@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Email Threat Inspector</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg: #0f172a;
+        --bg-light: #f1f5f9;
+        --panel: #ffffff;
+        --panel-dark: #1f2937;
+        --accent: #2563eb;
+        --accent-muted: rgba(37, 99, 235, 0.12);
+        --text: #0f172a;
+        --text-muted: #475569;
+        --border: rgba(15, 23, 42, 0.08);
+        --header-bg: linear-gradient(135deg, #14223d, #0b1529);
+        --header-border: rgba(190, 243, 94, 0.45);
+        --empty-bg: rgba(37, 99, 235, 0.1);
+        --empty-border: rgba(37, 99, 235, 0.35);
+        --attachment-bg: #0f1a30;
+        --attachment-border: rgba(190, 243, 94, 0.35);
+        --attachment-text: #f8fafc;
+        --chip-bg: rgba(37, 99, 235, 0.16);
+        --chip-muted: rgba(148, 163, 184, 0.3);
+        --chip-text: #0f172a;
+        font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg-light);
+        color: var(--text);
+      }
+
+      .app {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      header {
+        background: linear-gradient(135deg, #223654, #0f1f3d);
+        padding: 1.1rem clamp(0.8rem, 3vw, 1.8rem);
+        color: #ffffff;
+        box-shadow: 0 12px 32px rgba(15, 23, 42, 0.35);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      header .header-text h1 {
+        margin: 0 0 0.35rem;
+        font-size: clamp(1.5rem, 3.4vw, 2.45rem);
+        font-weight: 700;
+      }
+
+      header .header-text p {
+        margin: 0;
+        font-size: clamp(0.9rem, 2vw, 1.1rem);
+        color: rgba(255, 255, 255, 0.82);
+      }
+
+      .back-link {
+        color: #bef264;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.95rem;
+        padding: 0.5rem 1rem;
+        border: 1px solid rgba(190, 243, 94, 0.4);
+        border-radius: 999px;
+        transition: background 0.2s ease;
+        white-space: nowrap;
+      }
+
+      .back-link:hover {
+        background: rgba(190, 243, 94, 0.15);
+      }
+
+      main {
+        flex: 1;
+        display: flex;
+        gap: 1rem;
+        padding: clamp(0.75rem, 1.5vw, 1.25rem);
+        overflow: hidden;
+      }
+
+      aside {
+        width: clamp(260px, 28%, 360px);
+        background: #0f172a;
+        border-radius: 1rem;
+        border: 1px solid rgba(148, 163, 184, 0.25);
+        box-shadow: 0 12px 40px rgba(15, 23, 42, 0.18);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        color: #f8fafc;
+      }
+
+      .list-header {
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid rgba(190, 243, 94, 0.4);
+        background: linear-gradient(135deg, rgba(190, 243, 94, 0.45), rgba(59, 130, 246, 0.55));
+        font-weight: 600;
+        color: #f8fafc;
+        text-shadow: 0 1px 2px rgba(15, 23, 42, 0.45);
+      }
+
+      #email-list {
+        overflow-y: auto;
+        flex: 1;
+      }
+
+      .email-item {
+        display: block;
+        width: 100%;
+        text-align: left;
+        padding: 1rem 1.25rem;
+        color: #f8fafc;
+        background: transparent;
+        border: none;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+        cursor: pointer;
+        transition: background 0.25s ease, box-shadow 0.25s ease;
+      }
+
+      .email-item:last-child {
+        border-bottom: none;
+      }
+
+      .email-item:hover {
+        background: rgba(34, 197, 94, 0.18);
+      }
+
+      .email-item.active {
+        background: rgba(34, 197, 94, 0.3);
+        box-shadow: inset 3px 0 0 #22c55e;
+      }
+
+      .email-item .subject {
+        font-weight: 600;
+        margin-bottom: 0.35rem;
+        color: #22c55e;
+      }
+
+      .email-item .metadata {
+        font-size: 0.85rem;
+        color: rgba(248, 250, 252, 0.85);
+        display: flex;
+        flex-direction: column;
+        gap: 0.15rem;
+        line-height: 1.45;
+      }
+
+      .content {
+        flex: 1;
+        background: var(--panel);
+        border-radius: 1rem;
+        border: 1px solid var(--border);
+        box-shadow: 0 12px 40px rgba(15, 23, 42, 0.08);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+      }
+
+      .content-header {
+        padding: 1.25rem 1.75rem;
+        border: 1px solid var(--header-border);
+        border-bottom: none;
+        background: var(--header-bg);
+        border-radius: 1rem 1rem 0 0;
+        color: #f8fafc;
+        box-shadow: 0 12px 24px rgba(15, 23, 42, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+
+      .content-header h2 {
+        margin: 0;
+        font-size: 1.35rem;
+        line-height: 1.2;
+        flex: 1;
+        color: #f8fafc;
+      }
+
+      .content-body {
+        padding: clamp(1rem, 2vw, 1.75rem);
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+      }
+
+      .card {
+        background: rgba(148, 163, 184, 0.08);
+        border-radius: 0.85rem;
+        padding: clamp(0.9rem, 1.5vw, 1.3rem);
+        border: 1px solid rgba(15, 23, 42, 0.06);
+      }
+
+      .card h3 {
+        margin-top: 0;
+        font-size: 1rem;
+        margin-bottom: 0.65rem;
+      }
+
+      .meta-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 0.65rem;
+      }
+
+      .meta-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+        font-size: 0.95rem;
+      }
+
+      .meta-item span:first-child {
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: #f8fafc;
+        background: rgba(15, 23, 42, 0.85);
+        border-radius: 999px;
+        padding: 0.12rem 0.6rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: rgba(37, 99, 235, 0.12);
+        color: var(--accent);
+        font-weight: 600;
+        padding: 0.35rem 0.7rem;
+        border-radius: 999px;
+        font-size: 0.8rem;
+      }
+
+      .warning {
+        background: rgba(248, 113, 113, 0.14);
+        color: #dc2626;
+        border: 1px solid rgba(220, 38, 38, 0.2);
+      }
+
+      .body-block {
+        background: #0f172a;
+        color: #f8fafc;
+        padding: 1rem;
+        border-radius: 0.75rem;
+        max-height: 380px;
+        overflow: auto;
+        font-family: "Fira Code", "SFMono-Regular", ui-monospace, "Segoe UI Mono", monospace;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        white-space: pre-wrap;
+      }
+
+      iframe.email-html {
+        border: none;
+        width: 100%;
+        min-height: 520px;
+        max-height: 680px;
+        border-radius: 0.75rem;
+        background: #ffffff;
+        box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.06);
+      }
+
+      table.header-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+      }
+
+      table.header-table th,
+      table.header-table td {
+        text-align: left;
+        padding: 0.6rem 0.4rem;
+        border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+        vertical-align: top;
+      }
+
+      .header-scroll {
+        max-height: 360px;
+        overflow: auto;
+        border-radius: 0.65rem;
+        background: rgba(15, 23, 42, 0.06);
+        padding: 0.25rem 0.35rem;
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.08);
+      }
+
+      table.header-table th {
+        width: 160px;
+        font-weight: 600;
+        color: #f8fafc;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        font-size: 0.75rem;
+        background: rgba(15, 23, 42, 0.85);
+        border-radius: 0.4rem;
+      }
+
+      ul.link-list {
+        margin: 0;
+        padding-left: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+        font-size: 0.9rem;
+        word-break: break-all;
+      }
+
+      .attachment-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+      }
+
+      .attachment-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        padding: 0.65rem 0.75rem;
+        border-radius: 0.6rem;
+        border: 1px solid var(--attachment-border);
+        background: var(--attachment-bg);
+        color: var(--attachment-text);
+        box-shadow: 0 10px 18px rgba(15, 23, 42, 0.25);
+      }
+
+      .attachment-name {
+        font-weight: 600;
+        color: var(--attachment-text);
+      }
+
+      .attachment-item strong {
+        font-size: 0.95rem;
+      }
+
+      .attachment-meta {
+        font-size: 0.85rem;
+        color: rgba(248, 250, 252, 0.82);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+      }
+
+      .classification-card {
+        background: rgba(34, 197, 94, 0.08);
+        border: 1px solid rgba(34, 197, 94, 0.16);
+      }
+
+      .classification-form {
+        display: flex;
+        flex-direction: column;
+        gap: 0.9rem;
+      }
+
+      .classification-choices {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.25rem;
+      }
+
+      .classification-choices label {
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+        font-size: 0.95rem;
+      }
+
+      .signal-section {
+        border: 1px solid rgba(34, 197, 94, 0.3);
+        background: rgba(34, 197, 94, 0.12);
+        border-radius: 0.75rem;
+        padding: 0.95rem 1rem;
+      }
+
+      .signal-section p {
+        margin: 0 0 0.75rem;
+        font-weight: 600;
+      }
+
+      .signal-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 0.6rem;
+      }
+
+      .signal-grid label {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.45rem;
+        font-size: 0.9rem;
+        padding: 0.55rem 0.65rem;
+        background: rgba(15, 23, 42, 0.04);
+        border-radius: 0.6rem;
+        border: 1px solid rgba(15, 23, 42, 0.08);
+      }
+
+      .classification-submit {
+        align-self: flex-start;
+        appearance: none;
+        border: none;
+        border-radius: 999px;
+        padding: 0.6rem 1.6rem;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        color: #0f172a;
+        background: #bef264;
+        box-shadow: 0 8px 18px rgba(34, 197, 94, 0.2);
+        transition: transform 0.15s ease, box-shadow 0.2s ease;
+      }
+
+      .classification-submit:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 12px 26px rgba(34, 197, 94, 0.25);
+      }
+
+      .classification-submit:active {
+        transform: translateY(0);
+        box-shadow: 0 6px 16px rgba(34, 197, 94, 0.25);
+      }
+
+      .classification-status {
+        min-height: 1.2rem;
+        font-size: 0.9rem;
+        color: var(--text);
+        background: rgba(15, 23, 42, 0.04);
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        border-radius: 0.6rem;
+        padding: 0.65rem 0.75rem;
+      }
+
+      .classification-status .status-heading {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.35rem;
+      }
+
+      .classification-status.success {
+        color: #16a34a;
+        border-color: rgba(22, 163, 74, 0.4);
+        background: rgba(22, 163, 74, 0.08);
+      }
+
+      .classification-status.error {
+        color: #dc2626;
+        border-color: rgba(220, 38, 38, 0.35);
+        background: rgba(220, 38, 38, 0.08);
+      }
+
+      .signal-feedback {
+        margin-top: 0.5rem;
+        border-radius: 0.55rem;
+        border: 1px dashed rgba(248, 250, 252, 0.4);
+        padding: 0.55rem 0.65rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        background: rgba(15, 23, 42, 0.35);
+        color: #f8fafc;
+      }
+
+      .signal-feedback-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+        align-items: center;
+        font-size: 0.82rem;
+        color: #f8fafc;
+      }
+
+      .signal-feedback-label {
+        font-weight: 600;
+        color: #f8fafc;
+      }
+
+      .signal-feedback-values {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.3rem;
+      }
+
+      .signal-chip {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.15rem 0.55rem;
+        border-radius: 999px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        background: rgba(248, 250, 252, 0.12);
+        color: #ffffff;
+        border: 1px solid rgba(248, 250, 252, 0.35);
+      }
+
+      .signal-chip.muted {
+        background: transparent;
+        color: rgba(248, 250, 252, 0.65);
+        border-style: dashed;
+        font-weight: 500;
+      }
+
+      .empty-state {
+        flex: 1;
+        display: grid;
+        place-items: center;
+        padding: 2rem;
+        text-align: center;
+        color: #ffffff;
+        background: var(--empty-bg);
+        border: 1px solid var(--empty-border);
+        border-radius: 1rem;
+        box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+      }
+
+      .empty-state strong {
+        display: block;
+        margin-bottom: 0.4rem;
+        color: #ffffff;
+        font-size: 1.1rem;
+      }
+
+      .empty-state.primary,
+      .empty-state.primary strong {
+        color: #ffffff;
+      }
+
+      .loading {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        color: var(--text-muted);
+        font-size: 0.95rem;
+      }
+
+      .loading::before {
+        content: "";
+        width: 1rem;
+        height: 1rem;
+        border: 3px solid rgba(37, 99, 235, 0.25);
+        border-top-color: var(--accent);
+        border-radius: 999px;
+        animation: spin 0.85s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      @media (max-width: 960px) {
+        main {
+          flex-direction: column;
+        }
+
+        aside {
+          width: 100%;
+          max-height: 320px;
+        }
+
+        .content {
+          width: 100%;
+        }
+      }
+
+      @media (prefers-color-scheme: dark) {
+        body {
+          background: #020617;
+          color: #e2e8f0;
+        }
+
+        aside,
+        .content {
+          background: var(--panel-dark);
+          border-color: rgba(148, 163, 184, 0.12);
+        }
+
+        .card {
+          background: rgba(30, 41, 59, 0.85);
+          border-color: rgba(148, 163, 184, 0.1);
+        }
+
+        table.header-table th,
+        table.header-table td {
+          border-color: rgba(148, 163, 184, 0.12);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <header>
+        <div class="header-text">
+          <h1>Email Threat Inspector</h1>
+          <p>
+            Inspect real phishing and spam emails. Classify each one and identify the key signals.
+          </p>
+        </div>
+        <a class="back-link" href="/">&#8592; Back to App</a>
+      </header>
+      <main>
+        <aside>
+          <div class="list-header">Available Emails</div>
+          <div id="email-list" aria-live="polite">
+            <div class="empty-state">
+              <div>
+                <strong>No messages yet</strong>
+                Loading email list...
+              </div>
+            </div>
+          </div>
+        </aside>
+        <section class="content">
+          <div class="content-header">
+            <h2 id="email-subject">Select an email to inspect</h2>
+            <span id="email-status" class="pill" hidden></span>
+          </div>
+          <div class="content-body" id="email-details">
+            <div class="empty-state primary">
+              <div>
+                <strong>Awaiting selection</strong>
+                Choose an email from the list to load its content, headers, and link analysis.
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      const SIGNAL_OPTIONS = [
+        "Impersonation",
+        "Typosquatting/Punycodes",
+        "External Sender Domain",
+        "Spoofing",
+        "Social Engineering Text",
+        "Sense of Urgency",
+        "Fake Invoice",
+        "Malicious Attachment",
+        "Fake Login Page",
+        "Side Channel Communication Attempt",
+      ];
+
+      const SIGNAL_ALIAS_MAP = {
+        "Impersonation": "impersonation",
+        "Typosquatting/Punycodes": "punycode",
+        "External Sender Domain": "externaldomain",
+        "Spoofing": "spoof",
+        "Social Engineering Text": "socialeng",
+        "Sense of Urgency": "urgency",
+        "Fake Invoice": "fakeinvoice",
+        "Malicious Attachment": "attachment",
+        "Fake Login Page": "fakelogin",
+        "Side Channel Communication Attempt": "sidechannel",
+      };
+
+      const FLAG_REQUIREMENTS = {
+        "fakeinvoice-urgency-spoofing-socialeng.eml": {
+          classification: "Phishing",
+          signals: ["fakeinvoice", "urgency", "spoof"],
+          display: "fakeinvoice, urgency, spoofing",
+          flag: "THM{yougotnumber1-keep-it-going}",
+        },
+        "impersonation-attachment-socialeng-spoof.eml": {
+          classification: "Phishing",
+          signals: ["impersonation", "attachment", "spoof"],
+          display: "impersonation, attachment, spoof",
+          flag: "THM{nmumber2-was-not-tha-thard!}",
+        },
+        "impersonation-socialeng-urgency.eml": {
+          classification: "Phishing",
+          signals: ["impersonation", "socialeng", "urgency"],
+          display: "impersonation, socialeng, urgency",
+          flag: "THM{Impersonation-is-areal-thing-keepIt}",
+        },
+        "legitapp-impersonation-externaldomain-socialeng.eml": {
+          classification: "Phishing",
+          signals: ["impersonation", "externaldomain", "socialeng"],
+          display: "impersonation, externaldomain, social engineering",
+          flag: "THM{Get-back-SOC-mas!!}",
+        },
+        "marketing-spam-logistics.eml": {
+          classification: "Spam",
+          signals: [],
+          display: "spam",
+          flag: "THM{It-was-just-a-sp4m!!}",
+        },
+        "punycode-impersonation-legitapp-socialeng.eml": {
+          classification: "Phishing",
+          signals: ["punycode", "impersonation", "socialeng"],
+          display: "punycode, impersonation, social engineering",
+          flag: "THM{number6-is-the-last-one!-DX!}",
+        },
+      };
+
+      const classificationLog = [];
+      window.emailClassificationLog = classificationLog;
+
+      const emailListContainer = document.querySelector("#email-list");
+      const emailDetailsContainer = document.querySelector("#email-details");
+      const emailSubjectHeading = document.querySelector("#email-subject");
+      const emailStatusPill = document.querySelector("#email-status");
+      let activeEmail = null;
+
+      document.addEventListener("DOMContentLoaded", () => {
+        fetchEmailList();
+      });
+
+      async function fetchEmailList() {
+        setListState({ loading: true });
+        try {
+          const response = await fetch("/inspector/api/emails");
+          const payload = await response.json();
+
+          if (!response.ok) {
+            throw new Error(payload.error || "Unable to load messages.");
+          }
+
+          if (payload.error) {
+            renderListError(payload.error);
+            return;
+          }
+
+          renderEmailList(payload.emails || []);
+        } catch (error) {
+          renderListError(error.message);
+        }
+      }
+
+      function setListState({ loading = false } = {}) {
+        if (loading) {
+          emailListContainer.innerHTML = `<div class="empty-state"><span class="loading">Loading emails…</span></div>`;
+        }
+      }
+
+      function renderListError(message) {
+        emailListContainer.innerHTML = `
+          <div class="empty-state">
+            <div>
+              <strong>Unable to load emails</strong>
+              ${escapeHtml(message)}
+            </div>
+          </div>
+        `;
+      }
+
+      function renderEmailList(emails) {
+        if (!emails.length) {
+          emailListContainer.innerHTML = `
+            <div class="empty-state">
+              <div>
+                <strong>No messages found</strong>
+                No .eml files were found in the examples directory.
+              </div>
+            </div>
+          `;
+          return;
+        }
+
+        const list = document.createElement("div");
+        emails.forEach((email) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "email-item";
+          button.dataset.fileName = email.fileName;
+          button.innerHTML = `
+            <div class="subject">${escapeHtml(email.subject)}</div>
+            <div class="metadata">
+              <span>From: ${escapeHtml(email.from)}</span>
+              <span>To: ${escapeHtml(email.to)}</span>
+              <span>${escapeHtml(email.date || "Date unavailable")}</span>
+            </div>
+          `;
+          button.addEventListener("click", () => handleEmailSelection(button, email.fileName));
+          if (activeEmail && activeEmail === email.fileName) {
+            button.classList.add("active");
+          }
+          list.appendChild(button);
+        });
+
+        emailListContainer.innerHTML = "";
+        emailListContainer.appendChild(list);
+      }
+
+      function escapeHtml(text) {
+        const span = document.createElement("span");
+        span.textContent = text ?? "";
+        return span.innerHTML;
+      }
+
+      function formatFileSize(bytes) {
+        const size = Number(bytes);
+        if (!Number.isFinite(size) || size < 0) {
+          return "Size unavailable";
+        }
+        if (size === 0) {
+          return "0 bytes";
+        }
+        const units = ["bytes", "KB", "MB", "GB"];
+        let value = size;
+        let index = 0;
+        while (value >= 1024 && index < units.length - 1) {
+          value /= 1024;
+          index += 1;
+        }
+        const precision = index === 0 ? 0 : 1;
+        return `${value.toFixed(precision)} ${units[index]}`;
+      }
+
+      function normalizeToken(value) {
+        return (value || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+      }
+
+      function aliasForSignal(label) {
+        return SIGNAL_ALIAS_MAP[label] || normalizeToken(label);
+      }
+
+      function labelForAlias(alias) {
+        if (!labelForAlias.cache) {
+          labelForAlias.cache = Object.fromEntries(
+            Object.entries(SIGNAL_ALIAS_MAP).map(([label, aliasValue]) => [normalizeToken(aliasValue), label])
+          );
+        }
+        return labelForAlias.cache[normalizeToken(alias)] || alias;
+      }
+
+      function formatSignalChips(aliases = []) {
+        if (!aliases.length) {
+          return '<span class="signal-chip muted">None</span>';
+        }
+        return aliases
+          .map((alias) => `<span class="signal-chip">${escapeHtml(labelForAlias(alias))}</span>`)
+          .join("");
+      }
+
+      function renderSignalFeedback({ correct = [], incorrect = [] } = {}) {
+        const rows = [
+          { label: "Correct", values: correct },
+          { label: "Incorrect", values: incorrect },
+        ];
+        const markup = rows
+          .map(
+            ({ label, values }) => `
+              <div class="signal-feedback-row">
+                <span class="signal-feedback-label">${escapeHtml(label)}:</span>
+                <span class="signal-feedback-values">${formatSignalChips(values)}</span>
+              </div>
+            `
+          )
+          .join("");
+        return `<div class="signal-feedback">${markup}</div>`;
+      }
+
+      function renderStatusHeading(text) {
+        return `<span class="status-heading">${escapeHtml(text)}</span>`;
+      }
+
+      function evaluateSignalSelection(selectedAliases = [], expectedAliases = []) {
+        const normalizedSelected = selectedAliases.map(normalizeToken);
+        const normalizedExpected = expectedAliases.map(normalizeToken);
+        const expectedSet = new Set(normalizedExpected);
+        const selectedSet = new Set(normalizedSelected);
+        const correct = normalizedSelected.filter((alias) => expectedSet.has(alias));
+        const incorrect = normalizedSelected.filter((alias) => !expectedSet.has(alias));
+        const missing = normalizedExpected.filter((alias) => !selectedSet.has(alias));
+        const success =
+          incorrect.length === 0 && missing.length === 0 && normalizedSelected.length === normalizedExpected.length;
+        return { success, correct, incorrect, missing };
+      }
+
+      async function handleEmailSelection(button, fileName) {
+        if (activeEmail === fileName) {
+          return;
+        }
+        activeEmail = fileName;
+
+        document.querySelectorAll(".email-item").forEach((item) => item.classList.remove("active"));
+        button.classList.add("active");
+
+        await loadEmailDetails(fileName);
+      }
+
+      async function loadEmailDetails(fileName) {
+        showDetailsLoading();
+        try {
+          const response = await fetch(`/inspector/api/emails/${encodeURIComponent(fileName)}`);
+          const payload = await response.json();
+          if (!response.ok) {
+            throw new Error(payload.error || "Unable to load the email.");
+          }
+          renderEmailDetails(payload);
+        } catch (error) {
+          renderDetailsError(error.message);
+        }
+      }
+
+      function showDetailsLoading() {
+        emailSubjectHeading.textContent = "Loading email…";
+        emailStatusPill.hidden = true;
+        emailDetailsContainer.innerHTML = `<div class="empty-state"><span class="loading">Loading email content…</span></div>`;
+      }
+
+      function renderDetailsError(message) {
+        emailSubjectHeading.textContent = "Error loading email";
+        emailStatusPill.hidden = true;
+        emailDetailsContainer.innerHTML = `
+          <div class="empty-state">
+            <div>
+              <strong>Something went wrong</strong>
+              ${escapeHtml(message)}
+            </div>
+          </div>
+        `;
+      }
+
+      function renderEmailDetails(details) {
+        const { summary, headers = [], textBody = "", htmlBody = "", links = [], warnings = [], attachments = [] } = details;
+        emailSubjectHeading.textContent = summary.subject || "Email details";
+
+        if (warnings.length) {
+          emailStatusPill.textContent = `Warnings: ${warnings.length}`;
+          emailStatusPill.classList.add("warning");
+          emailStatusPill.hidden = false;
+        } else {
+          emailStatusPill.hidden = true;
+          emailStatusPill.textContent = "";
+          emailStatusPill.classList.remove("warning");
+        }
+
+        const warningMarkup = warnings
+          .map((warning) => `<li>${escapeHtml(warning)}</li>`)
+          .join("");
+
+        const linkMarkup = links
+          .map((link) => `<li><a href="${link}" target="_blank" rel="noopener noreferrer">${escapeHtml(link)}</a></li>`)
+          .join("");
+
+        const headerRows = headers
+          .map(
+            (header) => `
+              <tr>
+                <th>${escapeHtml(header.name)}</th>
+                <td>${escapeHtml(header.value)}</td>
+              </tr>
+            `
+          )
+          .join("");
+
+        const attachmentsMarkup = `
+          <article class="card">
+            <h3>Attachments</h3>
+            ${
+              attachments.length
+                ? `
+                    <ul class="attachment-list">
+                      ${attachments
+                        .map((attachment, index) => {
+                          const name = attachment.fileName || `Attachment ${index + 1}`;
+                          const disposition = attachment.contentDisposition || "Content-Disposition unavailable";
+                          const type = attachment.contentType || "Unknown type";
+                          const sizeLabel = formatFileSize(attachment.size);
+                          const contentId = attachment.contentId
+                            ? `<span class="attachment-meta">Content-ID: ${escapeHtml(attachment.contentId)}</span>`
+                            : "";
+                          return `
+                            <li class="attachment-item">
+                              <span class="attachment-name">${escapeHtml(name)}</span>
+                              <span class="attachment-meta">${escapeHtml(disposition)}</span>
+                              <span class="attachment-meta">Type: ${escapeHtml(type)}</span>
+                              <span class="attachment-meta">Size: ${escapeHtml(sizeLabel)}</span>
+                              ${contentId}
+                            </li>
+                          `;
+                        })
+                        .join("")}
+                    </ul>
+                  `
+                : `<p>No attachment found.</p>`
+            }
+          </article>
+        `;
+
+        const sanitizedIdBase = (summary.fileName || "email")
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-|-$/g, "") || "email";
+
+        const signalCheckboxes = SIGNAL_OPTIONS.map((label, index) => {
+          const checkboxId = `${sanitizedIdBase}-signal-${index}`;
+          const alias = aliasForSignal(label);
+          return `
+              <label for="${checkboxId}">
+                <input type="checkbox" id="${checkboxId}" name="signals" value="${escapeHtml(label)}" data-alias="${escapeHtml(alias)}" />
+                <span>${escapeHtml(label)}</span>
+              </label>
+            `;
+        }).join("");
+
+        const classificationMarkup = `
+          <article class="card classification-card">
+            <h3>Classification</h3>
+            <form class="classification-form" data-email="${escapeHtml(summary.fileName)}">
+              <div class="classification-choices">
+                <label><input type="checkbox" name="classification" value="Spam" /> Spam</label>
+                <label><input type="checkbox" name="classification" value="Phishing" /> Phishing</label>
+              </div>
+              <div class="signal-section" hidden>
+                <p>Select at least three phishing signals:</p>
+                <div class="signal-grid">
+                  ${signalCheckboxes}
+                </div>
+              </div>
+              <button type="submit" class="classification-submit">Submit</button>
+              <div class="classification-status" aria-live="polite"></div>
+            </form>
+          </article>
+        `;
+
+        emailDetailsContainer.innerHTML = `
+          <article class="card">
+            <h3>Message overview</h3>
+            <div class="meta-grid">
+              <div class="meta-item">
+                <span>From</span>
+                <span>${escapeHtml(summary.from)}</span>
+              </div>
+              <div class="meta-item">
+                <span>To</span>
+                <span>${escapeHtml(summary.to)}</span>
+              </div>
+              <div class="meta-item">
+                <span>Date</span>
+                <span>${escapeHtml(summary.date || "Unknown")}</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="card">
+            <h3>HTML preview</h3>
+            ${
+              htmlBody
+                ? `<iframe class="email-html" sandbox="allow-same-origin" title="HTML body preview"></iframe>`
+                : `<p>An HTML body was not present in this email.</p>`
+            }
+          </article>
+
+          ${attachmentsMarkup}
+
+          ${
+            warningMarkup
+              ? `
+                  <article class="card">
+                    <h3>Warning signals</h3>
+                    <ul class="link-list">${warningMarkup}</ul>
+                  </article>
+                `
+              : ""
+          }
+
+          <article class="card">
+            <h3>Headers</h3>
+            ${
+              headerRows
+                ? `<div class="header-scroll"><table class="header-table">${headerRows}</table></div>`
+                : `<p>No headers could be extracted.</p>`
+            }
+          </article>
+
+          <article class="card">
+            <h3>Links detected</h3>
+            ${
+              linkMarkup
+                ? `<ul class="link-list">${linkMarkup}</ul>`
+                : `<p>No direct links were found in the selected email.</p>`
+            }
+          </article>
+
+          ${classificationMarkup}
+        `;
+
+        const iframe = emailDetailsContainer.querySelector("iframe.email-html");
+        if (iframe && htmlBody) {
+          iframe.srcdoc = htmlBody;
+        }
+
+        setupClassificationForm(summary.fileName);
+      }
+
+      function setupClassificationForm(emailFileName) {
+        const form = emailDetailsContainer.querySelector(".classification-form");
+        if (!form) {
+          return;
+        }
+
+        const statusEl = form.querySelector(".classification-status");
+        const signalSection = form.querySelector(".signal-section");
+        const classificationInputs = Array.from(form.querySelectorAll('input[name="classification"]'));
+        const signalInputs = Array.from(form.querySelectorAll('input[name="signals"]'));
+
+        signalInputs.forEach((input) => {
+          input.addEventListener("change", () => {
+            const checkedSignals = signalInputs.filter((checkbox) => checkbox.checked);
+
+            if (checkedSignals.length > 3) {
+              input.checked = false;
+
+              if (statusEl) {
+                statusEl.textContent = "You can select at most three phishing signals.";
+                statusEl.classList.add("error");
+              }
+            }
+          });
+        });
+
+        classificationInputs.forEach((input) => {
+          input.addEventListener("change", () => {
+            if (input.checked) {
+              classificationInputs.forEach((other) => {
+                if (other !== input) {
+                  other.checked = false;
+                }
+              });
+              const isPhishing = input.value === "Phishing";
+              signalSection.hidden = !isPhishing;
+              if (!isPhishing) {
+                signalInputs.forEach((checkbox) => {
+                  checkbox.checked = false;
+                });
+              }
+            } else if (!classificationInputs.some((checkbox) => checkbox.checked)) {
+              signalSection.hidden = true;
+            }
+
+            if (statusEl) {
+              statusEl.innerHTML = "";
+              statusEl.classList.remove("success", "error");
+            }
+          });
+        });
+
+        form.addEventListener("submit", (event) => {
+          event.preventDefault();
+          if (!statusEl) {
+            return;
+          }
+
+          statusEl.innerHTML = "";
+          statusEl.classList.remove("success", "error");
+
+          const selectedClassificationInput = classificationInputs.find((input) => input.checked);
+          if (!selectedClassificationInput) {
+            statusEl.textContent = "Select either Spam or Phishing to continue.";
+            statusEl.classList.add("error");
+            return;
+          }
+
+          const selectedClassification = selectedClassificationInput.value;
+          const requirement = FLAG_REQUIREMENTS[emailFileName];
+          if (!requirement) {
+            statusEl.textContent = "No flag configuration is defined for this email.";
+            statusEl.classList.add("error");
+            return;
+          }
+
+          const selectedSignals = Array.from(form.querySelectorAll('input[name="signals"]:checked'));
+          const selectedAliases = selectedSignals.map((input) => input.dataset.alias || aliasForSignal(input.value));
+          let success = false;
+
+          if (selectedClassification === "Phishing") {
+            if (selectedAliases.length < 3) {
+              statusEl.textContent = "Select at least three phishing signals.";
+              statusEl.classList.add("error");
+              return;
+            }
+
+            const evaluation = evaluateSignalSelection(selectedAliases, requirement.signals || []);
+
+            if (requirement.classification !== "Phishing") {
+              statusEl.innerHTML = `${renderStatusHeading("This email is not expected to be phishing.")}${renderSignalFeedback({
+                correct: evaluation.correct,
+                incorrect: evaluation.incorrect,
+              })}`;
+              statusEl.classList.add("error");
+            } else if (!evaluation.success) {
+              statusEl.innerHTML = `${renderStatusHeading(
+                "Classification incorrect. Review the selected phishing signals."
+              )}${renderSignalFeedback({ correct: evaluation.correct, incorrect: evaluation.incorrect })}`;
+              statusEl.classList.add("error");
+            } else {
+              success = true;
+              statusEl.innerHTML = `${renderStatusHeading(`Correct! Flag: ${requirement.flag}`)}${renderSignalFeedback({
+                correct: evaluation.correct,
+                incorrect: evaluation.incorrect,
+              })}`;
+              statusEl.classList.add("success");
+            }
+          } else {
+            if (requirement.classification !== "Spam") {
+              statusEl.innerHTML = renderStatusHeading("This email is not expected to be spam.");
+              statusEl.classList.add("error");
+            } else if (selectedAliases.length > 0) {
+              const feedbackDetail = {
+                correct: [],
+                incorrect: selectedAliases.map(normalizeToken),
+              };
+              statusEl.innerHTML = `${renderStatusHeading(
+                "Spam classification should not include phishing signals."
+              )}${renderSignalFeedback(feedbackDetail)}`;
+              statusEl.classList.add("error");
+            } else {
+              success = true;
+              statusEl.innerHTML = renderStatusHeading(`Correct! Flag: ${requirement.flag}`);
+              statusEl.classList.add("success");
+            }
+          }
+
+          classificationLog.push({
+            email: emailFileName,
+            classification: selectedClassification,
+            signals: selectedSignals.map((input) => input.value),
+            success,
+            timestamp: new Date().toISOString(),
+          });
+        });
+      }
+    </script>
+  </body>
+</html>

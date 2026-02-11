@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Quiz Results{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 text-center">
+        <div class="card">
+            <div class="card-body">
+                <h3>Quiz Complete!</h3>
+                {% set pct = (score / total * 100) | round(0) | int if total > 0 else 0 %}
+                <div class="display-4 my-4
+                    {% if pct >= 80 %}text-success{% elif pct >= 50 %}text-warning{% else %}text-danger{% endif %}">
+                    {{ score }} / {{ total }}
+                </div>
+                <p class="lead">You scored {{ pct }}%</p>
+                {% if pct >= 80 %}
+                <p class="text-success">Excellent! You have strong phishing awareness.</p>
+                {% elif pct >= 50 %}
+                <p class="text-warning">Good effort, but there's room for improvement.</p>
+                {% else %}
+                <p class="text-danger">You might be vulnerable to phishing attacks. Review the material and try again!</p>
+                {% endif %}
+                <div class="mt-4">
+                    <a href="{{ url_for('quiz.quiz_list') }}" class="btn btn-primary me-2">Back to Quizzes</a>
+                    {% if quiz_id %}
+                    <a href="{{ url_for('quiz.start_quiz', quiz_id=quiz_id) }}" class="btn btn-outline-primary">Retry</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

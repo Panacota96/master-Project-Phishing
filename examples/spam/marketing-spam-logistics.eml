@@ -1,0 +1,107 @@
+{
+  "attachments": [],
+  "authFindings": {
+    "dkim": "Signature provided",
+    "dmarc": "spf=pass (sender IP is 209.85.128.67) smtp.mailfrom=tewsworks.net; dkim=pass (signature was verified) header.d=tewsworks.net;dmarc=none action=none header.from=tewsworks.net;compauth=pass reason=111",
+    "spf": "Pass (protection.outlook.com: domain of tewsworks.net designates 209.85.128.67 as permitted sender) receiver=protection.outlook.com; client-ip=209.85.128.67; helo=mail-wm1-f67.google.com; pr=C"
+  },
+  "base64Links": [],
+  "headers": [
+    {
+      "name": "Received",
+      "value": "from DU0PR01MB9023.eurprd01.prod.exchangelabs.com (2603:10a6:10:35a::19) by DU2PR01MB8429.eurprd01.prod.exchangelabs.com with HTTPS; Wed, 14 Aug 2024 04:05:13 +0000"
+    },
+    {
+      "name": "Received",
+      "value": "from AS9PR06CA0298.eurprd06.prod.outlook.com (2603:10a6:20b:45a::6) by DU0PR01MB9023.eurprd01.prod.exchangelabs.com (2603:10a6:10:35a::19) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.22; Wed, 14 Aug 2024 04:05:11 +0000"
+    },
+    {
+      "name": "Received",
+      "value": "from AM2PEPF0001C70C.eurprd05.prod.outlook.com (2603:10a6:20b:45a:cafe::35) by AS9PR06CA0298.outlook.office365.com (2603:10a6:20b:45a::6) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.22 via Frontend Transport; Wed, 14 Aug 2024 04:05:10 +0000"
+    },
+    {
+      "name": "Received",
+      "value": "from mail-wm1-f67.google.com (209.85.128.67) by AM2PEPF0001C70C.mail.protection.outlook.com (10.167.16.200) with Microsoft SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.7849.8 via Frontend Transport; Wed, 14 Aug 2024 04:05:10 +0000"
+    },
+    {
+      "name": "Received",
+      "value": "by mail-wm1-f67.google.com with SMTP id 5b1f17b1804b1-427fc97a88cso47415525e9.0        for <shafkath_nur@tbfc.com>; Tue, 13 Aug 2024 21:05:10 -0700 (PDT)"
+    },
+    {
+      "name": "Received",
+      "value": "from 341605307468 named unknown by gmailapi.google.com with HTTPREST; Wed, 14 Aug 2024 04:05:09 +0000"
+    },
+    {
+      "name": "Received",
+      "value": "from 83.72.202.35.bc.googleusercontent.com (83.72.202.35.bc.googleusercontent.com [35.202.72.83]) by api.nylas.com (Nylas) with HTTPREST id cnk1mfnwhrxc7kuiwnzjgdzti-0; Wed, 14 Aug 2024 04:03:50 +0000 (UTC)"
+    },
+    {
+      "name": "Authentication-Results",
+      "value": "spf=pass (sender IP is 209.85.128.67) smtp.mailfrom=tewsworks.net; dkim=pass (signature was verified) header.d=tewsworks.net;dmarc=none action=none header.from=tewsworks.net;compauth=pass reason=111"
+    },
+    {
+      "name": "Received-Spf",
+      "value": "Pass (protection.outlook.com: domain of tewsworks.net designates 209.85.128.67 as permitted sender) receiver=protection.outlook.com; client-ip=209.85.128.67; helo=mail-wm1-f67.google.com; pr=C"
+    },
+    {
+      "name": "Dkim-Signature",
+      "value": "v=1; a=rsa-sha256; c=relaxed/relaxed;        d=tewsworks.net; s=google; t=1723608310; x=1724213110; darn=tbfc.com;        h=to:subject:message-id:date:mime-version:from:user-agent:in-reply-to         :references:from:to:cc:subject:date:message-id:reply-to;        bh=JPDbPId0FhMLkx73Fa1XuTA6b3dKaoyqn+GhtJVVee8=;        b=kJMBe6v7T9QfTTit+Mgzzz6yhBWoJ5CD5kzCtfRBMD7ashn/0Z6/IPJK9Z/oIUsdZc         IxbB/maStZuBudhionCY3YhpHaZWLPlXBPxTT5dEJwirMhaGJO5FQfeWecRKrjHsrd+p         9Y4sB3iKAvKWrKTtsEw1uAQU7n/V9tELTcD/jFYWPEOpNQLwemT2gQPfakGOWM37jCwr         o32pw2LBAeKZmxw9jZ4HI0csFdC1OQ/VicCdmrXVB51bze2aRyAqDtGap4oYWV3C9ZcG         L/F/yTg1gNYO19mrFbfgv230pCkwaPPE3DGSG/DDxSIKSSNebp8AOcJ1Jy/kJAvM4B3F         2JcA=="
+    },
+    {
+      "name": "In-Reply-To",
+      "value": " <candycane-co.wv>"
+    },
+    {
+      "name": "User-Agent",
+      "value": "Nylas-Amplemarket/18.1.0"
+    },
+    {
+      "name": "From",
+      "value": "Lara <lara@candycane-co.wv>"
+    },
+    {
+      "name": "MIME-Version",
+      "value": "1.0"
+    },
+    {
+      "name": "Date",
+      "value": "Sun, 14 Dec 2025 04:05:09 +0000"
+    },
+    {
+      "name": "Message-Id",
+      "value": " <CAGVzd0ERMObw8GhH+bMsXYkKdFyfHL0npp+mM04e1GJonK44wg@mail.gmail.com>"
+    },
+    {
+      "name": "Subject",
+      "value": "Improve your event logistics this SOC-mas season"
+    },
+    {
+      "name": "To",
+      "value": "TBFC Events <events@tbfc.com>"
+    },
+    {
+      "name": "Content-Type",
+      "value": "multipart/mixed; boundary=\"----sinikael-?=_1-17236083563470.6207944771923966\""
+    },
+    {
+      "name": "Return-Path",
+      "value": "candycane-co.wv"
+    },
+    {
+      "name": "Content-Transfer-Encoding",
+      "value": "7bit"
+    }
+  ],
+  "htmlBody": "<html>\n  <body style=\"font-family: Arial, sans-serif; color: #000000ff; margin:0; padding:20px;\">\n    <div style=\"max-width:600px; margin:auto; border:1px solid #eaeaea; border-radius:10px; padding:20px;\">\n      <h2 style=\"color:#d41c1c;\">Improve your event logistics this SOC-mas season</h2>\n\n      <p>Dear TBFC Team,</p>\n\n      <p>I hope this message finds you well during this busy SOC-mas season.</p>\n\n      <p>We understand how challenging it can be to manage large-scale festive events \u2014 endless volunteer coordination, costume distribution, and late-night preparation. Our <strong>CandyCane Co. Logistics Platform</strong> was designed to simplify those processes and reduce workload for event managers across Wareville.</p>\n\n      <ul>\n        <li>Automated scheduling for staff and volunteers</li>\n        <li>Centralized supply tracking for costumes and decorations</li>\n        <li>Real-time updates to minimize delivery errors</li>\n        <li>Energy-efficient systems that cut operational costs</li>\n      </ul>\n\n      <p>I\u2019d love to learn how TBFC currently handles event logistics and see if our solution could support your preparations for SOC-mas. Even small improvements could bring huge time savings to your team.</p>\n\n      <p>Looking forward to hearing from you,</p>\n      <p>\n        Warm regards,<br>\n        <strong>Lara</strong><br>\n        Event Solutions Advisor<br>\n        <span style=\"color:#d41c1c;\">CandyCane Co.</span>\n      </p>\n\n      <hr style=\"border:none; border-top:1px solid #eee; margin-top:20px;\">\n      <p style=\"font-size:12px; color:#888;\">\u00a9 2025 CandyCane Co. | 45 Frostbite Avenue, Wareville</p>\n    </div>\n  </body>\n</html>",
+  "inlineImages": {},
+  "links": [],
+  "summary": {
+    "date": "Sun, 14 Dec 2025 04:05:09 +0000",
+    "fileName": "marketing-spam-logistics.eml",
+    "from": "Lara <lara@candycane-co.wv>",
+    "subject": "Improve your event logistics this SOC-mas season",
+    "to": "TBFC Events <events@tbfc.com>"
+  },
+  "textBody": "",
+  "warnings": []
+}

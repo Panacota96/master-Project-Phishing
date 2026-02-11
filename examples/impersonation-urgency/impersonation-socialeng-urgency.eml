@@ -1,0 +1,95 @@
+{
+  "attachments": [],
+  "authFindings": {
+    "dkim": "Signature provided",
+    "dmarc": "spf=pass (sender IP is 209.85.128.67) smtp.mailfrom=gmail.com; dkim=pass (signature was verified) header.d=gmail.com;dmarc=pass header.from=gmail.com;compauth=pass reason=111",
+    "spf": "Pass (protection.outlook.com: domain of gmail.com designates 209.85.128.67 as permitted sender) receiver=protection.outlook.com; client-ip=209.85.128.67; helo=mail-wm1-f67.google.com; pr=C"
+  },
+  "base64Links": [],
+  "headers": [
+    {
+      "name": "Received",
+      "value": "from DU0PR01MB9023.eurprd01.prod.exchangelabs.com (2603:10a6:10:35a::19) by DU2PR01MB8429.eurprd01.prod.exchangelabs.com with HTTPS; Fri, 14 Dec 2025 04:05:13 +0000"
+    },
+    {
+      "name": "Received",
+      "value": "from AS9PR06CA0298.eurprd06.prod.outlook.com (2603:10a6:20b:45a::6) by DU0PR01MB9023.eurprd01.prod.exchangelabs.com (2603:10a6:10:35a::19) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.22; Fri, 14 Dec 2025 04:05:11 +0000"
+    },
+    {
+      "name": "Received",
+      "value": "from AM2PEPF0001C70C.eurprd05.prod.outlook.com (2603:10a6:20b:45a:cafe::35) by AS9PR06CA0298.outlook.office365.com (2603:10a6:20b:45a::6) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.22 via Frontend Transport; Fri, 14 Dec 2025 04:05:10 +0000"
+    },
+    {
+      "name": "Received",
+      "value": "from mail-wm1-f67.google.com (209.85.128.67) by AM2PEPF0001C70C.mail.protection.outlook.com (10.167.16.200) with Microsoft SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.7849.8 via Frontend Transport; Fri, 14 Dec 2025 04:05:10 +0000"
+    },
+    {
+      "name": "Received",
+      "value": "from 341605307468 named unknown by gmailapi.google.com with HTTPREST; Fri, 14 Dec 2025 04:05:09 +0000"
+    },
+    {
+      "name": "Authentication-Results",
+      "value": "spf=pass (sender IP is 209.85.128.67) smtp.mailfrom=gmail.com; dkim=pass (signature was verified) header.d=gmail.com;dmarc=pass header.from=gmail.com;compauth=pass reason=111"
+    },
+    {
+      "name": "Received-Spf",
+      "value": "Pass (protection.outlook.com: domain of gmail.com designates 209.85.128.67 as permitted sender) receiver=protection.outlook.com; client-ip=209.85.128.67; helo=mail-wm1-f67.google.com; pr=C"
+    },
+    {
+      "name": "Dkim-Signature",
+      "value": "v=1; a=rsa-sha256; c=relaxed/relaxed;        d=gmail.com; s=google; t=1723608310; x=1724213110; darn=gmail.com;        h=to:subject:message-id:date:mime-version:from:user-agent:in-reply-to         :references:from:to:cc:subject:date:message-id:reply-to;        bh=JPDbPId0FhMLkx73Fa1XuTA6b3dKaoyqn+GhtJVVee8=;        b=kJMBe6v7T9QfTTit+Mgzzz6yhBWoJ5CD5kzCtfRBMD7ashn/0Z6/IPJK9Z/oIUsdZc         IxbB/maStZuBudhionCY3YhpHaZWLPlXBPxTT5dEJwirMhaGJO5FQfeWecRKrjHsrd+p         9Y4sB3iKAvKWrKTtsEw1uAQU7n/V9tELTcD/jFYWPEOpNQLwemT2gQPfakGOWM37jCwr         o32pw2LBAeKZmxw9jZ4HI0csFdC1OQ/VicCdmrXVB51bze2aRyAqDtGap4oYWV3C9ZcG         L/F/yTg1gNYO19mrFbfgv230pCkwaPPE3DGSG/DDxSIKSSNebp8AOcJ1Jy/kJAvM4B3F         2JcA=="
+    },
+    {
+      "name": "In-Reply-To",
+      "value": " <CAGVzd0Ec0WvV-YdSDHasdhm2d4JX9PsE8XSzrkNFB20Qd-MwENQ@mail.gmail.com>"
+    },
+    {
+      "name": "From",
+      "value": "McSkidy <mcskiddyy202512@gmail.com>"
+    },
+    {
+      "name": "MIME-Version",
+      "value": "1.0"
+    },
+    {
+      "name": "Date",
+      "value": "Sun, 14 Dec 2025 04:05:09 +0000"
+    },
+    {
+      "name": "Message-Id",
+      "value": " <CAGVzd0ERMObw8GhH+bMsXYkKdFyfHL0npp+mM04e1GJonK44wg@mail.gmail.com>"
+    },
+    {
+      "name": "Subject",
+      "value": "URGENT: McSkidy VPN access for incident response"
+    },
+    {
+      "name": "To",
+      "value": "TBFC Blue Team <blueteam@tbfc.com>"
+    },
+    {
+      "name": "Content-Type",
+      "value": "multipart/mixed; boundary=\"----sinikael-?=_1-17236083563470.6207944771923966\""
+    },
+    {
+      "name": "Return-Path",
+      "value": "mcskiddyy202512@gmail.com"
+    },
+    {
+      "name": "Content-Transfer-Encoding",
+      "value": "7bit"
+    }
+  ],
+  "htmlBody": "<html>\n  <body style=\"font-family: Arial, sans-serif; color:#000;\">\n    <div style=\"max-width:600px; margin:0 auto;\">\n      <p>Team,</p>\n\n      <p><strong>McSkidy</strong> here \u2014 I'm currently unreachable by phone. We have an ongoing incident and need the Blue Team to get remote access now to investigate. Please create a new VPN access for me immediately. Send the access to my personal email address <strong>mcskiddyy202512@gmail.com</strong></p>\n\n      <table style=\"border-collapse:collapse; width:100%; font-size:14px;\">\n        <tr><td style=\"padding:6px; border:1px solid #000;\"><strong>Name</strong></td><td style=\"padding:6px; border:1px solid #000;\">McSkidy</td></tr>\n        <tr><td style=\"padding:6px; border:1px solid #000;\"><strong>Team</strong></td><td style=\"padding:6px; border:1px solid #000;\">Blue Team</td></tr>\n        <tr><td style=\"padding:6px; border:1px solid #000;\"><strong>Reason</strong></td><td style=\"padding:6px; border:1px solid #000;\">Emergency incident response</td></tr>\n      </table>\n\n      <p style=\"color:#b00;\"><em>This is urgent \u2014 please action immediately.</em> </p>\n\n      <p>\u2014 McSkidy</p>\n    </div>\n  </body>\n</html>",
+  "inlineImages": {},
+  "links": [],
+  "summary": {
+    "date": "Sun, 14 Dec 2025 04:05:09 +0000",
+    "fileName": "impersonation-socialeng-urgency.eml",
+    "from": "McSkidy <mcskiddyy202512@gmail.com>",
+    "subject": "URGENT: McSkidy VPN access for incident response",
+    "to": "TBFC Blue Team <blueteam@tbfc.com>"
+  },
+  "textBody": "",
+  "warnings": []
+}

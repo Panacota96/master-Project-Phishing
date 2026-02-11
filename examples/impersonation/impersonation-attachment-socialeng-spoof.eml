@@ -1,0 +1,103 @@
+{
+  "attachments": [
+    {
+      "contentDisposition": "attachment; filename=\"Play-Now.mp3-29a-otpqw-warq-29.html\"",
+      "contentId": null,
+      "contentType": "application/octet-stream",
+      "fileName": "Play-Now.mp3-29a-otpqw-warq-29.html",
+      "size": 1706
+    }
+  ],
+  "authFindings": {
+    "dkim": "Signature provided",
+    "dmarc": "spf=fail (sender IP is 173.243.133.97) smtp.mailfrom=tbfc.com; dkim=fail (signature did not verify) header.d=tbfc.com;dmarc=fail action=none header.from=tbfc.com;compauth=none reason=405",
+    "spf": "Fail (protection.outlook.com: domain of transitioning tbfc.com discourages use of 173.243.133.97 as permitted sender)"
+  },
+  "base64Links": [],
+  "headers": [
+    {
+      "name": "Received",
+      "value": "from DU2PR08MB10188.eurprd08.prod.outlook.com (2603:10a6:10:46f::12) by AM9PR08MB6004.eurprd08.prod.outlook.com with HTTPS; Fri, 12 Dec 2025 11:55:03 +0000"
+    },
+    {
+      "name": "Received",
+      "value": "from AS9PR04CA0039.eurprd04.prod.outlook.com (2603:10a6:20b:46a::33) by DU2PR08MB10188.eurprd08.prod.outlook.com (2603:10a6:10:46f::12) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.13; Fri, 12 Dec 2025 11:53:15 +0000"
+    },
+    {
+      "name": "Received",
+      "value": "from AMS0EPF0000014F.eurprd05.prod.outlook.com (2603:10a6:20b:46a:cafe::22) by AS9PR04CA0039.outlook.office365.com (2603:10a6:20b:46a::33) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21 via Frontend Transport; Fri, 12 Dec 2025 11:53:12 +0000"
+    },
+    {
+      "name": "Authentication-Results",
+      "value": "spf=fail (sender IP is 173.243.133.97) smtp.mailfrom=tbfc.com; dkim=fail (signature did not verify) header.d=tbfc.com;dmarc=fail action=none header.from=tbfc.com;compauth=none reason=405"
+    },
+    {
+      "name": "Received-SPF",
+      "value": "Fail (protection.outlook.com: domain of transitioning tbfc.com discourages use of 173.243.133.97 as permitted sender)"
+    },
+    {
+      "name": "Received",
+      "value": "from gw3097.weakmail.com (173.243.133.97) by AMS0EPF0000014F.mail.protection.outlook.com (10.167.16.251) with Microsoft SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.7897.11 via Frontend Transport; Fri, 12 Dec 2025 11:53:12 +0000"
+    },
+    {
+      "name": "Authentication-Results-Original",
+      "value": "gw3097.weakmail.com;\tspf=permerror (weakmail.com: 143.55.232.2 is neither permitted nor denied by domain of bounce+35b744.72834a-calls.com@tbfc.com) smtp.mailfrom=bounce+35b744.72834a-calls.com@tbfc.com;\tdkim=pass header.i=@tbfc.com;"
+    },
+    {
+      "name": "DKIM-Signature",
+      "value": "a=rsa-sha256; v=1; c=relaxed/relaxed; d=tbfc.com; q=dns/txt; s=k1; t=1724068357; x=1724075557; h=Date: Message-ID: Reply-To: Subject: Subject: From: From: To: To: MIME-Version: Content-Type: Sender: Sender; bh=1hyA4Zf4UdXyZQc/DeMDyIR/aSSwcpbJiVyJDmICRf8=; b=McN4GKhl/iGM4CE5jLkj+uRdimBAEQy6PZNZmk+z3zRBD1iVRhyjiEgHssl/4ySAucnw62yRUuq7ybYwVjO9BBnu+wDpqH9XNTZ2CFnxNDyXcSo4d6V2R7Slw/FZJckToLLrJPDCgS2akm5Zl48ItvtYPoH1I+820FqJDFKHJYI="
+    },
+    {
+      "name": "Sender",
+      "value": "calls@tbfc.com"
+    },
+    {
+      "name": "Content-Type",
+      "value": "multipart/related; boundary=\"===============1384656496240588532==\""
+    },
+    {
+      "name": "To",
+      "value": "tarron@tbfc.com"
+    },
+    {
+      "name": "From",
+      "value": "McSkidy Missed Call Notifier <calls@tbfc.com>"
+    },
+    {
+      "name": "Subject",
+      "value": "New Audio Message from McSkidy"
+    },
+    {
+      "name": "Reply-To",
+      "value": "TBFC <noreply@tbfc.com>"
+    },
+    {
+      "name": "Message-ID",
+      "value": "<172406835482.169035.18309037092888188755@27-tyral>"
+    },
+    {
+      "name": "Date",
+      "value": "Sun, 12 Oct 2025 18:12:34 +0000"
+    },
+    {
+      "name": "Return-Path",
+      "value": "zxwsedr@easterbb.com"
+    },
+    {
+      "name": "MIME-Version",
+      "value": "1.0"
+    }
+  ],
+  "htmlBody": "<html><head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=us-ascii\"></head>\n<body style=\"font-family: Arial, sans-serif; color: #ffffff; background-color: #0b0b0b; margin: 40px;\">\n  <p>Hi Tarron</p>\n\n  <p>You have a new Voice Message from McSkidy:</p>\n\n  <p><strong>ID:</strong> 405-405-0405<br>\n     <strong>Duration:</strong> 88 seconds<br>\n     <strong>Date:</strong> October 12, 2025<br>\n     <strong>Organization:</strong> TBFC\n  </p>\n\n<tbody>\n<tr style=\"mso-yfti-irow:0;mso-yfti-firstrow:yes;mso-yfti-lastrow:yes\">\n<td style=\"background:#910A14;padding:5.25pt 1.5pt 5.25pt 1.5pt\"></td>\n<td width=\"100%\" style=\"width:100.0%;background:#FDF2F4;padding:5.25pt 3.75pt 5.25pt 11.25pt; word-wrap:break-word\" cellpadding=\"7px 5px 7px 15px\" color=\"#212121\">\n</td>\n</tr>\n</tbody>\n</table>\n<table class=\"MsoNormalTable\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"left\" width=\"100%\" style=\"width:100.0%;mso-cellspacing:0cm;mso-yfti-tbllook:1184; mso-table-lspace:2.25pt;mso-table-rspace:2.25pt;mso-table-anchor-vertical:paragraph;mso-table-anchor-horizontal:column;mso-table-left:left;mso-padding-alt:0cm 0cm 0cm 0cm\">\n<tbody>\n</tbody>\n</table>\n</body>\n</html>",
+  "inlineImages": {},
+  "links": [],
+  "summary": {
+    "date": "Sun, 12 Oct 2025 18:12:34 +0000",
+    "fileName": "impersonation-attachment-socialeng-spoof.eml",
+    "from": "McSkidy Missed Call Notifier <calls@tbfc.com>",
+    "subject": "New Audio Message from McSkidy",
+    "to": "tarron@tbfc.com"
+  },
+  "textBody": "",
+  "warnings": []
+}

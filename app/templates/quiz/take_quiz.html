@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Quiz - Question {{ current }}{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="mb-3">
+            <div class="progress">
+                <div class="progress-bar" style="width: {{ progress }}%">{{ progress }}%</div>
+            </div>
+            <small class="text-muted">Question {{ current }} of {{ total }}</small>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">{{ question.question_text }}</h5>
+
+                {% if not show_explanation %}
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        {% for value, label in form.answer.choices %}
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="answer"
+                                   id="answer_{{ value }}" value="{{ value }}">
+                            <label class="form-check-label" for="answer_{{ value }}">{{ label }}</label>
+                        </div>
+                        {% endfor %}
+                        {% for error in form.answer.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    {{ form.submit(class="btn btn-primary") }}
+                </form>
+                {% else %}
+                <div class="alert {% if is_correct %}alert-success{% else %}alert-danger{% endif %} mt-3">
+                    {% if is_correct %}
+                    <strong>Correct!</strong>
+                    {% else %}
+                    <strong>Incorrect.</strong>
+                    {% endif %}
+                </div>
+                {% if question.explanation %}
+                <div class="alert alert-info">
+                    <strong>Explanation:</strong> {{ question.explanation }}
+                </div>
+                {% endif %}
+                <a href="{{ url_for('quiz.take_question') }}" class="btn btn-primary">Next Question</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
