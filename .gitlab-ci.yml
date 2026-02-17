@@ -1,0 +1,92 @@
+stages:
+  - lint
+  - test
+  - build
+  - plan
+  - deploy
+
+variables:
+  TF_DIR: terraform
+  PYTHON_VERSION: "3.12"
+
+# ─── Stage 1: Lint ────────────────────────────────────────────────────────────
+
+lint:
+  stage: lint
+  image: python:3.12-slim
+  script:
+    - pip install flake8
+    - flake8 app/ --max-line-length=120 --exclude=__pycache__
+
+# ─── Stage 2: Test ────────────────────────────────────────────────────────────
+
+test:
+  stage: test
+  image: python:3.12-slim
+  script:
+    - pip install -r requirements.txt
+    - pip install pytest moto
+    - pytest tests/ -v --tb=short
+  artifacts:
+    when: always
+    reports:
+      junit: report.xml
+
+# ─── Stage 3: Build Lambda package ───────────────────────────────────────────
+
+build:
+  stage: build
+  image: python:3.12-slim
+  script:
+    - apt-get update && apt-get install -y zip
+    - pip install -r requirements.txt -t package/
+    - cp -r app/ package/app/
+    - cp lambda_handler.py config.py package/
+    - cd package && zip -r ../lambda.zip .
+  artifacts:
+    paths:
+      - lambda.zip
+    expire_in: 1 day
+
+# ─── Stage 4: Terraform Plan ─────────────────────────────────────────────────
+
+plan:
+  stage: plan
+  image:
+    name: hashicorp/terraform:latest
+    entrypoint: [""]
+  script:
+    - cd $TF_DIR
+    - terraform init
+    - terraform validate
+    - terraform plan -out=tfplan
+  artifacts:
+    paths:
+      - terraform/tfplan
+      - terraform/.terraform
+      - terraform/.terraform.lock.hcl
+    expire_in: 1 day
+  dependencies:
+    - build
+
+# ─── Stage 5: Deploy (manual approval for prod) ─────────────────────────────
+
+deploy:
+  stage: deploy
+  image:
+    name: hashicorp/terraform:latest
+    entrypoint: [""]
+  before_script:
+    - apk add --no-cache aws-cli
+  script:
+    - cd $TF_DIR
+    - terraform init
+    - terraform apply -auto-approve tfplan
+    # Upload EML samples to S3
+    - aws s3 sync ../examples/ s3://${S3_BUCKET}/eml-samples/ --exclude "*" --include "*.eml"
+  when: manual
+  only:
+    - main
+  dependencies:
+    - build
+    - plan

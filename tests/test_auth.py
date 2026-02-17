@@ -1,0 +1,93 @@
+"""Tests for authentication routes."""
+
+from tests.conftest import login
+
+
+class TestLogin:
+    def test_login_page_renders(self, client):
+        resp = client.get('/auth/login')
+        assert resp.status_code == 200
+        assert b'Login' in resp.data
+
+    def test_login_success(self, client, seed_admin):
+        resp = login(client, 'admin', 'admin123')
+        assert resp.status_code == 200
+        assert b'Logged in successfully' in resp.data
+
+    def test_login_wrong_password(self, client, seed_admin):
+        resp = login(client, 'admin', 'wrongpass')
+        assert b'Invalid username or password' in resp.data
+
+    def test_login_nonexistent_user(self, client):
+        resp = login(client, 'ghost', 'pass')
+        assert b'Invalid username or password' in resp.data
+
+    def test_logout(self, client, seed_admin):
+        login(client, 'admin', 'admin123')
+        resp = client.get('/auth/logout', follow_redirects=True)
+        assert b'You have been logged out' in resp.data
+
+    def test_no_register_route(self, client):
+        resp = client.get('/auth/register')
+        assert resp.status_code == 404
+
+    def test_login_redirects_authenticated(self, client, seed_admin):
+        login(client, 'admin', 'admin123')
+        resp = client.get('/auth/login')
+        assert resp.status_code == 302
+
+
+class TestCSVImport:
+    def test_import_requires_admin(self, client, seed_user):
+        login(client, 'testuser', 'password123')
+        resp = client.get('/auth/admin/import-users')
+        assert resp.status_code == 403
+
+    def test_import_page_renders_for_admin(self, client, seed_admin):
+        login(client, 'admin', 'admin123')
+        resp = client.get('/auth/admin/import-users')
+        assert resp.status_code == 200
+        assert b'Import Users' in resp.data
+
+    def test_import_csv(self, client, app, seed_admin):
+        login(client, 'admin', 'admin123')
+
+        csv_content = b'username,email,password,group\njdoe,jdoe@test.com,pass123,sales\nasmith,asmith@test.com,pass456,sales'
+        from io import BytesIO
+        data = {
+            'csv_file': (BytesIO(csv_content), 'users.csv'),
+        }
+        resp = client.post('/auth/admin/import-users', data=data,
+                           content_type='multipart/form-data', follow_redirects=True)
+        assert resp.status_code == 200
+        assert b'Imported 2 users' in resp.data
+
+        # Verify users exist
+        with app.app_context():
+            from app.models import get_user
+            assert get_user('jdoe') is not None
+            assert get_user('asmith') is not None
+
+    def test_import_csv_skips_existing(self, client, app, seed_admin):
+        login(client, 'admin', 'admin123')
+
+        csv_content = b'username,email,password,group\nadmin,other@test.com,pass,x\nnewuser,new@test.com,pass,x'
+        from io import BytesIO
+        data = {
+            'csv_file': (BytesIO(csv_content), 'users.csv'),
+        }
+        resp = client.post('/auth/admin/import-users', data=data,
+                           content_type='multipart/form-data', follow_redirects=True)
+        assert b'1 skipped' in resp.data
+
+    def test_import_csv_missing_columns(self, client, seed_admin):
+        login(client, 'admin', 'admin123')
+
+        csv_content = b'name,mail\njdoe,jdoe@test.com'
+        from io import BytesIO
+        data = {
+            'csv_file': (BytesIO(csv_content), 'users.csv'),
+        }
+        resp = client.post('/auth/admin/import-users', data=data,
+                           content_type='multipart/form-data', follow_redirects=True)
+        assert b'CSV must contain columns' in resp.data
