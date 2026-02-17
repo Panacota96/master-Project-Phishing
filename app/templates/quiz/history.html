@@ -15,10 +15,10 @@
     <tbody>
         {% for attempt in attempts %}
         <tr>
-            <td>{{ attempt.quiz.title }}</td>
+            <td>{{ attempt.quiz_title }}</td>
             <td>{{ attempt.score }} / {{ attempt.total }}</td>
-            <td>{{ (attempt.score / attempt.total * 100) | round(0) | int }}%</td>
-            <td>{{ attempt.completed_at.strftime('%Y-%m-%d %H:%M') }}</td>
+            <td>{{ attempt.percentage }}%</td>
+            <td>{{ attempt.completed_at[:16] | replace('T', ' ') }}</td>
         </tr>
         {% endfor %}
     </tbody>

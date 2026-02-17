@@ -1,0 +1,32 @@
+terraform {
+  required_version = ">= 1.5"
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+
+  backend "s3" {
+    bucket = "phishing-terraform-state"
+    key    = "prod/terraform.tfstate"
+    region = "eu-west-3"
+  }
+}
+
+provider "aws" {
+  region = var.aws_region
+
+  default_tags {
+    tags = {
+      Project     = var.app_name
+      Environment = var.environment
+      ManagedBy   = "terraform"
+    }
+  }
+}
+
+locals {
+  prefix = "${var.app_name}-${var.environment}"
+}

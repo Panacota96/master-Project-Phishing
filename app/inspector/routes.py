@@ -1,45 +1,60 @@
 import email
 import email.policy
-import os
 import re
 
-from flask import jsonify, render_template
+from flask import current_app, jsonify, render_template
 
 from app.inspector import bp
 
-EXAMPLES_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'examples')
+EML_PREFIX = 'eml-samples/'
 
 
-def _get_eml_files():
-    """Walk the examples/ directory and return a list of .eml file paths."""
-    eml_files = []
-    if not os.path.isdir(EXAMPLES_DIR):
-        return eml_files
-    for root, _dirs, files in os.walk(EXAMPLES_DIR):
-        for f in files:
-            if f.lower().endswith('.eml'):
-                eml_files.append(os.path.join(root, f))
-    return sorted(eml_files)
+def _s3_client():
+    return current_app.s3_client
 
 
-def _find_eml_by_filename(filename):
-    """Find an .eml file by its basename, ensuring it's inside examples/."""
-    # Prevent path traversal
+def _bucket():
+    return current_app.config['S3_BUCKET']
+
+
+def _get_eml_keys():
+    """List all .eml object keys under the eml-samples/ prefix in S3."""
+    try:
+        resp = _s3_client().list_objects_v2(Bucket=_bucket(), Prefix=EML_PREFIX)
+        keys = []
+        for obj in resp.get('Contents', []):
+            if obj['Key'].lower().endswith('.eml'):
+                keys.append(obj['Key'])
+        return sorted(keys)
+    except Exception:
+        return []
+
+
+def _get_eml_body(key):
+    """Download an EML file from S3 and return its bytes."""
+    resp = _s3_client().get_object(Bucket=_bucket(), Key=key)
+    return resp['Body'].read()
+
+
+def _find_eml_key_by_filename(filename):
+    """Find an .eml key by its basename, preventing path traversal."""
+    import os
     basename = os.path.basename(filename)
     if basename != filename or '..' in filename:
         return None
-    for filepath in _get_eml_files():
-        if os.path.basename(filepath) == basename:
-            return filepath
+    for key in _get_eml_keys():
+        if key.split('/')[-1] == basename:
+            return key
     return None
 
 
-def _parse_eml_summary(filepath):
-    """Parse an .eml file and return summary info for the list view."""
-    with open(filepath, 'rb') as f:
-        msg = email.message_from_binary_file(f, policy=email.policy.default)
+def _parse_eml_summary(key):
+    """Parse an .eml file from S3 and return summary info."""
+    body = _get_eml_body(key)
+    msg = email.message_from_bytes(body, policy=email.policy.default)
+    filename = key.split('/')[-1]
     return {
-        'fileName': os.path.basename(filepath),
+        'fileName': filename,
         'subject': msg.get('Subject', '(no subject)'),
         'from': msg.get('From', ''),
         'to': msg.get('To', ''),
@@ -47,12 +62,12 @@ def _parse_eml_summary(filepath):
     }
 
 
-def _parse_eml_detail(filepath):
-    """Parse an .eml file and return full details for the detail view."""
-    with open(filepath, 'rb') as f:
-        msg = email.message_from_binary_file(f, policy=email.policy.default)
+def _parse_eml_detail(key):
+    """Parse an .eml file from S3 and return full details."""
+    body = _get_eml_body(key)
+    msg = email.message_from_bytes(body, policy=email.policy.default)
 
-    filename = os.path.basename(filepath)
+    filename = key.split('/')[-1]
     summary = {
         'fileName': filename,
         'subject': msg.get('Subject', '(no subject)'),
@@ -61,10 +76,8 @@ def _parse_eml_detail(filepath):
         'date': msg.get('Date', ''),
     }
 
-    # Extract headers
     headers = [{'name': k, 'value': v} for k, v in msg.items()]
 
-    # Walk MIME parts
     text_body = ''
     html_body = ''
     attachments = []
@@ -91,12 +104,10 @@ def _parse_eml_detail(filepath):
                 'contentId': part.get('Content-ID', ''),
             })
 
-    # Extract links from HTML body
     links = []
     if html_body:
         links = re.findall(r'href=["\']([^"\']+)', html_body)
 
-    # Generate warnings
     warnings = []
     from_header = msg.get('From', '')
     return_path = msg.get('Return-Path', '')
@@ -132,25 +143,25 @@ def index():
 
 @bp.route('/api/emails')
 def api_email_list():
-    eml_files = _get_eml_files()
+    eml_keys = _get_eml_keys()
     emails = []
-    for filepath in eml_files:
+    for key in eml_keys:
         try:
-            emails.append(_parse_eml_summary(filepath))
+            emails.append(_parse_eml_summary(key))
         except Exception:
             continue
     return jsonify({
         'emails': emails,
-        'samplesDirectory': EXAMPLES_DIR,
+        'samplesDirectory': f's3://{_bucket()}/{EML_PREFIX}',
     })
 
 
 @bp.route('/api/emails/<filename>')
 def api_email_detail(filename):
-    filepath = _find_eml_by_filename(filename)
-    if not filepath:
+    key = _find_eml_key_by_filename(filename)
+    if not key:
         return jsonify({'error': 'Email not found'}), 404
     try:
-        return jsonify(_parse_eml_detail(filepath))
+        return jsonify(_parse_eml_detail(key))
     except Exception as e:
         return jsonify({'error': str(e)}), 500

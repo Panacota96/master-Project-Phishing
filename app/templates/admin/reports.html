@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Reports{% endblock %}
+{% block content %}
+<h2>Generate Reports</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header"><h5>Report Options</h5></div>
+            <div class="card-body">
+                <form id="reportForm">
+                    <div class="mb-3">
+                        <label class="form-label">Report Type</label>
+                        <select name="report_type" class="form-select" id="reportType">
+                            <option value="summary">Summary (group averages)</option>
+                            <option value="detailed">Detailed (per-user scores)</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Group Filter</label>
+                        <select name="group" class="form-select" id="groupFilter">
+                            <option value="">All Groups</option>
+                            {% for group in groups %}
+                            <option value="{{ group }}">{{ group }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="generateBtn">Generate Report</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card" id="resultCard" style="display: none;">
+            <div class="card-header bg-success text-white"><h5>Report Ready</h5></div>
+            <div class="card-body">
+                <p>Your report has been generated.</p>
+                <a href="#" id="downloadLink" class="btn btn-success" target="_blank">Download CSV</a>
+                <p class="text-muted mt-2 small">Link expires in 1 hour.</p>
+            </div>
+        </div>
+        <div id="loadingSpinner" style="display: none;" class="text-center mt-4">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p>Generating report...</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('reportForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('generateBtn');
+    const spinner = document.getElementById('loadingSpinner');
+    const resultCard = document.getElementById('resultCard');
+
+    btn.disabled = true;
+    spinner.style.display = 'block';
+    resultCard.style.display = 'none';
+
+    const formData = new FormData(this);
+    try {
+        const resp = await fetch('{{ url_for("dashboard.generate_report") }}', {
+            method: 'POST',
+            body: formData,
+        });
+        const data = await resp.json();
+        if (data.download_url) {
+            document.getElementById('downloadLink').href = data.download_url;
+            document.getElementById('downloadLink').textContent = 'Download ' + data.filename;
+            resultCard.style.display = 'block';
+        }
+    } catch (err) {
+        alert('Error generating report: ' + err.message);
+    } finally {
+        btn.disabled = false;
+        spinner.style.display = 'none';
+    }
+});
+</script>
+{% endblock %}

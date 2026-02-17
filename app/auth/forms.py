@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError
-from app.models import User
+from flask_wtf.file import FileAllowed, FileField, FileRequired
+from wtforms import PasswordField, StringField, SubmitField
+from wtforms.validators import DataRequired
 
 
 class LoginForm(FlaskForm):
@@ -10,17 +10,9 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Log In')
 
 
-class RegisterForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired(), Length(min=3, max=64)])
-    email = StringField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField('Password', validators=[DataRequired(), Length(min=6)])
-    password2 = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
-    submit = SubmitField('Register')
-
-    def validate_username(self, username):
-        if User.query.filter_by(username=username.data).first():
-            raise ValidationError('Username already taken.')
-
-    def validate_email(self, email):
-        if User.query.filter_by(email=email.data).first():
-            raise ValidationError('Email already registered.')
+class CSVUploadForm(FlaskForm):
+    csv_file = FileField('CSV File', validators=[
+        FileRequired(),
+        FileAllowed(['csv'], 'CSV files only'),
+    ])
+    submit = SubmitField('Import Users')

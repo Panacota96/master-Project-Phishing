@@ -1,11 +1,19 @@
 import os
 
-basedir = os.path.abspath(os.path.dirname(__file__))
-
 
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
-    SQLALCHEMY_DATABASE_URI = os.environ.get(
-        'DATABASE_URL', 'sqlite:///' + os.path.join(basedir, 'app.db')
-    )
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    # AWS / DynamoDB
+    AWS_REGION = os.environ.get('AWS_REGION_NAME', 'eu-west-3')
+    DYNAMODB_USERS = os.environ.get('DYNAMODB_USERS', 'phishing-app-prod-users')
+    DYNAMODB_QUIZZES = os.environ.get('DYNAMODB_QUIZZES', 'phishing-app-prod-quizzes')
+    DYNAMODB_ATTEMPTS = os.environ.get('DYNAMODB_ATTEMPTS', 'phishing-app-prod-attempts')
+    DYNAMODB_RESPONSES = os.environ.get('DYNAMODB_RESPONSES', 'phishing-app-prod-responses')
+
+    # S3
+    S3_BUCKET = os.environ.get('S3_BUCKET', 'phishing-app-prod-eu-west-3')
+
+    # DynamoDB Local (for local development)
+    DYNAMODB_ENDPOINT = os.environ.get('DYNAMODB_ENDPOINT', None)
+    S3_ENDPOINT = os.environ.get('S3_ENDPOINT', None)

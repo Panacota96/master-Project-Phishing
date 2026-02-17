@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Import Users{% endblock %}
+{% block content %}
+<h2>Import Users from CSV</h2>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data">
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        <label class="form-label">{{ form.csv_file.label }}</label>
+                        {{ form.csv_file(class="form-control") }}
+                        {% for error in form.csv_file.errors %}
+                        <div class="text-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    {{ form.submit(class="btn btn-primary") }}
+                </form>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header"><h5>CSV Format</h5></div>
+            <div class="card-body">
+                <p>Upload a CSV file with the following columns:</p>
+                <table class="table table-sm">
+                    <thead>
+                        <tr><th>Column</th><th>Required</th><th>Description</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><code>username</code></td><td>Yes</td><td>Unique username</td></tr>
+                        <tr><td><code>email</code></td><td>Yes</td><td>Unique email address</td></tr>
+                        <tr><td><code>password</code></td><td>Yes</td><td>Initial password</td></tr>
+                        <tr><td><code>group</code></td><td>No</td><td>Department/group name (defaults to "default")</td></tr>
+                    </tbody>
+                </table>
+                <p class="text-muted">Example:</p>
+                <pre class="bg-light p-2">username,email,password,group
+jdoe,jdoe@company.com,TempPass123,engineering
+asmith,asmith@company.com,TempPass456,marketing</pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        {% if results %}
+        <div class="card border-success">
+            <div class="card-header bg-success text-white"><h5>Import Results</h5></div>
+            <div class="card-body">
+                <p><strong>Total in CSV:</strong> {{ results.total }}</p>
+                <p><strong>Created:</strong> {{ results.created }}</p>
+                <p><strong>Skipped:</strong> {{ results.skipped | length }}</p>
+                {% if results.skipped %}
+                <p class="text-muted">Skipped users (already exist):</p>
+                <ul>
+                    {% for u in results.skipped %}
+                    <li>{{ u }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

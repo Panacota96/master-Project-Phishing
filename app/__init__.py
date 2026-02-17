@@ -1,8 +1,7 @@
+import boto3
 from flask import Flask, redirect, url_for
-from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 
-db = SQLAlchemy()
 login_manager = LoginManager()
 login_manager.login_view = 'auth.login'
 login_manager.login_message_category = 'info'
@@ -12,9 +11,33 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object('config.Config')
 
-    db.init_app(app)
+    # Initialize DynamoDB resource
+    dynamodb_kwargs = {
+        'region_name': app.config['AWS_REGION'],
+    }
+    if app.config.get('DYNAMODB_ENDPOINT'):
+        dynamodb_kwargs['endpoint_url'] = app.config['DYNAMODB_ENDPOINT']
+
+    app.dynamodb = boto3.resource('dynamodb', **dynamodb_kwargs)
+
+    # Initialize S3 client
+    s3_kwargs = {
+        'region_name': app.config['AWS_REGION'],
+    }
+    if app.config.get('S3_ENDPOINT'):
+        s3_kwargs['endpoint_url'] = app.config['S3_ENDPOINT']
+
+    app.s3_client = boto3.client('s3', **s3_kwargs)
+
+    # Initialize Flask-Login
     login_manager.init_app(app)
 
+    @login_manager.user_loader
+    def load_user(username):
+        from app.models import get_user
+        return get_user(username)
+
+    # Register blueprints
     from app.auth import bp as auth_bp
     app.register_blueprint(auth_bp)
 
@@ -30,8 +53,5 @@ def create_app():
     @app.route('/')
     def index():
         return redirect(url_for('quiz.quiz_list'))
-
-    with app.app_context():
-        db.create_all()
 
     return app

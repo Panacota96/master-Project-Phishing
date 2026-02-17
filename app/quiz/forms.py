@@ -3,5 +3,5 @@ from wtforms import RadioField, SubmitField
 
 
 class QuestionForm(FlaskForm):
-    answer = RadioField('Your Answer', coerce=int)
+    answer = RadioField('Your Answer', coerce=str)
     submit = SubmitField('Submit Answer')

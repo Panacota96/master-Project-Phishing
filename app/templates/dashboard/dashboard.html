@@ -3,34 +3,44 @@
 {% block content %}
 <h2>Admin Dashboard</h2>
 
+<!-- Stat Cards -->
 <div class="row mb-4">
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="card text-center bg-primary text-white">
             <div class="card-body">
                 <h5 class="card-title">Total Users</h5>
-                <p class="display-6">{{ total_users }}</p>
+                <p class="display-6" id="statUsers">{{ total_users }}</p>
             </div>
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="card text-center bg-success text-white">
             <div class="card-body">
-                <h5 class="card-title">Quiz Attempts</h5>
-                <p class="display-6">{{ total_attempts }}</p>
+                <h5 class="card-title">Completed</h5>
+                <p class="display-6" id="statCompleted">{{ completed_count }}</p>
             </div>
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
+        <div class="card text-center bg-warning text-dark">
+            <div class="card-body">
+                <h5 class="card-title">Pending</h5>
+                <p class="display-6" id="statPending">{{ pending_count }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
         <div class="card text-center bg-info text-white">
             <div class="card-body">
                 <h5 class="card-title">Average Score</h5>
-                <p class="display-6">{{ avg_score }}%</p>
+                <p class="display-6" id="statAvg">{{ avg_score }}%</p>
             </div>
         </div>
     </div>
 </div>
 
 <div class="row mb-4">
+    <!-- Score Distribution Chart -->
     <div class="col-md-6">
         <div class="card">
             <div class="card-header"><h5>Score Distribution</h5></div>
@@ -39,6 +49,23 @@
             </div>
         </div>
     </div>
+    <!-- Group Comparison Chart -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header"><h5>Average Score by Group</h5></div>
+            <div class="card-body">
+                {% if group_stats %}
+                <canvas id="groupChart"></canvas>
+                {% else %}
+                <p class="text-muted">No group data available yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <!-- Per-Quiz Stats -->
     <div class="col-md-6">
         <div class="card">
             <div class="card-header"><h5>Per-Quiz Stats</h5></div>
@@ -60,8 +87,31 @@
             </div>
         </div>
     </div>
+    <!-- Group Stats Table -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header"><h5>Group Statistics</h5></div>
+            <div class="card-body">
+                <table class="table table-sm">
+                    <thead>
+                        <tr><th>Group</th><th>Attempts</th><th>Avg Score</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for gs in group_stats %}
+                        <tr>
+                            <td>{{ gs.group }}</td>
+                            <td>{{ gs.count }}</td>
+                            <td>{{ gs.avg }}%</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 
+<!-- Recent Activity -->
 <div class="card">
     <div class="card-header"><h5>Recent Activity</h5></div>
     <div class="card-body">
@@ -72,10 +122,10 @@
             <tbody>
                 {% for attempt in recent %}
                 <tr>
-                    <td>{{ attempt.user.username }}</td>
-                    <td>{{ attempt.quiz.title }}</td>
+                    <td>{{ attempt.username }}</td>
+                    <td>{{ attempt.quiz_title }}</td>
                     <td>{{ attempt.score }}/{{ attempt.total }}</td>
-                    <td>{{ attempt.completed_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td>{{ attempt.completed_at[:16] | replace('T', ' ') }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -87,8 +137,9 @@
 {% block scripts %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <script>
-const ctx = document.getElementById('scoreChart').getContext('2d');
-new Chart(ctx, {
+// Score Distribution Chart
+const scoreCtx = document.getElementById('scoreChart').getContext('2d');
+new Chart(scoreCtx, {
     type: 'bar',
     data: {
         labels: ['0-20%', '20-40%', '40-60%', '60-80%', '80-100%'],
@@ -104,5 +155,40 @@ new Chart(ctx, {
         plugins: { legend: { display: false } }
     }
 });
+
+// Group Comparison Chart
+{% if group_stats %}
+const groupCtx = document.getElementById('groupChart').getContext('2d');
+new Chart(groupCtx, {
+    type: 'bar',
+    data: {
+        labels: {{ group_stats | map(attribute='group') | list | tojson }},
+        datasets: [{
+            label: 'Average Score (%)',
+            data: {{ group_stats | map(attribute='avg') | list | tojson }},
+            backgroundColor: '#0d6efd'
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: { y: { beginAtZero: true, max: 100 } },
+        plugins: { legend: { display: false } }
+    }
+});
+{% endif %}
+
+// Live stats polling (every 30 seconds)
+setInterval(async () => {
+    try {
+        const resp = await fetch('{{ url_for("dashboard.api_stats") }}');
+        const data = await resp.json();
+        document.getElementById('statUsers').textContent = data.total_users;
+        document.getElementById('statCompleted').textContent = data.completed_count;
+        document.getElementById('statPending').textContent = data.pending_count;
+        document.getElementById('statAvg').textContent = data.avg_score + '%';
+    } catch (e) {
+        // Silently ignore polling errors
+    }
+}, 30000);
 </script>
 {% endblock %}

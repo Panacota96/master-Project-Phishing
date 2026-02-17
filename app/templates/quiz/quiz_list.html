@@ -7,10 +7,19 @@
     <div class="col-md-6 mb-4">
         <div class="card h-100">
             <div class="card-body">
-                <h5 class="card-title">{{ quiz.title }}</h5>
+                <h5 class="card-title">
+                    {{ quiz.title }}
+                    {% if quiz.user_completed %}
+                    <span class="badge bg-success ms-2">Completed</span>
+                    {% endif %}
+                </h5>
                 <p class="card-text">{{ quiz.description }}</p>
-                <p class="text-muted small">{{ quiz.questions.count() }} questions</p>
-                <a href="{{ url_for('quiz.start_quiz', quiz_id=quiz.id) }}" class="btn btn-primary">Start Quiz</a>
+                <p class="text-muted small">{{ quiz.questions | length }} questions</p>
+                {% if quiz.user_completed %}
+                <button class="btn btn-secondary" disabled>Already Completed</button>
+                {% else %}
+                <a href="{{ url_for('quiz.start_quiz', quiz_id=quiz.quiz_id) }}" class="btn btn-primary">Start Quiz</a>
+                {% endif %}
             </div>
         </div>
     </div>

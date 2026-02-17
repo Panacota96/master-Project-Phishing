@@ -1,0 +1,10 @@
+# Copy this file to terraform.tfvars and fill in the values
+
+aws_region     = "eu-west-3"
+environment    = "prod"
+app_name       = "phishing-app"
+secret_key     = "CHANGE-ME-to-a-long-random-string"
+
+# Optional overrides
+# lambda_memory_size = 512
+# lambda_timeout     = 30

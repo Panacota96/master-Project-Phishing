@@ -17,13 +17,13 @@
                 {% elif pct >= 50 %}
                 <p class="text-warning">Good effort, but there's room for improvement.</p>
                 {% else %}
-                <p class="text-danger">You might be vulnerable to phishing attacks. Review the material and try again!</p>
+                <p class="text-danger">You might be vulnerable to phishing attacks. Review the training material!</p>
+                {% endif %}
+                {% if already_completed is defined and already_completed %}
+                <p class="text-muted mt-2">This is your recorded score. Each quiz can only be taken once.</p>
                 {% endif %}
                 <div class="mt-4">
-                    <a href="{{ url_for('quiz.quiz_list') }}" class="btn btn-primary me-2">Back to Quizzes</a>
-                    {% if quiz_id %}
-                    <a href="{{ url_for('quiz.start_quiz', quiz_id=quiz_id) }}" class="btn btn-outline-primary">Retry</a>
-                    {% endif %}
+                    <a href="{{ url_for('quiz.quiz_list') }}" class="btn btn-primary">Back to Quizzes</a>
                 </div>
             </div>
         </div>
