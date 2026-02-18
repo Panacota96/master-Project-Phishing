@@ -63,6 +63,7 @@ def extract_parts(msg):
     links = RE_LINK.findall(html_body) if html_body else []
     images = RE_IMG.findall(html_body) if html_body else []
     image_attachments = [a for a in attachments if (a['content_type'] or '').startswith('image/')]
+    non_inline_attachments = [a for a in attachments if a not in image_attachments]
 
     return {
         'text': text_body,
@@ -71,6 +72,7 @@ def extract_parts(msg):
         'images': images,
         'attachments': attachments,
         'image_attachments': image_attachments,
+        'non_inline_attachments': non_inline_attachments,
     }
 
 
@@ -82,6 +84,7 @@ def extract_parts_from_json(obj: dict):
     images = RE_IMG.findall(html_body) if html_body else []
     inline_images = obj.get('inlineImages') or {}
     image_attachments = [{'content_type': 'image/*'} for _ in inline_images] if inline_images else []
+    non_inline_attachments = [a for a in attachments if (a.get('contentType') or '').startswith('image/') is False]
 
     if not links and html_body:
         links = RE_LINK.findall(html_body)
@@ -93,6 +96,7 @@ def extract_parts_from_json(obj: dict):
         'images': images,
         'attachments': attachments,
         'image_attachments': image_attachments,
+        'non_inline_attachments': non_inline_attachments,
     }
 
 
@@ -128,7 +132,7 @@ def validate_eml(path: Path, allowlist: dict):
     has_text = bool(parts['text'].strip())
     has_html = bool(parts['html'].strip())
     has_links = bool(parts['links'])
-    has_attachments = bool(parts['attachments'])
+    has_attachments = bool(parts.get('non_inline_attachments'))
     has_images = bool(parts['images'] or parts['image_attachments'])
 
     if not skip.get('skip_text_html', False) and not (has_text or has_html):
