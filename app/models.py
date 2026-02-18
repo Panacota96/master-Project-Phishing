@@ -229,7 +229,7 @@ def list_quizzes():
     return sorted(items, key=lambda q: q.get('created_at', ''), reverse=True)
 
 
-def create_quiz(quiz_id, title, description, questions):
+def create_quiz(quiz_id, title, description, questions, video_url=None):
     """Create a quiz with embedded questions.
     questions: list of dicts with question_id, question_text, explanation, answers.
     """
@@ -241,6 +241,8 @@ def create_quiz(quiz_id, title, description, questions):
         'questions': questions,
         'created_at': _now_iso(),
     }
+    if video_url:
+        item['video_url'] = video_url
     table.put_item(Item=item)
     return item
 
