@@ -1,0 +1,35 @@
+From: "QuickBooks Online" <no-reply@intuit.com>
+To: accounts@company.com
+Subject: Invoice #88429 from Global Logistics Services
+Date: Mon, 23 Feb 2026 10:15:00 +0000
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="boundary-html"
+
+--boundary-html
+Content-Type: text/html; charset="UTF-8"
+
+<div style="background-color: #f6f7f8; padding: 40px; font-family: sans-serif;">
+  <div style="max-width: 600px; margin: auto; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+    <div style="background: #2ca01c; padding: 20px; color: white; display: flex; align-items: center;">
+      <img src="https://img.icons8.com/color/96/intuit.png" alt="Intuit" style="width: 32px; margin-right: 10px;">
+      <span style="font-size: 20px; font-weight: bold;">QuickBooks</span>
+    </div>
+    <div style="padding: 30px;">
+      <h1 style="font-size: 24px; color: #333;">New Invoice from Global Logistics</h1>
+      <p style="color: #666; line-height: 1.6;">You have received a new invoice for <b>$4,520.00</b>. Payment is due by end of business today.</p>
+      <div style="text-align: center; margin: 30px 0;">
+        <img src="https://img.icons8.com/fluency/96/invoice.png" alt="Invoice" style="width: 64px; margin-bottom: 15px;">
+        <p>Please find the attached PDF invoice for your records.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+--boundary-html
+Content-Type: application/octet-stream
+Content-Disposition: attachment; filename="Invoice-88429.pdf.exe"
+Content-Transfer-Encoding: base64
+
+VGVzdCBjb250ZW50IGZvciBmYWtlIGludm9pY2U=
+
+--boundary-html--

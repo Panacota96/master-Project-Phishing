@@ -203,6 +203,16 @@ def mark_quiz_completed(username):
     )
 
 
+def update_user_password(username, new_password):
+    """Update a user's password hash."""
+    table = _get_table('DYNAMODB_USERS')
+    table.update_item(
+        Key={'username': username},
+        UpdateExpression='SET password_hash = :val',
+        ExpressionAttributeValues={':val': generate_password_hash(new_password)},
+    )
+
+
 # ─── Quiz CRUD ────────────────────────────────────────────────────────────────
 
 def get_quiz(quiz_id):

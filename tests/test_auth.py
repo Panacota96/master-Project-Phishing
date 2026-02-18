@@ -91,3 +91,62 @@ class TestCSVImport:
         resp = client.post('/auth/admin/import-users', data=data,
                            content_type='multipart/form-data', follow_redirects=True)
         assert b'CSV must contain columns' in resp.data
+
+
+class TestChangePassword:
+    def test_change_password_requires_login(self, client):
+        resp = client.get('/auth/change-password')
+        assert resp.status_code in (302, 401)
+
+    def test_change_password_wrong_current(self, client, seed_user):
+        login(client, 'testuser', 'password123')
+        resp = client.post(
+            '/auth/change-password',
+            data={
+                'current_password': 'wrong',
+                'new_password': 'Newpass1!',
+                'confirm_password': 'Newpass1!',
+            },
+            follow_redirects=True,
+        )
+        assert b'Current password is incorrect' in resp.data
+
+    def test_change_password_strength_validation(self, client, seed_user):
+        login(client, 'testuser', 'password123')
+        resp = client.post(
+            '/auth/change-password',
+            data={
+                'current_password': 'password123',
+                'new_password': 'weak',
+                'confirm_password': 'weak',
+            },
+            follow_redirects=True,
+        )
+        assert b'Password must be at least 8 characters' in resp.data
+
+    def test_change_password_logs_out_and_updates(self, client, app, seed_user):
+        login(client, 'testuser', 'password123')
+        resp = client.post(
+            '/auth/change-password',
+            data={
+                'current_password': 'password123',
+                'new_password': 'Newpass1!',
+                'confirm_password': 'Newpass1!',
+            },
+            follow_redirects=True,
+        )
+        assert b'Password updated. Please log in again.' in resp.data
+        assert b'Login' in resp.data
+
+        with app.app_context():
+            from app.models import get_user
+            user = get_user('testuser')
+            assert user is not None
+            assert user.check_password('Newpass1!') is True
+            assert user.check_password('password123') is False
+
+        resp = login(client, 'testuser', 'password123')
+        assert b'Invalid username or password' in resp.data
+
+        resp = login(client, 'testuser', 'Newpass1!')
+        assert b'Logged in successfully' in resp.data

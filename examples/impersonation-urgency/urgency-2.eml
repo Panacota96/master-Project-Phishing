@@ -1,0 +1,24 @@
+From: "Accounts Department" <billing@company.com>
+To: finance@company.com
+Subject: URGENT: Final Overdue Notice for Invoice #8841 ($12,499.00)
+Date: Tue, 24 Feb 2026 09:00:00 +0000
+Return-Path: <attacker-relay@bad-domain.net>
+MIME-Version: 1.0
+Content-Type: text/html; charset="UTF-8"
+
+<div style="background: #ffffff; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: auto; padding: 40px; border: 2px solid #ff0000; border-radius: 10px;">
+  <div style="text-align: right; margin-bottom: 20px;">
+    <h1 style="color: #ff0000; margin: 0; text-transform: uppercase;">Final Notice</h1>
+  </div>
+  <p>Our records indicate that your account is now <b>30 days overdue</b>. We have sent multiple previous reminders without response.</p>
+  <div style="background: #f9f9f9; padding: 25px; border-radius: 8px; margin: 25px 0;">
+    <p style="margin: 5px 0;"><strong>Invoice Number:</strong> 8841</p>
+    <p style="margin: 5px 0;"><strong>Amount Overdue:</strong> $12,499.00 USD</p>
+    <p style="margin: 5px 0; color: #ff0000;"><strong>Status:</strong> Immediate Legal Action Pending</p>
+  </div>
+  <p style="color: #444; line-height: 1.6;">Failure to settle this balance within <b>24 hours</b> will result in a permanent service suspension and referral to our collections agency.</p>
+  <div style="text-align: center; margin-top: 35px;">
+    <a href="http://secure-payment-gateway.biz/pay" style="background: #ff0000; color: white; padding: 15px 40px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 18px;">Pay Overdue Balance</a>
+  </div>
+  <p style="margin-top: 40px; font-size: 12px; color: #999;">If you have already made this payment, please disregard this notice.</p>
+</div>

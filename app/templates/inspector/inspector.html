@@ -1017,6 +1017,15 @@
             }
           </article>
 
+          <article class="card">
+            <h3>Plain text body</h3>
+            ${
+              textBody
+                ? `<pre class="body-block">${escapeHtml(textBody)}</pre>`
+                : `<p>No plain text body found.</p>`
+            }
+          </article>
+
           ${attachmentsMarkup}
 
           ${

@@ -1,0 +1,28 @@
+From: "DHL Express" <track@dhl-global-logistics.net>
+To: recipient@example.com
+Subject: Your shipment is on hold: Action required for package #4920112
+Date: Wed, 25 Feb 2026 10:30:00 +0000
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="boundary-dhl"
+
+--boundary-dhl
+Content-Type: text/html; charset="UTF-8"
+
+<div style="background: #ffcc00; padding: 20px; font-family: 'Frutiger', Arial, sans-serif;">
+  <div style="background: white; max-width: 600px; margin: auto; padding: 40px;">
+    <img src="https://img.icons8.com/color/96/dhl.png" alt="DHL" style="width: 100px; margin-bottom: 20px;">
+    <h2 style="color: #d40511;">Shipment On Hold</h2>
+    <p>We attempted to deliver your package #4920112, but the delivery was unsuccessful due to an incomplete shipping invoice.</p>
+    <p>A shipping fee of <b>$2.95</b> is required to release the package for the next delivery attempt.</p>
+    <p>Please review the attached invoice summary for details.</p>
+  </div>
+</div>
+
+--boundary-dhl
+Content-Type: application/octet-stream
+Content-Disposition: attachment; filename="Shipping_Invoice_DHL_4920112.pdf.exe"
+Content-Transfer-Encoding: base64
+
+VGVzdCBtYWxpY2lvdXMgREhMIGF0dGFjaG1lbnQ=
+
+--boundary-dhl--

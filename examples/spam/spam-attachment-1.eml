@@ -1,0 +1,24 @@
+From: "Local Pizza Hub" <rewards@local-pizza-deals.com>
+To: pizza-lover@example.com
+Subject: Thanks for your order! Here is your receipt
+Date: Wed, 25 Feb 2026 14:00:00 +0000
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="boundary-spam-receipt"
+
+--boundary-spam-receipt
+Content-Type: text/html; charset="UTF-8"
+
+<div style="font-family: 'Comic Sans MS', cursive; max-width: 600px; margin: auto; text-align: center; border: 2px dashed #e74c3c; padding: 30px;">
+  <h1 style="color: #e74c3c;">🍕 Pizza Hub Rewards 🍕</h1>
+  <p>Thanks for choosing Pizza Hub! Your order has been delivered.</p>
+  <p>We've attached your digital receipt for your records.</p>
+  <p>Check out our latest coupons in the app!</p>
+</div>
+
+--boundary-spam-receipt
+Content-Type: application/pdf
+Content-Disposition: attachment; filename="Pizza_Hub_Receipt_#1042.pdf"
+Content-Transfer-Encoding: base64
+
+JVBERi0xLjQKJ... (dummy pdf content)
+--boundary-spam-receipt--

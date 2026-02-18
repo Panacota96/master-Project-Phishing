@@ -1,0 +1,19 @@
+From: "Microsoft Billing" <billing@msft-services.net>
+To: recipient@example.com
+Subject: URGENT: Your Microsoft 365 Subscription Payment Failed
+Date: Mon, 23 Feb 2026 09:00:00 +0000
+MIME-Version: 1.0
+Content-Type: text/html; charset="UTF-8"
+
+<div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e1e1e1; padding: 20px;">
+  <h2 style="color: #0078d4;">Payment Failed</h2>
+  <p>Dear Customer, We were unable to process your latest payment for your <strong>Microsoft 365 Personal</strong> subscription.</p>
+  <p>Please update your payment method immediately to avoid service interruption.</p>
+  <div style="text-align: center; margin-top: 30px;">
+    <a href="https://msft-billing-portal.com/update" style="background: #0078d4; color: white; padding: 12px 25px; text-decoration: none; font-weight: bold;">Update Payment Now</a>
+  </div>
+  <p style="font-size: 11px; color: #999; margin-top: 50px; text-align: center;">
+    © 2026 Microsof Corporation. All right reserved. 
+    One Microsoft Way, Redmond, WA 98052, USA
+  </p>
+</div>

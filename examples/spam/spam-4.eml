@@ -1,0 +1,21 @@
+From: "PureHealth Labs" <no-reply@pure-health-vits.biz>
+To: user@example.com
+Subject: Better sleep is just one click away! (Buy 1 Get 1 Free)
+Date: Fri, 27 Feb 2026 11:30:00 +0000
+MIME-Version: 1.0
+Content-Type: text/html; charset="UTF-8"
+
+<div style="background: #fdfdfd; font-family: 'Georgia', serif; padding: 40px; text-align: center;">
+  <div style="max-width: 550px; margin: auto; background: white; border: 1px solid #f1f1f1; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.03);">
+    <div style="padding: 40px;">
+      <h1 style="color: #2c3e50; font-size: 32px; margin-top: 0;">PureHealth Labs</h1>
+      <p style="color: #7f8c8d; font-size: 18px; font-style: italic; margin-bottom: 35px;">The science of better living.</p>
+      <img src="https://images.unsplash.com/photo-1541480601022-23057d167483?w=500&h=300&fit=crop" alt="Sleep" style="width: 100%; border-radius: 10px; margin-bottom: 35px;">
+      <p style="color: #34495e; font-size: 16px; line-height: 1.8;">Tired of tossing and turning? Our new all-natural sleep aid is clinically proven to help you fall asleep faster and stay asleep longer. 100% money-back guarantee.</p>
+      <div style="background: #e7f3ff; padding: 20px; border-radius: 10px; margin: 30px 0;">
+        <p style="color: #2980b9; margin: 0; font-weight: bold; font-size: 20px;">LIMITED OFFER: BUY 1 GET 1 FREE</p>
+      </div>
+      <a href="http://pure-health-vits.biz/offers/sleep" style="background: #27ae60; color: white; padding: 15px 45px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 18px; display: inline-block;">Claim Your Offer</a>
+    </div>
+  </div>
+</div>

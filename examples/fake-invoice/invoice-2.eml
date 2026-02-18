@@ -1,0 +1,27 @@
+From: "Microsoft Billing" <billing@msft-services.net>
+To: user@example.com
+Subject: URGENT: Your Microsoft 365 Subscription Payment Failed
+Date: Mon, 23 Feb 2026 09:00:00 +0000
+MIME-Version: 1.0
+Content-Type: text/html; charset="UTF-8"
+
+<div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e1e1e1; padding: 20px;">
+  <div style="text-align: center; margin-bottom: 20px;">
+    <img src="https://img.icons8.com/color/96/microsoft.png" alt="Microsoft Logo" style="width: 48px;">
+  </div>
+  <h2 style="color: #0078d4; text-align: center;">Payment Failed</h2>
+  <p>Dear Customer,</p>
+  <p>We were unable to process your latest payment for your <strong>Microsoft 365 Personal</strong> subscription.</p>
+  <div style="background: #f4f4f4; padding: 15px; border-radius: 5px; margin: 20px 0;">
+    <p style="margin: 5px 0;"><strong>Invoice Number:</strong> MS-99281-2026</p>
+    <p style="margin: 5px 0;"><strong>Amount Due:</strong> $14.99 USD</p>
+    <p style="margin: 5px 0;"><strong>Due Date:</strong> February 23, 2026</p>
+  </div>
+  <p>Please update your payment method immediately to avoid service interruption.</p>
+  <div style="text-align: center; margin-top: 30px;">
+    <a href="https://msft-billing-portal.com/update" style="background: #0078d4; color: white; padding: 12px 25px; text-decoration: none; border-radius: 2px; font-weight: bold;">Update Payment Now</a>
+  </div>
+  <p style="font-size: 12px; color: #666; margin-top: 40px; text-align: center;">
+    One Microsoft Way, Redmond, WA 98052, USA
+  </p>
+</div>

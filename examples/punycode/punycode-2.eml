@@ -1,0 +1,23 @@
+From: "PayPal Security" <security@xn--pypal-4ve.com>
+To: user@example.com
+Subject: Security Alert: Your account has been limited
+Date: Thu, 26 Feb 2026 09:00:00 +0000
+MIME-Version: 1.0
+Content-Type: text/html; charset="UTF-8"
+
+<div style="background: #fcfcfc; font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #eeeeee; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+  <div style="padding: 40px;">
+    <div style="margin-bottom: 30px;">
+      <img src="https://img.icons8.com/color/96/paypal.png" alt="PayPal" style="width: 40px;">
+    </div>
+    <h1 style="color: #003087; font-size: 24px; font-weight: 700; margin-bottom: 25px;">Account Status: Limited</h1>
+    <p style="color: #333; font-size: 16px; line-height: 1.6;">We've noticed suspicious activity on your PayPal account. For your protection, we have temporarily limited your account access to prevent unauthorized transactions.</p>
+    <div style="background: #fff9db; border-left: 5px solid #ffcc00; padding: 20px; border-radius: 4px; margin: 30px 0;">
+      <p style="color: #856404; margin: 0; font-weight: bold;">Action Required:</p>
+      <p style="color: #856404; margin: 10px 0 0 0; font-size: 14px;">To restore access and verify your account details, please log in to our secure verification portal below.</p>
+    </div>
+    <div style="text-align: center; margin-top: 35px;">
+      <a href="https://xn--pypal-4ve.com/login" style="background: #0070ba; color: white; padding: 14px 45px; border-radius: 99px; text-decoration: none; font-weight: bold; display: inline-block;">Verify Account Now</a>
+    </div>
+  </div>
+</div>

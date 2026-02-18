@@ -5,8 +5,8 @@ from flask import abort, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
 
 from app.auth import bp
-from app.auth.forms import CSVUploadForm, LoginForm
-from app.models import batch_create_users, get_user
+from app.auth.forms import CSVUploadForm, ChangePasswordForm, LoginForm
+from app.models import batch_create_users, get_user, update_user_password
 
 
 @bp.route('/login', methods=['GET', 'POST'])
@@ -82,3 +82,19 @@ def import_users():
             flash(f'Imported {created} users. {len(skipped)} skipped (already exist).', 'success')
 
     return render_template('admin/import_users.html', form=form, results=results)
+
+
+@bp.route('/change-password', methods=['GET', 'POST'])
+@login_required
+def change_password():
+    form = ChangePasswordForm()
+    if form.validate_on_submit():
+        if not current_user.check_password(form.current_password.data):
+            flash('Current password is incorrect.', 'danger')
+        else:
+            update_user_password(current_user.username, form.new_password.data)
+            current_user.set_password(form.new_password.data)
+            logout_user()
+            flash('Password updated. Please log in again.', 'success')
+            return redirect(url_for('auth.login'))
+    return render_template('auth/change_password.html', form=form)

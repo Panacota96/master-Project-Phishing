@@ -305,7 +305,131 @@ testuser3,test3@company.com,TempPass3,engineering
 
 ---
 
-## 4. GitLab Pipeline Verification
+## 4. Manual Feature Tests (Detailed)
+
+Use these steps to create and verify the tests you listed. Capture screenshots and logs if something fails.
+
+### 4.1 Users Upload (CSV Import)
+
+1. Login as `admin` / `admin123`.
+2. Navigate to Admin → Import Users.
+3. Upload a CSV with at least 3 users. Use the sample below.
+4. Verify the success banner shows imported count.
+5. Try uploading the same CSV again and confirm the "skipped" count.
+6. Log out and log in as one imported user to verify credentials.
+
+**Sample CSV**
+```csv
+username,email,password,group
+testuser1,test1@company.com,TempPass1,engineering
+testuser2,test2@company.com,TempPass2,marketing
+testuser3,test3@company.com,TempPass3,engineering
+```
+
+**Expected**
+- Import success message with correct count.
+- Second import shows skipped users.
+- Imported users can log in.
+
+### 4.2 Mails Upload (EML Samples to S3)
+
+1. Upload `.eml` files to `s3://<bucket>/eml-samples/` (already done in deploy jobs).
+2. Open Email Inspector in the app.
+3. Confirm the email list loads and includes the uploaded files.
+4. Click a file and verify details render.
+
+**Expected**
+- 6 example emails are listed.
+- Email detail view shows headers, HTML/text body, links, and warnings.
+
+### 4.3 Answer Verification (Quiz Submissions)
+
+1. Log in as a non-admin user.
+2. Start a quiz and answer all questions.
+3. Verify correctness feedback appears after each question.
+4. Finish the quiz and record the final score.
+5. Re-open the quiz list and confirm the completed state.
+
+**Expected**
+- Each submitted answer shows correct/incorrect feedback.
+- Final score matches the number of correct answers.
+- The quiz is locked after completion.
+
+### 4.4 Analytics (Dashboard and Inspector)
+
+1. Log in as admin and open the dashboard.
+2. Verify Total Users, Completed, Pending, and Average Score show correct values.
+3. Confirm the score distribution and per-quiz stats match the attempts you created.
+4. Open the Inspector analytics page and confirm it shows attempts per cohort.
+5. Apply filters (class/year/major/email) and verify the table updates.
+
+**Expected**
+- Counts align with actual attempts.
+- Filters narrow the data correctly.
+
+### 4.5 Reports (CSV Generation)
+
+1. Log in as admin and open Reports.
+2. Generate Summary and Detailed reports.
+3. Download each CSV and verify content.
+4. Generate Inspector report and verify cohort counts and correct percentage.
+
+**Expected**
+- CSV downloads work and match the dashboard data.
+- Presigned links are valid for 1 hour.
+
+### 4.6 Authentication: Change Password
+
+1. Log in as a regular user.
+2. Navigate to the profile or change-password screen if available.
+3. Change the password and log out.
+4. Log in with the new password.
+5. Verify the old password no longer works.
+
+**Expected**
+- Password change succeeds and persists.
+- Old password fails.
+- New password works.
+
+### 4.7 Test Run Checklist Template
+
+Use this template to record results for a test session.
+
+```text
+Test Run Date:
+Environment (local/dev/prod):
+App URL:
+Commit Hash:
+Tester:
+
+Users Upload (CSV Import)
+- Status (Pass/Fail):
+- Notes:
+
+Mails Upload (EML to S3)
+- Status (Pass/Fail):
+- Notes:
+
+Answer Verification (Quiz Submissions)
+- Status (Pass/Fail):
+- Notes:
+
+Analytics (Dashboard + Inspector)
+- Status (Pass/Fail):
+- Notes:
+
+Reports (Summary/Detailed/Inspector)
+- Status (Pass/Fail):
+- Notes:
+
+Authentication: Change Password
+- Status (Pass/Fail):
+- Notes:
+```
+
+---
+
+## 5. GitLab Pipeline Verification
 
 When you push to GitLab, check each stage:
 

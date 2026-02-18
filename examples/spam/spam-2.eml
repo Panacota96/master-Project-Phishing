@@ -1,0 +1,21 @@
+From: "Electronics Superstore" <deals@marketing-mail-server.com>
+To: recipient@example.com
+Subject: FLASH SALE: 70% Off Electronics - Today Only!
+Date: Fri, 27 Feb 2026 09:00:00 +0000
+MIME-Version: 1.0
+Content-Type: text/html; charset="UTF-8"
+
+<div style="background: #ffcc00; padding: 40px; font-family: 'Arial Black', Gadget, sans-serif; text-align: center;">
+  <div style="background: white; max-width: 600px; margin: auto; padding: 40px; box-shadow: 10px 10px 0px rgba(0,0,0,0.1);">
+    <h1 style="color: #ff0000; font-size: 48px; margin: 0;">FLASH SALE</h1>
+    <h2 style="color: #333; font-size: 32px; margin: 10px 0 30px;">70% OFF EVERYTHING</h2>
+    <img src="https://images.unsplash.com/photo-1550009158-9ebf69173e03?w=500&h=300&fit=crop" alt="Electronics" style="width: 100%; border-radius: 8px; margin-bottom: 30px;">
+    <p style="font-family: Arial, sans-serif; font-size: 18px; color: #333; line-height: 1.6;">Don't miss our biggest sale of the year. Laptops, smartphones, and accessories all at unbeatable prices. Shop our official catalog today!</p>
+    <div style="margin-top: 35px;">
+      <a href="http://legit-marketing-site.com/shop" style="background: #333; color: white; padding: 15px 40px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 20px;">SHOP THE SALE</a>
+    </div>
+    <p style="font-family: Arial, sans-serif; font-size: 11px; color: #999; margin-top: 50px;">
+      You are receiving this because you signed up for our newsletter. <a href="#" style="color: #999;">Unsubscribe</a>
+    </p>
+  </div>
+</div>

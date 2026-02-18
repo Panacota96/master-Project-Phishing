@@ -1,0 +1,14 @@
+From: "IT Service Desk" <helpdesk@company.com>
+To: user@company.com
+Subject: RE: [Ticket #9921] - Urgent Security Update Required
+Date: Tue, 24 Feb 2026 09:00:00 +0000
+MIME-Version: 1.0
+Content-Type: text/html; charset="UTF-8"
+
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd;">
+  <p>Hello,</p>
+  <p>RE: [Ticket #9921]. As discussed in our previous session, your workstation requires an urgent security patch.</p>
+  <p>Failure to apply this patch within the next <b>hour</b> will result in a temporary network lockout for your device.</p>
+  <p><a href="http://company-it-updates.net/patch-9921">Apply Security Patch Now</a></p>
+  <p>Thank you,<br>IT Helpdesk</p>
+</div>

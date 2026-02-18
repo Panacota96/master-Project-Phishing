@@ -1,0 +1,22 @@
+From: "Microsoft Security" <support@micros0ft-security.com>
+To: user@example.com
+Subject: Security Alert: Suspicious login from Moscow, Russia
+Date: Tue, 24 Feb 2026 10:15:00 +0000
+MIME-Version: 1.0
+Content-Type: text/html; charset="UTF-8"
+
+<div style="background: #f2f2f2; padding: 40px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+  <div style="max-width: 500px; margin: auto; background: white; padding: 40px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
+    <div style="margin-bottom: 30px;">
+      <img src="https://img.icons8.com/color/96/microsoft.png" alt="Microsoft" style="width: 32px;">
+    </div>
+    <h3 style="color: #333; margin-bottom: 20px;">We think someone has your password.</h3>
+    <p style="color: #666; margin-bottom: 25px;">Someone just used your password to sign in to your Microsoft account from a device in <b>Moscow, Russia</b>.</p>
+    <div style="background: #fff8e1; border: 1px solid #ffe082; padding: 15px; border-radius: 4px; margin-bottom: 25px;">
+      <p style="color: #6d4c41; margin: 0; font-size: 14px;"><strong>Location:</strong> Moscow, Russia</p>
+      <p style="color: #6d4c41; margin: 5px 0 0 0; font-size: 14px;"><strong>IP Address:</strong> 185.22.174.122</p>
+    </div>
+    <p style="color: #666; margin-bottom: 35px;">If this wasn't you, please secure your account immediately to prevent unauthorized access.</p>
+    <a href="https://micros0ft-login.com/verify" style="display: block; text-align: center; background: #0078d4; color: white; padding: 12px; text-decoration: none; border-radius: 2px; font-weight: bold;">Secure Account</a>
+  </div>
+</div>
