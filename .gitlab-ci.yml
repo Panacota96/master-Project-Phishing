@@ -60,6 +60,11 @@ plan:
   script:
     - cd $TF_DIR
     - echo "TF_ENV=${TF_ENV} TF_VAR_environment=${TF_VAR_environment} AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}"
+    - |
+      if [ -n "${TF_STATE_KEY}" ] || [ -n "${TF_STATE_BUCKET}" ] || [ -n "${TF_STATE_LOCK_TABLE}" ] || [ -n "${S3_BUCKET}" ]; then
+        echo "ERROR: Legacy CI vars detected (TF_STATE_* or S3_BUCKET). Remove them to avoid backend mismatch."
+        exit 1
+      fi
     - terraform init -backend-config="${TF_BACKEND_FILE}"
     - |
       mkdir -p env
@@ -95,6 +100,11 @@ deploy:
   script:
     - cd $TF_DIR
     - echo "TF_ENV=${TF_ENV} TF_VAR_environment=${TF_VAR_environment} AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}"
+    - |
+      if [ -n "${TF_STATE_KEY}" ] || [ -n "${TF_STATE_BUCKET}" ] || [ -n "${TF_STATE_LOCK_TABLE}" ] || [ -n "${S3_BUCKET}" ]; then
+        echo "ERROR: Legacy CI vars detected (TF_STATE_* or S3_BUCKET). Remove them to avoid backend mismatch."
+        exit 1
+      fi
     - terraform init -backend-config="${TF_BACKEND_FILE}"
     - |
       mkdir -p env
