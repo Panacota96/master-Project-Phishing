@@ -3,6 +3,135 @@
 This guide explains how to deploy the phishing awareness app to AWS using Terraform and GitLab CI/CD.
 
 ---
+## Quick Runbook (Dev)
+
+Short path for a dev deployment:
+
+```bash
+# Build Lambda
+./scripts/build_lambda.sh
+
+# Terraform init (dev backend)
+cd terraform
+terraform init -backend-config=backend/dev.hcl
+
+# Configure variables
+cp env/dev.tfvars.example terraform.tfvars
+# edit terraform.tfvars
+
+# Plan + apply
+terraform plan -var-file=terraform.tfvars
+terraform apply -var-file=terraform.tfvars
+
+# Upload EML samples
+aws s3 sync ../examples/ s3://<dev-bucket>/eml-samples/ --exclude "*" --include "*.eml"
+
+# Seed data
+export AWS_REGION_NAME=<region>
+export DYNAMODB_USERS=<dev-users-table>
+export DYNAMODB_QUIZZES=<dev-quizzes-table>
+export DYNAMODB_ATTEMPTS=<dev-attempts-table>
+export DYNAMODB_RESPONSES=<dev-responses-table>
+export DYNAMODB_INSPECTOR=<dev-inspector-table>
+export S3_BUCKET=<dev-bucket>
+export SECRET_KEY=<same-secret-as-terraform>
+python seed_dynamodb.py
+```
+
+## Session Log (Example — Dev)
+Use this as a template to document what was done in this session.
+
+**Bootstrap remote state (completed)**  
+- `terraform/bootstrap`  
+- S3 state bucket created: `phishing-terraform-state`  
+- DynamoDB lock table created: `phishing-terraform-locks`  
+
+**Terraform dev apply (completed)**  
+- API Gateway URL: `https://xfwnu5ncf9.execute-api.eu-west-3.amazonaws.com`  
+- DynamoDB tables:  
+  - `phishing-app-dev-users`  
+  - `phishing-app-dev-quizzes`  
+  - `phishing-app-dev-attempts`  
+  - `phishing-app-dev-responses`  
+  - `phishing-app-dev-inspector-attempts`  
+- S3 bucket: `phishing-app-dev-eu-west-3`  
+- Lambda function: `phishing-app-dev-app`  
+
+## Next Steps (to finish the dev deploy)
+1. Upload EML samples to S3:
+   ```bash
+   aws s3 sync ../examples/ s3://phishing-app-dev-eu-west-3/eml-samples/ --exclude "*" --include "*.eml"
+   ```
+2. Seed DynamoDB with admin user and quiz content:
+   ```bash
+   export AWS_REGION_NAME=eu-west-3
+   export DYNAMODB_USERS=phishing-app-dev-users
+   export DYNAMODB_QUIZZES=phishing-app-dev-quizzes
+   export DYNAMODB_ATTEMPTS=phishing-app-dev-attempts
+   export DYNAMODB_RESPONSES=phishing-app-dev-responses
+   export DYNAMODB_INSPECTOR=phishing-app-dev-inspector-attempts
+   export S3_BUCKET=phishing-app-dev-eu-west-3
+   export SECRET_KEY=<same-secret-as-terraform>
+
+   python seed_dynamodb.py
+   ```
+3. Verify the app:
+   - Open the API Gateway URL in a browser.
+   - Login with `admin / admin123`.
+   - Confirm quiz list and Email Inspector load.
+
+### Screenshot Checklist (Step-by-Step, Reproducible)
+Use this checklist for any environment by substituting `<env>` (e.g., `dev`, `prod`).
+
+1. [ ] **Bootstrap: S3 state bucket** (AWS console)
+   - Evidence: bucket details page with versioning enabled.
+   - Paste screenshot:
+     - `[[PASTE: bootstrap-s3-<env>.png]]`
+
+2. [ ] **Bootstrap: DynamoDB lock table** (AWS console)
+   - Evidence: lock table details page.
+   - Paste screenshot:
+     - `[[PASTE: bootstrap-dynamodb-lock-<env>.png]]`
+
+3. [ ] **Terraform init** (terminal)
+   - Command: `terraform init -backend-config=backend/<env>.hcl`
+   - Evidence: init success output.
+   - Paste screenshot:
+     - `[[PASTE: terraform-init-<env>.png]]`
+
+4. [ ] **Terraform plan** (terminal)
+   - Command: `terraform plan -var-file=terraform.tfvars`
+   - Evidence: plan summary (add/change/destroy).
+   - Paste screenshot:
+     - `[[PASTE: terraform-plan-<env>.png]]`
+
+5. [ ] **Terraform apply** (terminal)
+   - Command: `terraform apply -var-file=terraform.tfvars`
+   - Evidence: apply success + outputs (API Gateway URL).
+   - Paste screenshot:
+     - `[[PASTE: terraform-apply-<env>.png]]`
+
+6. [ ] **Upload EML samples** (AWS console)
+   - Evidence: `eml-samples/` prefix listing with `.eml` files.
+   - Paste screenshot:
+     - `[[PASTE: s3-eml-samples-<env>.png]]`
+
+7. [ ] **Seed DynamoDB** (terminal)
+   - Command: `python seed_dynamodb.py`
+   - Evidence: output confirming admin + quiz created.
+   - Paste screenshot:
+     - `[[PASTE: seed-dynamodb-<env>.png]]`
+
+8. [ ] **Verify login page** (browser)
+   - Evidence: login page loaded from API Gateway URL.
+   - Paste screenshot:
+     - `[[PASTE: verify-login-<env>.png]]`
+
+9. [ ] **Verify quiz list** (browser)
+   - Evidence: successful login + quiz list page.
+   - Paste screenshot:
+     - `[[PASTE: verify-quiz-list-<env>.png]]`
+
 
 ## Prerequisites
 
@@ -34,15 +163,18 @@ This guide explains how to deploy the phishing awareness app to AWS using Terraf
 
 Save the **Access Key ID** and **Secret Access Key** — you'll need them.
 
-### 1.2 Create the Terraform State Bucket
+### 1.2 Bootstrap Terraform Remote State (S3 + DynamoDB Lock)
 
-Terraform stores its state in S3. Create this bucket once:
+Terraform stores its state in S3 and uses a DynamoDB table for state locking. Bootstrap these once:
 
 ```bash
-aws s3 mb s3://phishing-terraform-state --region eu-west-3
-aws s3api put-bucket-versioning \
-  --bucket phishing-terraform-state \
-  --versioning-configuration Status=Enabled
+cd master-Project-Phishing/terraform/bootstrap
+
+terraform init
+terraform apply \
+  -var="state_bucket_name=phishing-terraform-state" \
+  -var="lock_table_name=phishing-terraform-locks" \
+  -var="aws_region=eu-west-3"
 ```
 
 ---
@@ -59,9 +191,25 @@ cp terraform.tfvars.example terraform.tfvars
 
 # Edit terraform.tfvars:
 #   aws_region  = "eu-west-3"
-#   environment = "prod"
+#   environment = "dev"   # or "prod"
 #   app_name    = "phishing-app"
 #   secret_key  = "your-random-secret-string-here"  ← generate a strong key
+#
+# Alternatively, start from:
+#   terraform/env/dev.tfvars.example
+#   terraform/env/prod.tfvars.example
+```
+
+	### 2.1.1 Configure the Remote Backend
+
+Pick the backend config for the environment:
+
+```bash
+# For dev
+terraform init -backend-config=backend/dev.hcl
+
+# For prod
+terraform init -backend-config=backend/prod.hcl
 ```
 
 ### 2.2 Build the Lambda Package
@@ -69,30 +217,36 @@ cp terraform.tfvars.example terraform.tfvars
 ```bash
 cd master-Project-Phishing
 
-# Install dependencies into a package/ directory
-pip install -r requirements.txt -t package/
-
-# Copy application code
-cp -r app/ package/app/
-cp lambda_handler.py config.py package/
-
-# Create the zip
-cd package && zip -r ../lambda.zip . && cd ..
+# Build the Lambda zip artifact
+./scripts/build_lambda.sh
 ```
+
+Note: The Lambda handler wraps Flask as ASGI using `asgiref` + `mangum`.
 
 ### 2.3 Deploy with Terraform
 
 ```bash
 cd terraform
 
-# Initialize Terraform (downloads providers, sets up backend)
-terraform init
-
 # Preview what will be created
 terraform plan
 
 # Apply (creates all AWS resources)
 terraform apply
+```
+
+### 2.3.1 Terraform Cheat Sheet (Dev/Prod)
+
+```bash
+# Dev
+terraform init -backend-config=backend/dev.hcl
+terraform plan -var-file=env/dev.tfvars.example
+terraform apply -var-file=env/dev.tfvars.example
+
+# Prod
+terraform init -backend-config=backend/prod.hcl
+terraform plan -var-file=env/prod.tfvars.example
+terraform apply -var-file=env/prod.tfvars.example
 ```
 
 **Expected output after `terraform apply`:**
@@ -123,6 +277,7 @@ export DYNAMODB_USERS=phishing-app-prod-users
 export DYNAMODB_QUIZZES=phishing-app-prod-quizzes
 export DYNAMODB_ATTEMPTS=phishing-app-prod-attempts
 export DYNAMODB_RESPONSES=phishing-app-prod-responses
+export DYNAMODB_INSPECTOR=phishing-app-prod-inspector-attempts
 export S3_BUCKET=phishing-app-prod-eu-west-3
 export SECRET_KEY=your-secret-key
 
@@ -147,9 +302,12 @@ Go to **GitLab → Your Project → Settings → CI/CD → Variables**. Add thes
 | `AWS_SECRET_ACCESS_KEY` | Your IAM secret key | Yes |
 | `AWS_DEFAULT_REGION` | `eu-west-3` | No |
 | `TF_VAR_secret_key` | Your Flask secret key | Yes |
-| `TF_VAR_environment` | `prod` | No |
+| `TF_VAR_environment` | `prod` or `dev` | No |
 | `TF_VAR_app_name` | `phishing-app` | No |
 | `S3_BUCKET` | `phishing-app-prod-eu-west-3` | No |
+| `TF_STATE_BUCKET` | `phishing-terraform-state` | No |
+| `TF_STATE_KEY` | `prod/terraform.tfstate` | No |
+| `TF_STATE_LOCK_TABLE` | `phishing-terraform-locks` | No |
 
 ### 3.2 Pipeline Stages
 
@@ -191,6 +349,7 @@ DynamoDB Tables:
   phishing-app-prod-quizzes
   phishing-app-prod-attempts    (+ 2 GSIs: quiz-index, group-index)
   phishing-app-prod-responses   (+ 1 GSI: quiz-question-index)
+  phishing-app-prod-inspector-attempts (+ 2 GSIs: email-index, group-index)
 
 S3 Bucket:
   phishing-app-prod-eu-west-3/

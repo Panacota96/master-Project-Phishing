@@ -31,6 +31,30 @@ The app runs on `http://localhost:5000` by default.
 
 **Default admin credentials**: `admin` / `admin123`
 
+## Lambda Packaging
+
+Use the shared build script to create `lambda.zip`:
+
+```bash
+./scripts/build_lambda.sh
+```
+
+## Make Targets
+
+```bash
+make lint
+make test
+make lambda
+```
+
+## CI Backend Config Variables
+
+Set these in GitLab CI/CD for Terraform remote state:
+
+- `TF_STATE_BUCKET` (e.g., `phishing-terraform-state`)
+- `TF_STATE_KEY` (e.g., `prod/terraform.tfstate`)
+- `TF_STATE_LOCK_TABLE` (e.g., `phishing-terraform-locks`)
+
 ## Docker (Local / Production)
 
 ```bash

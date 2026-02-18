@@ -10,6 +10,7 @@ class Config:
     DYNAMODB_QUIZZES = os.environ.get('DYNAMODB_QUIZZES', 'phishing-app-prod-quizzes')
     DYNAMODB_ATTEMPTS = os.environ.get('DYNAMODB_ATTEMPTS', 'phishing-app-prod-attempts')
     DYNAMODB_RESPONSES = os.environ.get('DYNAMODB_RESPONSES', 'phishing-app-prod-responses')
+    DYNAMODB_INSPECTOR = os.environ.get('DYNAMODB_INSPECTOR', 'phishing-app-prod-inspector-attempts')
 
     # S3
     S3_BUCKET = os.environ.get('S3_BUCKET', 'phishing-app-prod-eu-west-3')

@@ -13,6 +13,11 @@
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">{{ question.question_text }}</h5>
+                {% if question.image_path %}
+                <div class="mb-3">
+                    <img src="{{ question.image_path }}" alt="{{ question.image_alt or 'Quiz prompt image' }}" class="img-fluid rounded border">
+                </div>
+                {% endif %}
 
                 {% if not show_explanation %}
                 <form method="POST">

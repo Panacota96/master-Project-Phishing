@@ -21,11 +21,12 @@ def aws_env(monkeypatch):
     monkeypatch.setenv('DYNAMODB_QUIZZES', 'test-quizzes')
     monkeypatch.setenv('DYNAMODB_ATTEMPTS', 'test-attempts')
     monkeypatch.setenv('DYNAMODB_RESPONSES', 'test-responses')
+    monkeypatch.setenv('DYNAMODB_INSPECTOR', 'test-inspector')
     monkeypatch.setenv('S3_BUCKET', 'test-bucket')
 
 
 def _create_dynamodb_tables(region='eu-west-3'):
-    """Create the 4 DynamoDB tables that the app expects."""
+    """Create the DynamoDB tables that the app expects."""
     dynamodb = boto3.resource('dynamodb', region_name=region)
 
     # Users table
@@ -125,6 +126,40 @@ def _create_dynamodb_tables(region='eu-west-3'):
         BillingMode='PAY_PER_REQUEST',
     )
 
+    # Inspector attempts table
+    dynamodb.create_table(
+        TableName='test-inspector',
+        KeySchema=[
+            {'AttributeName': 'username', 'KeyType': 'HASH'},
+            {'AttributeName': 'submitted_at', 'KeyType': 'RANGE'},
+        ],
+        AttributeDefinitions=[
+            {'AttributeName': 'username', 'AttributeType': 'S'},
+            {'AttributeName': 'submitted_at', 'AttributeType': 'S'},
+            {'AttributeName': 'group', 'AttributeType': 'S'},
+            {'AttributeName': 'email_file', 'AttributeType': 'S'},
+        ],
+        GlobalSecondaryIndexes=[
+            {
+                'IndexName': 'group-index',
+                'KeySchema': [
+                    {'AttributeName': 'group', 'KeyType': 'HASH'},
+                    {'AttributeName': 'submitted_at', 'KeyType': 'RANGE'},
+                ],
+                'Projection': {'ProjectionType': 'ALL'},
+            },
+            {
+                'IndexName': 'email-index',
+                'KeySchema': [
+                    {'AttributeName': 'email_file', 'KeyType': 'HASH'},
+                    {'AttributeName': 'submitted_at', 'KeyType': 'RANGE'},
+                ],
+                'Projection': {'ProjectionType': 'ALL'},
+            },
+        ],
+        BillingMode='PAY_PER_REQUEST',
+    )
+
 
 def _create_s3_bucket(region='eu-west-3'):
     s3 = boto3.client('s3', region_name=region)
@@ -164,7 +199,16 @@ def seed_admin(app):
     """Create an admin user in the mocked DynamoDB."""
     with app.app_context():
         from app.models import create_user
-        return create_user('admin', 'admin@test.com', 'admin123', is_admin=True, group='admin')
+        return create_user(
+            'admin',
+            'admin@test.com',
+            'admin123',
+            is_admin=True,
+            group='admin',
+            class_name='Class A',
+            academic_year='2025',
+            major='Security',
+        )
 
 
 @pytest.fixture()
@@ -172,7 +216,15 @@ def seed_user(app):
     """Create a regular user."""
     with app.app_context():
         from app.models import create_user
-        return create_user('testuser', 'test@test.com', 'password123', group='engineering')
+        return create_user(
+            'testuser',
+            'test@test.com',
+            'password123',
+            group='engineering',
+            class_name='Class A',
+            academic_year='2025',
+            major='CS',
+        )
 
 
 @pytest.fixture()

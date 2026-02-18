@@ -49,15 +49,15 @@
             </div>
         </div>
     </div>
-    <!-- Group Comparison Chart -->
+    <!-- Cohort Comparison Chart -->
     <div class="col-md-6">
         <div class="card">
-            <div class="card-header"><h5>Average Score by Group</h5></div>
+            <div class="card-header"><h5>Average Score by Cohort</h5></div>
             <div class="card-body">
                 {% if group_stats %}
                 <canvas id="groupChart"></canvas>
                 {% else %}
-                <p class="text-muted">No group data available yet.</p>
+                <p class="text-muted">No cohort data available yet.</p>
                 {% endif %}
             </div>
         </div>
@@ -87,19 +87,21 @@
             </div>
         </div>
     </div>
-    <!-- Group Stats Table -->
+    <!-- Cohort Stats Table -->
     <div class="col-md-6">
         <div class="card">
-            <div class="card-header"><h5>Group Statistics</h5></div>
+            <div class="card-header"><h5>Cohort Statistics</h5></div>
             <div class="card-body">
                 <table class="table table-sm">
                     <thead>
-                        <tr><th>Group</th><th>Attempts</th><th>Avg Score</th></tr>
+                        <tr><th>Class</th><th>Year</th><th>Major</th><th>Attempts</th><th>Avg Score</th></tr>
                     </thead>
                     <tbody>
                         {% for gs in group_stats %}
                         <tr>
-                            <td>{{ gs.group }}</td>
+                            <td>{{ gs.class_name }}</td>
+                            <td>{{ gs.academic_year }}</td>
+                            <td>{{ gs.major }}</td>
                             <td>{{ gs.count }}</td>
                             <td>{{ gs.avg }}%</td>
                         </tr>
@@ -111,25 +113,40 @@
     </div>
 </div>
 
-<!-- Recent Activity -->
-<div class="card">
-    <div class="card-header"><h5>Recent Activity</h5></div>
+<!-- Inspector Analytics -->
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Inspector Analytics</h5>
+        <button id="inspectorReportBtn" class="btn btn-sm btn-outline-primary">Download Inspector CSV</button>
+    </div>
     <div class="card-body">
-        <table class="table table-striped">
-            <thead>
-                <tr><th>User</th><th>Quiz</th><th>Score</th><th>Date</th></tr>
-            </thead>
-            <tbody>
-                {% for attempt in recent %}
-                <tr>
-                    <td>{{ attempt.username }}</td>
-                    <td>{{ attempt.quiz_title }}</td>
-                    <td>{{ attempt.score }}/{{ attempt.total }}</td>
-                    <td>{{ attempt.completed_at[:16] | replace('T', ' ') }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="row mb-3">
+            <div class="col-md-3"><strong>Total Attempts:</strong> {{ inspector_total }}</div>
+            <div class="col-md-3"><strong>Correct:</strong> {{ inspector_correct }}</div>
+            <div class="col-md-3"><strong>Phishing:</strong> {{ inspector_phishing }}</div>
+            <div class="col-md-3"><strong>Spam:</strong> {{ inspector_spam }}</div>
+        </div>
+        <div id="inspectorReportStatus" class="text-muted small mb-3"></div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <h6>Attempts by Email</h6>
+                <table class="table table-sm">
+                    <thead>
+                        <tr><th>Email</th><th>Attempts</th><th>Correct</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for row in inspector_per_email %}
+                        <tr>
+                            <td>{{ row.email_file }}</td>
+                            <td>{{ row.count }}</td>
+                            <td>{{ row.correct }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
@@ -156,13 +173,13 @@ new Chart(scoreCtx, {
     }
 });
 
-// Group Comparison Chart
+// Cohort Comparison Chart
 {% if group_stats %}
 const groupCtx = document.getElementById('groupChart').getContext('2d');
 new Chart(groupCtx, {
     type: 'bar',
     data: {
-        labels: {{ group_stats | map(attribute='group') | list | tojson }},
+        labels: {{ group_stats | map(attribute='label') | list | tojson }},
         datasets: [{
             label: 'Average Score (%)',
             data: {{ group_stats | map(attribute='avg') | list | tojson }},
@@ -190,5 +207,31 @@ setInterval(async () => {
         // Silently ignore polling errors
     }
 }, 30000);
+
+const inspectorReportBtn = document.getElementById('inspectorReportBtn');
+const inspectorReportStatus = document.getElementById('inspectorReportStatus');
+if (inspectorReportBtn) {
+    inspectorReportBtn.addEventListener('click', async () => {
+        if (inspectorReportStatus) {
+            inspectorReportStatus.textContent = 'Generating inspector report...';
+        }
+        try {
+            const resp = await fetch('{{ url_for("dashboard.generate_inspector_report") }}', {
+                method: 'POST',
+            });
+            const data = await resp.json();
+            if (!resp.ok) {
+                throw new Error(data.error || 'Unable to generate report.');
+            }
+            if (inspectorReportStatus) {
+                inspectorReportStatus.innerHTML = `Report ready: <a href="${data.download_url}" target="_blank" rel="noopener noreferrer">${data.filename}</a>`;
+            }
+        } catch (e) {
+            if (inspectorReportStatus) {
+                inspectorReportStatus.textContent = `Error: ${e.message}`;
+            }
+        }
+    });
+}
 </script>
 {% endblock %}

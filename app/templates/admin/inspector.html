@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+{% block title %}Inspector Analytics{% endblock %}
+{% block content %}
+<h2>Inspector Analytics</h2>
+
+<form class="row g-3 mb-4" method="get">
+    <div class="col-md-4">
+        <label class="form-label">Class</label>
+        <select name="class_name" class="form-select">
+            <option value="">All</option>
+            {% for class_name in classes %}
+            <option value="{{ class_name }}" {% if class_name == selected_class %}selected{% endif %}>{{ class_name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">Academic Year</label>
+        <select name="academic_year" class="form-select">
+            <option value="">All</option>
+            {% for year in years %}
+            <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>{{ year }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">Major</label>
+        <select name="major" class="form-select">
+            <option value="">All</option>
+            {% for major in majors %}
+            <option value="{{ major }}" {% if major == selected_major %}selected{% endif %}>{{ major }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Email</label>
+        <select name="email" class="form-select">
+            <option value="">All</option>
+            {% for email in emails %}
+            <option value="{{ email }}" {% if email == selected_email %}selected{% endif %}>{{ email }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-2">
+        <label class="form-label">From</label>
+        <input type="date" class="form-control" name="date_from" value="{{ date_from }}">
+    </div>
+    <div class="col-md-2">
+        <label class="form-label">To</label>
+        <input type="date" class="form-control" name="date_to" value="{{ date_to }}">
+    </div>
+    <div class="col-md-1 d-flex align-items-end">
+        <button class="btn btn-primary w-100" type="submit">Filter</button>
+    </div>
+</form>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-3"><strong>Total Attempts:</strong> {{ total_attempts }}</div>
+            <div class="col-md-3"><strong>Correct:</strong> {{ correct_attempts }}</div>
+            <div class="col-md-3"><strong>Phishing:</strong> {{ phishing_attempts }}</div>
+            <div class="col-md-3"><strong>Spam:</strong> {{ spam_attempts }}</div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex justify-content-end align-items-center gap-3 mb-3">
+    <div id="inspectorReportStatus" class="text-muted small"></div>
+    <button class="btn btn-outline-primary" type="button" id="inspectorReportBtn">Download CSV</button>
+</div>
+
+<div class="card">
+    <div class="card-header"><h5 class="mb-0">Inspector Cohorts</h5></div>
+    <div class="card-body">
+        <table class="table table-striped table-sm">
+            <thead>
+                <tr>
+                    <th><a href="#" data-sort="class_name">Class <span class="sort-indicator" data-indicator="class_name"></span></a></th>
+                    <th><a href="#" data-sort="academic_year">Year <span class="sort-indicator" data-indicator="academic_year"></span></a></th>
+                    <th><a href="#" data-sort="major">Major <span class="sort-indicator" data-indicator="major"></span></a></th>
+                    <th><a href="#" data-sort="attempts">Attempts <span class="sort-indicator" data-indicator="attempts"></span></a></th>
+                    <th><a href="#" data-sort="correct_pct">Correct % <span class="sort-indicator" data-indicator="correct_pct"></span></a></th>
+                    <th><a href="#" data-sort="phishing">Phishing <span class="sort-indicator" data-indicator="phishing"></span></a></th>
+                    <th><a href="#" data-sort="spam">Spam <span class="sort-indicator" data-indicator="spam"></span></a></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for attempt in attempts %}
+                <tr>
+                    <td>{{ attempt.class_name }}</td>
+                    <td>{{ attempt.academic_year }}</td>
+                    <td>{{ attempt.major }}</td>
+                    <td>{{ attempt.attempts }}</td>
+                    <td>{{ attempt.correct_pct }}%</td>
+                    <td>{{ attempt.phishing }}</td>
+                    <td>{{ attempt.spam }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="d-flex justify-content-between align-items-center">
+            <span class="text-muted small">Page {{ page }} of {{ total_pages }}</span>
+            <div class="btn-group">
+                {% if prev_url %}
+                <a class="btn btn-sm btn-outline-secondary" href="{{ prev_url }}">Prev</a>
+                {% endif %}
+                {% if next_url %}
+                <a class="btn btn-sm btn-outline-secondary" href="{{ next_url }}">Next</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const currentSort = "{{ sort_by }}";
+const currentOrder = "{{ sort_order }}";
+document.querySelectorAll('.sort-indicator').forEach((indicator) => {
+    if (indicator.dataset.indicator === currentSort) {
+        indicator.textContent = currentOrder === 'asc' ? '↑' : '↓';
+    }
+});
+
+const reportBtn = document.getElementById('inspectorReportBtn');
+const reportStatus = document.getElementById('inspectorReportStatus');
+if (reportBtn) {
+    reportBtn.addEventListener('click', async () => {
+        reportStatus.textContent = 'Generating report...';
+        try {
+            const formData = new FormData();
+            formData.append('class_name', '{{ selected_class }}');
+            formData.append('academic_year', '{{ selected_year }}');
+            formData.append('major', '{{ selected_major }}');
+            formData.append('email', '{{ selected_email }}');
+            formData.append('date_from', '{{ date_from }}');
+            formData.append('date_to', '{{ date_to }}');
+            const resp = await fetch('{{ url_for("dashboard.generate_inspector_report") }}', {
+                method: 'POST',
+                body: formData,
+            });
+            const data = await resp.json();
+            if (!resp.ok) {
+                throw new Error(data.error || 'Unable to generate report.');
+            }
+            reportStatus.innerHTML = `Report ready: <a href=\"${data.download_url}\" target=\"_blank\" rel=\"noopener noreferrer\">${data.filename}</a>`;
+        } catch (err) {
+            reportStatus.textContent = `Error: ${err.message}`;
+        }
+    });
+}
+
+const sortLinks = document.querySelectorAll('[data-sort]');
+sortLinks.forEach((link) => {
+    link.addEventListener('click', (event) => {
+        event.preventDefault();
+        const sortBy = link.getAttribute('data-sort');
+        const params = new URLSearchParams(window.location.search);
+        const currentSort = params.get('sort_by') || 'attempts';
+        const currentOrder = params.get('sort_order') || 'desc';
+        if (currentSort === sortBy) {
+            params.set('sort_order', currentOrder === 'asc' ? 'desc' : 'asc');
+        } else {
+            params.set('sort_by', sortBy);
+            params.set('sort_order', 'asc');
+        }
+        params.set('page', '1');
+        window.location.search = params.toString();
+    });
+});
+</script>
+{% endblock %}

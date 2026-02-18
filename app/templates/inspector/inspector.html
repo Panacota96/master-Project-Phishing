@@ -678,45 +678,6 @@
         "Side Channel Communication Attempt": "sidechannel",
       };
 
-      const FLAG_REQUIREMENTS = {
-        "fakeinvoice-urgency-spoofing-socialeng.eml": {
-          classification: "Phishing",
-          signals: ["fakeinvoice", "urgency", "spoof"],
-          display: "fakeinvoice, urgency, spoofing",
-          flag: "THM{yougotnumber1-keep-it-going}",
-        },
-        "impersonation-attachment-socialeng-spoof.eml": {
-          classification: "Phishing",
-          signals: ["impersonation", "attachment", "spoof"],
-          display: "impersonation, attachment, spoof",
-          flag: "THM{nmumber2-was-not-tha-thard!}",
-        },
-        "impersonation-socialeng-urgency.eml": {
-          classification: "Phishing",
-          signals: ["impersonation", "socialeng", "urgency"],
-          display: "impersonation, socialeng, urgency",
-          flag: "THM{Impersonation-is-areal-thing-keepIt}",
-        },
-        "legitapp-impersonation-externaldomain-socialeng.eml": {
-          classification: "Phishing",
-          signals: ["impersonation", "externaldomain", "socialeng"],
-          display: "impersonation, externaldomain, social engineering",
-          flag: "THM{Get-back-SOC-mas!!}",
-        },
-        "marketing-spam-logistics.eml": {
-          classification: "Spam",
-          signals: [],
-          display: "spam",
-          flag: "THM{It-was-just-a-sp4m!!}",
-        },
-        "punycode-impersonation-legitapp-socialeng.eml": {
-          classification: "Phishing",
-          signals: ["punycode", "impersonation", "socialeng"],
-          display: "punycode, impersonation, social engineering",
-          flag: "THM{number6-is-the-last-one!-DX!}",
-        },
-      };
-
       const classificationLog = [];
       window.emailClassificationLog = classificationLog;
 
@@ -879,18 +840,6 @@
         return `<span class="status-heading">${escapeHtml(text)}</span>`;
       }
 
-      function evaluateSignalSelection(selectedAliases = [], expectedAliases = []) {
-        const normalizedSelected = selectedAliases.map(normalizeToken);
-        const normalizedExpected = expectedAliases.map(normalizeToken);
-        const expectedSet = new Set(normalizedExpected);
-        const selectedSet = new Set(normalizedSelected);
-        const correct = normalizedSelected.filter((alias) => expectedSet.has(alias));
-        const incorrect = normalizedSelected.filter((alias) => !expectedSet.has(alias));
-        const missing = normalizedExpected.filter((alias) => !selectedSet.has(alias));
-        const success =
-          incorrect.length === 0 && missing.length === 0 && normalizedSelected.length === normalizedExpected.length;
-        return { success, correct, incorrect, missing };
-      }
 
       async function handleEmailSelection(button, fileName) {
         if (activeEmail === fileName) {
@@ -1025,11 +974,11 @@
             <h3>Classification</h3>
             <form class="classification-form" data-email="${escapeHtml(summary.fileName)}">
               <div class="classification-choices">
-                <label><input type="checkbox" name="classification" value="Spam" /> Spam</label>
-                <label><input type="checkbox" name="classification" value="Phishing" /> Phishing</label>
+                <label><input type="radio" name="classification" value="Spam" /> Spam</label>
+                <label><input type="radio" name="classification" value="Phishing" /> Phishing</label>
               </div>
               <div class="signal-section" hidden>
-                <p>Select at least three phishing signals:</p>
+                <p>Select exactly three phishing signals:</p>
                 <div class="signal-grid">
                   ${signalCheckboxes}
                 </div>
@@ -1124,12 +1073,10 @@
         signalInputs.forEach((input) => {
           input.addEventListener("change", () => {
             const checkedSignals = signalInputs.filter((checkbox) => checkbox.checked);
-
             if (checkedSignals.length > 3) {
               input.checked = false;
-
               if (statusEl) {
-                statusEl.textContent = "You can select at most three phishing signals.";
+                statusEl.textContent = "Select exactly three phishing signals.";
                 statusEl.classList.add("error");
               }
             }
@@ -1162,7 +1109,7 @@
           });
         });
 
-        form.addEventListener("submit", (event) => {
+        form.addEventListener("submit", async (event) => {
           event.preventDefault();
           if (!statusEl) {
             return;
@@ -1179,72 +1126,54 @@
           }
 
           const selectedClassification = selectedClassificationInput.value;
-          const requirement = FLAG_REQUIREMENTS[emailFileName];
-          if (!requirement) {
-            statusEl.textContent = "No flag configuration is defined for this email.";
+          const selectedSignals = Array.from(form.querySelectorAll('input[name="signals"]:checked'));
+          const selectedAliases = selectedSignals.map((input) => input.dataset.alias || aliasForSignal(input.value));
+
+          if (selectedClassification === "Phishing" && selectedAliases.length !== 3) {
+            statusEl.textContent = "Select exactly three phishing signals.";
             statusEl.classList.add("error");
             return;
           }
 
-          const selectedSignals = Array.from(form.querySelectorAll('input[name="signals"]:checked'));
-          const selectedAliases = selectedSignals.map((input) => input.dataset.alias || aliasForSignal(input.value));
-          let success = false;
-
-          if (selectedClassification === "Phishing") {
-            if (selectedAliases.length < 3) {
-              statusEl.textContent = "Select at least three phishing signals.";
-              statusEl.classList.add("error");
-              return;
-            }
-
-            const evaluation = evaluateSignalSelection(selectedAliases, requirement.signals || []);
-
-            if (requirement.classification !== "Phishing") {
-              statusEl.innerHTML = `${renderStatusHeading("This email is not expected to be phishing.")}${renderSignalFeedback({
-                correct: evaluation.correct,
-                incorrect: evaluation.incorrect,
-              })}`;
-              statusEl.classList.add("error");
-            } else if (!evaluation.success) {
-              statusEl.innerHTML = `${renderStatusHeading(
-                "Classification incorrect. Review the selected phishing signals."
-              )}${renderSignalFeedback({ correct: evaluation.correct, incorrect: evaluation.incorrect })}`;
-              statusEl.classList.add("error");
-            } else {
-              success = true;
-              statusEl.innerHTML = `${renderStatusHeading(`Correct! Flag: ${requirement.flag}`)}${renderSignalFeedback({
-                correct: evaluation.correct,
-                incorrect: evaluation.incorrect,
-              })}`;
-              statusEl.classList.add("success");
-            }
-          } else {
-            if (requirement.classification !== "Spam") {
-              statusEl.innerHTML = renderStatusHeading("This email is not expected to be spam.");
-              statusEl.classList.add("error");
-            } else if (selectedAliases.length > 0) {
-              const feedbackDetail = {
-                correct: [],
-                incorrect: selectedAliases.map(normalizeToken),
-              };
-              statusEl.innerHTML = `${renderStatusHeading(
-                "Spam classification should not include phishing signals."
-              )}${renderSignalFeedback(feedbackDetail)}`;
-              statusEl.classList.add("error");
-            } else {
-              success = true;
-              statusEl.innerHTML = renderStatusHeading(`Correct! Flag: ${requirement.flag}`);
-              statusEl.classList.add("success");
-            }
+          if (selectedClassification === "Spam" && selectedAliases.length > 0) {
+            statusEl.textContent = "Spam classifications should not include phishing signals.";
+            statusEl.classList.add("error");
+            return;
           }
 
-          classificationLog.push({
-            email: emailFileName,
-            classification: selectedClassification,
-            signals: selectedSignals.map((input) => input.value),
-            success,
-            timestamp: new Date().toISOString(),
-          });
+          try {
+            const response = await fetch("/inspector/api/submit", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                fileName: emailFileName,
+                classification: selectedClassification,
+                signals: selectedAliases,
+              }),
+            });
+            const payload = await response.json();
+            if (!response.ok) {
+              throw new Error(payload.error || "Submission failed.");
+            }
+
+            statusEl.innerHTML = `${renderStatusHeading(payload.message || "")}${renderSignalFeedback({
+              correct: payload.correct_signals || [],
+              incorrect: payload.incorrect_signals || [],
+            })}`;
+            statusEl.classList.toggle("success", !!payload.success);
+            statusEl.classList.toggle("error", !payload.success);
+
+            classificationLog.push({
+              email: emailFileName,
+              classification: selectedClassification,
+              signals: selectedSignals.map((input) => input.value),
+              success: payload.success,
+              timestamp: new Date().toISOString(),
+            });
+          } catch (error) {
+            statusEl.textContent = error.message;
+            statusEl.classList.add("error");
+          }
         });
       }
     </script>

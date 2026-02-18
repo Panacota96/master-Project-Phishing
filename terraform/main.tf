@@ -8,11 +8,7 @@ terraform {
     }
   }
 
-  backend "s3" {
-    bucket = "phishing-terraform-state"
-    key    = "prod/terraform.tfstate"
-    region = "eu-west-3"
-  }
+  backend "s3" {}
 }
 
 provider "aws" {

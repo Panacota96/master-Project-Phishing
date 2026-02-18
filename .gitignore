@@ -27,6 +27,20 @@ app.db
 # Docker overrides
 docker-compose.override.yml
 
+# Terraform
+terraform/.terraform/
+terraform/**/.terraform/
+terraform/bootstrap/.terraform.lock.hcl
+terraform/bootstrap/terraform.tfstate
+terraform/bootstrap/terraform.tfstate.backup
+terraform/*.tfstate
+terraform/*.tfstate.*
+terraform/terraform.tfvars
+
+# Build artifacts
+lambda.zip
+package/
+
 # OS files
 .DS_Store
 Thumbs.db

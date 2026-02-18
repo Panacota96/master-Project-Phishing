@@ -3,6 +3,14 @@
 This guide explains how to test the phishing awareness app at each stage: local development, automated tests, and post-deployment verification.
 
 ---
+## Quick Runbook
+
+```bash
+pip install -r requirements.txt
+pip install pytest moto
+make test
+```
+
 
 ## 1. Running Automated Tests Locally
 
@@ -103,6 +111,7 @@ export DYNAMODB_USERS=phishing-app-dev-users
 export DYNAMODB_QUIZZES=phishing-app-dev-quizzes
 export DYNAMODB_ATTEMPTS=phishing-app-dev-attempts
 export DYNAMODB_RESPONSES=phishing-app-dev-responses
+export DYNAMODB_INSPECTOR=phishing-app-dev-inspector-attempts
 export S3_BUCKET=phishing-app-dev
 export SECRET_KEY=dev-secret
 
@@ -150,6 +159,19 @@ aws dynamodb create-table \
     AttributeName=username,AttributeType=S \
   --global-secondary-indexes \
     '[{"IndexName":"quiz-question-index","KeySchema":[{"AttributeName":"quiz_question_id","KeyType":"HASH"},{"AttributeName":"username","KeyType":"RANGE"}],"Projection":{"ProjectionType":"ALL"}}]' \
+  --billing-mode PAY_PER_REQUEST
+
+aws dynamodb create-table \
+  --endpoint-url http://localhost:8000 \
+  --table-name phishing-app-dev-inspector-attempts \
+  --key-schema AttributeName=username,KeyType=HASH AttributeName=submitted_at,KeyType=RANGE \
+  --attribute-definitions \
+    AttributeName=username,AttributeType=S \
+    AttributeName=submitted_at,AttributeType=S \
+    AttributeName=group,AttributeType=S \
+    AttributeName=email_file,AttributeType=S \
+  --global-secondary-indexes \
+    '[{"IndexName":"group-index","KeySchema":[{"AttributeName":"group","KeyType":"HASH"},{"AttributeName":"submitted_at","KeyType":"RANGE"}],"Projection":{"ProjectionType":"ALL"}},{"IndexName":"email-index","KeySchema":[{"AttributeName":"email_file","KeyType":"HASH"},{"AttributeName":"submitted_at","KeyType":"RANGE"}],"Projection":{"ProjectionType":"ALL"}}]' \
   --billing-mode PAY_PER_REQUEST
 ```
 

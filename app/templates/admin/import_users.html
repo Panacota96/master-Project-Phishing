@@ -33,13 +33,16 @@
                         <tr><td><code>username</code></td><td>Yes</td><td>Unique username</td></tr>
                         <tr><td><code>email</code></td><td>Yes</td><td>Unique email address</td></tr>
                         <tr><td><code>password</code></td><td>Yes</td><td>Initial password</td></tr>
-                        <tr><td><code>group</code></td><td>No</td><td>Department/group name (defaults to "default")</td></tr>
+                        <tr><td><code>class</code></td><td>Yes</td><td>Class or cohort identifier</td></tr>
+                        <tr><td><code>academic_year</code></td><td>Yes</td><td>Academic year (e.g., 2025)</td></tr>
+                        <tr><td><code>major</code></td><td>Yes</td><td>Major or specialization</td></tr>
+                        <tr><td><code>group</code></td><td>No</td><td>Legacy grouping label (defaults to "default")</td></tr>
                     </tbody>
                 </table>
                 <p class="text-muted">Example:</p>
-                <pre class="bg-light p-2">username,email,password,group
-jdoe,jdoe@company.com,TempPass123,engineering
-asmith,asmith@company.com,TempPass456,marketing</pre>
+                <pre class="bg-light p-2">username,email,password,class,academic_year,major,group
+jdoe,jdoe@company.com,TempPass123,Class A,2025,CS,engineering
+asmith,asmith@company.com,TempPass456,Class B,2025,Marketing,marketing</pre>
             </div>
         </div>
     </div>
@@ -52,14 +55,6 @@ asmith,asmith@company.com,TempPass456,marketing</pre>
                 <p><strong>Total in CSV:</strong> {{ results.total }}</p>
                 <p><strong>Created:</strong> {{ results.created }}</p>
                 <p><strong>Skipped:</strong> {{ results.skipped | length }}</p>
-                {% if results.skipped %}
-                <p class="text-muted">Skipped users (already exist):</p>
-                <ul>
-                    {% for u in results.skipped %}
-                    <li>{{ u }}</li>
-                    {% endfor %}
-                </ul>
-                {% endif %}
             </div>
         </div>
         {% endif %}

@@ -54,6 +54,14 @@ python run.py
 
 The app runs at **http://localhost:5000**. Default admin: `admin` / `admin123`
 
+## Make Targets
+
+```bash
+make lint
+make test
+make lambda
+```
+
 ## Docker
 
 ```bash
@@ -69,9 +77,36 @@ docker compose down
 
 Access at **http://localhost** (port 80).
 
+## Lambda Build
+
+Use the shared build script to package the Lambda artifact:
+
+```bash
+./scripts/build_lambda.sh
+```
+
 ## AWS Deployment
 
 See [aws/README.md](aws/README.md) for a full guide to deploy on AWS Free Tier (EC2 t2.micro + Docker + Nginx).
+
+## Terraform Remote State (Bootstrap)
+
+```bash
+cd terraform/bootstrap
+terraform init
+terraform apply \
+  -var="state_bucket_name=phishing-terraform-state" \
+  -var="lock_table_name=phishing-terraform-locks" \
+  -var="aws_region=eu-west-3"
+```
+
+## CI Backend Config Variables
+
+Set these in GitLab CI/CD for Terraform remote state:
+
+- `TF_STATE_BUCKET` (e.g., `phishing-terraform-state`)
+- `TF_STATE_KEY` (e.g., `prod/terraform.tfstate`)
+- `TF_STATE_LOCK_TABLE` (e.g., `phishing-terraform-locks`)
 
 ## Project Structure
 
