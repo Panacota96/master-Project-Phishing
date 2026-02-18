@@ -117,9 +117,16 @@ def _parse_eml_detail(key):
     if return_path and from_header:
         from_domain = re.search(r'@([\w.-]+)', from_header)
         return_domain = re.search(r'@([\w.-]+)', return_path)
-        if from_domain and return_domain and from_domain.group(1).lower() != return_domain.group(1).lower():
+        if (
+            from_domain
+            and return_domain
+            and from_domain.group(1).lower() != return_domain.group(1).lower()
+        ):
             warnings.append(
-                f'From domain ({from_domain.group(1)}) differs from Return-Path domain ({return_domain.group(1)})'
+                (
+                    f'From domain ({from_domain.group(1)}) differs from Return-Path domain '
+                    f'({return_domain.group(1)})'
+                )
             )
 
     if any('xn--' in link.lower() for link in links):
