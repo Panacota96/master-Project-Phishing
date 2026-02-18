@@ -49,8 +49,22 @@ source .venv/bin/activate
 # Install dependencies
 python -m pip install -r requirements.txt
 
-# Seed the database with admin user + quiz questions
-python seed.py
+# Start DynamoDB Local (optional, for local dev)
+docker run -d -p 8000:8000 amazon/dynamodb-local
+
+# Configure local DynamoDB + seed
+export DYNAMODB_ENDPOINT=http://localhost:8000
+export AWS_REGION_NAME=eu-west-3
+export AWS_ACCESS_KEY_ID=fake
+export AWS_SECRET_ACCESS_KEY=fake
+export DYNAMODB_USERS=phishing-app-dev-users
+export DYNAMODB_QUIZZES=phishing-app-dev-quizzes
+export DYNAMODB_ATTEMPTS=phishing-app-dev-attempts
+export DYNAMODB_RESPONSES=phishing-app-dev-responses
+export DYNAMODB_INSPECTOR=phishing-app-dev-inspector-attempts
+export S3_BUCKET=phishing-app-dev
+export SECRET_KEY=dev-secret
+python seed_dynamodb.py
 
 # Run the development server
 python run.py
@@ -61,7 +75,7 @@ The app runs at **http://localhost:5000**. Default admin: `admin` / `admin123`
 ## Reproducible Setup (Checklist)
 1. Create and activate a virtual environment: `python3 -m venv .venv && source .venv/bin/activate`
 2. Install dependencies: `python -m pip install -r requirements.txt`
-3. Seed data: `python seed.py` (SQLite) or `python seed_dynamodb.py` (DynamoDB)
+3. Seed data: `python seed_dynamodb.py` (DynamoDB)
 4. Run locally: `python run.py`
 5. Verify login and quiz list load in the browser.
 
@@ -81,6 +95,7 @@ make lambda
 ## CI/CD Notes
 - GitLab CI expects `TF_VAR_secret_key` to be set as a masked variable.
 - GitLab CI uses `TF_ENV` (`dev` or `prod`) to select the backend and tfvars file.
+- Set `SKIP_SEED=true` to skip DynamoDB seeding during deploy.
 - Test reports are emitted as `report.xml` for JUnit artifacts.
 
 ## CI/CD Overview
@@ -176,6 +191,7 @@ Set these in GitLab CI/CD:
 - `TF_ENV` (`dev` or `prod`)
 - `TF_VAR_secret_key` (masked)
 - `TF_VAR_app_name` (optional, defaults to `phishing-app`)
+- `SKIP_SEED` (optional, `true` to skip seeding)
 
 ## Project Structure
 

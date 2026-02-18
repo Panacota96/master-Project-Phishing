@@ -122,7 +122,7 @@ export DYNAMODB_QUIZZES=phishing-app-dev-quizzes
 export DYNAMODB_ATTEMPTS=phishing-app-dev-attempts
 export DYNAMODB_RESPONSES=phishing-app-dev-responses
 export DYNAMODB_INSPECTOR=phishing-app-dev-inspector-attempts
-export S3_BUCKET=phishing-app-dev
+export S3_BUCKET=phishing-app-dev-local
 export SECRET_KEY=dev-secret
 
 # Create tables using AWS CLI pointed at local DynamoDB
@@ -204,8 +204,8 @@ For full S3 support locally, use LocalStack:
 docker run -d -p 4566:4566 localstack/localstack
 
 export S3_ENDPOINT=http://localhost:4566
-aws --endpoint-url http://localhost:4566 s3 mb s3://phishing-app-dev
-aws --endpoint-url http://localhost:4566 s3 sync examples/ s3://phishing-app-dev/eml-samples/
+aws --endpoint-url http://localhost:4566 s3 mb s3://phishing-app-dev-local
+aws --endpoint-url http://localhost:4566 s3 sync examples/ s3://phishing-app-dev-local/eml-samples/
 ```
 
 ---

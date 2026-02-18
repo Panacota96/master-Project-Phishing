@@ -47,6 +47,7 @@ python seed_dynamodb.py
 - **AccessDenied for DynamoDB**: switch to `terraform-deployer` or update IAM permissions.
 - **PEP 668 / pip install blocked**: use a venv (`python3 -m venv .venv`).
 - **Wrong bucket/env**: ensure `<env>` placeholders are replaced (dev vs prod).
+- **CI tries to recreate existing resources**: run `./scripts/import_resources.sh` to import live AWS resources into state.
 
 ## Session Log (Example — Dev)
 Use this as a template to document what was done in this session.

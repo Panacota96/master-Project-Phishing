@@ -9,11 +9,11 @@
 - `terraform/bootstrap/README.md`: Bootstrap instructions for remote state.
 - `terraform/backend/`: Backend configs for dev/prod state.
 - `terraform/env/`: Example tfvars for dev/prod.
-- Root scripts: `run.py` (dev entrypoint), `seed.py` (SQLite seed), `seed_dynamodb.py` (DynamoDB seed), `lambda_handler.py` (AWS Lambda).
+- Root scripts: `run.py` (dev entrypoint), `seed_dynamodb.py` (DynamoDB seed), `lambda_handler.py` (AWS Lambda).
 
 ## Build, Test, and Development Commands
 - `pip install -r requirements.txt`: install Python dependencies.
-- `python seed.py`: seed local SQLite data (admin + quiz).
+- `python seed_dynamodb.py`: seed DynamoDB data (admin + quiz).
 - `python run.py`: run the Flask dev server at `http://localhost:5000`.
 - `docker compose up -d --build`: run Nginx + Gunicorn + Flask locally.
 - `pytest tests/ -v`: run automated tests.
@@ -31,9 +31,9 @@
 - Terraform init (terminal):
   - `terraform init -backend-config=backend/dev.hcl` success output.
 - Terraform plan (terminal):
-  - `terraform plan` summary (add/change/destroy counts).
+  - `terraform plan -var-file=env/dev.tfvars` summary (add/change/destroy counts).
 - Terraform apply (terminal):
-  - `terraform apply` success output.
+  - `terraform apply -var-file=env/dev.tfvars` success output.
   - Terraform outputs showing API Gateway URL.
 - S3 upload (console):
   - `eml-samples/` prefix listing with `.eml` files.
@@ -52,6 +52,8 @@
 - Dev environment deployed via Terraform (Lambda + API Gateway + DynamoDB + S3).
 - Remote state bootstrapped: S3 state bucket + DynamoDB lock table.
 - CI/CD fixes applied (make in CI, JUnit report, CI secret key requirement).
+- CI/CD auto-deploys dev and keeps prod manual; seeding runs every deploy (skippable via `SKIP_SEED`).
+- Added `scripts/import_resources.sh` to import existing AWS resources into state.
 - GDPR updates: group-only analytics by class/year/major; no individual reports.
 - Inspector analytics now cohort-based with CSV export.
 - Lambda handler uses ASGI wrapper (`asgiref` + `mangum`).
@@ -60,7 +62,7 @@
 - Python: 4-space indentation, PEP 8 style, `snake_case` for functions/vars, `PascalCase` for classes.
 - Flask blueprints follow `app/<area>/routes.py` and `app/<area>/forms.py` naming.
 - Templates live under `app/templates/<area>/` with descriptive names (e.g., `quiz_list.html`).
-- No formatter/linter is enforced in repo; keep diffs clean and consistent.
+- Linting uses `flake8` via `make lint`; keep diffs clean and consistent.
 
 ## Testing Guidelines
 - Framework: `pytest`. DynamoDB interactions are mocked with `moto` in tests.

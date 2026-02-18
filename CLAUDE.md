@@ -8,10 +8,10 @@ This is the **master-Project-Phishing** repository, part of an ESME engineering 
 
 ## Tech Stack
 
-- **Backend**: Flask (Python 3) with Flask-SQLAlchemy, Flask-Login, Flask-WTF
-- **Database**: SQLite (file: `app.db`)
+- **Backend**: Flask (Python 3.12), Flask-Login, Flask-WTF
+- **Database**: DynamoDB (AWS)
 - **Frontend**: Jinja2 templates + Bootstrap 5 (CDN)
-- **Charts**: Chart.js for dashboard visualizations
+- **Charts**: Chart.js
 - **Auth**: Flask-Login + Werkzeug password hashing
 
 ## Setup & Run (Local Development)
@@ -24,8 +24,22 @@ source .venv/bin/activate
 # Install dependencies
 python -m pip install -r requirements.txt
 
-# Seed the database with sample quiz data and admin user
-python seed.py
+# Start DynamoDB Local (optional for local dev)
+docker run -d -p 8000:8000 amazon/dynamodb-local
+
+# Configure and seed DynamoDB
+export DYNAMODB_ENDPOINT=http://localhost:8000
+export AWS_REGION_NAME=eu-west-3
+export AWS_ACCESS_KEY_ID=fake
+export AWS_SECRET_ACCESS_KEY=fake
+export DYNAMODB_USERS=phishing-app-dev-users
+export DYNAMODB_QUIZZES=phishing-app-dev-quizzes
+export DYNAMODB_ATTEMPTS=phishing-app-dev-attempts
+export DYNAMODB_RESPONSES=phishing-app-dev-responses
+export DYNAMODB_INSPECTOR=phishing-app-dev-inspector-attempts
+export S3_BUCKET=phishing-app-dev-local
+export SECRET_KEY=dev-secret
+python seed_dynamodb.py
 
 # Run the development server
 python run.py
@@ -56,18 +70,22 @@ make test
 make lambda
 ```
 
-## CI Backend Config Variables
+## CI/CD Variables (GitLab)
 
-Set these in GitLab CI/CD for Terraform remote state:
+Set these in GitLab CI/CD:
 
-- `TF_STATE_BUCKET` (e.g., `phishing-terraform-state`)
-- `TF_STATE_KEY` (e.g., `prod/terraform.tfstate`)
-- `TF_STATE_LOCK_TABLE` (e.g., `phishing-terraform-locks`)
+- `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_DEFAULT_REGION`
+- `TF_ENV` (`dev` or `prod`)
+- `TF_VAR_secret_key` (masked)
+- `TF_VAR_app_name` (optional, defaults to `phishing-app`)
+- `SKIP_SEED` (optional, `true` to skip seeding)
 
 ## Session Notes (2026-02-18)
 - Dev environment deployed with Terraform (Lambda + API Gateway + DynamoDB + S3).
 - Remote state bootstrapped successfully.
 - CI/CD fixes: `make` installed in CI, JUnit report enabled, `TF_VAR_secret_key` required.
+- CI/CD now auto-deploys dev, manual for prod, and seeds DynamoDB each deploy (skippable via `SKIP_SEED`).
+- Added `scripts/import_resources.sh` to import existing AWS resources into state.
 - GDPR compliance: analytics/reporting aggregated by class/year/major only.
 - Inspector analytics now cohort-based with CSV export.
 - Lambda updated to ASGI wrapper (`asgiref` + `mangum`).
@@ -92,7 +110,7 @@ Access at `http://localhost` (port 80).
 
 ## AWS Deployment
 
-See **[aws/README.md](aws/README.md)** for a full step-by-step guide to deploy on AWS Free Tier (EC2 t2.micro + Docker + Nginx).
+See `DEPLOYMENT_GUIDE.md` for the Terraform + GitLab CI/CD deployment workflow.
 
 ## Full Project Structure
 
@@ -117,7 +135,7 @@ master-Project-Phishing/
 │   └── user-data.sh         # EC2 boot script (installs Docker + Compose)
 ├── app/
 │   ├── __init__.py          # Flask app factory (creates app, registers blueprints)
-│   ├── models.py            # SQLAlchemy models: User, Quiz, Question, Answer, QuizAttempt
+│   ├── models.py            # DynamoDB data access layer (users, quizzes, attempts, responses, inspector attempts)
 │   ├── auth/
 │   │   ├── __init__.py      # Auth blueprint registration
 │   │   ├── routes.py        # Login, register, logout routes
