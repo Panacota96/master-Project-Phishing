@@ -5,6 +5,7 @@ stages:
   - plan
   - deploy
   - migrate
+  - destroy
 
 variables:
   TF_DIR: terraform
@@ -243,3 +244,75 @@ migrate_prod:
     - main
   dependencies:
     - deploy_prod
+
+destroy_dev:
+  stage: destroy
+  image:
+    name: hashicorp/terraform:latest
+    entrypoint: [""]
+  before_script:
+    - apk add --no-cache aws-cli
+  script:
+    - cd $TF_DIR
+    - TF_ENV=dev
+    - TF_BACKEND_FILE="backend/${TF_ENV}.hcl"
+    - TF_VAR_FILE="env/${TF_ENV}.tfvars"
+    - terraform init -reconfigure -backend-config="${TF_BACKEND_FILE}"
+    - |
+      if [ "${CLEAN_S3:-false}" = "true" ]; then
+        S3_BUCKET="$(terraform output -raw s3_bucket_name)"
+        aws s3api list-object-versions --bucket "${S3_BUCKET}" \
+          --query 'Versions[].{Key:Key,VersionId:VersionId}' --output json > /tmp/versions.json
+        aws s3api list-object-versions --bucket "${S3_BUCKET}" \
+          --query 'DeleteMarkers[].{Key:Key,VersionId:VersionId}' --output json > /tmp/markers.json
+        python3 - <<'PY'
+import json
+from pathlib import Path
+versions = json.loads(Path('/tmp/versions.json').read_text() or '[]')
+markers = json.loads(Path('/tmp/markers.json').read_text() or '[]')
+objects = versions + markers
+Path('/tmp/delete.json').write_text(json.dumps({'Objects': objects} if objects else {'Objects': []}))
+print(f"objects_to_delete={len(objects)}")
+PY
+        aws s3api delete-objects --bucket "${S3_BUCKET}" --delete file:///tmp/delete.json
+      fi
+    - terraform destroy -auto-approve -var-file="${TF_VAR_FILE}"
+  when: manual
+  only:
+    - main
+
+destroy_prod:
+  stage: destroy
+  image:
+    name: hashicorp/terraform:latest
+    entrypoint: [""]
+  before_script:
+    - apk add --no-cache aws-cli
+  script:
+    - cd $TF_DIR
+    - TF_ENV=prod
+    - TF_BACKEND_FILE="backend/${TF_ENV}.hcl"
+    - TF_VAR_FILE="env/${TF_ENV}.tfvars"
+    - terraform init -reconfigure -backend-config="${TF_BACKEND_FILE}"
+    - |
+      if [ "${CLEAN_S3:-false}" = "true" ]; then
+        S3_BUCKET="$(terraform output -raw s3_bucket_name)"
+        aws s3api list-object-versions --bucket "${S3_BUCKET}" \
+          --query 'Versions[].{Key:Key,VersionId:VersionId}' --output json > /tmp/versions.json
+        aws s3api list-object-versions --bucket "${S3_BUCKET}" \
+          --query 'DeleteMarkers[].{Key:Key,VersionId:VersionId}' --output json > /tmp/markers.json
+        python3 - <<'PY'
+import json
+from pathlib import Path
+versions = json.loads(Path('/tmp/versions.json').read_text() or '[]')
+markers = json.loads(Path('/tmp/markers.json').read_text() or '[]')
+objects = versions + markers
+Path('/tmp/delete.json').write_text(json.dumps({'Objects': objects} if objects else {'Objects': []}))
+print(f"objects_to_delete={len(objects)}")
+PY
+        aws s3api delete-objects --bucket "${S3_BUCKET}" --delete file:///tmp/delete.json
+      fi
+    - terraform destroy -auto-approve -var-file="${TF_VAR_FILE}"
+  when: manual
+  only:
+    - main

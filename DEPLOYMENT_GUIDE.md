@@ -330,6 +330,7 @@ Go to **GitLab → Your Project → Settings → CI/CD → Variables**. Add thes
 | `TF_VAR_environment`    | `dev` or `prod`               | No      |
 | `TF_VAR_app_name`       | `phishing-app`                | No      |
 | `SKIP_SEED`             | `true` to skip seeding        | No      |
+| `CLEAN_S3`              | `true` to purge versioned objects before destroy | No |
 
 CI/CD generates `terraform/env/<env>.tfvars` at runtime from these variables if it does not already exist in the repo.
 
@@ -346,6 +347,8 @@ When you push to GitLab, the pipeline runs automatically:
 | **deploy_dev** | `terraform apply` (dev) + upload EML + seed DynamoDB | **Auto** |
 | **deploy_prod** | `terraform apply` (prod) + upload EML + seed DynamoDB | **Manual click** |
 | **migrate_prod** | Copy dev → prod (S3 + DynamoDB) | **Manual click** |
+| **destroy_dev** | Destroy dev infra (optional S3 cleanup) | **Manual click** |
+| **destroy_prod** | Destroy prod infra (optional S3 cleanup) | **Manual click** |
 
 ### 3.3 What to Expect (CI/CD)
 
@@ -365,6 +368,8 @@ When you push to GitLab, the pipeline runs automatically:
 8. **migrate_prod** (manual): click play to copy dev data into prod.
    - Optional: set `MIGRATE_DRY_RUN=true` to scan without writing.
    - This also runs S3 sync in `--dryrun` mode.
+9. **destroy_dev** / **destroy_prod** (manual): safely teardown envs.
+   - Optional: set `CLEAN_S3=true` to delete versioned objects before destroy.
 
 After each deploy, the job log shows the API Gateway URL.
 
