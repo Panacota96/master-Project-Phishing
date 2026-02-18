@@ -328,6 +328,7 @@ Go to **GitLab → Your Project → Settings → CI/CD → Variables**. Add thes
 | `TF_ENV`                | `dev` or `prod`               | No      |
 | `TF_VAR_environment`    | `dev` or `prod`               | No      |
 | `TF_VAR_app_name`       | `phishing-app`                | No      |
+| `SKIP_SEED`             | `true` to skip seeding        | No      |
 
 CI/CD generates `terraform/env/<env>.tfvars` at runtime from these variables if it does not already exist in the repo.
 

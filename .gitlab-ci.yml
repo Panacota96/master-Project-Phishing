@@ -123,17 +123,22 @@ deploy_dev:
     - terraform apply -auto-approve tfplan
     - S3_BUCKET="$(terraform output -raw s3_bucket_name)"
     - aws s3 sync ../examples/ "s3://${S3_BUCKET}/eml-samples/" --exclude "*" --include "*.eml"
-    - cd ..
-    - pip3 install -r requirements.txt
-    - export AWS_REGION_NAME="${AWS_DEFAULT_REGION}"
-    - export DYNAMODB_USERS="$(terraform output -raw dynamodb_users_table)"
-    - export DYNAMODB_QUIZZES="$(terraform output -raw dynamodb_quizzes_table)"
-    - export DYNAMODB_ATTEMPTS="$(terraform output -raw dynamodb_attempts_table)"
-    - export DYNAMODB_RESPONSES="$(terraform output -raw dynamodb_responses_table)"
-    - export DYNAMODB_INSPECTOR="$(terraform output -raw dynamodb_inspector_table)"
-    - export S3_BUCKET="$(terraform output -raw s3_bucket_name)"
-    - export SECRET_KEY="${TF_VAR_secret_key}"
-    - python3 seed_dynamodb.py
+    - |
+      if [ "${SKIP_SEED:-false}" != "true" ]; then
+        cd ..
+        pip3 install -r requirements.txt
+        export AWS_REGION_NAME="${AWS_DEFAULT_REGION}"
+        export DYNAMODB_USERS="$(terraform output -raw dynamodb_users_table)"
+        export DYNAMODB_QUIZZES="$(terraform output -raw dynamodb_quizzes_table)"
+        export DYNAMODB_ATTEMPTS="$(terraform output -raw dynamodb_attempts_table)"
+        export DYNAMODB_RESPONSES="$(terraform output -raw dynamodb_responses_table)"
+        export DYNAMODB_INSPECTOR="$(terraform output -raw dynamodb_inspector_table)"
+        export S3_BUCKET="$(terraform output -raw s3_bucket_name)"
+        export SECRET_KEY="${TF_VAR_secret_key}"
+        python3 seed_dynamodb.py
+      else
+        echo "Skipping DynamoDB seed because SKIP_SEED=true"
+      fi
   only:
     - main
   dependencies:
@@ -174,17 +179,22 @@ deploy_prod:
     - terraform apply -auto-approve tfplan
     - S3_BUCKET="$(terraform output -raw s3_bucket_name)"
     - aws s3 sync ../examples/ "s3://${S3_BUCKET}/eml-samples/" --exclude "*" --include "*.eml"
-    - cd ..
-    - pip3 install -r requirements.txt
-    - export AWS_REGION_NAME="${AWS_DEFAULT_REGION}"
-    - export DYNAMODB_USERS="$(terraform output -raw dynamodb_users_table)"
-    - export DYNAMODB_QUIZZES="$(terraform output -raw dynamodb_quizzes_table)"
-    - export DYNAMODB_ATTEMPTS="$(terraform output -raw dynamodb_attempts_table)"
-    - export DYNAMODB_RESPONSES="$(terraform output -raw dynamodb_responses_table)"
-    - export DYNAMODB_INSPECTOR="$(terraform output -raw dynamodb_inspector_table)"
-    - export S3_BUCKET="$(terraform output -raw s3_bucket_name)"
-    - export SECRET_KEY="${TF_VAR_secret_key}"
-    - python3 seed_dynamodb.py
+    - |
+      if [ "${SKIP_SEED:-false}" != "true" ]; then
+        cd ..
+        pip3 install -r requirements.txt
+        export AWS_REGION_NAME="${AWS_DEFAULT_REGION}"
+        export DYNAMODB_USERS="$(terraform output -raw dynamodb_users_table)"
+        export DYNAMODB_QUIZZES="$(terraform output -raw dynamodb_quizzes_table)"
+        export DYNAMODB_ATTEMPTS="$(terraform output -raw dynamodb_attempts_table)"
+        export DYNAMODB_RESPONSES="$(terraform output -raw dynamodb_responses_table)"
+        export DYNAMODB_INSPECTOR="$(terraform output -raw dynamodb_inspector_table)"
+        export S3_BUCKET="$(terraform output -raw s3_bucket_name)"
+        export SECRET_KEY="${TF_VAR_secret_key}"
+        python3 seed_dynamodb.py
+      else
+        echo "Skipping DynamoDB seed because SKIP_SEED=true"
+      fi
   when: manual
   only:
     - main
