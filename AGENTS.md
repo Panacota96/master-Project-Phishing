@@ -71,3 +71,4 @@
 - Default admin credentials are `admin` / `admin123` (change for real deployments).
 - Configure secrets and AWS resources via env vars (see `aws/env.example`).
 - Do not commit real AWS keys or production secrets.
+- CI/CD requires `TF_VAR_secret_key` set in GitLab variables.

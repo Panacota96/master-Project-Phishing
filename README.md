@@ -78,6 +78,10 @@ make test
 make lambda
 ```
 
+## CI/CD Notes
+- GitLab CI expects `TF_VAR_secret_key` to be set as a masked variable.
+- Test reports are emitted as `report.xml` for JUnit artifacts.
+
 ## Docker
 
 ```bash

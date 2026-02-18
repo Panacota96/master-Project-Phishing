@@ -353,6 +353,11 @@ When you push to GitLab, the pipeline runs automatically:
 
 After deploy, the job log shows the API Gateway URL.
 
+### 3.3 Common CI/CD Fixes
+- **Pipeline prompts for `secret_key`**: set `TF_VAR_secret_key` in GitLab variables.
+- **Build step permission denied**: CI runs the build script via `bash` (already configured).
+- **Test artifacts missing**: `make test` generates `report.xml` for GitLab JUnit reports.
+
 ---
 
 ## 4. AWS Resources Created

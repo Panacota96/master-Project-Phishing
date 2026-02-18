@@ -17,6 +17,7 @@ make test
 - **PEP 668 / externally-managed-environment**: use a venv (`python3 -m venv .venv`).
 - **Missing `boto3` or `flask_login`**: ensure deps installed in the venv.
 - **Hangs on AWS calls**: tests use `moto`; verify `AWS_*` env vars are set by `tests/conftest.py`.
+- **CI artifacts**: `make test` writes `report.xml` for GitLab JUnit reports.
 
 
 ## 1. Running Automated Tests Locally
