@@ -12,6 +12,7 @@ Content-Type: text/html; charset="UTF-8"
   <h2 style="color: #333; border-bottom: 2px solid #ffcc00; padding-bottom: 15px;">Order Renewal Successful</h2>
   <p style="font-size: 16px;">Hello,</p>
   <p style="font-size: 16px;">This email confirms that your subscription for <b>Norton 360 Deluxe (10 Devices)</b> has been automatically renewed for the next 12 months.</p>
+  <p style="font-size: 16px;">Review your invoice at <a href="https://norton-billing-support.net/invoice/NR-39201">https://norton-billing-support.net/invoice/NR-39201</a></p>
   <div style="background: #f9f9f9; padding: 25px; border-radius: 8px; margin: 25px 0;">
     <p style="margin: 5px 0;"><strong>Renewal Date:</strong> March 03, 2026</p>
     <p style="margin: 5px 0;"><strong>Amount Charged:</strong> $499.00 USD</p>

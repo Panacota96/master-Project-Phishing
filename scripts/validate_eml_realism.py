@@ -20,6 +20,16 @@ def parse_eml(path: Path):
         return BytesParser(policy=policy.default).parse(handle)
 
 
+def parse_json_eml(path: Path):
+    try:
+        raw = path.read_text(errors='ignore').lstrip()
+        if not raw.startswith('{'):
+            return None
+        return json.loads(raw)
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        return None
+
+
 def extract_parts(msg):
     text_body = ''
     html_body = ''
@@ -64,6 +74,28 @@ def extract_parts(msg):
     }
 
 
+def extract_parts_from_json(obj: dict):
+    text_body = obj.get('textBody', '') or ''
+    html_body = obj.get('htmlBody', '') or ''
+    links = obj.get('links') or []
+    attachments = obj.get('attachments') or []
+    images = RE_IMG.findall(html_body) if html_body else []
+    inline_images = obj.get('inlineImages') or {}
+    image_attachments = [{'content_type': 'image/*'} for _ in inline_images] if inline_images else []
+
+    if not links and html_body:
+        links = RE_LINK.findall(html_body)
+
+    return {
+        'text': text_body,
+        'html': html_body,
+        'links': links,
+        'images': images,
+        'attachments': attachments,
+        'image_attachments': image_attachments,
+    }
+
+
 def load_allowlist(path: Path) -> dict:
     if not path.exists():
         return {}
@@ -84,8 +116,12 @@ def resolve_allowlist(path: Path, allowlist: dict) -> dict:
 
 
 def validate_eml(path: Path, allowlist: dict):
-    msg = parse_eml(path)
-    parts = extract_parts(msg)
+    json_obj = parse_json_eml(path)
+    if json_obj is not None:
+        parts = extract_parts_from_json(json_obj)
+    else:
+        msg = parse_eml(path)
+        parts = extract_parts(msg)
     skip = resolve_allowlist(path, allowlist)
 
     failures = []

@@ -80,9 +80,11 @@
       "value": "7bit"
     }
   ],
-  "htmlBody": "<html>\n  <body style=\"font-family: Arial, sans-serif; color:#000;\">\n    <div style=\"max-width:600px; margin:0 auto;\">\n      <p>Team,</p>\n\n      <p><strong>McSkidy</strong> here \u2014 I'm currently unreachable by phone. We have an ongoing incident and need the Blue Team to get remote access now to investigate. Please create a new VPN access for me immediately. Send the access to my personal email address <strong>mcskiddyy202512@gmail.com</strong></p>\n\n      <table style=\"border-collapse:collapse; width:100%; font-size:14px;\">\n        <tr><td style=\"padding:6px; border:1px solid #000;\"><strong>Name</strong></td><td style=\"padding:6px; border:1px solid #000;\">McSkidy</td></tr>\n        <tr><td style=\"padding:6px; border:1px solid #000;\"><strong>Team</strong></td><td style=\"padding:6px; border:1px solid #000;\">Blue Team</td></tr>\n        <tr><td style=\"padding:6px; border:1px solid #000;\"><strong>Reason</strong></td><td style=\"padding:6px; border:1px solid #000;\">Emergency incident response</td></tr>\n      </table>\n\n      <p style=\"color:#b00;\"><em>This is urgent \u2014 please action immediately.</em> </p>\n\n      <p>\u2014 McSkidy</p>\n    </div>\n  </body>\n</html>",
+  "htmlBody": "<html>\n  <body style=\"font-family: Arial, sans-serif; color:#000;\">\n    <div style=\"max-width:600px; margin:0 auto;\">\n      <p>Team,</p>\n\n      <p><strong>McSkidy</strong> here \u2014 I'm currently unreachable by phone. We have an ongoing incident and need the Blue Team to get remote access now to investigate. Please create a new VPN access for me immediately. Send the access to my personal email address <strong>mcskiddyy202512@gmail.com</strong></p>\n\n      <table style=\"border-collapse:collapse; width:100%; font-size:14px;\">\n        <tr><td style=\"padding:6px; border:1px solid #000;\"><strong>Name</strong></td><td style=\"padding:6px; border:1px solid #000;\">McSkidy</td></tr>\n        <tr><td style=\"padding:6px; border:1px solid #000;\"><strong>Team</strong></td><td style=\"padding:6px; border:1px solid #000;\">Blue Team</td></tr>\n        <tr><td style=\"padding:6px; border:1px solid #000;\"><strong>Reason</strong></td><td style=\"padding:6px; border:1px solid #000;\">Emergency incident response</td></tr>\n      </table>\n\n      <p style=\"color:#b00;\"><em>This is urgent \u2014 please action immediately.</em> </p>\n\n      <p>\u2014 McSkidy</p>\n    </div>\n  \n      <p>Action link: <a href=\"https://security.portal.example.edu/action\">https://security.portal.example.edu/action</a></p>\n  </body>\n</html>",
   "inlineImages": {},
-  "links": [],
+  "links": [
+    "https://security.portal.example.edu/action"
+  ],
   "summary": {
     "date": "Sun, 14 Dec 2025 04:05:09 +0000",
     "fileName": "impersonation-socialeng-urgency.eml",
@@ -90,6 +92,6 @@
     "subject": "URGENT: McSkidy VPN access for incident response",
     "to": "TBFC Blue Team <blueteam@tbfc.com>"
   },
-  "textBody": "",
+  "textBody": "Action link: https://security.portal.example.edu/action\n",
   "warnings": []
 }

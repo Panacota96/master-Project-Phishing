@@ -26,15 +26,6 @@
     "legitapp-impersonation-externaldomain-socialeng.eml": {
       "skip_link_attachment": true
     },
-    "impersonation-socialeng-urgency.eml": {
-      "skip_link_attachment": true
-    },
-    "callback-phish.eml": {
-      "skip_link_attachment": true
-    },
-    "impersonation-2.eml": {
-      "skip_link_attachment": true
-    },
     "spam-attachment-1.eml": {
       "skip_image": true
     },
