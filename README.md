@@ -82,6 +82,17 @@ make lambda
 - GitLab CI expects `TF_VAR_secret_key` to be set as a masked variable.
 - Test reports are emitted as `report.xml` for JUnit artifacts.
 
+## CI/CD Overview
+**Continuous Integration (CI)** automatically checks every change:
+- Linting (code quality)
+- Automated tests
+- Build the Lambda artifact
+
+**Continuous Deployment (CD)** manages infrastructure safely:
+- Terraform plan to preview changes
+- Manual deploy stage to apply changes
+
+
 ## Admin Operations Guide
 
 ### Upload Users (CSV)
