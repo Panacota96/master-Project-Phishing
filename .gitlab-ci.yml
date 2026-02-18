@@ -128,7 +128,8 @@ deploy_dev:
     - |
       if [ "${SKIP_SEED:-false}" != "true" ]; then
         cd ..
-        pip3 install -r requirements.txt
+        python3 -m venv .venv
+        .venv/bin/pip install -r requirements.txt
         export AWS_REGION_NAME="${AWS_DEFAULT_REGION}"
         export DYNAMODB_USERS="$(terraform output -raw dynamodb_users_table)"
         export DYNAMODB_QUIZZES="$(terraform output -raw dynamodb_quizzes_table)"
@@ -137,7 +138,7 @@ deploy_dev:
         export DYNAMODB_INSPECTOR="$(terraform output -raw dynamodb_inspector_table)"
         export S3_BUCKET="$(terraform output -raw s3_bucket_name)"
         export SECRET_KEY="${TF_VAR_secret_key}"
-        python3 seed_dynamodb.py
+        .venv/bin/python3 seed_dynamodb.py
       else
         echo "Skipping DynamoDB seed because SKIP_SEED=true"
       fi
@@ -184,7 +185,8 @@ deploy_prod:
     - |
       if [ "${SKIP_SEED:-false}" != "true" ]; then
         cd ..
-        pip3 install -r requirements.txt
+        python3 -m venv .venv
+        .venv/bin/pip install -r requirements.txt
         export AWS_REGION_NAME="${AWS_DEFAULT_REGION}"
         export DYNAMODB_USERS="$(terraform output -raw dynamodb_users_table)"
         export DYNAMODB_QUIZZES="$(terraform output -raw dynamodb_quizzes_table)"
@@ -193,7 +195,7 @@ deploy_prod:
         export DYNAMODB_INSPECTOR="$(terraform output -raw dynamodb_inspector_table)"
         export S3_BUCKET="$(terraform output -raw s3_bucket_name)"
         export SECRET_KEY="${TF_VAR_secret_key}"
-        python3 seed_dynamodb.py
+        .venv/bin/python3 seed_dynamodb.py
       else
         echo "Skipping DynamoDB seed because SKIP_SEED=true"
       fi
