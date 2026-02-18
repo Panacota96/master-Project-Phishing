@@ -308,22 +308,26 @@ Visit the **API Gateway URL** from the Terraform output. You should see the logi
 
 ## 3. GitLab CI/CD Deployment (Automated)
 
+### 3.0 CI/CD Purpose
+**CI** validates code changes (lint + tests + build).  
+**CD** previews and applies infrastructure changes with Terraform (manual approval for deploy).
+
 ### 3.1 Configure GitLab CI/CD Variables
 
 Go to **GitLab → Your Project → Settings → CI/CD → Variables**. Add these variables (mark sensitive ones as **Masked**):
 
-| Variable | Value | Masked? |
-|----------|-------|---------|
-| `AWS_ACCESS_KEY_ID` | Your IAM access key | Yes |
-| `AWS_SECRET_ACCESS_KEY` | Your IAM secret key | Yes |
-| `AWS_DEFAULT_REGION` | `eu-west-3` | No |
-| `TF_VAR_secret_key` | Your Flask secret key | Yes |
-| `TF_VAR_environment` | `prod` or `dev` | No |
-| `TF_VAR_app_name` | `phishing-app` | No |
-| `S3_BUCKET` | `phishing-app-prod-eu-west-3` | No |
-| `TF_STATE_BUCKET` | `phishing-terraform-state` | No |
-| `TF_STATE_KEY` | `prod/terraform.tfstate` | No |
-| `TF_STATE_LOCK_TABLE` | `phishing-terraform-locks` | No |
+| Variable                | Value                         | Masked? |
+| ----------------------- | ----------------------------- | ------- |
+| `AWS_ACCESS_KEY_ID`     | Your IAM access key           | Yes     |
+| `AWS_SECRET_ACCESS_KEY` | Your IAM secret key           | Yes     |
+| `AWS_DEFAULT_REGION`    | `eu-west-3`                   | No      |
+| `TF_VAR_secret_key`     | Your Flask secret key         | Yes     |
+| `TF_VAR_environment`    | `prod` or `dev`               | No      |
+| `TF_VAR_app_name`       | `phishing-app`                | No      |
+| `S3_BUCKET`             | `phishing-app-prod-eu-west-3` | No      |
+| `TF_STATE_BUCKET`       | `phishing-terraform-state`    | No      |
+| `TF_STATE_KEY`          | `prod/terraform.tfstate`      | No      |
+| `TF_STATE_LOCK_TABLE`   | `phishing-terraform-locks`    | No      |
 
 ### 3.2 Pipeline Stages
 
@@ -448,6 +452,25 @@ aws lambda update-function-code \
   --function-name phishing-app-prod-app \
   --zip-file fileb://lambda.zip
 ```
+
+---
+
+## 6.1 Destroy & Re-Deploy (CI/CD)
+
+### Destroy (local)
+```bash
+cd terraform
+terraform destroy -var-file=terraform.tfvars
+```
+
+### Re-Deploy (CI/CD)
+1. Ensure remote state still exists (S3 + DynamoDB lock).
+2. Ensure GitLab variables are set (especially `TF_VAR_secret_key`).
+3. Push a commit to trigger the pipeline.
+4. Review the `plan` stage output.
+5. Click **Play** on the `deploy` stage to apply.
+
+Note: The app is down after destroy until deploy completes.
 
 ---
 
