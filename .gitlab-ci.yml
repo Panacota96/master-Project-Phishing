@@ -131,12 +131,12 @@ deploy_dev:
         python3 -m venv .venv
         .venv/bin/pip install -r requirements.txt
         export AWS_REGION_NAME="${AWS_DEFAULT_REGION}"
-        export DYNAMODB_USERS="$(terraform output -raw dynamodb_users_table)"
-        export DYNAMODB_QUIZZES="$(terraform output -raw dynamodb_quizzes_table)"
-        export DYNAMODB_ATTEMPTS="$(terraform output -raw dynamodb_attempts_table)"
-        export DYNAMODB_RESPONSES="$(terraform output -raw dynamodb_responses_table)"
-        export DYNAMODB_INSPECTOR="$(terraform output -raw dynamodb_inspector_table)"
-        export S3_BUCKET="$(terraform output -raw s3_bucket_name)"
+        export DYNAMODB_USERS="$(terraform -chdir="${TF_DIR}" output -raw dynamodb_users_table)"
+        export DYNAMODB_QUIZZES="$(terraform -chdir="${TF_DIR}" output -raw dynamodb_quizzes_table)"
+        export DYNAMODB_ATTEMPTS="$(terraform -chdir="${TF_DIR}" output -raw dynamodb_attempts_table)"
+        export DYNAMODB_RESPONSES="$(terraform -chdir="${TF_DIR}" output -raw dynamodb_responses_table)"
+        export DYNAMODB_INSPECTOR="$(terraform -chdir="${TF_DIR}" output -raw dynamodb_inspector_table)"
+        export S3_BUCKET="$(terraform -chdir="${TF_DIR}" output -raw s3_bucket_name)"
         export SECRET_KEY="${TF_VAR_secret_key}"
         .venv/bin/python3 seed_dynamodb.py
       else
@@ -188,12 +188,12 @@ deploy_prod:
         python3 -m venv .venv
         .venv/bin/pip install -r requirements.txt
         export AWS_REGION_NAME="${AWS_DEFAULT_REGION}"
-        export DYNAMODB_USERS="$(terraform output -raw dynamodb_users_table)"
-        export DYNAMODB_QUIZZES="$(terraform output -raw dynamodb_quizzes_table)"
-        export DYNAMODB_ATTEMPTS="$(terraform output -raw dynamodb_attempts_table)"
-        export DYNAMODB_RESPONSES="$(terraform output -raw dynamodb_responses_table)"
-        export DYNAMODB_INSPECTOR="$(terraform output -raw dynamodb_inspector_table)"
-        export S3_BUCKET="$(terraform output -raw s3_bucket_name)"
+        export DYNAMODB_USERS="$(terraform -chdir="${TF_DIR}" output -raw dynamodb_users_table)"
+        export DYNAMODB_QUIZZES="$(terraform -chdir="${TF_DIR}" output -raw dynamodb_quizzes_table)"
+        export DYNAMODB_ATTEMPTS="$(terraform -chdir="${TF_DIR}" output -raw dynamodb_attempts_table)"
+        export DYNAMODB_RESPONSES="$(terraform -chdir="${TF_DIR}" output -raw dynamodb_responses_table)"
+        export DYNAMODB_INSPECTOR="$(terraform -chdir="${TF_DIR}" output -raw dynamodb_inspector_table)"
+        export S3_BUCKET="$(terraform -chdir="${TF_DIR}" output -raw s3_bucket_name)"
         export SECRET_KEY="${TF_VAR_secret_key}"
         .venv/bin/python3 seed_dynamodb.py
       else
