@@ -77,8 +77,8 @@ if [ -z "$ROUTE_ID" ] || [ "$ROUTE_ID" = "None" ]; then
   exit 1
 fi
 
-import_if_missing aws_apigatewayv2_integration.lambda "$INTEGRATION_ID"
-import_if_missing aws_apigatewayv2_route.default "$ROUTE_ID"
+import_if_missing aws_apigatewayv2_integration.lambda "${API_ID}/${INTEGRATION_ID}"
+import_if_missing aws_apigatewayv2_route.default "${API_ID}/${ROUTE_ID}"
 import_if_missing aws_apigatewayv2_stage.default "${API_ID}/\$default"
 import_if_missing aws_lambda_permission.apigw "${LAMBDA_NAME}/AllowAPIGatewayInvoke"
 
