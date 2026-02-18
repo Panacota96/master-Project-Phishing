@@ -8,6 +8,9 @@ stages:
 variables:
   TF_DIR: terraform
   PYTHON_VERSION: "3.12"
+  TF_STATE_BUCKET: "phishing-terraform-state"
+  TF_STATE_KEY: "prod/terraform.tfstate"
+  TF_STATE_LOCK_TABLE: "phishing-terraform-locks"
 
 # ─── Stage 1: Lint ────────────────────────────────────────────────────────────
 
@@ -16,7 +19,7 @@ lint:
   image: python:3.12-slim
   script:
     - pip install flake8
-    - flake8 app/ --max-line-length=120 --exclude=__pycache__
+    - make lint
 
 # ─── Stage 2: Test ────────────────────────────────────────────────────────────
 
@@ -26,7 +29,7 @@ test:
   script:
     - pip install -r requirements.txt
     - pip install pytest moto
-    - pytest tests/ -v --tb=short
+    - make test
   artifacts:
     when: always
     reports:
@@ -39,10 +42,7 @@ build:
   image: python:3.12-slim
   script:
     - apt-get update && apt-get install -y zip
-    - pip install -r requirements.txt -t package/
-    - cp -r app/ package/app/
-    - cp lambda_handler.py config.py package/
-    - cd package && zip -r ../lambda.zip .
+    - ./scripts/build_lambda.sh
   artifacts:
     paths:
       - lambda.zip
@@ -57,7 +57,7 @@ plan:
     entrypoint: [""]
   script:
     - cd $TF_DIR
-    - terraform init
+    - terraform init -backend-config="bucket=${TF_STATE_BUCKET}" -backend-config="key=${TF_STATE_KEY}" -backend-config="region=${AWS_DEFAULT_REGION}" -backend-config="dynamodb_table=${TF_STATE_LOCK_TABLE}"
     - terraform validate
     - terraform plan -out=tfplan
   artifacts:
@@ -80,7 +80,7 @@ deploy:
     - apk add --no-cache aws-cli
   script:
     - cd $TF_DIR
-    - terraform init
+    - terraform init -backend-config="bucket=${TF_STATE_BUCKET}" -backend-config="key=${TF_STATE_KEY}" -backend-config="region=${AWS_DEFAULT_REGION}" -backend-config="dynamodb_table=${TF_STATE_LOCK_TABLE}"
     - terraform apply -auto-approve tfplan
     # Upload EML samples to S3
     - aws s3 sync ../examples/ s3://${S3_BUCKET}/eml-samples/ --exclude "*" --include "*.eml"

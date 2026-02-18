@@ -1,4 +1,5 @@
 # Copy this file to terraform.tfvars and fill in the values
+# Alternatively, use terraform/env/dev.tfvars.example or terraform/env/prod.tfvars.example
 
 aws_region     = "eu-west-3"
 environment    = "prod"

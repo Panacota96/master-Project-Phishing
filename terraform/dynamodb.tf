@@ -125,3 +125,46 @@ resource "aws_dynamodb_table" "responses" {
     projection_type = "ALL"
   }
 }
+
+# ─── Inspector Attempts Table ────────────────────────────────────────────────
+
+resource "aws_dynamodb_table" "inspector_attempts" {
+  name         = "${local.prefix}-inspector-attempts"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "username"
+  range_key    = "submitted_at"
+
+  attribute {
+    name = "username"
+    type = "S"
+  }
+
+  attribute {
+    name = "submitted_at"
+    type = "S"
+  }
+
+  attribute {
+    name = "group"
+    type = "S"
+  }
+
+  attribute {
+    name = "email_file"
+    type = "S"
+  }
+
+  global_secondary_index {
+    name            = "group-index"
+    hash_key        = "group"
+    range_key       = "submitted_at"
+    projection_type = "ALL"
+  }
+
+  global_secondary_index {
+    name            = "email-index"
+    hash_key        = "email_file"
+    range_key       = "submitted_at"
+    projection_type = "ALL"
+  }
+}

@@ -150,6 +150,9 @@ def finish_quiz():
             score=score,
             total=total,
             group=current_user.group,
+            class_name=current_user.class_name,
+            academic_year=current_user.academic_year,
+            major=current_user.major,
         )
         mark_quiz_completed(current_user.username)
 

@@ -45,9 +45,9 @@ def import_users():
         stream = io.StringIO(form.csv_file.data.read().decode('utf-8'))
         reader = csv.DictReader(stream)
 
-        required_fields = {'username', 'email', 'password'}
+        required_fields = {'username', 'email', 'password', 'class', 'academic_year', 'major'}
         if not required_fields.issubset(set(reader.fieldnames or [])):
-            flash('CSV must contain columns: username, email, password. '
+            flash('CSV must contain columns: username, email, password, class, academic_year, major. '
                   'Optional: group', 'danger')
             return render_template('admin/import_users.html', form=form, results=results)
 
@@ -57,6 +57,9 @@ def import_users():
             email = row['email'].strip()
             password = row['password'].strip()
             group = row.get('group', 'default').strip() or 'default'
+            class_name = row.get('class', 'unknown').strip() or 'unknown'
+            academic_year = row.get('academic_year', 'unknown').strip() or 'unknown'
+            major = row.get('major', 'unknown').strip() or 'unknown'
 
             if not username or not email or not password:
                 continue
@@ -66,6 +69,9 @@ def import_users():
                 'email': email,
                 'password': password,
                 'group': group,
+                'class_name': class_name,
+                'academic_year': academic_year,
+                'major': major,
             })
 
         if not users_list:

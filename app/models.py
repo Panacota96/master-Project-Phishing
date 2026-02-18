@@ -27,7 +27,8 @@ class User(UserMixin):
     """In-memory user object hydrated from DynamoDB."""
 
     def __init__(self, username, email, password_hash, is_admin=False,
-                 group='default', quiz_completed=False, created_at=None):
+                 group='default', quiz_completed=False, created_at=None,
+                 class_name='unknown', academic_year='unknown', major='unknown'):
         self.username = username
         self.email = email
         self.password_hash = password_hash
@@ -35,6 +36,9 @@ class User(UserMixin):
         self.group = group
         self.quiz_completed = quiz_completed
         self.created_at = created_at or _now_iso()
+        self.class_name = class_name
+        self.academic_year = academic_year
+        self.major = major
 
     # Flask-Login requires get_id(); we use username as the identifier
     def get_id(self):
@@ -55,6 +59,9 @@ class User(UserMixin):
             'group': self.group,
             'quiz_completed': self.quiz_completed,
             'created_at': self.created_at,
+            'class_name': self.class_name,
+            'academic_year': self.academic_year,
+            'major': self.major,
         }
 
     @classmethod
@@ -69,6 +76,9 @@ class User(UserMixin):
             group=item.get('group', 'default'),
             quiz_completed=item.get('quiz_completed', False),
             created_at=item.get('created_at'),
+            class_name=item.get('class_name', 'unknown'),
+            academic_year=item.get('academic_year', 'unknown'),
+            major=item.get('major', 'unknown'),
         )
 
 
@@ -90,7 +100,16 @@ def get_user_by_email(email):
     return User.from_dynamo(items[0]) if items else None
 
 
-def create_user(username, email, password, is_admin=False, group='default'):
+def create_user(
+    username,
+    email,
+    password,
+    is_admin=False,
+    group='default',
+    class_name='unknown',
+    academic_year='unknown',
+    major='unknown',
+):
     table = _get_table('DYNAMODB_USERS')
     user = User(
         username=username,
@@ -98,6 +117,9 @@ def create_user(username, email, password, is_admin=False, group='default'):
         password_hash=generate_password_hash(password),
         is_admin=is_admin,
         group=group,
+        class_name=class_name,
+        academic_year=academic_year,
+        major=major,
     )
     table.put_item(Item=user.to_dynamo())
     return user
@@ -105,7 +127,7 @@ def create_user(username, email, password, is_admin=False, group='default'):
 
 def batch_create_users(users_list):
     """Write multiple users to DynamoDB in batch.
-    users_list: list of dicts with keys username, email, password, group.
+    users_list: list of dicts with keys username, email, password, group, class_name, academic_year, major.
     Returns (created_count, skipped_usernames).
     """
     table = _get_table('DYNAMODB_USERS')
@@ -129,6 +151,9 @@ def batch_create_users(users_list):
                 email=u['email'],
                 password_hash=generate_password_hash(u['password']),
                 group=u.get('group', 'default'),
+                class_name=u.get('class_name', 'unknown'),
+                academic_year=u.get('academic_year', 'unknown'),
+                major=u.get('major', 'unknown'),
             )
             batch.put_item(Item=user.to_dynamo())
             created += 1
@@ -161,6 +186,13 @@ def get_distinct_groups():
     """Return a sorted list of unique group names."""
     users = list_all_users()
     return sorted({u.group for u in users})
+
+
+def get_distinct_cohorts():
+    """Return a sorted list of unique cohort triples (class, academic_year, major)."""
+    users = list_all_users()
+    cohorts = {(u.class_name, u.academic_year, u.major) for u in users}
+    return sorted(cohorts)
 
 
 def mark_quiz_completed(username):
@@ -211,7 +243,16 @@ def get_attempt(username, quiz_id):
     return resp.get('Item')
 
 
-def create_attempt(username, quiz_id, score, total, group):
+def create_attempt(
+    username,
+    quiz_id,
+    score,
+    total,
+    group='default',
+    class_name='unknown',
+    academic_year='unknown',
+    major='unknown',
+):
     """Write an attempt. Uses a condition to enforce one attempt per user per quiz."""
     table = _get_table('DYNAMODB_ATTEMPTS')
     percentage = round((score / total * 100), 1) if total > 0 else Decimal('0')
@@ -222,6 +263,9 @@ def create_attempt(username, quiz_id, score, total, group):
         'total': total,
         'percentage': Decimal(str(percentage)),
         'group': group,
+        'class_name': class_name,
+        'academic_year': academic_year,
+        'major': major,
         'completed_at': _now_iso(),
     }
     try:
@@ -299,3 +343,67 @@ def get_responses_by_question(quiz_id, question_id):
         KeyConditionExpression=Key('quiz_question_id').eq(f'{quiz_id}#{question_id}'),
     )
     return resp.get('Items', [])
+
+
+# ─── Inspector Attempt CRUD ──────────────────────────────────────────────────
+
+def create_inspector_attempt(
+    username,
+    group,
+    email_file,
+    classification,
+    selected_signals,
+    expected_classification,
+    expected_signals,
+    is_correct,
+    class_name='unknown',
+    academic_year='unknown',
+    major='unknown',
+):
+    table = _get_table('DYNAMODB_INSPECTOR')
+    item = {
+        'username': username,
+        'submitted_at': _now_iso(),
+        'group': group,
+        'email_file': email_file,
+        'classification': classification,
+        'selected_signals': selected_signals,
+        'expected_classification': expected_classification,
+        'expected_signals': expected_signals,
+        'is_correct': is_correct,
+        'class_name': class_name,
+        'academic_year': academic_year,
+        'major': major,
+    }
+    table.put_item(Item=item)
+    return item
+
+
+def list_inspector_attempts():
+    table = _get_table('DYNAMODB_INSPECTOR')
+    resp = table.scan()
+    return resp.get('Items', [])
+
+
+def list_inspector_attempts_by_group(group):
+    table = _get_table('DYNAMODB_INSPECTOR')
+    resp = table.query(
+        IndexName='group-index',
+        KeyConditionExpression=Key('group').eq(group),
+    )
+    return resp.get('Items', [])
+
+
+def list_inspector_attempts_by_email(email_file):
+    table = _get_table('DYNAMODB_INSPECTOR')
+    resp = table.query(
+        IndexName='email-index',
+        KeyConditionExpression=Key('email_file').eq(email_file),
+    )
+    return resp.get('Items', [])
+
+
+def count_inspector_attempts():
+    table = _get_table('DYNAMODB_INSPECTOR')
+    resp = table.scan(Select='COUNT')
+    return resp['Count']

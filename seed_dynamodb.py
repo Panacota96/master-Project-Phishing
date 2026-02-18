@@ -20,6 +20,9 @@ with app.app_context():
             password='admin123',
             is_admin=True,
             group='admin',
+            class_name='Admin',
+            academic_year='2025',
+            major='Security',
         )
         print('  - Created admin user: admin / admin123')
     else:
@@ -44,6 +47,8 @@ with app.app_context():
             'question_id': 'q2',
             'question_text': 'Which of the following URLs is most likely a phishing attempt?',
             'explanation': 'Phishers use subdomains to make URLs look legitimate. "paypal.com.secure-login.net" uses "paypal.com" as a subdomain of "secure-login.net", which is not PayPal\'s real domain.',
+            'image_path': '/static/quiz/url-preview.svg',
+            'image_alt': 'Email snippet showing a suspicious PayPal URL preview',
             'answers': [
                 {'answer_id': 'q2a1', 'answer_text': 'https://www.paypal.com/account/settings', 'is_correct': False},
                 {'answer_id': 'q2a2', 'answer_text': 'https://paypal.com.secure-login.net/verify', 'is_correct': True},
@@ -99,6 +104,8 @@ with app.app_context():
             'question_id': 'q7',
             'question_text': 'A colleague sends you a file called "Q4_Report.pdf.exe" via email. What should you do?',
             'explanation': 'Files with double extensions (like .pdf.exe) are a red flag. The actual file type is determined by the last extension — this is an executable, not a PDF. It could contain malware.',
+            'image_path': '/static/quiz/attachment-warning.svg',
+            'image_alt': 'Email snippet showing a suspicious attachment filename',
             'answers': [
                 {'answer_id': 'q7a1', 'answer_text': 'Open it since it came from a colleague', 'is_correct': False},
                 {'answer_id': 'q7a2', 'answer_text': 'Do not open it — the double extension is suspicious and it may be malware', 'is_correct': True},

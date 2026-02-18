@@ -12,16 +12,34 @@
                     <div class="mb-3">
                         <label class="form-label">Report Type</label>
                         <select name="report_type" class="form-select" id="reportType">
-                            <option value="summary">Summary (group averages)</option>
-                            <option value="detailed">Detailed (per-user scores)</option>
+                            <option value="summary">Summary (cohort averages)</option>
+                            <option value="detailed">Detailed (cohort + quiz)</option>
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Group Filter</label>
-                        <select name="group" class="form-select" id="groupFilter">
-                            <option value="">All Groups</option>
-                            {% for group in groups %}
-                            <option value="{{ group }}">{{ group }}</option>
+                        <label class="form-label">Class</label>
+                        <select name="class_name" class="form-select">
+                            <option value="">All</option>
+                            {% for class_name in classes %}
+                            <option value="{{ class_name }}">{{ class_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Academic Year</label>
+                        <select name="academic_year" class="form-select">
+                            <option value="">All</option>
+                            {% for year in years %}
+                            <option value="{{ year }}">{{ year }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Major</label>
+                        <select name="major" class="form-select">
+                            <option value="">All</option>
+                            {% for major in majors %}
+                            <option value="{{ major }}">{{ major }}</option>
                             {% endfor %}
                         </select>
                     </div>
