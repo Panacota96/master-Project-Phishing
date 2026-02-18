@@ -1,6 +1,6 @@
 import csv
 import io
-from datetime import datetime, timezone
+from datetime import datetime
 
 from flask import abort, current_app, jsonify, render_template, request
 from flask_login import current_user, login_required

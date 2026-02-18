@@ -3,7 +3,6 @@
 from datetime import datetime, timezone
 from decimal import Decimal
 
-import boto3
 from boto3.dynamodb.conditions import Key
 from flask import current_app
 from flask_login import UserMixin
