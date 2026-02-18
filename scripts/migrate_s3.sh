@@ -10,11 +10,16 @@ DEV_BUCKET="${DEV_BUCKET:-${APP_NAME}-${DEV_ENV}-${REGION}}"
 PROD_BUCKET="${PROD_BUCKET:-${APP_NAME}-${PROD_ENV}-${REGION}}"
 
 PREFIXES=("eml-samples" "reports" "csv-uploads")
+DRYRUN_FLAG=""
+
+if [ "${MIGRATE_DRY_RUN:-false}" = "true" ]; then
+  DRYRUN_FLAG="--dryrun"
+fi
 
 echo "Migrating S3 prefixes from ${DEV_BUCKET} -> ${PROD_BUCKET}"
 for prefix in "${PREFIXES[@]}"; do
   echo "Syncing s3://${DEV_BUCKET}/${prefix}/ -> s3://${PROD_BUCKET}/${prefix}/"
-  aws s3 sync "s3://${DEV_BUCKET}/${prefix}/" "s3://${PROD_BUCKET}/${prefix}/"
+  aws s3 sync "s3://${DEV_BUCKET}/${prefix}/" "s3://${PROD_BUCKET}/${prefix}/" ${DRYRUN_FLAG}
 done
 
 echo "S3 migration complete."
