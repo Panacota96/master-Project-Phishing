@@ -8,6 +8,15 @@
     }
   },
   "files": {
+    "qr-phishing.eml": {
+      "skip_link_attachment": true
+    },
+    "punycode-impersonation-legitapp-socialeng.eml": {
+      "skip_link_attachment": true
+    },
+    "marketing-spam-logistics.eml": {
+      "skip_link_attachment": true
+    },
     "spam-attachment-1.eml": {
       "skip_image": true
     },
