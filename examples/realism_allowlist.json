@@ -3,6 +3,9 @@
     "skip_image": true
   },
   "paths": {
+    "examples/spam/": {
+      "skip_link_attachment": true
+    },
     "examples/realistic_templates/": {
       "skip_image": false
     }
