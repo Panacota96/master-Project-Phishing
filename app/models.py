@@ -247,6 +247,17 @@ def reset_user_inspector_state(username):
     update_user_inspector_state(username, submitted=[], locked=False)
 
 
+def reset_users_inspector_state(usernames):
+    """Reset inspector state for multiple users. Returns count reset."""
+    if not usernames:
+        return 0
+    count = 0
+    for username in usernames:
+        update_user_inspector_state(username, submitted=[], locked=False)
+        count += 1
+    return count
+
+
 # ─── Quiz CRUD ────────────────────────────────────────────────────────────────
 
 def get_quiz(quiz_id):

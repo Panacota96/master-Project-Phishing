@@ -85,6 +85,27 @@
                 <div id="resetInspectorStatus" class="text-muted small"></div>
             </div>
         </div>
+        <hr class="my-3">
+        <div class="row g-2 align-items-end">
+            <div class="col-md-4">
+                <div class="text-muted small">
+                    Bulk reset uses the current Class/Year/Major filters above.
+                </div>
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-outline-warning w-100" type="button" id="resetInspectorFilteredBtn">
+                    Reset Filtered Users
+                </button>
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-outline-danger w-100" type="button" id="resetInspectorAllBtn">
+                    Reset All Users
+                </button>
+            </div>
+            <div class="col-md-2">
+                <div id="resetInspectorBulkStatus" class="text-muted small"></div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -159,6 +180,9 @@ function buildReportFormData(scope) {
 
 const resetBtn = document.getElementById('resetInspectorBtn');
 const resetStatus = document.getElementById('resetInspectorStatus');
+const resetFilteredBtn = document.getElementById('resetInspectorFilteredBtn');
+const resetAllBtn = document.getElementById('resetInspectorAllBtn');
+const resetBulkStatus = document.getElementById('resetInspectorBulkStatus');
 if (resetBtn) {
     resetBtn.addEventListener('click', async () => {
         const username = document.getElementById('resetInspectorUsername').value.trim();
@@ -182,6 +206,47 @@ if (resetBtn) {
         } catch (err) {
             resetStatus.textContent = `Error: ${err.message}`;
         }
+    });
+}
+
+async function submitBulkReset(scope) {
+    if (!resetBulkStatus) {
+        return;
+    }
+    resetBulkStatus.textContent = 'Resetting inspector access...';
+    try {
+        const formData = new FormData();
+        formData.append('scope', scope);
+        formData.append('class_name', '{{ selected_class }}');
+        formData.append('academic_year', '{{ selected_year }}');
+        formData.append('major', '{{ selected_major }}');
+        const resp = await fetch('{{ url_for("dashboard.reset_inspector_bulk") }}', {
+            method: 'POST',
+            body: formData,
+        });
+        const data = await resp.json();
+        if (!resp.ok) {
+            throw new Error(data.error || 'Unable to reset inspector.');
+        }
+        resetBulkStatus.textContent = data.message;
+    } catch (err) {
+        resetBulkStatus.textContent = `Error: ${err.message}`;
+    }
+}
+
+if (resetFilteredBtn) {
+    resetFilteredBtn.addEventListener('click', async () => {
+        await submitBulkReset('filtered');
+    });
+}
+
+if (resetAllBtn) {
+    resetAllBtn.addEventListener('click', async () => {
+        const confirmed = window.confirm('Reset inspector access for all users?');
+        if (!confirmed) {
+            return;
+        }
+        await submitBulkReset('all');
     });
 }
 

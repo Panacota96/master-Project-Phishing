@@ -410,6 +410,8 @@ testuser3,test3@company.com,TempPass3,engineering
 6. As admin, go to **Admin → Inspector Analytics** and reset the user.
 7. Log back in as the user and verify Inspector access is restored.
 
+Optional: Use the bulk reset buttons to reset the current cohort filters or all users.
+
 **Expected**
 - Each email can be submitted only once.
 - After 8 submissions, the Inspector is locked.

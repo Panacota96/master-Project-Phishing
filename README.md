@@ -174,7 +174,7 @@ These GitHub projects can be used as inspiration or sources for realistic exampl
 4. Click the **Download CSV** button; you’ll receive a pre‑signed S3 link.
 
 ### Inspector Lockout
-Each user can submit answers for the assigned 8 emails once. After completing all 8, the Inspector is locked until an admin resets access in **Admin → Inspector Analytics**.
+Each user can submit answers for the assigned 8 emails once. After completing all 8, the Inspector is locked until an admin resets access in **Admin → Inspector Analytics**. Admins can reset a single user or bulk reset by cohort filters or all users.
 
 ## DynamoDB Usage Summary
 **Users table**: login credentials + cohort fields (class/year/major).  

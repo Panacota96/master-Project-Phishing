@@ -11,11 +11,13 @@ from app.models import (
     get_distinct_cohorts,
     get_quiz,
     get_user,
+    list_all_users,
     list_all_attempts,
     list_attempts_by_quiz,
     list_inspector_attempts_anonymous,
     list_quizzes,
     reset_user_inspector_state,
+    reset_users_inspector_state,
 )
 
 
@@ -374,6 +376,44 @@ def reset_inspector_user():
         return jsonify({'error': 'User not found.'}), 404
     reset_user_inspector_state(username)
     return jsonify({'success': True, 'message': f'Inspector reset for {username}.'})
+
+
+@bp.route('/inspector/reset-bulk', methods=['POST'])
+@login_required
+def reset_inspector_bulk():
+    if not current_user.is_admin:
+        abort(403)
+    scope = request.form.get('scope', '').strip()
+    if scope not in {'filtered', 'all'}:
+        return jsonify({'error': 'Invalid scope.'}), 400
+
+    class_filter = request.form.get('class_name', '').strip()
+    year_filter = request.form.get('academic_year', '').strip()
+    major_filter = request.form.get('major', '').strip()
+
+    users = list_all_users()
+    filtered_users = []
+    for user in users:
+        if user.is_admin:
+            continue
+        if scope == 'filtered':
+            if class_filter and user.class_name != class_filter:
+                continue
+            if year_filter and user.academic_year != year_filter:
+                continue
+            if major_filter and user.major != major_filter:
+                continue
+        filtered_users.append(user.username)
+
+    count = reset_users_inspector_state(filtered_users)
+    label = 'filtered users' if scope == 'filtered' else 'all users'
+    return jsonify(
+        {
+            'success': True,
+            'count': count,
+            'message': f'Inspector reset for {count} {label}.',
+        }
+    )
 
 
 @bp.route('/reports/generate', methods=['POST'])
