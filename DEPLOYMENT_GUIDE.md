@@ -364,6 +364,7 @@ When you push to GitLab, the pipeline runs automatically:
 7. **deploy_prod** (manual): click play to deploy prod (use `SKIP_SEED=true` for migration runs).
 8. **migrate_prod** (manual): click play to copy dev data into prod.
    - Optional: set `MIGRATE_DRY_RUN=true` to scan without writing.
+   - This also runs S3 sync in `--dryrun` mode.
 
 After each deploy, the job log shows the API Gateway URL.
 
