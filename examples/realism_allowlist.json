@@ -30,7 +30,8 @@
       "skip_image": true
     },
     "spam-attachment-2.eml": {
-      "skip_image": true
+      "skip_image": true,
+      "skip_link_attachment": true
     }
   }
 }
