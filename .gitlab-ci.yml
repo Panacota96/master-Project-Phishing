@@ -232,7 +232,12 @@ migrate_prod:
     - pip3 install -r requirements.txt
     - |
       aws dynamodb describe-table --table-name "${TF_VAR_app_name}-prod-users" >/dev/null
-      python3 scripts/migrate_dynamodb.py --from dev --to prod
+      if [ "${MIGRATE_DRY_RUN:-false}" = "true" ]; then
+        echo "Running DynamoDB migration in dry-run mode."
+        python3 scripts/migrate_dynamodb.py --from dev --to prod --dry-run
+      else
+        python3 scripts/migrate_dynamodb.py --from dev --to prod
+      fi
   when: manual
   only:
     - main
