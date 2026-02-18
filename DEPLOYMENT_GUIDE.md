@@ -8,6 +8,10 @@ This guide explains how to deploy the phishing awareness app to AWS using Terraf
 Short path for a dev deployment:
 
 ```bash
+# Create and activate venv (required on PEP 668 systems)
+python3 -m venv .venv
+source .venv/bin/activate
+
 # Build Lambda
 ./scripts/build_lambda.sh
 
@@ -177,6 +181,12 @@ terraform apply \
   -var="aws_region=eu-west-3"
 ```
 
+Note: If you use multiple AWS profiles, export the correct one first:
+
+```bash
+export AWS_PROFILE=terraform-deployer
+```
+
 ---
 
 ## 2. Local Deployment (Manual)
@@ -200,7 +210,7 @@ cp terraform.tfvars.example terraform.tfvars
 #   terraform/env/prod.tfvars.example
 ```
 
-	### 2.1.1 Configure the Remote Backend
+### 2.1.1 Configure the Remote Backend
 
 Pick the backend config for the environment:
 
@@ -264,7 +274,7 @@ dynamodb_users_table = "phishing-app-prod-users"
 ### 2.4 Upload EML Samples to S3
 
 ```bash
-aws s3 sync examples/ s3://phishing-app-prod-eu-west-3/eml-samples/ \
+aws s3 sync examples/ s3://phishing-app-<env>-eu-west-3/eml-samples/ \
   --exclude "*" --include "*.eml"
 ```
 
@@ -273,12 +283,12 @@ aws s3 sync examples/ s3://phishing-app-prod-eu-west-3/eml-samples/ \
 ```bash
 # Set environment variables to point to the real AWS tables
 export AWS_REGION_NAME=eu-west-3
-export DYNAMODB_USERS=phishing-app-prod-users
-export DYNAMODB_QUIZZES=phishing-app-prod-quizzes
-export DYNAMODB_ATTEMPTS=phishing-app-prod-attempts
-export DYNAMODB_RESPONSES=phishing-app-prod-responses
-export DYNAMODB_INSPECTOR=phishing-app-prod-inspector-attempts
-export S3_BUCKET=phishing-app-prod-eu-west-3
+export DYNAMODB_USERS=phishing-app-<env>-users
+export DYNAMODB_QUIZZES=phishing-app-<env>-quizzes
+export DYNAMODB_ATTEMPTS=phishing-app-<env>-attempts
+export DYNAMODB_RESPONSES=phishing-app-<env>-responses
+export DYNAMODB_INSPECTOR=phishing-app-<env>-inspector-attempts
+export S3_BUCKET=phishing-app-<env>-eu-west-3
 export SECRET_KEY=your-secret-key
 
 python seed_dynamodb.py

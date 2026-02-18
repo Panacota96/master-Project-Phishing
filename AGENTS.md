@@ -43,6 +43,11 @@
   - Login page at API Gateway URL.
   - Successful login (flash message) and quiz list page.
 
+## Reproducibility Notes
+- Always use a virtual environment for Python (`python3 -m venv .venv`).
+- Use `AWS_PROFILE` to switch accounts safely.
+- Replace `<env>` placeholders with your target environment (e.g., `dev`, `prod`).
+
 ## Coding Style & Naming Conventions
 - Python: 4-space indentation, PEP 8 style, `snake_case` for functions/vars, `PascalCase` for classes.
 - Flask blueprints follow `app/<area>/routes.py` and `app/<area>/forms.py` naming.

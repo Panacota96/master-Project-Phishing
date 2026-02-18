@@ -17,8 +17,12 @@ This is the **master-Project-Phishing** repository, part of an ESME engineering 
 ## Setup & Run (Local Development)
 
 ```bash
+# Create and activate venv (recommended)
+python3 -m venv .venv
+source .venv/bin/activate
+
 # Install dependencies
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 
 # Seed the database with sample quiz data and admin user
 python seed.py

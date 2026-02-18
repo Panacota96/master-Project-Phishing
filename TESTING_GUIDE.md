@@ -6,8 +6,10 @@ This guide explains how to test the phishing awareness app at each stage: local 
 ## Quick Runbook
 
 ```bash
-pip install -r requirements.txt
-pip install pytest moto
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+python -m pip install pytest moto
 make test
 ```
 
@@ -18,8 +20,10 @@ make test
 
 ```bash
 cd master-Project-Phishing
-pip install -r requirements.txt
-pip install pytest moto
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+python -m pip install pytest moto
 ```
 
 ### Run All Tests
