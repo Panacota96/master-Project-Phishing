@@ -1,6 +1,6 @@
 import csv
 import io
-from datetime import datetime
+from datetime import datetime, timezone
 
 from flask import abort, current_app, jsonify, render_template, request
 from flask_login import current_user, login_required
@@ -229,7 +229,7 @@ def inspector_analytics():
         filtered = [a for a in filtered if a.get('email_file') == selected_email]
 
     if date_from or date_to:
-        from datetime import datetime, timezone
+        from datetime import datetime
 
         def parse_date(value, end_of_day=False):
             if not value:
@@ -470,7 +470,7 @@ def generate_inspector_report():
     if email_filter:
         attempts = [a for a in attempts if a.get('email_file') == email_filter]
     if date_from or date_to:
-        from datetime import datetime, timezone
+        from datetime import datetime
 
         def parse_date(value, end_of_day=False):
             if not value:
