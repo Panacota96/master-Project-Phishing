@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - GitLab CI: corrected heredoc indentation in destroy jobs to prevent YAML/shell parse errors.
 - GitLab CI: seed step now uses a venv to avoid PEP 668 "externally managed" failures.
 - GitLab CI: seed step reads Terraform outputs from `terraform/` after `cd ..` to avoid invalid DynamoDB table names.
+- Safe commit: `7f023ef3b34d6e6c1022a038e60fcae89dd8aee0`.
 
 ---
 
