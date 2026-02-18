@@ -180,6 +180,12 @@ Use these scripts to migrate data from dev to prod while keeping password hashes
 python3 ./scripts/migrate_dynamodb.py --from dev --to prod
 ```
 
+Optional dry-run (no writes):
+```bash
+MIGRATE_DRY_RUN=true ./scripts/migrate_s3.sh
+MIGRATE_DRY_RUN=true python3 ./scripts/migrate_dynamodb.py --from dev --to prod --dry-run
+```
+
 ## Terraform Remote State (Bootstrap)
 
 ```bash
