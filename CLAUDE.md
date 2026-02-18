@@ -86,6 +86,8 @@ Set these in GitLab CI/CD:
 - CI/CD fixes: `make` installed in CI, JUnit report enabled, `TF_VAR_secret_key` required.
 - CI/CD now auto-deploys dev, manual for prod, and seeds DynamoDB each deploy (skippable via `SKIP_SEED`).
 - Added `scripts/import_resources.sh` to import existing AWS resources into state.
+- Added migration scripts: `scripts/migrate_dynamodb.py` + `scripts/migrate_s3.sh` (supports `MIGRATE_DRY_RUN`).
+- Added CI jobs: `migrate_prod`, `destroy_dev`, `destroy_prod` (optional `CLEAN_S3=true`).
 - GDPR compliance: analytics/reporting aggregated by class/year/major only.
 - Inspector analytics now cohort-based with CSV export.
 - Lambda updated to ASGI wrapper (`asgiref` + `mangum`).

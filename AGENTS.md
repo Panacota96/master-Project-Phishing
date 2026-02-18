@@ -54,6 +54,8 @@
 - CI/CD fixes applied (make in CI, JUnit report, CI secret key requirement).
 - CI/CD auto-deploys dev and keeps prod manual; seeding runs every deploy (skippable via `SKIP_SEED`).
 - Added `scripts/import_resources.sh` to import existing AWS resources into state.
+- Added dev→prod migration scripts: `scripts/migrate_dynamodb.py` + `scripts/migrate_s3.sh` (supports `MIGRATE_DRY_RUN`).
+- Added manual CI jobs: `migrate_prod`, `destroy_dev`, `destroy_prod` (optional `CLEAN_S3=true`).
 - GDPR updates: group-only analytics by class/year/major; no individual reports.
 - Inspector analytics now cohort-based with CSV export.
 - Lambda handler uses ASGI wrapper (`asgiref` + `mangum`).
