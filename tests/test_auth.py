@@ -1,6 +1,6 @@
 """Tests for authentication routes."""
 
-from tests.conftest import login
+from conftest import login
 
 
 class TestLogin:

@@ -2,7 +2,7 @@
 
 from moto import mock_aws
 
-from tests.conftest import login
+from conftest import login
 
 
 class TestUserModel:

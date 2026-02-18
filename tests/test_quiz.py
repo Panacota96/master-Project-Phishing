@@ -1,6 +1,6 @@
 """Tests for quiz routes — quiz lock, per-question responses."""
 
-from tests.conftest import login
+from conftest import login
 
 
 class TestQuizList:
