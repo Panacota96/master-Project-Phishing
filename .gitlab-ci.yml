@@ -61,6 +61,7 @@ plan:
     - cd $TF_DIR
     - terraform init -backend-config="${TF_BACKEND_FILE}"
     - |
+      mkdir -p env
       if [ ! -f "${TF_VAR_FILE}" ]; then
         APP_NAME="${TF_VAR_app_name:-phishing-app}"
         cat > "${TF_VAR_FILE}" <<EOF
@@ -94,6 +95,7 @@ deploy:
     - cd $TF_DIR
     - terraform init -backend-config="${TF_BACKEND_FILE}"
     - |
+      mkdir -p env
       if [ ! -f "${TF_VAR_FILE}" ]; then
         APP_NAME="${TF_VAR_app_name:-phishing-app}"
         cat > "${TF_VAR_FILE}" <<EOF
