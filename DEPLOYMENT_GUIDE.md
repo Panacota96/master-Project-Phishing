@@ -345,6 +345,7 @@ When you push to GitLab, the pipeline runs automatically:
 | **plan** | Runs `terraform plan` and saves the plan | Yes |
 | **deploy_dev** | `terraform apply` (dev) + upload EML + seed DynamoDB | **Auto** |
 | **deploy_prod** | `terraform apply` (prod) + upload EML + seed DynamoDB | **Manual click** |
+| **migrate_prod** | Copy dev → prod (S3 + DynamoDB) | **Manual click** |
 
 ### 3.3 What to Expect (CI/CD)
 
@@ -361,6 +362,7 @@ When you push to GitLab, the pipeline runs automatically:
    - IAM roles and CloudWatch log groups
 
 7. **deploy_prod** (manual): click play to deploy prod (use `SKIP_SEED=true` for migration runs).
+8. **migrate_prod** (manual): click play to copy dev data into prod.
 
 After each deploy, the job log shows the API Gateway URL.
 

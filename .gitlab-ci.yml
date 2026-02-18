@@ -4,6 +4,7 @@ stages:
   - build
   - plan
   - deploy
+  - migrate
 
 variables:
   TF_DIR: terraform
@@ -201,3 +202,32 @@ deploy_prod:
   dependencies:
     - build
     - plan
+
+migrate_prod:
+  stage: migrate
+  image:
+    name: hashicorp/terraform:latest
+    entrypoint: [""]
+  before_script:
+    - apk add --no-cache aws-cli python3 py3-pip
+  script:
+    - cd $TF_DIR
+    - TF_ENV=prod
+    - TF_BACKEND_FILE="backend/${TF_ENV}.hcl"
+    - terraform init -reconfigure -backend-config="${TF_BACKEND_FILE}"
+    - S3_BUCKET_PROD="$(terraform output -raw s3_bucket_name)"
+    - cd ..
+    - export TF_VAR_app_name="${TF_VAR_app_name:-phishing-app}"
+    - export AWS_DEFAULT_REGION="${AWS_DEFAULT_REGION}"
+    - export DEV_ENV="dev"
+    - export PROD_ENV="prod"
+    - export DEV_BUCKET="${TF_VAR_app_name}-dev-${AWS_DEFAULT_REGION}"
+    - export PROD_BUCKET="${S3_BUCKET_PROD}"
+    - bash scripts/migrate_s3.sh
+    - pip3 install -r requirements.txt
+    - python3 scripts/migrate_dynamodb.py --from dev --to prod
+  when: manual
+  only:
+    - main
+  dependencies:
+    - deploy_prod
