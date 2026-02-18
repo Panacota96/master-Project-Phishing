@@ -91,7 +91,7 @@ make lambda
 
 **Continuous Deployment (CD)** manages infrastructure safely:
 - Terraform plan to preview changes
-- Manual deploy stage to apply changes
+- Dev deploy is automatic, prod deploy is manual
 
 
 ## Admin Operations Guide

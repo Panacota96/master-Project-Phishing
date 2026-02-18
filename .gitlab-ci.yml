@@ -89,22 +89,24 @@ plan:
 
 # ─── Stage 5: Deploy (manual approval for prod) ─────────────────────────────
 
-deploy:
+deploy_dev:
   stage: deploy
   image:
     name: hashicorp/terraform:latest
     entrypoint: [""]
   before_script:
-    - apk add --no-cache aws-cli
+    - apk add --no-cache aws-cli python3 py3-pip
   script:
     - cd $TF_DIR
-    - echo "TF_ENV=${TF_ENV} TF_VAR_environment=${TF_VAR_environment} AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}"
+    - echo "TF_ENV=dev TF_VAR_environment=${TF_VAR_environment} AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}"
     - |
       if [ -n "${TF_STATE_KEY}" ] || [ -n "${TF_STATE_BUCKET}" ] || [ -n "${TF_STATE_LOCK_TABLE}" ] || [ -n "${S3_BUCKET}" ]; then
         echo "ERROR: Legacy CI vars detected (TF_STATE_* or S3_BUCKET). Remove them to avoid backend mismatch."
         exit 1
       fi
+    - TF_ENV=dev
     - TF_BACKEND_FILE="backend/${TF_ENV}.hcl"
+    - TF_VAR_FILE="env/${TF_ENV}.tfvars"
     - terraform init -reconfigure -backend-config="${TF_BACKEND_FILE}"
     - |
       mkdir -p env
@@ -119,9 +121,70 @@ deploy:
       fi
     - terraform plan -var-file="${TF_VAR_FILE}" -out=tfplan
     - terraform apply -auto-approve tfplan
-    # Upload EML samples to S3
     - S3_BUCKET="$(terraform output -raw s3_bucket_name)"
     - aws s3 sync ../examples/ "s3://${S3_BUCKET}/eml-samples/" --exclude "*" --include "*.eml"
+    - cd ..
+    - pip3 install -r requirements.txt
+    - export AWS_REGION_NAME="${AWS_DEFAULT_REGION}"
+    - export DYNAMODB_USERS="$(terraform output -raw dynamodb_users_table)"
+    - export DYNAMODB_QUIZZES="$(terraform output -raw dynamodb_quizzes_table)"
+    - export DYNAMODB_ATTEMPTS="$(terraform output -raw dynamodb_attempts_table)"
+    - export DYNAMODB_RESPONSES="$(terraform output -raw dynamodb_responses_table)"
+    - export DYNAMODB_INSPECTOR="$(terraform output -raw dynamodb_inspector_table)"
+    - export S3_BUCKET="$(terraform output -raw s3_bucket_name)"
+    - export SECRET_KEY="${TF_VAR_secret_key}"
+    - python3 seed_dynamodb.py
+  only:
+    - main
+  dependencies:
+    - build
+    - plan
+
+deploy_prod:
+  stage: deploy
+  image:
+    name: hashicorp/terraform:latest
+    entrypoint: [""]
+  before_script:
+    - apk add --no-cache aws-cli python3 py3-pip
+  script:
+    - cd $TF_DIR
+    - echo "TF_ENV=prod TF_VAR_environment=${TF_VAR_environment} AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}"
+    - |
+      if [ -n "${TF_STATE_KEY}" ] || [ -n "${TF_STATE_BUCKET}" ] || [ -n "${TF_STATE_LOCK_TABLE}" ] || [ -n "${S3_BUCKET}" ]; then
+        echo "ERROR: Legacy CI vars detected (TF_STATE_* or S3_BUCKET). Remove them to avoid backend mismatch."
+        exit 1
+      fi
+    - TF_ENV=prod
+    - TF_BACKEND_FILE="backend/${TF_ENV}.hcl"
+    - TF_VAR_FILE="env/${TF_ENV}.tfvars"
+    - terraform init -reconfigure -backend-config="${TF_BACKEND_FILE}"
+    - |
+      mkdir -p env
+      if [ ! -f "${TF_VAR_FILE}" ]; then
+        APP_NAME="${TF_VAR_app_name:-phishing-app}"
+        cat > "${TF_VAR_FILE}" <<EOF
+      aws_region  = "${AWS_DEFAULT_REGION}"
+      environment = "${TF_ENV}"
+      app_name    = "${APP_NAME}"
+      secret_key  = "${TF_VAR_secret_key}"
+      EOF
+      fi
+    - terraform plan -var-file="${TF_VAR_FILE}" -out=tfplan
+    - terraform apply -auto-approve tfplan
+    - S3_BUCKET="$(terraform output -raw s3_bucket_name)"
+    - aws s3 sync ../examples/ "s3://${S3_BUCKET}/eml-samples/" --exclude "*" --include "*.eml"
+    - cd ..
+    - pip3 install -r requirements.txt
+    - export AWS_REGION_NAME="${AWS_DEFAULT_REGION}"
+    - export DYNAMODB_USERS="$(terraform output -raw dynamodb_users_table)"
+    - export DYNAMODB_QUIZZES="$(terraform output -raw dynamodb_quizzes_table)"
+    - export DYNAMODB_ATTEMPTS="$(terraform output -raw dynamodb_attempts_table)"
+    - export DYNAMODB_RESPONSES="$(terraform output -raw dynamodb_responses_table)"
+    - export DYNAMODB_INSPECTOR="$(terraform output -raw dynamodb_inspector_table)"
+    - export S3_BUCKET="$(terraform output -raw s3_bucket_name)"
+    - export SECRET_KEY="${TF_VAR_secret_key}"
+    - python3 seed_dynamodb.py
   when: manual
   only:
     - main

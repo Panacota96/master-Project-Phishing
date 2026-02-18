@@ -341,7 +341,8 @@ When you push to GitLab, the pipeline runs automatically:
 | **test** | Runs `pytest` with mocked AWS (moto) | Yes |
 | **build** | Packages the Lambda zip artifact | Yes |
 | **plan** | Runs `terraform plan` and saves the plan | Yes |
-| **deploy** | Runs `terraform apply` + uploads EML files to S3 | **Manual click** |
+| **deploy_dev** | `terraform apply` (dev) + upload EML + seed DynamoDB | **Auto** |
+| **deploy_prod** | `terraform apply` (prod) + upload EML + seed DynamoDB | **Manual click** |
 
 ### 3.3 What to Expect
 
@@ -350,14 +351,16 @@ When you push to GitLab, the pipeline runs automatically:
 3. **test** (1-2 min): passes if all pytest tests succeed
 4. **build** (1 min): creates `lambda.zip` artifact
 5. **plan** (30s): shows Terraform plan output — review it in the job logs
-6. **deploy** (1-2 min): click the play button to deploy. Creates/updates:
+6. **deploy_dev** (1-2 min): auto deploys dev. Creates/updates:
    - 4 DynamoDB tables
    - 1 S3 bucket
    - 1 Lambda function
    - 1 API Gateway HTTP API
    - IAM roles and CloudWatch log groups
 
-After deploy, the job log shows the API Gateway URL.
+7. **deploy_prod** (manual): click play to deploy prod.
+
+After each deploy, the job log shows the API Gateway URL.
 
 ### 3.3 Common CI/CD Fixes
 - **Pipeline prompts for `secret_key`**: set `TF_VAR_secret_key` in GitLab variables.
