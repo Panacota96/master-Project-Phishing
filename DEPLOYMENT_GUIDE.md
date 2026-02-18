@@ -498,6 +498,12 @@ Use this when you want **both environments live** and need to **copy data from d
 5. [ ] Verify prod login + quiz list.
 6. [ ] Resume dev writes if still needed.
 
+### 6.1.0.1 Rollback Checklist (If Migration Fails)
+1. [ ] Stop prod traffic (disable links/announcement).
+2. [ ] Re‑run migration with `MIGRATE_DRY_RUN=true` to validate.
+3. [ ] Re‑run migration without dry‑run.
+4. [ ] If still broken, destroy prod and redeploy clean.
+
 ### 6.1.1 Migrate S3 (all prefixes)
 ```bash
 ./scripts/migrate_s3.sh
