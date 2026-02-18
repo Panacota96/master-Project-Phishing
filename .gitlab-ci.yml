@@ -277,7 +277,7 @@ destroy_dev:
           payload = {'Objects': objects} if objects else {'Objects': []}
           Path('/tmp/delete.json').write_text(json.dumps(payload))
           print(f"objects_to_delete={len(objects)}")
-        PY
+      PY
         aws s3api delete-objects --bucket "${S3_BUCKET}" --delete file:///tmp/delete.json
       fi
     - terraform destroy -auto-approve -var-file="${TF_VAR_FILE}"
@@ -315,7 +315,7 @@ destroy_prod:
           payload = {'Objects': objects} if objects else {'Objects': []}
           Path('/tmp/delete.json').write_text(json.dumps(payload))
           print(f"objects_to_delete={len(objects)}")
-        PY
+      PY
         aws s3api delete-objects --bucket "${S3_BUCKET}" --delete file:///tmp/delete.json
       fi
     - terraform destroy -auto-approve -var-file="${TF_VAR_FILE}"
