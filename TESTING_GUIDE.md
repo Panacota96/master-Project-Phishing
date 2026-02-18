@@ -400,6 +400,21 @@ testuser3,test3@company.com,TempPass3,engineering
 - Old password fails.
 - New password works.
 
+### 4.7 Inspector Lockout Flow
+
+1. Login as a regular user and open the Inspector.
+2. Submit answers for all 8 assigned emails.
+3. After the last submission, verify a completion message appears.
+4. Refresh the Inspector page.
+5. Confirm the Inspector is blocked and shows the completion message.
+6. As admin, go to **Admin → Inspector Analytics** and reset the user.
+7. Log back in as the user and verify Inspector access is restored.
+
+**Expected**
+- Each email can be submitted only once.
+- After 8 submissions, the Inspector is locked.
+- Admin reset restores access.
+
 ### 4.7 Test Run Checklist Template
 
 Use this template to record results for a test session.

@@ -15,7 +15,7 @@ Users take interactive quizzes to learn how to identify phishing emails, and can
 - Standalone tool at `/inspector/` for analyzing real `.eml` files
 - Parses and displays: message overview, full headers, HTML preview (sandboxed), extracted links, attachments, and security warnings
 - Users classify each email as Spam or Phishing and select phishing signals
-- Immediate feedback with correct/incorrect indicators and CTF flags
+- No correctness feedback; answers are saved for analytics
 - 10 phishing signal categories: Impersonation, Typosquatting/Punycodes, External Sender Domain, Spoofing, Social Engineering, Urgency, Fake Invoice, Malicious Attachment, Fake Login Page, Side Channel Communication
 
 ### Admin Dashboard
@@ -172,6 +172,9 @@ These GitHub projects can be used as inspiration or sources for realistic exampl
 2. Go to **Admin → Reports** to generate quiz/cohort reports.
 3. Go to **Admin → Inspector Analytics** to download inspector cohort reports.
 4. Click the **Download CSV** button; you’ll receive a pre‑signed S3 link.
+
+### Inspector Lockout
+Each user can submit answers for the assigned 8 emails once. After completing all 8, the Inspector is locked until an admin resets access in **Admin → Inspector Analytics**.
 
 ## DynamoDB Usage Summary
 **Users table**: login credentials + cohort fields (class/year/major).  

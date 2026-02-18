@@ -214,6 +214,39 @@ def update_user_password(username, new_password):
     )
 
 
+def get_user_inspector_state(username):
+    table = _get_table('DYNAMODB_USERS')
+    resp = table.get_item(Key={'username': username})
+    item = resp.get('Item') or {}
+    return {
+        'submitted': item.get('inspector_submitted', []) or [],
+        'locked': bool(item.get('inspector_locked', False)),
+    }
+
+
+def update_user_inspector_state(username, submitted=None, locked=None):
+    table = _get_table('DYNAMODB_USERS')
+    updates = []
+    values = {}
+    if submitted is not None:
+        updates.append('inspector_submitted = :submitted')
+        values[':submitted'] = submitted
+    if locked is not None:
+        updates.append('inspector_locked = :locked')
+        values[':locked'] = locked
+    if not updates:
+        return
+    table.update_item(
+        Key={'username': username},
+        UpdateExpression=f"SET {', '.join(updates)}",
+        ExpressionAttributeValues=values,
+    )
+
+
+def reset_user_inspector_state(username):
+    update_user_inspector_state(username, submitted=[], locked=False)
+
+
 # ─── Quiz CRUD ────────────────────────────────────────────────────────────────
 
 def get_quiz(quiz_id):

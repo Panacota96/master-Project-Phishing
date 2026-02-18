@@ -8,7 +8,11 @@ from flask_login import current_user, login_required
 
 from app.inspector import bp
 from app.inspector.answer_key import ANSWER_KEY
-from app.models import create_inspector_attempt_anonymous
+from app.models import (
+    create_inspector_attempt_anonymous,
+    get_user_inspector_state,
+    update_user_inspector_state,
+)
 
 EML_PREFIX = 'eml-samples/'
 
@@ -150,7 +154,7 @@ def _parse_eml_detail(key):
                 )
             )
 
-    if any('xn--' in link.lower() for link in links):
+    if current_user.is_admin and any('xn--' in link.lower() for link in links):
         warnings.append('Punycode (internationalized) domain detected in links')
 
     for link in links:
@@ -172,12 +176,18 @@ def _parse_eml_detail(key):
 @bp.route('/')
 @login_required
 def index():
+    state = get_user_inspector_state(current_user.username)
+    if state['locked']:
+        return render_template('inspector/locked.html')
     return render_template('inspector/inspector.html')
 
 
 @bp.route('/api/emails')
 @login_required
 def api_email_list():
+    state = get_user_inspector_state(current_user.username)
+    if state['locked']:
+        return jsonify({'error': 'Inspector access is locked. Please return to main.'}), 403
     pool, key_map = _get_or_create_email_pool()
     emails = []
     for filename in pool:
@@ -197,6 +207,9 @@ def api_email_list():
 @bp.route('/api/emails/<filename>')
 @login_required
 def api_email_detail(filename):
+    state = get_user_inspector_state(current_user.username)
+    if state['locked']:
+        return jsonify({'error': 'Inspector access is locked. Please return to main.'}), 403
     pool, _ = _get_or_create_email_pool()
     if filename not in pool:
         return jsonify({'error': 'Email not found'}), 404
@@ -220,9 +233,17 @@ def api_submit():
     if not filename:
         return jsonify({'error': 'Missing email filename.'}), 400
 
+    state = get_user_inspector_state(current_user.username)
+    if state['locked']:
+        return jsonify({'error': 'Inspector access is locked. Please return to main.'}), 403
+
     pool, _ = _get_or_create_email_pool()
     if filename not in pool:
         return jsonify({'error': 'Email not found'}), 404
+
+    submitted = state['submitted']
+    if filename in submitted:
+        return jsonify({'error': 'Answer already submitted for this email.'}), 409
 
     requirement = ANSWER_KEY.get(filename)
     if not requirement:
@@ -269,7 +290,19 @@ def api_submit():
         major=current_user.major,
     )
 
+    submitted = submitted + [filename]
+    target_count = len(pool) or 8
+    completed = len(submitted) >= target_count
+    update_user_inspector_state(
+        current_user.username,
+        submitted=submitted,
+        locked=completed,
+    )
+    if completed:
+        session.pop('inspector_email_pool', None)
+
     return jsonify({
         'success': True,
         'message': 'Answer saved.',
+        'completed': completed,
     })

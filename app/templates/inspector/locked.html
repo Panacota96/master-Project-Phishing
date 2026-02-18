@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Inspector Locked{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="alert alert-info">
+            <h4 class="alert-heading">Inspector Completed</h4>
+            <p>You have completed all assigned emails. Please return to the main page.</p>
+            <hr>
+            <a href="{{ url_for('quiz.quiz_list') }}" class="btn btn-primary">Back to Main</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

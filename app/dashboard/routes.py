@@ -10,10 +10,12 @@ from app.models import (
     count_users,
     get_distinct_cohorts,
     get_quiz,
+    get_user,
     list_all_attempts,
     list_attempts_by_quiz,
     list_inspector_attempts_anonymous,
     list_quizzes,
+    reset_user_inspector_state,
 )
 
 
@@ -357,6 +359,21 @@ def inspector_analytics():
         prev_url=prev_url,
         next_url=next_url,
     )
+
+
+@bp.route('/inspector/reset-user', methods=['POST'])
+@login_required
+def reset_inspector_user():
+    if not current_user.is_admin:
+        abort(403)
+    username = request.form.get('username', '').strip()
+    if not username:
+        return jsonify({'error': 'Username is required.'}), 400
+    user = get_user(username)
+    if not user:
+        return jsonify({'error': 'User not found.'}), 404
+    reset_user_inspector_state(username)
+    return jsonify({'success': True, 'message': f'Inspector reset for {username}.'})
 
 
 @bp.route('/reports/generate', methods=['POST'])

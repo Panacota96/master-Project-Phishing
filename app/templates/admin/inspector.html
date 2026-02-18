@@ -70,6 +70,24 @@
     <button class="btn btn-outline-secondary" type="button" id="inspectorReportCohortBtn">Download CSV (cohort only)</button>
 </div>
 
+<div class="card mb-4">
+    <div class="card-body">
+        <h6 class="mb-3">Reset Inspector Access (Admin)</h6>
+        <div class="row g-2 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label">Username</label>
+                <input type="text" class="form-control" id="resetInspectorUsername" placeholder="username">
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-warning" type="button" id="resetInspectorBtn">Reset Inspector</button>
+            </div>
+            <div class="col-md-5">
+                <div id="resetInspectorStatus" class="text-muted small"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="card">
     <div class="card-header"><h5 class="mb-0">Inspector Cohorts</h5></div>
     <div class="card-body">
@@ -137,6 +155,34 @@ function buildReportFormData(scope) {
     formData.append('date_to', '{{ date_to }}');
     formData.append('report_scope', scope);
     return formData;
+}
+
+const resetBtn = document.getElementById('resetInspectorBtn');
+const resetStatus = document.getElementById('resetInspectorStatus');
+if (resetBtn) {
+    resetBtn.addEventListener('click', async () => {
+        const username = document.getElementById('resetInspectorUsername').value.trim();
+        if (!username) {
+            resetStatus.textContent = 'Username is required.';
+            return;
+        }
+        resetStatus.textContent = 'Resetting inspector access...';
+        try {
+            const formData = new FormData();
+            formData.append('username', username);
+            const resp = await fetch('{{ url_for("dashboard.reset_inspector_user") }}', {
+                method: 'POST',
+                body: formData,
+            });
+            const data = await resp.json();
+            if (!resp.ok) {
+                throw new Error(data.error || 'Unable to reset inspector.');
+            }
+            resetStatus.textContent = data.message;
+        } catch (err) {
+            resetStatus.textContent = `Error: ${err.message}`;
+        }
+    });
 }
 
 if (reportBtn) {
