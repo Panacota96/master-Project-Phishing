@@ -56,15 +56,13 @@ import_if_missing aws_cloudwatch_log_group.lambda "/aws/lambda/${LAMBDA_NAME}"
 import_if_missing aws_lambda_function.app "$LAMBDA_NAME"
 
 # API Gateway integration/route/stage/permission
+API_ID="$(aws apigatewayv2 get-apis --query \"Items[?Name=='${API_NAME}'].ApiId | [0]\" --output text)"
+if [ -z \"$API_ID\" ] || [ \"$API_ID\" = \"None\" ]; then
+  echo \"ERROR: Could not find API Gateway ID for ${API_NAME}.\" >&2
+  exit 1
+fi
 if ! state_has aws_apigatewayv2_api.app; then
-  API_ID="$(aws apigatewayv2 get-apis --query "Items[?Name=='${API_NAME}'].ApiId | [0]" --output text)"
-  if [ -z "$API_ID" ] || [ "$API_ID" = "None" ]; then
-    echo "ERROR: Could not find API Gateway ID for ${API_NAME}." >&2
-    exit 1
-  fi
-  terraform import aws_apigatewayv2_api.app "$API_ID"
-else
-  API_ID="$(terraform state show -no-color aws_apigatewayv2_api.app | awk -F' = ' '/^id =/ {print $2; exit}')"
+  terraform import aws_apigatewayv2_api.app \"$API_ID\"
 fi
 
 INTEGRATION_ID="$(aws apigatewayv2 get-integrations --api-id "$API_ID" --query 'Items[0].IntegrationId' --output text)"
