@@ -83,6 +83,7 @@ deploy:
   script:
     - cd $TF_DIR
     - terraform init -backend-config="bucket=${TF_STATE_BUCKET}" -backend-config="key=${TF_STATE_KEY}" -backend-config="region=${AWS_DEFAULT_REGION}" -backend-config="dynamodb_table=${TF_STATE_LOCK_TABLE}"
+    - terraform plan -out=tfplan
     - terraform apply -auto-approve tfplan
     # Upload EML samples to S3
     - aws s3 sync ../examples/ s3://${S3_BUCKET}/eml-samples/ --exclude "*" --include "*.eml"
