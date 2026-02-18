@@ -267,7 +267,7 @@ destroy_dev:
           --query 'Versions[].{Key:Key,VersionId:VersionId}' --output json > /tmp/versions.json
         aws s3api list-object-versions --bucket "${S3_BUCKET}" \
           --query 'DeleteMarkers[].{Key:Key,VersionId:VersionId}' --output json > /tmp/markers.json
-        python3 -c 'import json; from pathlib import Path; versions = json.loads(Path("/tmp/versions.json").read_text() or "[]"); markers = json.loads(Path("/tmp/markers.json").read_text() or "[]"); objects = versions + markers; payload = {"Objects": objects} if objects else {"Objects": []}; Path("/tmp/delete.json").write_text(json.dumps(payload)); print(f"objects_to_delete={len(objects)}")'
+        python3 -c 'import json; from pathlib import Path; versions = json.loads(Path("/tmp/versions.json").read_text() or "[]"); markers = json.loads(Path("/tmp/markers.json").read_text() or "[]"); versions = versions or []; markers = markers or []; objects = versions + markers; payload = {"Objects": objects} if objects else {"Objects": []}; Path("/tmp/delete.json").write_text(json.dumps(payload)); print(f"objects_to_delete={len(objects)}")'
         aws s3api delete-objects --bucket "${S3_BUCKET}" --delete file:///tmp/delete.json
       fi
     - terraform destroy -auto-approve -var-file="${TF_VAR_FILE}"
@@ -295,7 +295,7 @@ destroy_prod:
           --query 'Versions[].{Key:Key,VersionId:VersionId}' --output json > /tmp/versions.json
         aws s3api list-object-versions --bucket "${S3_BUCKET}" \
           --query 'DeleteMarkers[].{Key:Key,VersionId:VersionId}' --output json > /tmp/markers.json
-        python3 -c 'import json; from pathlib import Path; versions = json.loads(Path("/tmp/versions.json").read_text() or "[]"); markers = json.loads(Path("/tmp/markers.json").read_text() or "[]"); objects = versions + markers; payload = {"Objects": objects} if objects else {"Objects": []}; Path("/tmp/delete.json").write_text(json.dumps(payload)); print(f"objects_to_delete={len(objects)}")'
+        python3 -c 'import json; from pathlib import Path; versions = json.loads(Path("/tmp/versions.json").read_text() or "[]"); markers = json.loads(Path("/tmp/markers.json").read_text() or "[]"); versions = versions or []; markers = markers or []; objects = versions + markers; payload = {"Objects": objects} if objects else {"Objects": []}; Path("/tmp/delete.json").write_text(json.dumps(payload)); print(f"objects_to_delete={len(objects)}")'
         aws s3api delete-objects --bucket "${S3_BUCKET}" --delete file:///tmp/delete.json
       fi
     - terraform destroy -auto-approve -var-file="${TF_VAR_FILE}"
