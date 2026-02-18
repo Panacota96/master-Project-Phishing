@@ -32,12 +32,12 @@ Users take interactive quizzes to learn how to identify phishing emails, and can
 
 | Component | Technology |
 |-----------|-----------|
-| Backend | Flask (Python 3), Flask-SQLAlchemy, Flask-Login, Flask-WTF |
-| Database | SQLite |
+| Backend | Flask (Python 3.12), Flask-Login, Flask-WTF |
+| Database | DynamoDB (AWS) |
 | Frontend | Jinja2 + Bootstrap 5 (CDN) |
 | Charts | Chart.js |
 | EML Parsing | Python `email` stdlib (no extra dependencies) |
-| Deployment | Docker + Gunicorn + Nginx |
+| Deployment | AWS Lambda + API Gateway + Terraform (CI/CD via GitLab) |
 
 ## Quick Start (Local)
 
@@ -80,6 +80,7 @@ make lambda
 
 ## CI/CD Notes
 - GitLab CI expects `TF_VAR_secret_key` to be set as a masked variable.
+- GitLab CI uses `TF_ENV` (`dev` or `prod`) to select the backend and tfvars file.
 - Test reports are emitted as `report.xml` for JUnit artifacts.
 
 ## CI/CD Overview
@@ -154,7 +155,7 @@ Use the shared build script to package the Lambda artifact:
 
 ## AWS Deployment
 
-See [aws/README.md](aws/README.md) for a full guide to deploy on AWS Free Tier (EC2 t2.micro + Docker + Nginx).
+See `DEPLOYMENT_GUIDE.md` for the full Terraform + AWS deployment guide.
 
 ## Terraform Remote State (Bootstrap)
 
@@ -167,13 +168,14 @@ terraform apply \
   -var="aws_region=eu-west-3"
 ```
 
-## CI Backend Config Variables
+## CI/CD Environment Variables
 
-Set these in GitLab CI/CD for Terraform remote state:
+Set these in GitLab CI/CD:
 
-- `TF_STATE_BUCKET` (e.g., `phishing-terraform-state`)
-- `TF_STATE_KEY` (e.g., `prod/terraform.tfstate`)
-- `TF_STATE_LOCK_TABLE` (e.g., `phishing-terraform-locks`)
+- `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_DEFAULT_REGION`
+- `TF_ENV` (`dev` or `prod`)
+- `TF_VAR_secret_key` (masked)
+- `TF_VAR_app_name` (optional, defaults to `phishing-app`)
 
 ## Project Structure
 

@@ -20,12 +20,12 @@ cd terraform
 terraform init -backend-config=backend/dev.hcl
 
 # Configure variables
-cp env/dev.tfvars.example terraform.tfvars
-# edit terraform.tfvars
+cp env/dev.tfvars.example env/dev.tfvars
+# edit env/dev.tfvars
 
 # Plan + apply
-terraform plan -var-file=terraform.tfvars
-terraform apply -var-file=terraform.tfvars
+terraform plan -var-file=env/dev.tfvars
+terraform apply -var-file=env/dev.tfvars
 
 # Upload EML samples
 aws s3 sync ../examples/ s3://<dev-bucket>/eml-samples/ --exclude "*" --include "*.eml"
@@ -110,13 +110,13 @@ Use this checklist for any environment by substituting `<env>` (e.g., `dev`, `pr
      - `[[PASTE: terraform-init-<env>.png]]`
 
 4. [ ] **Terraform plan** (terminal)
-   - Command: `terraform plan -var-file=terraform.tfvars`
+   - Command: `terraform plan -var-file=env/<env>.tfvars`
    - Evidence: plan summary (add/change/destroy).
    - Paste screenshot:
      - `[[PASTE: terraform-plan-<env>.png]]`
 
 5. [ ] **Terraform apply** (terminal)
-   - Command: `terraform apply -var-file=terraform.tfvars`
+   - Command: `terraform apply -var-file=env/<env>.tfvars`
    - Evidence: apply success + outputs (API Gateway URL).
    - Paste screenshot:
      - `[[PASTE: terraform-apply-<env>.png]]`
@@ -203,13 +203,16 @@ export AWS_PROFILE=terraform-deployer
 cd master-Project-Phishing/terraform
 
 # Copy the example variables file
-cp terraform.tfvars.example terraform.tfvars
+cp env/dev.tfvars.example env/dev.tfvars
+cp env/prod.tfvars.example env/prod.tfvars
 
-# Edit terraform.tfvars:
+# Edit env/dev.tfvars or env/prod.tfvars:
 #   aws_region  = "eu-west-3"
 #   environment = "dev"   # or "prod"
 #   app_name    = "phishing-app"
 #   secret_key  = "your-random-secret-string-here"  ← generate a strong key
+#
+# Note: `terraform/env/*.tfvars` is gitignored to avoid leaking secrets.
 #
 # Alternatively, start from:
 #   terraform/env/dev.tfvars.example
@@ -245,10 +248,10 @@ Note: The Lambda handler wraps Flask as ASGI using `asgiref` + `mangum`.
 cd terraform
 
 # Preview what will be created
-terraform plan
+terraform plan -var-file=env/dev.tfvars
 
 # Apply (creates all AWS resources)
-terraform apply
+terraform apply -var-file=env/dev.tfvars
 ```
 
 ### 2.3.1 Terraform Cheat Sheet (Dev/Prod)
@@ -256,13 +259,13 @@ terraform apply
 ```bash
 # Dev
 terraform init -backend-config=backend/dev.hcl
-terraform plan -var-file=env/dev.tfvars.example
-terraform apply -var-file=env/dev.tfvars.example
+terraform plan -var-file=env/dev.tfvars
+terraform apply -var-file=env/dev.tfvars
 
 # Prod
 terraform init -backend-config=backend/prod.hcl
-terraform plan -var-file=env/prod.tfvars.example
-terraform apply -var-file=env/prod.tfvars.example
+terraform plan -var-file=env/prod.tfvars
+terraform apply -var-file=env/prod.tfvars
 ```
 
 **Expected output after `terraform apply`:**
@@ -322,12 +325,11 @@ Go to **GitLab → Your Project → Settings → CI/CD → Variables**. Add thes
 | `AWS_SECRET_ACCESS_KEY` | Your IAM secret key           | Yes     |
 | `AWS_DEFAULT_REGION`    | `eu-west-3`                   | No      |
 | `TF_VAR_secret_key`     | Your Flask secret key         | Yes     |
-| `TF_VAR_environment`    | `prod` or `dev`               | No      |
+| `TF_ENV`                | `dev` or `prod`               | No      |
+| `TF_VAR_environment`    | `dev` or `prod`               | No      |
 | `TF_VAR_app_name`       | `phishing-app`                | No      |
-| `S3_BUCKET`             | `phishing-app-prod-eu-west-3` | No      |
-| `TF_STATE_BUCKET`       | `phishing-terraform-state`    | No      |
-| `TF_STATE_KEY`          | `prod/terraform.tfstate`      | No      |
-| `TF_STATE_LOCK_TABLE`   | `phishing-terraform-locks`    | No      |
+
+CI/CD generates `terraform/env/<env>.tfvars` at runtime from these variables if it does not already exist in the repo.
 
 ### 3.2 Pipeline Stages
 
@@ -359,6 +361,7 @@ After deploy, the job log shows the API Gateway URL.
 
 ### 3.3 Common CI/CD Fixes
 - **Pipeline prompts for `secret_key`**: set `TF_VAR_secret_key` in GitLab variables.
+- **S3 sync fails**: ensure `TF_ENV` is set so the deploy job reads outputs from the correct backend.
 - **Build step permission denied**: CI runs the build script via `bash` (already configured).
 - **Test artifacts missing**: `make test` generates `report.xml` for GitLab JUnit reports.
 
@@ -460,7 +463,7 @@ aws lambda update-function-code \
 ### Destroy (local)
 ```bash
 cd terraform
-terraform destroy -var-file=terraform.tfvars
+terraform destroy -var-file=env/<env>.tfvars
 ```
 
 ### Re-Deploy (CI/CD)

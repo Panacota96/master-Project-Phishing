@@ -36,6 +36,7 @@ terraform/bootstrap/terraform.tfstate.backup
 terraform/*.tfstate
 terraform/*.tfstate.*
 terraform/terraform.tfvars
+terraform/env/*.tfvars
 
 # Build artifacts
 lambda.zip

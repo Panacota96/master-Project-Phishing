@@ -8,9 +8,9 @@ stages:
 variables:
   TF_DIR: terraform
   PYTHON_VERSION: "3.12"
-  TF_STATE_BUCKET: "phishing-terraform-state"
-  TF_STATE_KEY: "prod/terraform.tfstate"
-  TF_STATE_LOCK_TABLE: "phishing-terraform-locks"
+  TF_ENV: "dev"
+  TF_BACKEND_FILE: "backend/${TF_ENV}.hcl"
+  TF_VAR_FILE: "env/${TF_ENV}.tfvars"
 
 # ─── Stage 1: Lint ────────────────────────────────────────────────────────────
 
@@ -59,9 +59,19 @@ plan:
     entrypoint: [""]
   script:
     - cd $TF_DIR
-    - terraform init -backend-config="bucket=${TF_STATE_BUCKET}" -backend-config="key=${TF_STATE_KEY}" -backend-config="region=${AWS_DEFAULT_REGION}" -backend-config="dynamodb_table=${TF_STATE_LOCK_TABLE}"
+    - terraform init -backend-config="${TF_BACKEND_FILE}"
+    - |
+      if [ ! -f "${TF_VAR_FILE}" ]; then
+        APP_NAME="${TF_VAR_app_name:-phishing-app}"
+        cat > "${TF_VAR_FILE}" <<EOF
+      aws_region  = "${AWS_DEFAULT_REGION}"
+      environment = "${TF_ENV}"
+      app_name    = "${APP_NAME}"
+      secret_key  = "${TF_VAR_secret_key}"
+      EOF
+      fi
     - terraform validate
-    - terraform plan -out=tfplan
+    - terraform plan -var-file="${TF_VAR_FILE}" -out=tfplan
   artifacts:
     paths:
       - terraform/tfplan
@@ -82,11 +92,22 @@ deploy:
     - apk add --no-cache aws-cli
   script:
     - cd $TF_DIR
-    - terraform init -backend-config="bucket=${TF_STATE_BUCKET}" -backend-config="key=${TF_STATE_KEY}" -backend-config="region=${AWS_DEFAULT_REGION}" -backend-config="dynamodb_table=${TF_STATE_LOCK_TABLE}"
-    - terraform plan -out=tfplan
+    - terraform init -backend-config="${TF_BACKEND_FILE}"
+    - |
+      if [ ! -f "${TF_VAR_FILE}" ]; then
+        APP_NAME="${TF_VAR_app_name:-phishing-app}"
+        cat > "${TF_VAR_FILE}" <<EOF
+      aws_region  = "${AWS_DEFAULT_REGION}"
+      environment = "${TF_ENV}"
+      app_name    = "${APP_NAME}"
+      secret_key  = "${TF_VAR_secret_key}"
+      EOF
+      fi
+    - terraform plan -var-file="${TF_VAR_FILE}" -out=tfplan
     - terraform apply -auto-approve tfplan
     # Upload EML samples to S3
-    - aws s3 sync ../examples/ s3://${S3_BUCKET}/eml-samples/ --exclude "*" --include "*.eml"
+    - S3_BUCKET="$(terraform output -raw s3_bucket_name)"
+    - aws s3 sync ../examples/ "s3://${S3_BUCKET}/eml-samples/" --exclude "*" --include "*.eml"
   when: manual
   only:
     - main
