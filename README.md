@@ -58,6 +58,18 @@ python run.py
 
 The app runs at **http://localhost:5000**. Default admin: `admin` / `admin123`
 
+## Reproducible Setup (Checklist)
+1. Create and activate a virtual environment: `python3 -m venv .venv && source .venv/bin/activate`
+2. Install dependencies: `python -m pip install -r requirements.txt`
+3. Seed data: `python seed.py` (SQLite) or `python seed_dynamodb.py` (DynamoDB)
+4. Run locally: `python run.py`
+5. Verify login and quiz list load in the browser.
+
+## Troubleshooting
+- **PEP 668 / externally-managed-environment**: use a venv (`python3 -m venv .venv`) instead of system Python.
+- **`lambda.zip` missing**: run `./scripts/build_lambda.sh`.
+- **AWS profile issues**: set `AWS_PROFILE=terraform-deployer` before Terraform.
+
 ## Make Targets
 
 ```bash

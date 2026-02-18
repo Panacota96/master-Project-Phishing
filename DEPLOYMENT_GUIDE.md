@@ -42,6 +42,12 @@ export SECRET_KEY=<same-secret-as-terraform>
 python seed_dynamodb.py
 ```
 
+## Troubleshooting
+- **`terraform plan` fails with missing `lambda.zip`**: run `./scripts/build_lambda.sh`.
+- **AccessDenied for DynamoDB**: switch to `terraform-deployer` or update IAM permissions.
+- **PEP 668 / pip install blocked**: use a venv (`python3 -m venv .venv`).
+- **Wrong bucket/env**: ensure `<env>` placeholders are replaced (dev vs prod).
+
 ## Session Log (Example — Dev)
 Use this as a template to document what was done in this session.
 

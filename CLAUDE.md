@@ -35,6 +35,11 @@ The app runs on `http://localhost:5000` by default.
 
 **Default admin credentials**: `admin` / `admin123`
 
+## Troubleshooting
+- **PEP 668 / externally-managed-environment**: use a venv (`python3 -m venv .venv`).
+- **Missing Python deps**: install in venv with `python -m pip install -r requirements.txt`.
+- **Lambda plan fails**: build `lambda.zip` with `./scripts/build_lambda.sh`.
+
 ## Lambda Packaging
 
 Use the shared build script to create `lambda.zip`:
