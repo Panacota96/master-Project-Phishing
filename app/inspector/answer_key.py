@@ -150,6 +150,18 @@ ANSWER_KEY = {
         "classification": "Spam",
         "signals": [],
     },
+    "realistic-invoice-qr.eml": {
+        "classification": "Phishing",
+        "signals": ["fakeinvoice", "urgency", "externaldomain"],
+    },
+    "realistic-it-reset.eml": {
+        "classification": "Phishing",
+        "signals": ["fakelogin", "urgency", "externaldomain"],
+    },
+    "realistic-shipping-qr.eml": {
+        "classification": "Phishing",
+        "signals": ["externaldomain", "socialeng", "urgency"],
+    },
     "pixel-tracking.eml": {
         "classification": "Phishing",
         "signals": ["impersonation", "socialeng", "sidechannel"],
