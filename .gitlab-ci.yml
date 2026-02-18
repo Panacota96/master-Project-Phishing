@@ -44,8 +44,7 @@ build:
   image: python:3.12-slim
   script:
     - apt-get update && apt-get install -y zip
-    - chmod +x ./scripts/build_lambda.sh
-    - ./scripts/build_lambda.sh
+    - bash ./scripts/build_lambda.sh
   artifacts:
     paths:
       - lambda.zip
