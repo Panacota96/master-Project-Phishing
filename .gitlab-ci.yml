@@ -59,6 +59,7 @@ plan:
     entrypoint: [""]
   script:
     - cd $TF_DIR
+    - echo "TF_ENV=${TF_ENV} TF_VAR_environment=${TF_VAR_environment} AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}"
     - terraform init -backend-config="${TF_BACKEND_FILE}"
     - |
       mkdir -p env
@@ -93,6 +94,7 @@ deploy:
     - apk add --no-cache aws-cli
   script:
     - cd $TF_DIR
+    - echo "TF_ENV=${TF_ENV} TF_VAR_environment=${TF_VAR_environment} AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}"
     - terraform init -backend-config="${TF_BACKEND_FILE}"
     - |
       mkdir -p env
