@@ -223,9 +223,16 @@ migrate_prod:
     - export PROD_ENV="prod"
     - export DEV_BUCKET="${TF_VAR_app_name}-dev-${AWS_DEFAULT_REGION}"
     - export PROD_BUCKET="${S3_BUCKET_PROD}"
+    - |
+      if [ -z "${S3_BUCKET_PROD}" ]; then
+        echo "ERROR: prod bucket output not found. Ensure deploy_prod completed."
+        exit 1
+      fi
     - bash scripts/migrate_s3.sh
     - pip3 install -r requirements.txt
-    - python3 scripts/migrate_dynamodb.py --from dev --to prod
+    - |
+      aws dynamodb describe-table --table-name "${TF_VAR_app_name}-prod-users" >/dev/null
+      python3 scripts/migrate_dynamodb.py --from dev --to prod
   when: manual
   only:
     - main
