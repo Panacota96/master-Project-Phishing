@@ -261,6 +261,17 @@ destroy_dev:
     - TF_VAR_FILE="env/${TF_ENV}.tfvars"
     - terraform init -reconfigure -backend-config="${TF_BACKEND_FILE}"
     - |
+      mkdir -p env
+      if [ ! -f "${TF_VAR_FILE}" ]; then
+        APP_NAME="${TF_VAR_app_name:-phishing-app}"
+        cat > "${TF_VAR_FILE}" <<EOF
+      aws_region  = "${AWS_DEFAULT_REGION}"
+      environment = "${TF_ENV}"
+      app_name    = "${APP_NAME}"
+      secret_key  = "${TF_VAR_secret_key}"
+      EOF
+      fi
+    - |
       if [ "${CLEAN_S3:-false}" = "true" ]; then
         S3_BUCKET="$(terraform output -raw s3_bucket_name)"
         aws s3api list-object-versions --bucket "${S3_BUCKET}" \
@@ -288,6 +299,17 @@ destroy_prod:
     - TF_BACKEND_FILE="backend/${TF_ENV}.hcl"
     - TF_VAR_FILE="env/${TF_ENV}.tfvars"
     - terraform init -reconfigure -backend-config="${TF_BACKEND_FILE}"
+    - |
+      mkdir -p env
+      if [ ! -f "${TF_VAR_FILE}" ]; then
+        APP_NAME="${TF_VAR_app_name:-phishing-app}"
+        cat > "${TF_VAR_FILE}" <<EOF
+      aws_region  = "${AWS_DEFAULT_REGION}"
+      environment = "${TF_ENV}"
+      app_name    = "${APP_NAME}"
+      secret_key  = "${TF_VAR_secret_key}"
+      EOF
+      fi
     - |
       if [ "${CLEAN_S3:-false}" = "true" ]; then
         S3_BUCKET="$(terraform output -raw s3_bucket_name)"
