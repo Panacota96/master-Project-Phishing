@@ -172,6 +172,14 @@ Use the shared build script to package the Lambda artifact:
 
 See `DEPLOYMENT_GUIDE.md` for the full Terraform + AWS deployment guide.
 
+## Dev → Prod Migration (Snapshot)
+Use these scripts to migrate data from dev to prod while keeping password hashes:
+
+```bash
+./scripts/migrate_s3.sh
+python3 ./scripts/migrate_dynamodb.py --from dev --to prod
+```
+
 ## Terraform Remote State (Bootstrap)
 
 ```bash

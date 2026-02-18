@@ -346,7 +346,7 @@ When you push to GitLab, the pipeline runs automatically:
 | **deploy_dev** | `terraform apply` (dev) + upload EML + seed DynamoDB | **Auto** |
 | **deploy_prod** | `terraform apply` (prod) + upload EML + seed DynamoDB | **Manual click** |
 
-### 3.3 What to Expect
+### 3.3 What to Expect (CI/CD)
 
 1. **Push code to `main` branch** → pipeline starts
 2. **lint** (30s): passes if no flake8 errors
@@ -360,11 +360,28 @@ When you push to GitLab, the pipeline runs automatically:
    - 1 API Gateway HTTP API
    - IAM roles and CloudWatch log groups
 
-7. **deploy_prod** (manual): click play to deploy prod.
+7. **deploy_prod** (manual): click play to deploy prod (use `SKIP_SEED=true` for migration runs).
 
 After each deploy, the job log shows the API Gateway URL.
 
-### 3.3 Common CI/CD Fixes
+### 3.4 Safe Deploy/Destroy via CI/CD
+**Dev deploy (auto):**
+1. Push to `main`.
+2. Confirm `deploy_dev` is green.
+3. Verify dev URL from job outputs.
+
+**Prod deploy (manual):**
+1. Set CI vars: `TF_ENV=prod`, `TF_VAR_environment=prod`, `TF_VAR_secret_key=<prod-secret>`.
+2. Push to `main`, review `plan`.
+3. Click **Play** on `deploy_prod`.
+4. Verify prod URL from job outputs.
+
+**Destroy (manual):**
+1. Set CI vars to the target env (`TF_ENV=dev` or `TF_ENV=prod`).
+2. Run a local destroy or a dedicated destroy job (see section 6.2).
+3. Confirm S3 and DynamoDB are gone.
+
+### 3.5 Common CI/CD Fixes
 - **Pipeline prompts for `secret_key`**: set `TF_VAR_secret_key` in GitLab variables.
 - **S3 sync fails**: ensure `TF_ENV` is set so the deploy job reads outputs from the correct backend.
 - **Build step permission denied**: CI runs the build script via `bash` (already configured).
@@ -463,7 +480,37 @@ aws lambda update-function-code \
 
 ---
 
-## 6.1 Destroy & Re-Deploy (CI/CD)
+## 6.1 Dev → Prod Migration (Snapshot)
+
+Use this when you want **both environments live** and need to **copy data from dev to prod**.
+
+**Freeze writes on dev** for a short window, then:
+
+### 6.1.1 Migrate S3 (all prefixes)
+```bash
+./scripts/migrate_s3.sh
+```
+
+### 6.1.2 Migrate DynamoDB (all tables)
+```bash
+python3 ./scripts/migrate_dynamodb.py --from dev --to prod
+```
+
+**Notes**
+- Keeps existing password hashes intact.
+- Re-run is safe; tables are overwritten by primary key.
+
+### 6.1.3 Validate
+```bash
+aws dynamodb scan --table-name phishing-app-dev-users --select COUNT
+aws dynamodb scan --table-name phishing-app-prod-users --select COUNT
+aws s3 ls s3://phishing-app-dev-eu-west-3/eml-samples/ --recursive | wc -l
+aws s3 ls s3://phishing-app-prod-eu-west-3/eml-samples/ --recursive | wc -l
+```
+
+---
+
+## 6.2 Destroy & Re-Deploy (CI/CD)
 
 ### Destroy (local)
 ```bash
@@ -476,10 +523,74 @@ terraform destroy -var-file=env/<env>.tfvars
 2. Ensure GitLab variables are set (especially `TF_VAR_secret_key`).
 3. Push a commit to trigger the pipeline.
 4. Review the `plan` stage output.
-5. Click **Play** on the `deploy` stage to apply.
+5. Click **Play** on `deploy_prod` (prod) or let `deploy_dev` run (dev).
 
 Note: The app is down after destroy until deploy completes.
 
+## 6.3 Safe Deploy (Manual)
+**Dev**
+```bash
+cd terraform
+terraform init -backend-config=backend/dev.hcl
+terraform plan -var-file=env/dev.tfvars
+terraform apply -var-file=env/dev.tfvars
+```
+
+**Prod**
+```bash
+cd terraform
+terraform init -backend-config=backend/prod.hcl
+terraform plan -var-file=env/prod.tfvars
+terraform apply -var-file=env/prod.tfvars
+```
+
+After apply, upload EML samples and seed (if desired):
+```bash
+S3_BUCKET="$(terraform output -raw s3_bucket_name)"
+aws s3 sync ../examples/ "s3://${S3_BUCKET}/eml-samples/" --exclude "*" --include "*.eml"
+
+export AWS_REGION_NAME=eu-west-3
+export DYNAMODB_USERS="$(terraform output -raw dynamodb_users_table)"
+export DYNAMODB_QUIZZES="$(terraform output -raw dynamodb_quizzes_table)"
+export DYNAMODB_ATTEMPTS="$(terraform output -raw dynamodb_attempts_table)"
+export DYNAMODB_RESPONSES="$(terraform output -raw dynamodb_responses_table)"
+export DYNAMODB_INSPECTOR="$(terraform output -raw dynamodb_inspector_table)"
+export SECRET_KEY=<same-secret-as-terraform>
+python seed_dynamodb.py
+```
+
+## 6.4 Safe Destroy (Manual)
+**Dev**
+```bash
+cd terraform
+terraform init -backend-config=backend/dev.hcl
+terraform destroy -var-file=env/dev.tfvars
+```
+
+**Prod**
+```bash
+cd terraform
+terraform init -backend-config=backend/prod.hcl
+terraform destroy -var-file=env/prod.tfvars
+```
+
+If destroy fails on S3 due to versioned objects, empty the bucket first:
+```bash
+aws s3api list-object-versions --bucket <bucket> \
+  --query 'Versions[].{Key:Key,VersionId:VersionId}' --output json > /tmp/versions.json
+aws s3api list-object-versions --bucket <bucket> \
+  --query 'DeleteMarkers[].{Key:Key,VersionId:VersionId}' --output json > /tmp/markers.json
+python3 - <<'PY'
+import json
+from pathlib import Path
+versions = json.loads(Path('/tmp/versions.json').read_text() or '[]')
+markers = json.loads(Path('/tmp/markers.json').read_text() or '[]')
+objects = versions + markers
+Path('/tmp/delete.json').write_text(json.dumps({'Objects': objects} if objects else {'Objects': []}))
+print(f"objects_to_delete={len(objects)}")
+PY
+aws s3api delete-objects --bucket <bucket> --delete file:///tmp/delete.json
+```
 ---
 
 ## 7. Admin Operations (Post-Deploy)
@@ -519,16 +630,9 @@ Edit the `.tf` files, push to GitLab, review the plan, and click deploy.
 
 ---
 
-## 7. Teardown
+## 7. Teardown (All)
 
-To destroy all AWS resources:
-
-```bash
-cd terraform
-terraform destroy
-```
-
-This removes all DynamoDB tables, the Lambda function, API Gateway, S3 bucket, IAM roles, and log groups. **This is irreversible** — all data in DynamoDB and S3 will be deleted.
+To destroy all AWS resources for a given environment, use the manual destroy steps in section 6.3. This removes all DynamoDB tables, the Lambda function, API Gateway, S3 bucket, IAM roles, and log groups. **This is irreversible** — all data in DynamoDB and S3 will be deleted.
 
 ---
 
