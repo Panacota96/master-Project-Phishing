@@ -426,6 +426,37 @@ aws lambda update-function-code \
   --zip-file fileb://lambda.zip
 ```
 
+---
+
+## 7. Admin Operations (Post-Deploy)
+
+### Upload Users (CSV)
+1. Log in as an admin.
+2. Go to **Admin → Import Users**.
+3. Upload a CSV with required columns:
+   - `username`, `email`, `password`, `class`, `academic_year`, `major`
+   - Optional: `group`
+4. Submit and verify the import summary.
+
+Example CSV:
+```csv
+username,email,password,class,academic_year,major,group
+jdoe,jdoe@school.edu,TempPass123,Class A,2025,CS,engineering
+asmith,asmith@school.edu,TempPass456,Class B,2025,Marketing,marketing
+```
+
+### Upload Email Samples (.eml)
+Upload `.eml` files to S3 under the `eml-samples/` prefix:
+```bash
+aws s3 sync examples/ s3://phishing-app-<env>-eu-west-3/eml-samples/ --exclude "*" --include "*.eml"
+```
+
+### Download Reports
+1. Log in as admin.
+2. **Admin → Reports** for quiz/cohort reports.
+3. **Admin → Inspector Analytics** for inspector cohort reports.
+4. Click **Download CSV** to get a pre‑signed S3 link.
+
 Or simply push to GitLab and let the pipeline handle it.
 
 ### Infrastructure changes:
