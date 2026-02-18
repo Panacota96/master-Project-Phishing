@@ -111,6 +111,13 @@ aws s3 sync examples/ s3://phishing-app-<env>-eu-west-3/eml-samples/ --exclude "
 3. Go to **Admin → Inspector Analytics** to download inspector cohort reports.
 4. Click the **Download CSV** button; you’ll receive a pre‑signed S3 link.
 
+## DynamoDB Usage Summary
+**Users table**: login credentials + cohort fields (class/year/major).  
+**Quizzes table**: quiz definitions and questions.  
+**Attempts table**: quiz scores + cohort fields for analytics.  
+**Responses table**: per‑question responses for reporting.  
+**Inspector attempts table**: email classification attempts + cohort fields.
+
 ## Docker
 
 ```bash

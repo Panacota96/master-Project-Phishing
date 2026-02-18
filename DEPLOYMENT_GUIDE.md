@@ -392,6 +392,29 @@ CloudWatch:
   /aws/apigateway/phishing-app-prod-api
 ```
 
+### DynamoDB Usage Summary
+The app uses DynamoDB as its primary datastore:
+
+**Users table**
+- Stores: username, email, password hash, admin flag, cohort fields (class/year/major)
+- Used by login and CSV import
+
+**Quizzes table**
+- Stores: quiz metadata and embedded questions/answers
+- Used to render quiz list and questions
+
+**Attempts table**
+- Stores: quiz scores, percentage, completion timestamp, cohort fields
+- Used for admin analytics and reports
+
+**Responses table**
+- Stores: per-question responses for analytics
+- Used for question-level reporting
+
+**Inspector attempts table**
+- Stores: email classification attempts, phishing signals, correctness, cohort fields
+- Used for inspector analytics and reports
+
 ---
 
 ## 5. Cost Estimate
