@@ -1,5 +1,6 @@
 """Tests for the EML realism validator."""
 
+import base64
 from email.message import EmailMessage
 from pathlib import Path
 
@@ -22,6 +23,18 @@ def _write_eml(path: Path, *, include_link: bool = True, include_image: bool = T
 
     msg.set_content(text_body)
     msg.add_alternative(html_body, subtype="html")
+    if include_image:
+        png = base64.b64decode(
+            "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wcAAgcB"
+            "9l9n1QAAAABJRU5ErkJggg=="
+        )
+        msg.get_payload()[1].add_related(
+            png,
+            maintype="image",
+            subtype="png",
+            cid="logo",
+            filename="logo.png",
+        )
 
     path.write_text(msg.as_string())
 
