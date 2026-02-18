@@ -17,6 +17,15 @@
     "marketing-spam-logistics.eml": {
       "skip_link_attachment": true
     },
+    "impersonation-4.eml": {
+      "skip_link_attachment": true
+    },
+    "impersonation-attachment-socialeng-spoof.eml": {
+      "skip_link_attachment": true
+    },
+    "legitapp-impersonation-externaldomain-socialeng.eml": {
+      "skip_link_attachment": true
+    },
     "spam-attachment-1.eml": {
       "skip_image": true
     },
