@@ -1,0 +1,42 @@
+From: "Weekly News" <newsletter@weekly-news-mail.com>
+To: "Student" <student@example.edu>
+Subject: This Week's Highlights + Manage Preferences
+Date: Tue, 18 Feb 2026 15:00:00 +0000
+Message-ID: <news-1500.20260218@weekly-news-mail.com>
+Reply-To: "Weekly News" <support@weekly-news-mail.com>
+Return-Path: <bounce@weekly-news-mail.com>
+MIME-Version: 1.0
+Authentication-Results: mx.example.edu; spf=neutral smtp.mailfrom=weekly-news-mail.com; dkim=pass header.d=weekly-news-mail.com; dmarc=fail
+Received: from mail.weekly-news-mail.com (198.51.100.88) by mx.example.edu with ESMTPS id SPAM006 for <student@example.edu>; Tue, 18 Feb 2026 15:00:00 +0000
+Content-Type: multipart/alternative; boundary="alt-015"
+
+--alt-015
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+
+Hello,
+
+Here are this week's highlights. Update your preferences any time.
+
+Manage preferences: https://weekly-news-mail.com.preferences-hub.net/manage
+
+--alt-015
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+
+<html>
+  <body style="font-family: Arial, sans-serif; color: #111827;">
+    <h2>This Week's Highlights</h2>
+    <p>Catch up on the latest updates and stories.</p>
+    <p>
+      <a href="https://weekly-news-mail.com.preferences-hub.net/manage"
+         style="display:inline-block;padding:10px 16px;background:#334155;color:#fff;text-decoration:none;border-radius:4px;">
+        Manage Preferences
+      </a>
+    </p>
+    <p style="font-size:12px;color:#6b7280;">You may unsubscribe at any time.</p>
+    <img src="https://tracking.weekly-news-mail.com/pixel?id=NEWS" width="1" height="1" alt="" />
+  </body>
+</html>
+
+--alt-015--

@@ -1,0 +1,97 @@
+From: "Contoso Billing" <billing@contoso-payments.com>
+To: "Alex Student" <alex@student.example.edu>
+Subject: Invoice #INV-20491 - Action Required
+Date: Tue, 18 Feb 2026 09:22:00 +0000
+Message-ID: <inv-20491.20260218@contoso-payments.com>
+Reply-To: "Contoso Billing" <billing@contoso-payments.com>
+Return-Path: <bounce@contoso-payments.com>
+MIME-Version: 1.0
+Authentication-Results: mx.example.edu; spf=softfail smtp.mailfrom=contoso-payments.com; dkim=pass header.d=contoso-payments.com; dmarc=fail
+Received: from mail.contoso-payments.com (203.0.113.10) by mx.example.edu with ESMTPS id ABC123 for <alex@student.example.edu>; Tue, 18 Feb 2026 09:22:00 +0000
+Content-Type: multipart/mixed; boundary="mix-001"
+
+--mix-001
+Content-Type: multipart/alternative; boundary="alt-001"
+
+--alt-001
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+
+Hello Alex,
+
+Your invoice INV-20491 is overdue. Please review and pay within 24 hours to avoid service interruption.
+
+View invoice: https://contoso-payments.com.secure-login.net/invoice/INV-20491
+
+If you prefer, scan the QR code in the email to access the portal.
+
+Regards,
+Contoso Billing Team
+
+--alt-001
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+
+<html>
+  <body style="font-family: Arial, sans-serif; color: #1f2937;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 640px; margin: 0 auto;">
+      <tr>
+        <td style="padding: 16px 0;">
+          <img src="cid:logo-contoso" alt="Contoso" width="140" height="32" />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <h2 style="margin: 0 0 8px;">Invoice INV-20491</h2>
+          <p>Your invoice is overdue. Please pay within <strong>24 hours</strong> to avoid service interruption.</p>
+          <p>
+            <a href="https://contoso-payments.com.secure-login.net/invoice/INV-20491"
+               style="display:inline-block;padding:10px 16px;background:#2563eb;color:#fff;text-decoration:none;border-radius:4px;">
+              Review Invoice
+            </a>
+          </p>
+          <p>Or scan the QR code to access your portal:</p>
+          <img src="cid:qr-code-1" alt="Scan QR" width="140" height="140" />
+        </td>
+      </tr>
+      <tr>
+        <td style="padding-top: 16px; font-size: 12px; color: #6b7280;">
+          This is an automated message. Do not reply to this email.
+        </td>
+      </tr>
+    </table>
+    <img src="https://tracking.contoso-payments.com/pixel?id=INV-20491" width="1" height="1" alt="" />
+  </body>
+</html>
+
+--alt-001--
+
+--mix-001
+Content-Type: image/png
+Content-Transfer-Encoding: base64
+Content-ID: <logo-contoso>
+Content-Disposition: inline; filename="logo.png"
+
+iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wcAAgcB
+9l9n1QAAAABJRU5ErkJggg==
+
+--mix-001
+Content-Type: image/png
+Content-Transfer-Encoding: base64
+Content-ID: <qr-code-1>
+Content-Disposition: inline; filename="qr.png"
+
+iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wcAAgcB
+9l9n1QAAAABJRU5ErkJggg==
+
+--mix-001
+Content-Type: application/pdf
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="INV-20491.pdf"
+
+JVBERi0xLjQKJcTl8uXrp/Og0MTGCjEgMCBvYmoKPDwvVHlwZS9DYXRhbG9nPj4KZW5k
+b2JqCjIgMCBvYmoKPDwvVHlwZS9QYWdlPj4KZW5kb2JqCnhyZWYKMCAzCjAwMDAwMDAw
+MDAgNjU1MzUgZiAKMDAwMDAwMDAxMCAwMDAwMCBuIAowMDAwMDAwMDUyIDAwMDAwIG4g
+CnRyYWlsZXIKPDwvUm9vdCAxIDAgUj4+CnN0YXJ0eHJlZgo2NQolJUVPRgo=
+
+--mix-001--

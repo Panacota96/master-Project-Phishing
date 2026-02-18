@@ -1,0 +1,42 @@
+From: "Invoice Desk" <billing@invoice-desk-mail.com>
+To: "Student" <student@example.edu>
+Subject: Reminder: Invoice #A-1842
+Date: Tue, 18 Feb 2026 15:30:00 +0000
+Message-ID: <inv-rem-1530.20260218@invoice-desk-mail.com>
+Reply-To: "Invoice Desk" <support@invoice-desk-mail.com>
+Return-Path: <bounce@invoice-desk-mail.com>
+MIME-Version: 1.0
+Authentication-Results: mx.example.edu; spf=neutral smtp.mailfrom=invoice-desk-mail.com; dkim=pass header.d=invoice-desk-mail.com; dmarc=fail
+Received: from mail.invoice-desk-mail.com (203.0.113.91) by mx.example.edu with ESMTPS id SPAM007 for <student@example.edu>; Tue, 18 Feb 2026 15:30:00 +0000
+Content-Type: multipart/alternative; boundary="alt-016"
+
+--alt-016
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+
+Hello,
+
+This is a reminder about invoice A-1842. If you have already paid, please disregard.
+
+View: https://invoice-desk-mail.com.payments-portal.net/view/A-1842
+
+--alt-016
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+
+<html>
+  <body style="font-family: Arial, sans-serif; color: #111827;">
+    <h2>Invoice Reminder</h2>
+    <p>This is a reminder about invoice <strong>A-1842</strong>. If you already paid, you can ignore this message.</p>
+    <p>
+      <a href="https://invoice-desk-mail.com.payments-portal.net/view/A-1842"
+         style="display:inline-block;padding:10px 16px;background:#0f766e;color:#fff;text-decoration:none;border-radius:4px;">
+        View Invoice
+      </a>
+    </p>
+    <p style="font-size:12px;color:#6b7280;">This is a promotional message.</p>
+    <img src="https://tracking.invoice-desk-mail.com/pixel?id=INV" width="1" height="1" alt="" />
+  </body>
+</html>
+
+--alt-016--

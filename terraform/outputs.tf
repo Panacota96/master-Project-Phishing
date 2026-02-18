@@ -42,3 +42,8 @@ output "dynamodb_inspector_table" {
   description = "DynamoDB inspector attempts table name"
   value       = aws_dynamodb_table.inspector_attempts.name
 }
+
+output "dynamodb_inspector_anon_table" {
+  description = "DynamoDB anonymous inspector attempts table name"
+  value       = aws_dynamodb_table.inspector_attempts_anon.name
+}

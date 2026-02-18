@@ -11,6 +11,7 @@ source .venv/bin/activate
 python -m pip install -r requirements.txt
 python -m pip install pytest moto
 make test
+make validate-eml
 ```
 
 ## Troubleshooting
@@ -37,6 +38,14 @@ python -m pip install pytest moto
 ```bash
 pytest tests/ -v
 ```
+
+### Validate EML Realism
+
+```bash
+make validate-eml
+```
+
+The report is written to `examples/realism_report.json`. Use `examples/realism_allowlist.json` to skip checks for legacy samples.
 
 ### Expected Output
 

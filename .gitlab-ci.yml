@@ -22,6 +22,7 @@ lint:
     - apt-get update && apt-get install -y make
     - pip install flake8
     - make lint
+    - make validate-eml
 
 # ─── Stage 2: Test ────────────────────────────────────────────────────────────
 

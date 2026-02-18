@@ -64,9 +64,10 @@
     </div>
 </div>
 
-<div class="d-flex justify-content-end align-items-center gap-3 mb-3">
+<div class="d-flex justify-content-end align-items-center gap-2 mb-3">
     <div id="inspectorReportStatus" class="text-muted small"></div>
-    <button class="btn btn-outline-primary" type="button" id="inspectorReportBtn">Download CSV</button>
+    <button class="btn btn-outline-primary" type="button" id="inspectorReportByEmailBtn">Download CSV (by email)</button>
+    <button class="btn btn-outline-secondary" type="button" id="inspectorReportCohortBtn">Download CSV (cohort only)</button>
 </div>
 
 <div class="card">
@@ -123,19 +124,26 @@ document.querySelectorAll('.sort-indicator').forEach((indicator) => {
     }
 });
 
-const reportBtn = document.getElementById('inspectorReportBtn');
+const reportBtn = document.getElementById('inspectorReportByEmailBtn');
+const reportCohortBtn = document.getElementById('inspectorReportCohortBtn');
 const reportStatus = document.getElementById('inspectorReportStatus');
+function buildReportFormData(scope) {
+    const formData = new FormData();
+    formData.append('class_name', '{{ selected_class }}');
+    formData.append('academic_year', '{{ selected_year }}');
+    formData.append('major', '{{ selected_major }}');
+    formData.append('email', '{{ selected_email }}');
+    formData.append('date_from', '{{ date_from }}');
+    formData.append('date_to', '{{ date_to }}');
+    formData.append('report_scope', scope);
+    return formData;
+}
+
 if (reportBtn) {
     reportBtn.addEventListener('click', async () => {
         reportStatus.textContent = 'Generating report...';
         try {
-            const formData = new FormData();
-            formData.append('class_name', '{{ selected_class }}');
-            formData.append('academic_year', '{{ selected_year }}');
-            formData.append('major', '{{ selected_major }}');
-            formData.append('email', '{{ selected_email }}');
-            formData.append('date_from', '{{ date_from }}');
-            formData.append('date_to', '{{ date_to }}');
+            const formData = buildReportFormData('email');
             const resp = await fetch('{{ url_for("dashboard.generate_inspector_report") }}', {
                 method: 'POST',
                 body: formData,
@@ -145,6 +153,25 @@ if (reportBtn) {
                 throw new Error(data.error || 'Unable to generate report.');
             }
             reportStatus.innerHTML = `Report ready: <a href=\"${data.download_url}\" target=\"_blank\" rel=\"noopener noreferrer\">${data.filename}</a>`;
+        } catch (err) {
+            reportStatus.textContent = `Error: ${err.message}`;
+        }
+    });
+}
+if (reportCohortBtn) {
+    reportCohortBtn.addEventListener('click', async () => {
+        reportStatus.textContent = 'Generating report...';
+        try {
+            const formData = buildReportFormData('cohort');
+            const resp = await fetch('{{ url_for("dashboard.generate_inspector_report") }}', {
+                method: 'POST',
+                body: formData,
+            });
+            const data = await resp.json();
+            if (!resp.ok) {
+                throw new Error(data.error || 'Unable to generate report.');
+            }
+            reportStatus.innerHTML = `Report ready: <a href="${data.download_url}" target="_blank" rel="noopener noreferrer">${data.filename}</a>`;
         } catch (err) {
             reportStatus.textContent = `Error: ${err.message}`;
         }

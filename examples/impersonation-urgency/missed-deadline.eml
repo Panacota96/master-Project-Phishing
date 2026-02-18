@@ -1,0 +1,24 @@
+From: "Compliance Training" <compliance@corp-hr-learning.net>
+To: employee@company.com
+Subject: DEADLINE MISSED: Mandatory 2026 Compliance Training for [User]
+Date: Tue, 03 Mar 2026 09:00:00 +0000
+MIME-Version: 1.0
+Content-Type: text/html; charset="UTF-8"
+
+<div style="background: #f8f9fa; font-family: 'Segoe UI', Arial, sans-serif; padding: 40px; border: 1px solid #dee2e6;">
+  <div style="background: white; max-width: 600px; margin: auto; padding: 40px; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+    <div style="margin-bottom: 25px;">
+      <img src="https://img.icons8.com/color/96/guarantee.png" alt="Compliance" style="width: 48px;">
+    </div>
+    <h1 style="color: #dc3545; font-size: 24px;">Notice of Non-Compliance</h1>
+    <p style="color: #333; font-size: 16px; line-height: 1.5;">Our records show that you have <b>missed the mandatory deadline</b> for the 2026 Annual Compliance and Ethics Training.</p>
+    <div style="background: #fff3cd; border-left: 5px solid #ffc107; padding: 15px; margin: 25px 0;">
+      <p style="color: #856404; margin: 0; font-weight: bold;">Account Suspension Pending</p>
+      <p style="color: #856404; margin: 5px 0 0 0; font-size: 14px;">Your corporate account access will be suspended today at 5:00 PM unless you complete the catch-up module.</p>
+    </div>
+    <p style="color: #333;">Please log in to the HR Learning Portal to begin the module immediately.</p>
+    <div style="text-align: center; margin-top: 35px;">
+      <a href="http://corp-hr-learning.net/portal/training/9928" style="background: #007bff; color: white; padding: 12px 35px; text-decoration: none; border-radius: 4px; font-weight: bold;">Launch Learning Portal</a>
+    </div>
+  </div>
+</div>

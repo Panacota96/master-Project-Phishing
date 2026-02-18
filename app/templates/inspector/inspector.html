@@ -818,29 +818,6 @@
           .join("");
       }
 
-      function renderSignalFeedback({ correct = [], incorrect = [] } = {}) {
-        const rows = [
-          { label: "Correct", values: correct },
-          { label: "Incorrect", values: incorrect },
-        ];
-        const markup = rows
-          .map(
-            ({ label, values }) => `
-              <div class="signal-feedback-row">
-                <span class="signal-feedback-label">${escapeHtml(label)}:</span>
-                <span class="signal-feedback-values">${formatSignalChips(values)}</span>
-              </div>
-            `
-          )
-          .join("");
-        return `<div class="signal-feedback">${markup}</div>`;
-      }
-
-      function renderStatusHeading(text) {
-        return `<span class="status-heading">${escapeHtml(text)}</span>`;
-      }
-
-
       async function handleEmailSelection(button, fileName) {
         if (activeEmail === fileName) {
           return;
@@ -1165,18 +1142,21 @@
               throw new Error(payload.error || "Submission failed.");
             }
 
-            statusEl.innerHTML = `${renderStatusHeading(payload.message || "")}${renderSignalFeedback({
-              correct: payload.correct_signals || [],
-              incorrect: payload.incorrect_signals || [],
-            })}`;
-            statusEl.classList.toggle("success", !!payload.success);
-            statusEl.classList.toggle("error", !payload.success);
+            statusEl.textContent = payload.message || "Answer saved.";
+            statusEl.classList.add("success");
+            statusEl.classList.remove("error");
+
+            const savedAt = new Date();
+            statusEl.textContent = `Answer saved at ${savedAt.toLocaleTimeString()}.`;
+            form.querySelectorAll("input, button").forEach((el) => {
+              el.disabled = true;
+            });
 
             classificationLog.push({
               email: emailFileName,
               classification: selectedClassification,
               signals: selectedSignals.map((input) => input.value),
-              success: payload.success,
+              success: true,
               timestamp: new Date().toISOString(),
             });
           } catch (error) {

@@ -132,6 +132,41 @@ Use S3 and keep files under the `eml-samples/` prefix:
 aws s3 sync examples/ s3://phishing-app-<env>-eu-west-3/eml-samples/ --exclude "*" --include "*.eml"
 ```
 
+### Migrate Inspector Attempts to GDPR-Safe Table
+If you have legacy inspector attempts with usernames, migrate them to the anonymous table:
+```bash
+python3 scripts/migrate_inspector_attempts.py --dry-run
+python3 scripts/migrate_inspector_attempts.py
+```
+
+## Improving Example Emails (Realism Checklist)
+To make the `examples/` folder feel closer to real-world phishing, aim for:
+- **Multipart emails**: include both `text/plain` and `text/html`.
+- **HTML layout**: tables, buttons, brand colors, and footer/legal text.
+- **Inline images**: use CID-embedded logos (`Content-ID`) plus remote image references.
+- **QR codes**: embed a QR image (CID or remote) that points to a test URL.
+- **Tracking pixels**: a 1×1 image to mimic open tracking.
+- **Attachments**: PDF invoices, HTML files, or ZIPs (benign placeholders).
+- **Header realism**: `Reply-To` mismatch, `Return-Path` mismatch, SPF/DKIM/DMARC results.
+- **Look‑alike domains**: subdomain tricks and homographs (punycode) in links.
+- **Urgency + social engineering language**: time pressure, authority, or fear cues.
+
+### Realism Validator
+Run the built-in validator to ensure all example emails meet baseline realism:
+```bash
+make validate-eml
+```
+Reports are written to `examples/realism_report.json`.
+If a file should skip a check, add it to `examples/realism_allowlist.json`.
+
+### Reference Datasets / Repos
+These GitHub projects can be used as inspiration or sources for realistic examples:
+- https://github.com/SeanWrightSec/phishing-examples
+- https://github.com/sunknighteric/EPVME-Dataset
+- https://github.com/rokibulroni/Phishing-Email-Dataset
+
+**Note:** Always review licenses and remove any sensitive or personal data from real samples before using them in `examples/`.
+
 ### Download Reports
 1. Log in as admin.
 2. Go to **Admin → Reports** to generate quiz/cohort reports.

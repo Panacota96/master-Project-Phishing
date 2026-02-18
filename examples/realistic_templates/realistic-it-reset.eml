@@ -1,0 +1,96 @@
+From: "IT Support Desk" <support@campus-it.example.edu>
+To: "Jordan Learner" <jordan@student.example.edu>
+Subject: Password Expiration Notice - Action Required
+Date: Tue, 18 Feb 2026 10:05:00 +0000
+Message-ID: <pwd-exp-1005.20260218@campus-it.example.edu>
+Reply-To: "IT Support Desk" <helpdesk@campus-it.example.edu>
+Return-Path: <bounce@campus-it.example.edu>
+MIME-Version: 1.0
+Authentication-Results: mx.example.edu; spf=pass smtp.mailfrom=campus-it.example.edu; dkim=pass header.d=campus-it.example.edu; dmarc=pass
+Received: from mail.campus-it.example.edu (198.51.100.33) by mx.example.edu with ESMTPS id XYZ456 for <jordan@student.example.edu>; Tue, 18 Feb 2026 10:05:00 +0000
+Content-Type: multipart/mixed; boundary="mix-002"
+
+--mix-002
+Content-Type: multipart/alternative; boundary="alt-002"
+
+--alt-002
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+
+Hello Jordan,
+
+Your campus password expires today. Please reset it to avoid losing access.
+
+Reset now: https://campus-it.example.edu.security-check.org/reset
+
+If you cannot access the portal, scan the QR code in the email.
+
+Thanks,
+Campus IT Support
+
+--alt-002
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+
+<html>
+  <body style="font-family: Arial, sans-serif; color: #0f172a;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 620px; margin: 0 auto;">
+      <tr>
+        <td style="padding: 12px 0;">
+          <img src="cid:logo-it" alt="Campus IT" width="120" height="32" />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <h2 style="margin: 0 0 8px;">Password Expiration Notice</h2>
+          <p>Your campus password expires <strong>today</strong>. Reset now to avoid service disruption.</p>
+          <p>
+            <a href="https://campus-it.example.edu.security-check.org/reset"
+               style="display:inline-block;padding:10px 14px;background:#0f766e;color:#fff;text-decoration:none;border-radius:4px;">
+              Reset Password
+            </a>
+          </p>
+          <p>Alternatively, scan the QR code:</p>
+          <img src="cid:qr-code-2" alt="Scan QR" width="130" height="130" />
+        </td>
+      </tr>
+      <tr>
+        <td style="padding-top: 16px; font-size: 12px; color: #64748b;">
+          This email was sent automatically by the campus identity system.
+        </td>
+      </tr>
+    </table>
+    <img src="https://telemetry.campus-it.example.edu/pixel?id=PWD-EXP-1005" width="1" height="1" alt="" />
+  </body>
+</html>
+
+--alt-002--
+
+--mix-002
+Content-Type: image/png
+Content-Transfer-Encoding: base64
+Content-ID: <logo-it>
+Content-Disposition: inline; filename="logo.png"
+
+iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wcAAgcB
+9l9n1QAAAABJRU5ErkJggg==
+
+--mix-002
+Content-Type: image/png
+Content-Transfer-Encoding: base64
+Content-ID: <qr-code-2>
+Content-Disposition: inline; filename="qr.png"
+
+iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wcAAgcB
+9l9n1QAAAABJRU5ErkJggg==
+
+--mix-002
+Content-Type: application/zip
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="reset-instructions.zip"
+
+UEsDBAoAAAAAAI2oZ1EAAAAAAAAAAAAAAAAJAAAAdG1wLnR4dFBLAQIUABQAAAAAAI2o
+Z1EAAAAAAAAAAAAAAAAJAAAAAAAAAAAAAACAAQAAAAB0bXAudHh0UEsFBgAAAAABAAEA
+NwAAADcAAAAAAA==
+
+--mix-002--

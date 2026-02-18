@@ -1,7 +1,7 @@
 import csv
 import io
 
-from flask import abort, flash, redirect, render_template, request, url_for
+from flask import abort, flash, redirect, render_template, request, session, url_for
 from flask_login import current_user, login_required, login_user, logout_user
 
 from app.auth import bp
@@ -27,6 +27,7 @@ def login():
 
 @bp.route('/logout')
 def logout():
+    session.pop('inspector_email_pool', None)
     logout_user()
     flash('You have been logged out.', 'info')
     return redirect(url_for('auth.login'))
@@ -94,6 +95,7 @@ def change_password():
         else:
             update_user_password(current_user.username, form.new_password.data)
             current_user.set_password(form.new_password.data)
+            session.pop('inspector_email_pool', None)
             logout_user()
             flash('Password updated. Please log in again.', 'success')
             return redirect(url_for('auth.login'))

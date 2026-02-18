@@ -1,0 +1,56 @@
+From: "Promo Hub" <offers@promo-hub-mail.com>
+To: "Student" <student@example.edu>
+Subject: Scan to Claim Your Free Gift
+Date: Tue, 18 Feb 2026 13:30:00 +0000
+Message-ID: <promo-qr-1330.20260218@promo-hub-mail.com>
+Reply-To: "Promo Hub" <support@promo-hub-mail.com>
+Return-Path: <bounce@promo-hub-mail.com>
+MIME-Version: 1.0
+Authentication-Results: mx.example.edu; spf=neutral smtp.mailfrom=promo-hub-mail.com; dkim=pass header.d=promo-hub-mail.com; dmarc=fail
+Received: from mail.promo-hub-mail.com (203.0.113.77) by mx.example.edu with ESMTPS id SPAM003 for <student@example.edu>; Tue, 18 Feb 2026 13:30:00 +0000
+Content-Type: multipart/mixed; boundary="mix-010"
+
+--mix-010
+Content-Type: multipart/alternative; boundary="alt-012"
+
+--alt-012
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+
+Hello,
+
+Scan the QR code to claim your free gift today.
+
+Claim: https://promo-hub-mail.com.gift-center.net/claim
+
+--alt-012
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+
+<html>
+  <body style="font-family: Arial, sans-serif; color: #111827;">
+    <h2>Free Gift Inside</h2>
+    <p>Scan the QR code to claim your reward.</p>
+    <p>
+      <a href="https://promo-hub-mail.com.gift-center.net/claim"
+         style="display:inline-block;padding:10px 16px;background:#2563eb;color:#fff;text-decoration:none;border-radius:4px;">
+        Claim Gift
+      </a>
+    </p>
+    <img src="cid:qr-code-spam" alt="Scan QR" width="140" height="140" />
+    <img src="https://tracking.promo-hub-mail.com/pixel?id=QR-SPAM" width="1" height="1" alt="" />
+  </body>
+</html>
+
+--alt-012--
+
+--mix-010
+Content-Type: image/png
+Content-Transfer-Encoding: base64
+Content-ID: <qr-code-spam>
+Content-Disposition: inline; filename="qr.png"
+
+iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wcAAgcB
+9l9n1QAAAABJRU5ErkJggg==
+
+--mix-010--

@@ -1,0 +1,42 @@
+From: "Campus Rewards" <rewards@campus-rewards-mail.com>
+To: "Student" <student@example.edu>
+Subject: Quick Survey - Get a $10 Voucher
+Date: Tue, 18 Feb 2026 14:00:00 +0000
+Message-ID: <survey-1400.20260218@campus-rewards-mail.com>
+Reply-To: "Campus Rewards" <support@campus-rewards-mail.com>
+Return-Path: <bounce@campus-rewards-mail.com>
+MIME-Version: 1.0
+Authentication-Results: mx.example.edu; spf=neutral smtp.mailfrom=campus-rewards-mail.com; dkim=pass header.d=campus-rewards-mail.com; dmarc=fail
+Received: from mail.campus-rewards-mail.com (198.51.100.77) by mx.example.edu with ESMTPS id SPAM004 for <student@example.edu>; Tue, 18 Feb 2026 14:00:00 +0000
+Content-Type: multipart/alternative; boundary="alt-013"
+
+--alt-013
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+
+Hello,
+
+Complete a 2-minute survey and receive a $10 voucher.
+
+Survey: https://campus-rewards-mail.com.survey-center.net/start
+
+--alt-013
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+
+<html>
+  <body style="font-family: Arial, sans-serif; color: #111827;">
+    <h2>Quick Survey</h2>
+    <p>Complete this 2-minute survey and get a <strong>$10 voucher</strong>.</p>
+    <p>
+      <a href="https://campus-rewards-mail.com.survey-center.net/start"
+         style="display:inline-block;padding:10px 16px;background:#7c3aed;color:#fff;text-decoration:none;border-radius:4px;">
+        Start Survey
+      </a>
+    </p>
+    <p style="font-size:12px;color:#6b7280;">Offer valid for 24 hours.</p>
+    <img src="https://tracking.campus-rewards-mail.com/pixel?id=SURVEY" width="1" height="1" alt="" />
+  </body>
+</html>
+
+--alt-013--

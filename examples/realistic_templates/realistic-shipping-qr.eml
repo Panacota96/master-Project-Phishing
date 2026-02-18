@@ -1,0 +1,97 @@
+From: "Global Shipping" <notifications@global-ship.com>
+To: "Casey Learner" <casey@student.example.edu>
+Subject: Delivery Issue - Verify Address
+Date: Tue, 18 Feb 2026 11:40:00 +0000
+Message-ID: <ship-verify-1140.20260218@global-ship.com>
+Reply-To: "Global Shipping" <support@global-ship.com>
+Return-Path: <bounce@global-ship.com>
+MIME-Version: 1.0
+Authentication-Results: mx.example.edu; spf=neutral smtp.mailfrom=global-ship.com; dkim=pass header.d=global-ship.com; dmarc=fail
+Received: from mail.global-ship.com (203.0.113.55) by mx.example.edu with ESMTPS id SHIP789 for <casey@student.example.edu>; Tue, 18 Feb 2026 11:40:00 +0000
+Content-Type: multipart/mixed; boundary="mix-003"
+
+--mix-003
+Content-Type: multipart/alternative; boundary="alt-003"
+
+--alt-003
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+
+Hello Casey,
+
+We attempted delivery but could not confirm your address. Please update your address to avoid delays.
+
+Update: https://global-ship.com.tracking-center.co/address/verify
+
+Scan the QR code to open your shipment page.
+
+Thank you,
+Global Shipping
+
+--alt-003
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+
+<html>
+  <body style="font-family: Arial, sans-serif; color: #1f2937;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 620px; margin: 0 auto;">
+      <tr>
+        <td style="padding: 12px 0;">
+          <img src="cid:logo-ship" alt="Global Shipping" width="150" height="32" />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <h2 style="margin: 0 0 8px;">Delivery Issue</h2>
+          <p>We could not confirm your address. Update it now to prevent delays.</p>
+          <p>
+            <a href="https://global-ship.com.tracking-center.co/address/verify"
+               style="display:inline-block;padding:10px 16px;background:#dc2626;color:#fff;text-decoration:none;border-radius:4px;">
+              Verify Address
+            </a>
+          </p>
+          <p>Or scan the QR code:</p>
+          <img src="cid:qr-code-3" alt="Scan QR" width="130" height="130" />
+        </td>
+      </tr>
+      <tr>
+        <td style="padding-top: 16px; font-size: 12px; color: #6b7280;">
+          Please do not share this email. It contains a private tracking link.
+        </td>
+      </tr>
+    </table>
+    <img src="https://tracking.global-ship.com/pixel?shipment=SHIP-1140" width="1" height="1" alt="" />
+  </body>
+</html>
+
+--alt-003--
+
+--mix-003
+Content-Type: image/png
+Content-Transfer-Encoding: base64
+Content-ID: <logo-ship>
+Content-Disposition: inline; filename="logo.png"
+
+iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wcAAgcB
+9l9n1QAAAABJRU5ErkJggg==
+
+--mix-003
+Content-Type: image/png
+Content-Transfer-Encoding: base64
+Content-ID: <qr-code-3>
+Content-Disposition: inline; filename="qr.png"
+
+iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wcAAgcB
+9l9n1QAAAABJRU5ErkJggg==
+
+--mix-003
+Content-Type: application/pdf
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="delivery-notice.pdf"
+
+JVBERi0xLjQKJcTl8uXrp/Og0MTGCjEgMCBvYmoKPDwvVHlwZS9DYXRhbG9nPj4KZW5k
+b2JqCjIgMCBvYmoKPDwvVHlwZS9QYWdlPj4KZW5kb2JqCnhyZWYKMCAzCjAwMDAwMDAw
+MDAgNjU1MzUgZiAKMDAwMDAwMDAxMCAwMDAwMCBuIAowMDAwMDAwMDUyIDAwMDAwIG4g
+CnRyYWlsZXIKPDwvUm9vdCAxIDAgUj4+CnN0YXJ0eHJlZgo2NQolJUVPRgo=
+
+--mix-003--

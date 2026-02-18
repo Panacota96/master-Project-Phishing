@@ -1,0 +1,18 @@
+{
+  "defaults": {
+    "skip_image": true
+  },
+  "paths": {
+    "examples/realistic_templates/": {
+      "skip_image": false
+    }
+  },
+  "files": {
+    "spam-attachment-1.eml": {
+      "skip_image": true
+    },
+    "spam-attachment-2.eml": {
+      "skip_image": true
+    }
+  }
+}

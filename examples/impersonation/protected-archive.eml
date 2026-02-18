@@ -1,0 +1,29 @@
+From: "Payroll Department" <payroll@it-hr-portal.net>
+To: employee@company.com
+Subject: IMPORTANT: Your 2026 Q1 Salary Adjustment & Tax Form
+Date: Tue, 03 Mar 2026 11:30:00 +0000
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="boundary-protected"
+
+--boundary-protected
+Content-Type: text/html; charset="UTF-8"
+
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd;">
+  <h2 style="color: #004a99;">Employee Finance Portal</h2>
+  <p>Dear Staff Member,</p>
+  <p>To ensure total privacy and compliance with our new data protection policy, please find your encrypted salary adjustment form attached below.</p>
+  <div style="background: #f8f9fa; border: 1px solid #eee; padding: 20px; margin: 25px 0; border-radius: 8px;">
+    <p style="margin: 0; font-size: 14px;"><strong>Encrypted File:</strong> Salary_Adjustment_2026.zip</p>
+    <p style="margin: 10px 0 0 0; font-size: 14px;"><strong>Password:</strong> <code style="background: #eee; padding: 2px 5px; border-radius: 3px;">HR_DISBURSE_2026</code></p>
+  </div>
+  <p>Please open the file and return the completed document to the portal by the end of the day.</p>
+</div>
+
+--boundary-protected
+Content-Type: application/octet-stream
+Content-Disposition: attachment; filename="Salary_Adjustment_2026.zip"
+Content-Transfer-Encoding: base64
+
+VGVzdCBwcm90ZWN0ZWQgY29udGVudA==
+
+--boundary-protected--

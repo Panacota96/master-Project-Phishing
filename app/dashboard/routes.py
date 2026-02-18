@@ -11,8 +11,8 @@ from app.models import (
     get_distinct_cohorts,
     get_quiz,
     list_all_attempts,
-    list_inspector_attempts,
     list_attempts_by_quiz,
+    list_inspector_attempts_anonymous,
     list_quizzes,
 )
 
@@ -92,7 +92,7 @@ def index():
         })
 
     # Inspector analytics
-    inspector_attempts = list_inspector_attempts()
+    inspector_attempts = list_inspector_attempts_anonymous()
     inspector_total = len(inspector_attempts)
     inspector_correct = sum(1 for a in inspector_attempts if a.get('is_correct'))
     inspector_phishing = sum(1 for a in inspector_attempts if a.get('classification') == 'Phishing')
@@ -106,6 +106,8 @@ def index():
         per_email[email_file]['count'] += 1
         if attempt.get('is_correct'):
             per_email[email_file]['correct'] += 1
+    for stats in per_email.values():
+        stats['incorrect'] = stats['count'] - stats['correct']
 
     inspector_per_email = sorted(
         per_email.values(),
@@ -200,7 +202,7 @@ def inspector_analytics():
     if not current_user.is_admin:
         abort(403)
 
-    attempts = list_inspector_attempts()
+    attempts = list_inspector_attempts_anonymous()
     attempts_sorted = attempts
 
     classes = sorted({a.get('class_name', 'unknown') for a in attempts_sorted})
@@ -459,8 +461,9 @@ def generate_inspector_report():
     email_filter = request.form.get('email', '')
     date_from = request.form.get('date_from', '').strip()
     date_to = request.form.get('date_to', '').strip()
+    report_scope = request.form.get('report_scope', 'email')
 
-    attempts = list_inspector_attempts()
+    attempts = list_inspector_attempts_anonymous()
     if class_filter:
         attempts = [a for a in attempts if a.get('class_name') == class_filter]
     if year_filter:
@@ -500,23 +503,31 @@ def generate_inspector_report():
 
     output = io.StringIO()
     writer = csv.writer(output)
-    writer.writerow([
+    header = [
         'Class',
         'Academic Year',
         'Major',
+    ]
+    if report_scope != 'cohort':
+        header.append('Email')
+    header += [
         'Attempts',
         'Correct Count',
         'Correct %',
         'Phishing Count',
         'Spam Count',
-    ])
+    ]
+    writer.writerow(header)
     grouped = {}
     for a in attempts:
-        key = (
+        key_parts = [
             a.get('class_name', 'unknown'),
             a.get('academic_year', 'unknown'),
             a.get('major', 'unknown'),
-        )
+        ]
+        if report_scope != 'cohort':
+            key_parts.append(a.get('email_file', 'unknown'))
+        key = tuple(key_parts)
         if key not in grouped:
             grouped[key] = {'count': 0, 'correct': 0, 'phishing': 0, 'spam': 0}
         grouped[key]['count'] += 1
@@ -526,22 +537,29 @@ def generate_inspector_report():
             grouped[key]['phishing'] += 1
         if a.get('classification') == 'Spam':
             grouped[key]['spam'] += 1
-    for (class_name, academic_year, major), stats in grouped.items():
+    for key, stats in grouped.items():
+        if report_scope == 'cohort':
+            class_name, academic_year, major = key
+            email_file = None
+        else:
+            class_name, academic_year, major, email_file = key
         count = stats['count']
         correct_pct = round((stats['correct'] / count * 100), 1) if count > 0 else 0
-        writer.writerow([
-            class_name,
-            academic_year,
-            major,
+        row = [class_name, academic_year, major]
+        if report_scope != 'cohort':
+            row.append(email_file)
+        row += [
             count,
             stats['correct'],
             correct_pct,
             stats['phishing'],
             stats['spam'],
-        ])
+        ]
+        writer.writerow(row)
 
     now = datetime.now(timezone.utc).strftime('%Y-%m-%d_%H%M%S')
-    s3_key = f'reports/{now}_inspector_report.csv'
+    scope_suffix = 'cohort' if report_scope == 'cohort' else 'by_email'
+    s3_key = f'reports/{now}_inspector_{scope_suffix}_report.csv'
     bucket = current_app.config['S3_BUCKET']
 
     current_app.s3_client.put_object(

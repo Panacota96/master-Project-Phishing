@@ -152,6 +152,7 @@ with app.app_context():
         quiz_id=quiz_id,
         title='Phishing Awareness Fundamentals',
         description='Test your ability to identify phishing attempts, suspicious emails, and social engineering tactics.',
+        video_url='/static/videos/placeholder.mp4',
         questions=questions,
     )
 

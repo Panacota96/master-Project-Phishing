@@ -54,7 +54,8 @@ resource "aws_iam_role_policy" "lambda_dynamodb" {
           aws_dynamodb_table.responses.arn,
           "${aws_dynamodb_table.responses.arn}/index/*",
           aws_dynamodb_table.inspector_attempts.arn,
-          "${aws_dynamodb_table.inspector_attempts.arn}/index/*"
+          "${aws_dynamodb_table.inspector_attempts.arn}/index/*",
+          aws_dynamodb_table.inspector_attempts_anon.arn
         ]
       }
     ]

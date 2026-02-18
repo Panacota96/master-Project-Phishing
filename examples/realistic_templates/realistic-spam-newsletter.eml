@@ -1,0 +1,42 @@
+From: "Daily Deals" <newsletter@dailydeals-mail.com>
+To: "Student" <student@example.edu>
+Subject: Weekly Deals Roundup - Save Big Today
+Date: Tue, 18 Feb 2026 13:05:00 +0000
+Message-ID: <deals-1305.20260218@dailydeals-mail.com>
+Reply-To: "Daily Deals" <support@dailydeals-mail.com>
+Return-Path: <bounce@dailydeals-mail.com>
+MIME-Version: 1.0
+Authentication-Results: mx.example.edu; spf=neutral smtp.mailfrom=dailydeals-mail.com; dkim=pass header.d=dailydeals-mail.com; dmarc=fail
+Received: from mail.dailydeals-mail.com (198.51.100.90) by mx.example.edu with ESMTPS id SPAM002 for <student@example.edu>; Tue, 18 Feb 2026 13:05:00 +0000
+Content-Type: multipart/alternative; boundary="alt-011"
+
+--alt-011
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+
+Hello,
+
+Here are your weekly deals. Limited-time offers inside.
+
+View deals: https://dailydeals-mail.com.offers-hub.net/deals
+
+--alt-011
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+
+<html>
+  <body style="font-family: Arial, sans-serif; color: #111827;">
+    <h2>Weekly Deals Roundup</h2>
+    <p>Limited-time offers inside. Save big today.</p>
+    <p>
+      <a href="https://dailydeals-mail.com.offers-hub.net/deals"
+         style="display:inline-block;padding:10px 16px;background:#f97316;color:#fff;text-decoration:none;border-radius:4px;">
+        View Deals
+      </a>
+    </p>
+    <p style="font-size:12px;color:#6b7280;">To unsubscribe, click here.</p>
+    <img src="https://tracking.dailydeals-mail.com/pixel?id=DEALS" width="1" height="1" alt="" />
+  </body>
+</html>
+
+--alt-011--

@@ -2,6 +2,7 @@
 
 from datetime import datetime, timezone
 from decimal import Decimal
+from uuid import uuid4
 
 from boto3.dynamodb.conditions import Key
 from flask import current_app
@@ -414,5 +415,53 @@ def list_inspector_attempts_by_email(email_file):
 
 def count_inspector_attempts():
     table = _get_table('DYNAMODB_INSPECTOR')
+    resp = table.scan(Select='COUNT')
+    return resp['Count']
+
+
+# ─── Inspector Attempt CRUD (Anonymous) ───────────────────────────────────────
+
+def create_inspector_attempt_anonymous(
+    email_file,
+    classification,
+    selected_signals,
+    expected_classification,
+    expected_signals,
+    is_correct,
+    class_name='unknown',
+    academic_year='unknown',
+    major='unknown',
+):
+    table = _get_table('DYNAMODB_INSPECTOR_ANON')
+    item = {
+        'attempt_id': str(uuid4()),
+        'submitted_at': _now_iso(),
+        'email_file': email_file,
+        'classification': classification,
+        'selected_signals': selected_signals,
+        'expected_classification': expected_classification,
+        'expected_signals': expected_signals,
+        'is_correct': is_correct,
+        'class_name': class_name,
+        'academic_year': academic_year,
+        'major': major,
+    }
+    table.put_item(Item=item)
+    return item
+
+
+def list_inspector_attempts_anonymous():
+    table = _get_table('DYNAMODB_INSPECTOR_ANON')
+    resp = table.scan()
+    return resp.get('Items', [])
+
+
+def list_inspector_attempts_anonymous_by_email(email_file):
+    attempts = list_inspector_attempts_anonymous()
+    return [a for a in attempts if a.get('email_file') == email_file]
+
+
+def count_inspector_attempts_anonymous():
+    table = _get_table('DYNAMODB_INSPECTOR_ANON')
     resp = table.scan(Select='COUNT')
     return resp['Count']

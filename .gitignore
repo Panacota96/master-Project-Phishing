@@ -42,6 +42,9 @@ terraform/env/*.tfvars
 lambda.zip
 package/
 
+# Reports
+examples/realism_report.json
+
 # OS files
 .DS_Store
 Thumbs.db

@@ -37,12 +37,14 @@ def start_quiz(quiz_id):
     existing = get_attempt(current_user.username, quiz_id)
     if existing:
         flash('You have already completed this quiz.', 'warning')
+        video_url = quiz.get('video_url')
         return render_template(
             'quiz/results.html',
             score=int(existing['score']),
             total=int(existing['total']),
             quiz_id=quiz_id,
             already_completed=True,
+            video_url=video_url,
         )
 
     questions = quiz.get('questions', [])
@@ -141,6 +143,8 @@ def finish_quiz():
     quiz_id = session.get('quiz_id')
     score = session.get('quiz_score', 0)
     total = session.get('quiz_total', 0)
+    quiz = get_quiz(quiz_id) if quiz_id else None
+    video_url = quiz.get('video_url') if quiz else None
 
     if quiz_id and total > 0:
         # Conditional write — fails silently if attempt already exists
@@ -160,7 +164,13 @@ def finish_quiz():
     for key in ('quiz_score', 'quiz_total', 'quiz_id', 'question_ids', 'current_index'):
         session.pop(key, None)
 
-    return render_template('quiz/results.html', score=score, total=total, quiz_id=quiz_id)
+    return render_template(
+        'quiz/results.html',
+        score=score,
+        total=total,
+        quiz_id=quiz_id,
+        video_url=video_url,
+    )
 
 
 @bp.route('/history')

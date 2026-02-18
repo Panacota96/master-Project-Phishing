@@ -29,6 +29,7 @@ def aws_env(monkeypatch):
     monkeypatch.setenv('DYNAMODB_ATTEMPTS', 'test-attempts')
     monkeypatch.setenv('DYNAMODB_RESPONSES', 'test-responses')
     monkeypatch.setenv('DYNAMODB_INSPECTOR', 'test-inspector')
+    monkeypatch.setenv('DYNAMODB_INSPECTOR_ANON', 'test-inspector-anon')
     monkeypatch.setenv('S3_BUCKET', 'test-bucket')
 
 
@@ -163,6 +164,20 @@ def _create_dynamodb_tables(region='eu-west-3'):
                 ],
                 'Projection': {'ProjectionType': 'ALL'},
             },
+        ],
+        BillingMode='PAY_PER_REQUEST',
+    )
+
+    # Anonymous inspector attempts table
+    dynamodb.create_table(
+        TableName='test-inspector-anon',
+        KeySchema=[
+            {'AttributeName': 'attempt_id', 'KeyType': 'HASH'},
+            {'AttributeName': 'submitted_at', 'KeyType': 'RANGE'},
+        ],
+        AttributeDefinitions=[
+            {'AttributeName': 'attempt_id', 'AttributeType': 'S'},
+            {'AttributeName': 'submitted_at', 'AttributeType': 'S'},
         ],
         BillingMode='PAY_PER_REQUEST',
     )

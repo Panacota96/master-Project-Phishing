@@ -1,0 +1,25 @@
+From: "Norton Security" <noreply@norton-billing-support.net>
+To: customer@example.com
+Subject: Order Renewal Confirmation: Your Norton 360 plan has been renewed for $499.00
+Date: Tue, 03 Mar 2026 14:00:00 +0000
+MIME-Version: 1.0
+Content-Type: text/html; charset="UTF-8"
+
+<div style="background: #ffffff; font-family: Helvetica, Arial, sans-serif; max-width: 600px; margin: auto; padding: 40px; border: 1px solid #ffcc00; border-radius: 8px;">
+  <div style="margin-bottom: 30px;">
+    <img src="https://img.icons8.com/color/96/norton.png" alt="Norton" style="width: 120px;">
+  </div>
+  <h2 style="color: #333; border-bottom: 2px solid #ffcc00; padding-bottom: 15px;">Order Renewal Successful</h2>
+  <p style="font-size: 16px;">Hello,</p>
+  <p style="font-size: 16px;">This email confirms that your subscription for <b>Norton 360 Deluxe (10 Devices)</b> has been automatically renewed for the next 12 months.</p>
+  <div style="background: #f9f9f9; padding: 25px; border-radius: 8px; margin: 25px 0;">
+    <p style="margin: 5px 0;"><strong>Renewal Date:</strong> March 03, 2026</p>
+    <p style="margin: 5px 0;"><strong>Amount Charged:</strong> $499.00 USD</p>
+    <p style="margin: 5px 0;"><strong>Payment Method:</strong> Visa ending in ****</p>
+  </div>
+  <p style="font-size: 18px; color: #d40511; font-weight: bold;">If you did not authorize this renewal or wish to cancel for a full refund, please call our billing support department immediately at:</p>
+  <div style="text-align: center; background: #fffde7; border: 1px dashed #ffcc00; padding: 20px; margin: 30px 0;">
+    <h2 style="margin: 0; color: #333; font-size: 32px;">+1-555-0199</h2>
+    <p style="margin: 10px 0 0 0; color: #666; font-size: 14px;">Toll-Free Support Line (24/7)</p>
+  </div>
+</div>

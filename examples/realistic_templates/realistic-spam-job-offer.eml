@@ -1,0 +1,42 @@
+From: "Talent Outreach" <jobs@campus-talent-mail.com>
+To: "Student" <student@example.edu>
+Subject: Part-Time Remote Role - Apply Today
+Date: Tue, 18 Feb 2026 14:30:00 +0000
+Message-ID: <job-1430.20260218@campus-talent-mail.com>
+Reply-To: "Talent Outreach" <support@campus-talent-mail.com>
+Return-Path: <bounce@campus-talent-mail.com>
+MIME-Version: 1.0
+Authentication-Results: mx.example.edu; spf=neutral smtp.mailfrom=campus-talent-mail.com; dkim=pass header.d=campus-talent-mail.com; dmarc=fail
+Received: from mail.campus-talent-mail.com (203.0.113.88) by mx.example.edu with ESMTPS id SPAM005 for <student@example.edu>; Tue, 18 Feb 2026 14:30:00 +0000
+Content-Type: multipart/alternative; boundary="alt-014"
+
+--alt-014
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+
+Hello,
+
+We are hiring for a flexible part-time remote role. Apply today to learn more.
+
+Apply: https://campus-talent-mail.com.jobs-board.net/apply
+
+--alt-014
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+
+<html>
+  <body style="font-family: Arial, sans-serif; color: #111827;">
+    <h2>Part-Time Remote Role</h2>
+    <p>We are hiring for a flexible part-time remote role. Apply today.</p>
+    <p>
+      <a href="https://campus-talent-mail.com.jobs-board.net/apply"
+         style="display:inline-block;padding:10px 16px;background:#0ea5e9;color:#fff;text-decoration:none;border-radius:4px;">
+        Apply Now
+      </a>
+    </p>
+    <p style="font-size:12px;color:#6b7280;">You are receiving this because you opted into career updates.</p>
+    <img src="https://tracking.campus-talent-mail.com/pixel?id=JOB" width="1" height="1" alt="" />
+  </body>
+</html>
+
+--alt-014--

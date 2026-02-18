@@ -168,3 +168,22 @@ resource "aws_dynamodb_table" "inspector_attempts" {
     projection_type = "ALL"
   }
 }
+
+# ─── Inspector Attempts Table (Anonymous) ────────────────────────────────────
+
+resource "aws_dynamodb_table" "inspector_attempts_anon" {
+  name         = "${local.prefix}-inspector-attempts-anon"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "attempt_id"
+  range_key    = "submitted_at"
+
+  attribute {
+    name = "attempt_id"
+    type = "S"
+  }
+
+  attribute {
+    name = "submitted_at"
+    type = "S"
+  }
+}

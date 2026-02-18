@@ -1,13 +1,14 @@
 import email
 import email.policy
+import random
 import re
 
-from flask import current_app, jsonify, render_template, request
+from flask import current_app, jsonify, render_template, request, session
 from flask_login import current_user, login_required
 
 from app.inspector import bp
 from app.inspector.answer_key import ANSWER_KEY
-from app.models import create_inspector_attempt
+from app.models import create_inspector_attempt_anonymous
 
 EML_PREFIX = 'eml-samples/'
 
@@ -31,6 +32,26 @@ def _get_eml_keys():
         return sorted(keys)
     except Exception:
         return []
+
+
+def _get_or_create_email_pool():
+    """Return a stable per-session list of email filenames (max 8)."""
+    eml_keys = _get_eml_keys()
+    key_map = {key.split('/')[-1]: key for key in eml_keys}
+
+    pool = session.get('inspector_email_pool') or []
+    if pool and all(name in key_map for name in pool):
+        return pool, key_map
+
+    filenames = list(key_map.keys())
+    if not filenames:
+        session['inspector_email_pool'] = []
+        return [], key_map
+
+    pool_size = min(8, len(filenames))
+    pool = random.sample(filenames, pool_size)
+    session['inspector_email_pool'] = pool
+    return pool, key_map
 
 
 def _get_eml_body(key):
@@ -157,9 +178,12 @@ def index():
 @bp.route('/api/emails')
 @login_required
 def api_email_list():
-    eml_keys = _get_eml_keys()
+    pool, key_map = _get_or_create_email_pool()
     emails = []
-    for key in eml_keys:
+    for filename in pool:
+        key = key_map.get(filename)
+        if not key:
+            continue
         try:
             emails.append(_parse_eml_summary(key))
         except Exception:
@@ -173,6 +197,9 @@ def api_email_list():
 @bp.route('/api/emails/<filename>')
 @login_required
 def api_email_detail(filename):
+    pool, _ = _get_or_create_email_pool()
+    if filename not in pool:
+        return jsonify({'error': 'Email not found'}), 404
     key = _find_eml_key_by_filename(filename)
     if not key:
         return jsonify({'error': 'Email not found'}), 404
@@ -192,6 +219,10 @@ def api_submit():
 
     if not filename:
         return jsonify({'error': 'Missing email filename.'}), 400
+
+    pool, _ = _get_or_create_email_pool()
+    if filename not in pool:
+        return jsonify({'error': 'Email not found'}), 404
 
     requirement = ANSWER_KEY.get(filename)
     if not requirement:
@@ -219,27 +250,14 @@ def api_submit():
     selected_set = set(normalized_selected)
     expected_set = set(normalized_expected)
 
-    correct_signals = [s for s in normalized_selected if s in expected_set]
-    incorrect_signals = [s for s in normalized_selected if s not in expected_set]
-    missing_signals = [s for s in normalized_expected if s not in selected_set]
-
     is_correct = False
-    message = ''
-    if classification != expected_classification:
-        message = f'This email is expected to be {expected_classification.lower()}.'
-    elif classification == 'Spam':
-        is_correct = True
-        message = 'Correct! This email is classified as spam.'
-    else:
-        if incorrect_signals or missing_signals or len(selected_set) != len(expected_set):
-            message = 'Classification incorrect. Review the selected phishing signals.'
-        else:
+    if classification == expected_classification:
+        if classification == 'Spam':
             is_correct = True
-            message = f'Correct! Flag: {requirement.get("flag", "")}'.strip()
+        else:
+            is_correct = selected_set == expected_set and len(selected_set) == len(expected_set)
 
-    create_inspector_attempt(
-        username=current_user.username,
-        group=current_user.group,
+    create_inspector_attempt_anonymous(
         email_file=filename,
         classification=classification,
         selected_signals=normalized_selected,
@@ -252,9 +270,6 @@ def api_submit():
     )
 
     return jsonify({
-        'success': is_correct,
-        'message': message,
-        'correct_signals': correct_signals,
-        'incorrect_signals': incorrect_signals,
-        'missing_signals': missing_signals,
+        'success': True,
+        'message': 'Answer saved.',
     })

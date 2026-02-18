@@ -1,0 +1,22 @@
+From: "Microsoft Account Security" <no-reply@microsoft.com.security-login.io>
+To: user@example.com
+Subject: Security Alert: Your Microsoft account was used to sign in to a new app
+Date: Mon, 02 Mar 2026 11:15:00 +0000
+MIME-Version: 1.0
+Content-Type: text/html; charset="UTF-8"
+
+<div style="background: #f2f2f2; padding: 40px; font-family: 'Segoe UI', Tahoma, sans-serif;">
+  <div style="max-width: 500px; margin: auto; background: white; padding: 40px; border: 1px solid #ddd;">
+    <img src="https://img.icons8.com/color/96/microsoft.png" alt="Microsoft" style="width: 32px; margin-bottom: 20px;">
+    <h2 style="color: #333; font-size: 20px;">Security Info Update</h2>
+    <p style="color: #666;">Someone recently used your password to sign in to a new application: <b>"Legacy-Outlook-Web-Access"</b>.</p>
+    <div style="background: #fff8e1; padding: 15px; border-radius: 4px; margin: 20px 0;">
+      <p style="margin: 0; font-size: 14px;"><strong>Location:</strong> Lagos, Nigeria</p>
+      <p style="margin: 5px 0 0 0; font-size: 14px;"><strong>Browser:</strong> Chrome on Linux</p>
+    </div>
+    <p>If this was not you, please use the secure link below to protect your account and revert this change.</p>
+    <div style="text-align: center; margin-top: 30px;">
+      <a href="https://microsoft.com.security-login.io/verify" style="background: #0078d4; color: white; padding: 12px 30px; text-decoration: none; border-radius: 2px; font-weight: bold;">Secure Account</a>
+    </div>
+  </div>
+</div>

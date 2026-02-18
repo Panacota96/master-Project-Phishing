@@ -22,6 +22,18 @@
                 {% if already_completed is defined and already_completed %}
                 <p class="text-muted mt-2">This is your recorded score. Each quiz can only be taken once.</p>
                 {% endif %}
+                {% if video_url %}
+                <div class="mt-4 text-start">
+                    <h5>Education Video</h5>
+                    <video class="w-100 border rounded" controls preload="metadata">
+                        <source src="{{ video_url }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <p class="text-muted small mt-2">
+                        If the video does not load, download it directly: <a href="{{ video_url }}">Download video</a>.
+                    </p>
+                </div>
+                {% endif %}
                 <div class="mt-4">
                     <a href="{{ url_for('quiz.quiz_list') }}" class="btn btn-primary">Back to Quizzes</a>
                 </div>

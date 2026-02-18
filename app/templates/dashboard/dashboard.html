@@ -133,7 +133,7 @@
                 <h6>Attempts by Email</h6>
                 <table class="table table-sm">
                     <thead>
-                        <tr><th>Email</th><th>Attempts</th><th>Correct</th></tr>
+                        <tr><th>Email</th><th>Attempts</th><th>Correct</th><th>Incorrect</th></tr>
                     </thead>
                     <tbody>
                         {% for row in inspector_per_email %}
@@ -141,6 +141,7 @@
                             <td>{{ row.email_file }}</td>
                             <td>{{ row.count }}</td>
                             <td>{{ row.correct }}</td>
+                            <td>{{ row.incorrect }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
