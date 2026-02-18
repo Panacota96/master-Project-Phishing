@@ -9,7 +9,6 @@ variables:
   TF_DIR: terraform
   PYTHON_VERSION: "3.12"
   TF_ENV: "dev"
-  TF_BACKEND_FILE: "backend/${TF_ENV}.hcl"
   TF_VAR_FILE: "env/${TF_ENV}.tfvars"
 
 # ─── Stage 1: Lint ────────────────────────────────────────────────────────────
@@ -65,7 +64,8 @@ plan:
         echo "ERROR: Legacy CI vars detected (TF_STATE_* or S3_BUCKET). Remove them to avoid backend mismatch."
         exit 1
       fi
-    - terraform init -backend-config="${TF_BACKEND_FILE}"
+    - TF_BACKEND_FILE="backend/${TF_ENV}.hcl"
+    - terraform init -reconfigure -backend-config="${TF_BACKEND_FILE}"
     - |
       mkdir -p env
       if [ ! -f "${TF_VAR_FILE}" ]; then
@@ -82,7 +82,6 @@ plan:
   artifacts:
     paths:
       - terraform/tfplan
-      - terraform/.terraform
       - terraform/.terraform.lock.hcl
     expire_in: 1 day
   dependencies:
@@ -105,7 +104,8 @@ deploy:
         echo "ERROR: Legacy CI vars detected (TF_STATE_* or S3_BUCKET). Remove them to avoid backend mismatch."
         exit 1
       fi
-    - terraform init -backend-config="${TF_BACKEND_FILE}"
+    - TF_BACKEND_FILE="backend/${TF_ENV}.hcl"
+    - terraform init -reconfigure -backend-config="${TF_BACKEND_FILE}"
     - |
       mkdir -p env
       if [ ! -f "${TF_VAR_FILE}" ]; then
