@@ -64,6 +64,14 @@ Set these in GitLab CI/CD for Terraform remote state:
 - `TF_STATE_KEY` (e.g., `prod/terraform.tfstate`)
 - `TF_STATE_LOCK_TABLE` (e.g., `phishing-terraform-locks`)
 
+## Session Notes (2026-02-18)
+- Dev environment deployed with Terraform (Lambda + API Gateway + DynamoDB + S3).
+- Remote state bootstrapped successfully.
+- CI/CD fixes: `make` installed in CI, JUnit report enabled, `TF_VAR_secret_key` required.
+- GDPR compliance: analytics/reporting aggregated by class/year/major only.
+- Inspector analytics now cohort-based with CSV export.
+- Lambda updated to ASGI wrapper (`asgiref` + `mangum`).
+
 ## Docker (Local / Production)
 
 ```bash

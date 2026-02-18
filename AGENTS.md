@@ -48,6 +48,14 @@
 - Use `AWS_PROFILE` to switch accounts safely.
 - Replace `<env>` placeholders with your target environment (e.g., `dev`, `prod`).
 
+## Session Notes (2026-02-18)
+- Dev environment deployed via Terraform (Lambda + API Gateway + DynamoDB + S3).
+- Remote state bootstrapped: S3 state bucket + DynamoDB lock table.
+- CI/CD fixes applied (make in CI, JUnit report, CI secret key requirement).
+- GDPR updates: group-only analytics by class/year/major; no individual reports.
+- Inspector analytics now cohort-based with CSV export.
+- Lambda handler uses ASGI wrapper (`asgiref` + `mangum`).
+
 ## Coding Style & Naming Conventions
 - Python: 4-space indentation, PEP 8 style, `snake_case` for functions/vars, `PascalCase` for classes.
 - Flask blueprints follow `app/<area>/routes.py` and `app/<area>/forms.py` naming.
