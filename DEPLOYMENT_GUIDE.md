@@ -490,6 +490,14 @@ Use this when you want **both environments live** and need to **copy data from d
 
 **Freeze writes on dev** for a short window, then:
 
+### 6.1.0 Migration Checklist (Exec Summary)
+1. [ ] Announce short write‑freeze on dev.
+2. [ ] Run S3 migration (or dry‑run first).
+3. [ ] Run DynamoDB migration (or dry‑run first).
+4. [ ] Validate counts in prod vs dev.
+5. [ ] Verify prod login + quiz list.
+6. [ ] Resume dev writes if still needed.
+
 ### 6.1.1 Migrate S3 (all prefixes)
 ```bash
 ./scripts/migrate_s3.sh
