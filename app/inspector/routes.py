@@ -1,5 +1,6 @@
 import email
 import email.policy
+import json
 import random
 import re
 
@@ -94,11 +95,35 @@ def _find_eml_key_by_filename(filename):
     return None
 
 
+def _try_parse_json_eml(body):
+    """Return parsed JSON if body contains a JSON-formatted EML."""
+    try:
+        text = body.decode('utf-8', errors='ignore').lstrip()
+    except Exception:
+        return None
+    if not text.startswith('{'):
+        return None
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        return None
+
+
 def _parse_eml_summary(key):
     """Parse an .eml file from S3 and return summary info."""
     body = _get_eml_body(key)
-    msg = email.message_from_bytes(body, policy=email.policy.default)
+    json_data = _try_parse_json_eml(body)
     filename = key.split('/')[-1]
+    if json_data:
+        summary = json_data.get('summary', {}) or {}
+        return {
+            'fileName': summary.get('fileName') or filename,
+            'subject': summary.get('subject', '(no subject)'),
+            'from': summary.get('from', ''),
+            'to': summary.get('to', ''),
+            'date': summary.get('date', ''),
+        }
+    msg = email.message_from_bytes(body, policy=email.policy.default)
     return {
         'fileName': filename,
         'subject': msg.get('Subject', '(no subject)'),
@@ -111,66 +136,82 @@ def _parse_eml_summary(key):
 def _parse_eml_detail(key):
     """Parse an .eml file from S3 and return full details."""
     body = _get_eml_body(key)
-    msg = email.message_from_bytes(body, policy=email.policy.default)
-
     filename = key.split('/')[-1]
-    summary = {
-        'fileName': filename,
-        'subject': msg.get('Subject', '(no subject)'),
-        'from': msg.get('From', ''),
-        'to': msg.get('To', ''),
-        'date': msg.get('Date', ''),
-    }
+    json_data = _try_parse_json_eml(body)
+    if json_data:
+        summary = json_data.get('summary', {}) or {}
+        summary_payload = {
+            'fileName': summary.get('fileName') or filename,
+            'subject': summary.get('subject', '(no subject)'),
+            'from': summary.get('from', ''),
+            'to': summary.get('to', ''),
+            'date': summary.get('date', ''),
+        }
+        headers = json_data.get('headers', []) or []
+        text_body = json_data.get('textBody', '') or ''
+        html_body = json_data.get('htmlBody', '') or ''
+        attachments = json_data.get('attachments', []) or []
+        links = json_data.get('links', []) or []
+        warnings = list(json_data.get('warnings', []) or [])
+    else:
+        msg = email.message_from_bytes(body, policy=email.policy.default)
+        summary_payload = {
+            'fileName': filename,
+            'subject': msg.get('Subject', '(no subject)'),
+            'from': msg.get('From', ''),
+            'to': msg.get('To', ''),
+            'date': msg.get('Date', ''),
+        }
 
-    headers = [{'name': k, 'value': v} for k, v in msg.items()]
+        headers = [{'name': k, 'value': v} for k, v in msg.items()]
 
-    text_body = ''
-    html_body = ''
-    attachments = []
+        text_body = ''
+        html_body = ''
+        attachments = []
 
-    for part in msg.walk():
-        content_type = part.get_content_type()
-        disposition = str(part.get('Content-Disposition', ''))
+        for part in msg.walk():
+            content_type = part.get_content_type()
+            disposition = str(part.get('Content-Disposition', ''))
 
-        if content_type == 'text/plain' and 'attachment' not in disposition:
-            payload = part.get_content()
-            if isinstance(payload, str):
-                text_body += payload
-        elif content_type == 'text/html' and 'attachment' not in disposition:
-            payload = part.get_content()
-            if isinstance(payload, str):
-                html_body += payload
-        elif part.get_filename() or 'attachment' in disposition:
-            payload = part.get_payload(decode=True)
-            attachments.append({
-                'fileName': part.get_filename() or 'unknown',
-                'contentType': content_type,
-                'contentDisposition': disposition or 'N/A',
-                'size': len(payload) if payload else 0,
-                'contentId': part.get('Content-ID', ''),
-            })
+            if content_type == 'text/plain' and 'attachment' not in disposition:
+                payload = part.get_content()
+                if isinstance(payload, str):
+                    text_body += payload
+            elif content_type == 'text/html' and 'attachment' not in disposition:
+                payload = part.get_content()
+                if isinstance(payload, str):
+                    html_body += payload
+            elif part.get_filename() or 'attachment' in disposition:
+                payload = part.get_payload(decode=True)
+                attachments.append({
+                    'fileName': part.get_filename() or 'unknown',
+                    'contentType': content_type,
+                    'contentDisposition': disposition or 'N/A',
+                    'size': len(payload) if payload else 0,
+                    'contentId': part.get('Content-ID', ''),
+                })
 
-    links = []
-    if html_body:
-        links = re.findall(r'href=["\']([^"\']+)', html_body)
+        links = []
+        if html_body:
+            links = re.findall(r'href=["\']([^"\']+)', html_body)
 
-    warnings = []
-    from_header = msg.get('From', '')
-    return_path = msg.get('Return-Path', '')
-    if return_path and from_header:
-        from_domain = re.search(r'@([\w.-]+)', from_header)
-        return_domain = re.search(r'@([\w.-]+)', return_path)
-        if (
-            from_domain
-            and return_domain
-            and from_domain.group(1).lower() != return_domain.group(1).lower()
-        ):
-            warnings.append(
-                (
-                    f'From domain ({from_domain.group(1)}) differs from Return-Path domain '
-                    f'({return_domain.group(1)})'
+        warnings = []
+        from_header = msg.get('From', '')
+        return_path = msg.get('Return-Path', '')
+        if return_path and from_header:
+            from_domain = re.search(r'@([\w.-]+)', from_header)
+            return_domain = re.search(r'@([\w.-]+)', return_path)
+            if (
+                from_domain
+                and return_domain
+                and from_domain.group(1).lower() != return_domain.group(1).lower()
+            ):
+                warnings.append(
+                    (
+                        f'From domain ({from_domain.group(1)}) differs from Return-Path domain '
+                        f'({return_domain.group(1)})'
+                    )
                 )
-            )
 
     if current_user.is_admin and any('xn--' in link.lower() for link in links):
         warnings.append('Punycode (internationalized) domain detected in links')
@@ -181,7 +222,7 @@ def _parse_eml_detail(key):
             break
 
     return {
-        'summary': summary,
+        'summary': summary_payload,
         'headers': headers,
         'textBody': text_body,
         'htmlBody': html_body,

@@ -222,4 +222,185 @@ ANSWER_KEY = {
         "classification": "Phishing",
         "signals": ["sidechannel", "socialeng", "urgency"],
     },
+    # ─── LINKSEC TEMPLATES ─────────────────────────────────────────────
+    "amazon-web-services-aws-aws-account-verification-request-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
+    "amazon-web-services-aws-exclusive-100-amazon-gift-card-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
+    "amazon-web-services-aws-urgent-aws-security-update-alert-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
+    "bluejeans-account-verification-request-for-bluejeans-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
+    "bluejeans-exclusive-upgrade-offer-template-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
+    "bluejeans-free-bluejeans-premium-subscription-offer-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
+    "bluejeans-profile-viewing-notification-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
+    "bluejeans-urgent-account-verification-request-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
+    "cisco-webex-claim-your-free-webex-pro-offer-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
+    "cisco-webex-urgent-password-reset-required-email-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
+    "cisco-webex-urgent-webex-account-verification-request-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
+    "google-cloud-platform-gcp-exclusive-rewards-verification-email-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
+    "google-cloud-platform-gcp-urgent-account-security-notification-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
+    "google-cloud-platform-gcp-urgent-gcp-service-alert-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
+    "google-workspace-exciting-google-workspace-free-upgrade-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
+    "google-workspace-urgent-google-workspace-account-verification-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
+    "google-workspace-urgent-google-workspace-storage-alert-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
+    "gotomeeting-exclusive-gotomeeting-subscription-upgrade-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
+    "gotomeeting-urgent-account-verification-request-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
+    "gotomeeting-urgent-security-update-for-gotomeeting-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
+    "ibm-cloud-exclusive-ibm-cloud-services-trial-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
+    "ibm-cloud-urgent-account-verification-request-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
+    "ibm-cloud-urgent-security-update-notification-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
+    "microsoft-azure-exclusive-discount-offer-from-microsoft-azure-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
+    "microsoft-azure-new-security-features-alert-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
+    "microsoft-azure-urgent-account-verification-request-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
+    "microsoft-office-365-exclusive-reward-email-template-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
+    "microsoft-office-365-urgent-account-verification-notice-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
+    "microsoft-teams-exclusive-microsoft-365-upgrade-offer-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
+    "microsoft-teams-microsoft-teams-free-upgrade-offer-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
+    "microsoft-teams-urgent-microsoft-teams-account-verification-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
+    "oracle-cloud-free-oracle-cloud-subscription-offer-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
+    "oracle-cloud-urgent-account-update-request-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
+    "ringcentral-exclusive-50-discount-offer-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
+    "ringcentral-urgent-account-security-alert-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
+    "ringcentral-urgent-subscription-renewal-notice-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
+    "skype-for-business-free-year-of-skype-premium-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
+    "skype-for-business-urgent-account-verification-request-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
+    "skype-for-business-urgent-password-reset-reminder-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
+    "slack-enticing-gift-card-phishing-template-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
+    "slack-urgent-account-security-alert-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
+    "slack-urgent-account-verification-request-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
+    "zoom-urgent-account-update-required-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
+    "zoom-urgent-zoom-account-security-alert-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
+    "zoom-zoom-pro-subscription-offer-modified.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "externaldomain"],
+    },
 }
