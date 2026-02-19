@@ -12,6 +12,17 @@ from app.models import create_quiz, create_user, get_user
 
 app = create_app()
 
+VIDEO_BASE_URL = os.getenv('VIDEO_BASE_URL', '').rstrip('/')
+
+
+def resolve_video_url(url):
+    if not url:
+        return url
+    if VIDEO_BASE_URL and url.startswith('/static/videos/'):
+        filename = url.split('/')[-1]
+        return f'{VIDEO_BASE_URL}/{filename}'
+    return url
+
 with app.app_context():
     # Create admin user
     if not get_user('admin'):
@@ -55,7 +66,7 @@ with app.app_context():
                 quiz_id=quiz['quiz_id'],
                 title=quiz['title'],
                 description=quiz.get('description', ''),
-                video_url=quiz.get('video_url'),
+                video_url=resolve_video_url(quiz.get('video_url')),
                 questions=questions,
             )
             created_count += 1

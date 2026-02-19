@@ -85,6 +85,7 @@ The app runs at **http://localhost:5000**. Default admin: `admin` / `admin123`
 - **PEP 668 / externally-managed-environment**: use a venv (`python3 -m venv .venv`) instead of system Python.
 - **`lambda.zip` missing**: run `./scripts/build_lambda.sh`.
 - **AWS profile issues**: set `AWS_PROFILE=terraform-deployer` before Terraform.
+- **Videos not loading on Lambda**: set `VIDEO_BASE_URL` to an S3/CloudFront base URL and re-run `seed_dynamodb.py`.
 
 ## Make Targets
 

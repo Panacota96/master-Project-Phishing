@@ -29,6 +29,9 @@ mkdir -p "${PKG_DIR}"
 cp -r "${ROOT_DIR}/app" "${PKG_DIR}/app"
 cp "${ROOT_DIR}/lambda_handler.py" "${ROOT_DIR}/config.py" "${PKG_DIR}/"
 
+# Exclude large local media assets from Lambda package
+rm -rf "${PKG_DIR}/app/static/videos"
+
 ( cd "${PKG_DIR}" && zip -r "${OUT_ZIP}" . )
 
 echo "Built ${OUT_ZIP}"
