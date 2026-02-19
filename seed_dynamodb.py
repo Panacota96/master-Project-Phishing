@@ -39,14 +39,14 @@ with app.app_context():
         for quiz in quizzes:
             questions = quiz.get('questions', [])
             if len(questions) != 4:
-                raise ValueError(f'Quiz {quiz.get(\"quiz_id\")} must have exactly 4 questions.')
+                raise ValueError(f"Quiz {quiz.get('quiz_id')} must have exactly 4 questions.")
             for question in questions:
                 answers = question.get('answers', [])
                 if len(answers) != 4:
-                    raise ValueError(f'Question {question.get(\"question_id\")} must have 4 answers.')
+                    raise ValueError(f"Question {question.get('question_id')} must have 4 answers.")
                 correct = [a for a in answers if a.get('is_correct')]
                 if len(correct) != 1:
-                    raise ValueError(f'Question {question.get(\"question_id\")} must have exactly 1 correct answer.')
+                    raise ValueError(f"Question {question.get('question_id')} must have exactly 1 correct answer.")
 
             create_quiz(
                 quiz_id=quiz['quiz_id'],
