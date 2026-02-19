@@ -691,6 +691,8 @@
         fetchEmailList();
       });
 
+      const IS_ADMIN = {{ 'true' if current_user.is_admin else 'false' }};
+
       async function fetchEmailList() {
         setListState({ loading: true });
         try {
@@ -864,7 +866,10 @@
       }
 
       function renderEmailDetails(details) {
-        const { summary, headers = [], textBody = "", htmlBody = "", links = [], warnings = [], attachments = [] } = details;
+        let { summary, headers = [], textBody = "", htmlBody = "", links = [], warnings = [], attachments = [] } = details;
+        if (!IS_ADMIN) {
+          warnings = [];
+        }
         emailSubjectHeading.textContent = summary.subject || "Email details";
 
         if (warnings.length) {
