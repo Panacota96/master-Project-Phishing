@@ -38,8 +38,11 @@ with app.app_context():
         created_count = 0
         for quiz in quizzes:
             questions = quiz.get('questions', [])
-            if len(questions) != 4:
-                raise ValueError(f"Quiz {quiz.get('quiz_id')} must have exactly 4 questions.")
+            expected_questions = 10 if quiz.get('quiz_id') == 'quiz-phishing-fundamentals' else 4
+            if len(questions) != expected_questions:
+                raise ValueError(
+                    f\"Quiz {quiz.get('quiz_id')} must have exactly {expected_questions} questions.\"
+                )
             for question in questions:
                 answers = question.get('answers', [])
                 if len(answers) != 4:
