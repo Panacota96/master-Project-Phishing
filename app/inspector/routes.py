@@ -47,13 +47,31 @@ def _get_or_create_email_pool():
     if pool and all(name in key_map for name in pool):
         return pool, key_map
 
-    filenames = list(key_map.keys())
+    filenames = [name for name in key_map.keys() if name in ANSWER_KEY]
     if not filenames:
         session['inspector_email_pool'] = []
         return [], key_map
 
-    pool_size = min(8, len(filenames))
-    pool = random.sample(filenames, pool_size)
+    spam_files = [name for name in filenames if ANSWER_KEY.get(name, {}).get('classification') == 'Spam']
+    phishing_files = [name for name in filenames if name not in spam_files]
+
+    spam_max = min(3, len(spam_files))
+    pool_size = min(8, len(filenames), len(phishing_files) + spam_max)
+
+    spam_min = 1 if spam_files and pool_size > 0 else 0
+    max_spam_allowed = min(spam_max, pool_size)
+    min_spam_required = max(spam_min, pool_size - len(phishing_files))
+
+    if min_spam_required > max_spam_allowed:
+        spam_count = max_spam_allowed
+    else:
+        spam_count = random.randint(min_spam_required, max_spam_allowed)
+
+    phishing_count = max(pool_size - spam_count, 0)
+    chosen_spam = random.sample(spam_files, spam_count) if spam_count else []
+    chosen_phishing = random.sample(phishing_files, phishing_count) if phishing_count else []
+    pool = chosen_spam + chosen_phishing
+    random.shuffle(pool)
     session['inspector_email_pool'] = pool
     return pool, key_map
 

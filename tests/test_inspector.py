@@ -34,6 +34,21 @@ class TestInspectorEmails:
 
         assert emails1 == emails2
 
+    def test_email_pool_spam_bounds(self, client, app, seed_user):
+        spam_files = [k for k, v in ANSWER_KEY.items() if v['classification'] == 'Spam']
+        phishing_files = [k for k, v in ANSWER_KEY.items() if v['classification'] == 'Phishing']
+        filenames = spam_files[:5] + phishing_files[:10]
+        _seed_eml_files(app, filenames)
+        login(client, 'testuser', 'password123')
+
+        resp = client.get('/inspector/api/emails')
+        assert resp.status_code == 200
+        data = resp.get_json()
+        emails = [e['fileName'] for e in data.get('emails', [])]
+        assert len(emails) == 8
+        spam_count = sum(1 for name in emails if ANSWER_KEY[name]['classification'] == 'Spam')
+        assert 1 <= spam_count <= 3
+
 
 class TestInspectorSubmit:
     def test_submit_saves_anonymous_attempt(self, client, app, seed_user):
