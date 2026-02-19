@@ -1047,7 +1047,7 @@
     "quiz_id": "quiz-side-channel",
     "title": "Side Channel Communication",
     "description": "Recognize unusual off-platform requests.",
-    "video_url": "/static/videos/side-channel.mp4",
+    "video_url": "/static/videos/Side_Channel_Deception.mp4",
     "questions": [
       {
         "question_id": "quiz-side-channel-q1",
