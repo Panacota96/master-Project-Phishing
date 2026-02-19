@@ -86,6 +86,9 @@ The app runs at **http://localhost:5000**. Default admin: `admin` / `admin123`
 - **`lambda.zip` missing**: run `./scripts/build_lambda.sh`.
 - **AWS profile issues**: set `AWS_PROFILE=terraform-deployer` before Terraform.
 - **Videos not loading on Lambda**: set `VIDEO_BASE_URL` to an S3/CloudFront base URL and re-run `seed_dynamodb.py`.
+  - Example: `VIDEO_BASE_URL=https://phishing-app-dev-eu-west-3.s3.eu-west-3.amazonaws.com/videos`
+  - Upload: `aws s3 sync app/static/videos/ s3://phishing-app-dev-eu-west-3/videos/`
+  - Ensure the bucket policy allows public read for `videos/*`.
 
 ## Make Targets
 

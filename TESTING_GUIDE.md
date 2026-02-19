@@ -204,6 +204,7 @@ python run.py
 Visit `http://localhost:5000`. The app works identically to the Lambda version, except:
 - EML files in the inspector won't load (they'd need S3/LocalStack)
 - Report downloads won't work without S3
+- Quiz videos require S3 or a public host (set `VIDEO_BASE_URL` and re-seed)
 
 ### 2.4 Optional: Full local stack with LocalStack
 
@@ -272,6 +273,12 @@ testuser3,test3@company.com,TempPass3,engineering
 | Go back to quiz list | Quiz shows green "Completed" badge, button says "Already Completed" |
 | Try to start same quiz again | Redirected to results with "already completed" message |
 | Check My History | Shows single attempt with score and date |
+
+### 3.4a Quiz Videos (S3)
+1. Upload videos: `aws s3 sync app/static/videos/ s3://<bucket>/videos/`
+2. Set `VIDEO_BASE_URL` to `https://<bucket>.s3.<region>.amazonaws.com/videos`
+3. Re-run `python seed_dynamodb.py`
+4. Open a quiz video page and verify the video loads
 
 ### 3.5 Admin Dashboard
 
