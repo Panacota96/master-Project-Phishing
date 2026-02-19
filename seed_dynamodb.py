@@ -52,7 +52,7 @@ with app.app_context():
             expected_questions = 10 if quiz.get('quiz_id') == 'quiz-phishing-fundamentals' else 4
             if len(questions) != expected_questions:
                 raise ValueError(
-                    f\"Quiz {quiz.get('quiz_id')} must have exactly {expected_questions} questions.\"
+                    f"Quiz {quiz.get('quiz_id')} must have exactly {expected_questions} questions."
                 )
             for question in questions:
                 answers = question.get('answers', [])
