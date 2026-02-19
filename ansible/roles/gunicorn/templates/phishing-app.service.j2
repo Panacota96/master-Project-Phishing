@@ -1,0 +1,15 @@
+[Unit]
+Description=Phishing Awareness Flask App
+After=network.target
+
+[Service]
+User={{ app_user }}
+Group={{ app_user }}
+WorkingDirectory={{ app_dir }}
+EnvironmentFile=/etc/phishing-app.env
+ExecStart={{ venv_path }}/bin/gunicorn --workers 3 --bind 127.0.0.1:{{ app_port }} run:app
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

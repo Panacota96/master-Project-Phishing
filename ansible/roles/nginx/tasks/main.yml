@@ -1,0 +1,24 @@
+- name: Write nginx site config
+  template:
+    src: phishing-app.nginx.j2
+    dest: /etc/nginx/sites-available/phishing-app
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Enable nginx site
+  file:
+    src: /etc/nginx/sites-available/phishing-app
+    dest: /etc/nginx/sites-enabled/phishing-app
+    state: link
+    force: true
+
+- name: Disable default site
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+
+- name: Reload nginx
+  systemd:
+    name: nginx
+    state: reloaded

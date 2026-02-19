@@ -1,0 +1,37 @@
+- name: Checkout application repo
+  git:
+    repo: "{{ repo_url }}"
+    dest: "{{ app_dir }}"
+    version: "{{ repo_branch }}"
+    force: true
+    update: true
+    accept_hostkey: true
+  become_user: "{{ app_user }}"
+
+- name: Create virtual environment
+  command: python3 -m venv "{{ venv_path }}"
+  args:
+    creates: "{{ venv_path }}/bin/activate"
+
+- name: Install Python requirements
+  pip:
+    requirements: "{{ app_dir }}/requirements.txt"
+    virtualenv: "{{ venv_path }}"
+    virtualenv_command: python3 -m venv
+
+- name: Write app environment file
+  template:
+    src: app.env.j2
+    dest: /etc/phishing-app.env
+    owner: root
+    group: root
+    mode: "0640"
+
+- name: Ensure app directory ownership
+  file:
+    path: "{{ app_dir }}"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+    recurse: true
+

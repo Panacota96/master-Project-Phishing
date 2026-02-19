@@ -10,6 +10,8 @@ Users take interactive quizzes to learn how to identify phishing emails, and can
 - Multiple-choice quizzes covering phishing techniques (URL analysis, spoofing, urgency tactics, CEO fraud, smishing, MFA, etc.)
 - Explanations after each question showing why an email is phishing or legitimate
 - Progress bar, color-coded score summary, and quiz history per user
+- Each quiz requires watching a training video before starting
+- Quizzes are defined in `data/quizzes.json` with 4 questions per attack vector
 
 ### Email Threat Inspector
 - Standalone tool at `/inspector/` for analyzing real `.eml` files
@@ -37,7 +39,7 @@ Users take interactive quizzes to learn how to identify phishing emails, and can
 | Frontend | Jinja2 + Bootstrap 5 (CDN) |
 | Charts | Chart.js |
 | EML Parsing | Python `email` stdlib (no extra dependencies) |
-| Deployment | AWS Lambda + API Gateway + Terraform (CI/CD via GitLab) |
+| Deployment | AWS Lambda + API Gateway + Terraform (CI/CD via GitLab), optional Ansible VM deploy |
 
 ## Quick Start (Local)
 
@@ -108,6 +110,11 @@ make lambda
 - Terraform plan to preview changes
 - Dev deploy is automatic, prod deploy is manual
 
+## Ansible (Optional VM Deploy)
+Use Ansible to provision a VM and deploy the Flask app with Gunicorn + Nginx.
+- Provision: `ansible-playbook -i ansible/inventory/hosts.ini ansible/playbooks/provision.yml`
+- Deploy: `ansible-playbook -i ansible/inventory/hosts.ini ansible/playbooks/deploy.yml`
+See `ansible/README.md` for required variables.
 
 ## Admin Operations Guide
 

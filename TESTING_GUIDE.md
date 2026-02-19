@@ -264,6 +264,8 @@ testuser3,test3@company.com,TempPass3,engineering
 | Step | Expected Result |
 |------|----------------|
 | Login as a regular user | Quiz list shows available quizzes |
+| Click "Start Quiz" | Training video page loads with Start disabled |
+| Finish the video | Start Quiz becomes enabled |
 | Click "Start Quiz" | First question loads with progress bar |
 | Answer a question | Correct/Incorrect feedback + explanation shown |
 | Complete all questions | Results page with score and percentage |

@@ -1,0 +1,19 @@
+app_user: phishing
+app_dir: /opt/phishing-app
+repo_url: https://gitlab.com/your-org/master-project-phishing.git
+repo_branch: main
+venv_path: /opt/phishing-app/.venv
+app_port: 8000
+
+secret_key: "change-me"
+aws_region_name: "eu-west-3"
+aws_access_key_id: ""
+aws_secret_access_key: ""
+
+s3_bucket: "phishing-app-dev-eu-west-3"
+dynamodb_users: "phishing-app-dev-users"
+dynamodb_quizzes: "phishing-app-dev-quizzes"
+dynamodb_attempts: "phishing-app-dev-attempts"
+dynamodb_responses: "phishing-app-dev-responses"
+dynamodb_inspector: "phishing-app-dev-inspector-attempts"
+dynamodb_inspector_anon: "phishing-app-dev-inspector-attempts-anon"

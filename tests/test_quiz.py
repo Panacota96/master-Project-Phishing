@@ -39,6 +39,11 @@ class TestQuizLock:
     def test_start_quiz_works_for_new_attempt(self, client, seed_user, seed_quiz):
         login(client, 'testuser', 'password123')
         resp = client.get('/quiz/quiz-test/start')
+        assert resp.status_code == 302
+        assert '/quiz/quiz-test/video' in resp.headers.get('Location', '')
+
+        client.post('/quiz/quiz-test/video-watched', json={'watched': True})
+        resp = client.get('/quiz/quiz-test/start')
         assert resp.status_code == 302  # Redirect to take_question
         assert '/quiz/question' in resp.headers.get('Location', '')
 
@@ -46,6 +51,7 @@ class TestQuizLock:
 class TestTakeQuiz:
     def test_take_question_renders(self, client, seed_user, seed_quiz):
         login(client, 'testuser', 'password123')
+        client.post('/quiz/quiz-test/video-watched', json={'watched': True})
         client.get('/quiz/quiz-test/start')
         resp = client.get('/quiz/question')
         assert resp.status_code == 200
@@ -53,6 +59,7 @@ class TestTakeQuiz:
 
     def test_submit_answer_saves_response(self, client, app, seed_user, seed_quiz):
         login(client, 'testuser', 'password123')
+        client.post('/quiz/quiz-test/video-watched', json={'watched': True})
         client.get('/quiz/quiz-test/start')
 
         # Submit correct answer for q1

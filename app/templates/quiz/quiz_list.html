@@ -18,7 +18,7 @@
                 {% if quiz.user_completed %}
                 <button class="btn btn-secondary" disabled>Already Completed</button>
                 {% else %}
-                <a href="{{ url_for('quiz.start_quiz', quiz_id=quiz.quiz_id) }}" class="btn btn-primary">Start Quiz</a>
+                <a href="{{ url_for('quiz.video_gate', quiz_id=quiz.quiz_id) }}" class="btn btn-primary">Start Quiz</a>
                 {% endif %}
             </div>
         </div>

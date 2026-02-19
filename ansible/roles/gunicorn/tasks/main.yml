@@ -1,0 +1,17 @@
+- name: Install systemd service
+  template:
+    src: phishing-app.service.j2
+    dest: /etc/systemd/system/phishing-app.service
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Reload systemd
+  systemd:
+    daemon_reload: true
+
+- name: Enable and restart gunicorn service
+  systemd:
+    name: phishing-app
+    enabled: true
+    state: restarted

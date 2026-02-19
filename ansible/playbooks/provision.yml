@@ -1,0 +1,32 @@
+- name: Provision phishing app server
+  hosts: app
+  become: true
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Install base packages
+      apt:
+        name:
+          - python3
+          - python3-venv
+          - python3-pip
+          - git
+          - nginx
+        state: present
+
+    - name: Create app user
+      user:
+        name: "{{ app_user }}"
+        create_home: true
+        shell: /bin/bash
+
+    - name: Ensure app directory exists
+      file:
+        path: "{{ app_dir }}"
+        state: directory
+        owner: "{{ app_user }}"
+        group: "{{ app_user }}"
+        mode: "0755"

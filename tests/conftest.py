@@ -258,6 +258,7 @@ def seed_quiz(app):
             quiz_id='quiz-test',
             title='Test Quiz',
             description='A test quiz',
+            video_url='/static/videos/placeholder.mp4',
             questions=[
                 {
                     'question_id': 'q1',

@@ -1,0 +1,574 @@
+[
+  {
+    "quiz_id": "quiz-impersonation",
+    "title": "Impersonation Attacks",
+    "description": "Identify impersonation attempts and verify senders.",
+    "video_url": "/static/videos/impersonation.mp4",
+    "questions": [
+      {
+        "question_id": "imp-q1",
+        "question_text": "An email claims to be from your CEO requesting an urgent transfer. What is the safest action?",
+        "explanation": "Impersonation and urgency are common. Verify through a separate channel.",
+        "answers": [
+          {"answer_id": "imp-q1a1", "answer_text": "Send the transfer immediately", "is_correct": false},
+          {"answer_id": "imp-q1a2", "answer_text": "Verify the request through a known channel", "is_correct": true},
+          {"answer_id": "imp-q1a3", "answer_text": "Reply asking for more details", "is_correct": false},
+          {"answer_id": "imp-q1a4", "answer_text": "Forward to coworkers", "is_correct": false}
+        ]
+      },
+      {
+        "question_id": "imp-q2",
+        "question_text": "Which indicator suggests impersonation?",
+        "explanation": "Display names can be spoofed. Check the actual email address.",
+        "answers": [
+          {"answer_id": "imp-q2a1", "answer_text": "The display name looks familiar", "is_correct": false},
+          {"answer_id": "imp-q2a2", "answer_text": "The reply-to domain differs from the organization", "is_correct": true},
+          {"answer_id": "imp-q2a3", "answer_text": "The message is short", "is_correct": false},
+          {"answer_id": "imp-q2a4", "answer_text": "The email has a signature", "is_correct": false}
+        ]
+      },
+      {
+        "question_id": "imp-q3",
+        "question_text": "A vendor email asks to change bank details. What should you do?",
+        "explanation": "Out-of-band verification is required for payment changes.",
+        "answers": [
+          {"answer_id": "imp-q3a1", "answer_text": "Update details from the email", "is_correct": false},
+          {"answer_id": "imp-q3a2", "answer_text": "Call the vendor using a known number", "is_correct": true},
+          {"answer_id": "imp-q3a3", "answer_text": "Ignore and delete immediately", "is_correct": false},
+          {"answer_id": "imp-q3a4", "answer_text": "Forward to your team for votes", "is_correct": false}
+        ]
+      },
+      {
+        "question_id": "imp-q4",
+        "question_text": "Why are impersonation emails dangerous?",
+        "explanation": "They leverage trust in known identities.",
+        "answers": [
+          {"answer_id": "imp-q4a1", "answer_text": "They always contain malware", "is_correct": false},
+          {"answer_id": "imp-q4a2", "answer_text": "They exploit trust in known identities", "is_correct": true},
+          {"answer_id": "imp-q4a3", "answer_text": "They only target executives", "is_correct": false},
+          {"answer_id": "imp-q4a4", "answer_text": "They cannot be detected", "is_correct": false}
+        ]
+      }
+    ]
+  },
+  {
+    "quiz_id": "quiz-punycode",
+    "title": "Typosquatting and Punycode",
+    "description": "Spot lookalike domains and deceptive links.",
+    "video_url": "/static/videos/punycode.mp4",
+    "questions": [
+      {
+        "question_id": "puny-q1",
+        "question_text": "Which URL is most suspicious?",
+        "explanation": "Lookalike domains and punycode can mimic real brands.",
+        "answers": [
+          {"answer_id": "puny-q1a1", "answer_text": "https://example.com/login", "is_correct": false},
+          {"answer_id": "puny-q1a2", "answer_text": "https://examp1e.com/login", "is_correct": true},
+          {"answer_id": "puny-q1a3", "answer_text": "https://www.example.com", "is_correct": false},
+          {"answer_id": "puny-q1a4", "answer_text": "https://help.example.com", "is_correct": false}
+        ]
+      },
+      {
+        "question_id": "puny-q2",
+        "question_text": "What is a key risk of punycode domains?",
+        "explanation": "They can render visually identical to trusted domains.",
+        "answers": [
+          {"answer_id": "puny-q2a1", "answer_text": "They are always blocked", "is_correct": false},
+          {"answer_id": "puny-q2a2", "answer_text": "They appear identical to trusted domains", "is_correct": true},
+          {"answer_id": "puny-q2a3", "answer_text": "They require special browsers", "is_correct": false},
+          {"answer_id": "puny-q2a4", "answer_text": "They only affect mobile devices", "is_correct": false}
+        ]
+      },
+      {
+        "question_id": "puny-q3",
+        "question_text": "How should you validate a suspicious link?",
+        "explanation": "Check the exact domain and use known bookmarks.",
+        "answers": [
+          {"answer_id": "puny-q3a1", "answer_text": "Click and see if it loads", "is_correct": false},
+          {"answer_id": "puny-q3a2", "answer_text": "Compare the exact domain to a trusted source", "is_correct": true},
+          {"answer_id": "puny-q3a3", "answer_text": "Trust the display name", "is_correct": false},
+          {"answer_id": "puny-q3a4", "answer_text": "Forward to friends", "is_correct": false}
+        ]
+      },
+      {
+        "question_id": "puny-q4",
+        "question_text": "Typosquatting often relies on:",
+        "explanation": "Attackers swap characters or add extra letters.",
+        "answers": [
+          {"answer_id": "puny-q4a1", "answer_text": "Perfect spelling", "is_correct": false},
+          {"answer_id": "puny-q4a2", "answer_text": "Small character substitutions", "is_correct": true},
+          {"answer_id": "puny-q4a3", "answer_text": "Longer passwords", "is_correct": false},
+          {"answer_id": "puny-q4a4", "answer_text": "Encrypted attachments", "is_correct": false}
+        ]
+      }
+    ]
+  },
+  {
+    "quiz_id": "quiz-external-domain",
+    "title": "External Sender Domains",
+    "description": "Recognize when senders are outside your organization.",
+    "video_url": "/static/videos/external-domain.mp4",
+    "questions": [
+      {
+        "question_id": "ext-q1",
+        "question_text": "Why is an external sender banner important?",
+        "explanation": "It flags messages from outside your organization.",
+        "answers": [
+          {"answer_id": "ext-q1a1", "answer_text": "It hides the sender", "is_correct": false},
+          {"answer_id": "ext-q1a2", "answer_text": "It indicates the email is external", "is_correct": true},
+          {"answer_id": "ext-q1a3", "answer_text": "It blocks all attachments", "is_correct": false},
+          {"answer_id": "ext-q1a4", "answer_text": "It proves authenticity", "is_correct": false}
+        ]
+      },
+      {
+        "question_id": "ext-q2",
+        "question_text": "A vendor email uses a free mail domain. What is the best action?",
+        "explanation": "Verify via known channels when domains are unexpected.",
+        "answers": [
+          {"answer_id": "ext-q2a1", "answer_text": "Proceed without checks", "is_correct": false},
+          {"answer_id": "ext-q2a2", "answer_text": "Verify the sender through a known contact", "is_correct": true},
+          {"answer_id": "ext-q2a3", "answer_text": "Reply with sensitive info", "is_correct": false},
+          {"answer_id": "ext-q2a4", "answer_text": "Forward to random employees", "is_correct": false}
+        ]
+      },
+      {
+        "question_id": "ext-q3",
+        "question_text": "Which is a red flag for external domains?",
+        "explanation": "Look for mismatched or uncommon domains for known contacts.",
+        "answers": [
+          {"answer_id": "ext-q3a1", "answer_text": "Domain matches official website", "is_correct": false},
+          {"answer_id": "ext-q3a2", "answer_text": "Domain is similar but not identical", "is_correct": true},
+          {"answer_id": "ext-q3a3", "answer_text": "Message includes a phone number", "is_correct": false},
+          {"answer_id": "ext-q3a4", "answer_text": "Email has a signature block", "is_correct": false}
+        ]
+      },
+      {
+        "question_id": "ext-q4",
+        "question_text": "How should you handle unexpected external requests?",
+        "explanation": "Confirm legitimacy out of band.",
+        "answers": [
+          {"answer_id": "ext-q4a1", "answer_text": "Act immediately", "is_correct": false},
+          {"answer_id": "ext-q4a2", "answer_text": "Confirm via a trusted channel", "is_correct": true},
+          {"answer_id": "ext-q4a3", "answer_text": "Ignore all external emails", "is_correct": false},
+          {"answer_id": "ext-q4a4", "answer_text": "Share credentials", "is_correct": false}
+        ]
+      }
+    ]
+  },
+  {
+    "quiz_id": "quiz-spoofing",
+    "title": "Spoofing",
+    "description": "Learn how spoofed sender identities are used.",
+    "video_url": "/static/videos/spoofing.mp4",
+    "questions": [
+      {
+        "question_id": "spoof-q1",
+        "question_text": "What is a common sign of spoofing?",
+        "explanation": "Authentication failures and mismatched headers are key.",
+        "answers": [
+          {"answer_id": "spoof-q1a1", "answer_text": "SPF/DKIM/DMARC pass", "is_correct": false},
+          {"answer_id": "spoof-q1a2", "answer_text": "Authentication results fail", "is_correct": true},
+          {"answer_id": "spoof-q1a3", "answer_text": "The email is short", "is_correct": false},
+          {"answer_id": "spoof-q1a4", "answer_text": "The subject is urgent", "is_correct": false}
+        ]
+      },
+      {
+        "question_id": "spoof-q2",
+        "question_text": "Which header is helpful for spoofing analysis?",
+        "explanation": "Received headers reveal the true sending servers.",
+        "answers": [
+          {"answer_id": "spoof-q2a1", "answer_text": "Subject", "is_correct": false},
+          {"answer_id": "spoof-q2a2", "answer_text": "Received headers", "is_correct": true},
+          {"answer_id": "spoof-q2a3", "answer_text": "Signature block", "is_correct": false},
+          {"answer_id": "spoof-q2a4", "answer_text": "Font size", "is_correct": false}
+        ]
+      },
+      {
+        "question_id": "spoof-q3",
+        "question_text": "If an email fails DMARC, what should you do?",
+        "explanation": "Treat it as suspicious and verify independently.",
+        "answers": [
+          {"answer_id": "spoof-q3a1", "answer_text": "Trust it anyway", "is_correct": false},
+          {"answer_id": "spoof-q3a2", "answer_text": "Verify through another channel", "is_correct": true},
+          {"answer_id": "spoof-q3a3", "answer_text": "Send credentials to confirm", "is_correct": false},
+          {"answer_id": "spoof-q3a4", "answer_text": "Forward to everyone", "is_correct": false}
+        ]
+      },
+      {
+        "question_id": "spoof-q4",
+        "question_text": "Spoofing attempts often rely on:",
+        "explanation": "They manipulate trust in the From address.",
+        "answers": [
+          {"answer_id": "spoof-q4a1", "answer_text": "Broken links only", "is_correct": false},
+          {"answer_id": "spoof-q4a2", "answer_text": "Forged sender identity", "is_correct": true},
+          {"answer_id": "spoof-q4a3", "answer_text": "Encrypted attachments", "is_correct": false},
+          {"answer_id": "spoof-q4a4", "answer_text": "Long emails", "is_correct": false}
+        ]
+      }
+    ]
+  },
+  {
+    "quiz_id": "quiz-social-engineering",
+    "title": "Social Engineering Text",
+    "description": "Understand manipulative language and pressure tactics.",
+    "video_url": "/static/videos/social-engineering.mp4",
+    "questions": [
+      {
+        "question_id": "soc-q1",
+        "question_text": "Why do attackers use emotional language?",
+        "explanation": "It pressures users into quick action.",
+        "answers": [
+          {"answer_id": "soc-q1a1", "answer_text": "To improve grammar", "is_correct": false},
+          {"answer_id": "soc-q1a2", "answer_text": "To trigger impulsive actions", "is_correct": true},
+          {"answer_id": "soc-q1a3", "answer_text": "To reduce clicks", "is_correct": false},
+          {"answer_id": "soc-q1a4", "answer_text": "To confirm identity", "is_correct": false}
+        ]
+      },
+      {
+        "question_id": "soc-q2",
+        "question_text": "A message says \"Do this now or lose access\". This is an example of:",
+        "explanation": "Urgency and fear are classic social engineering tactics.",
+        "answers": [
+          {"answer_id": "soc-q2a1", "answer_text": "Harmless reminder", "is_correct": false},
+          {"answer_id": "soc-q2a2", "answer_text": "Urgency tactic", "is_correct": true},
+          {"answer_id": "soc-q2a3", "answer_text": "Invoice processing", "is_correct": false},
+          {"answer_id": "soc-q2a4", "answer_text": "Normal workflow", "is_correct": false}
+        ]
+      },
+      {
+        "question_id": "soc-q3",
+        "question_text": "What is the safest response to a pressure-based request?",
+        "explanation": "Pause and verify through official channels.",
+        "answers": [
+          {"answer_id": "soc-q3a1", "answer_text": "Act immediately", "is_correct": false},
+          {"answer_id": "soc-q3a2", "answer_text": "Verify independently", "is_correct": true},
+          {"answer_id": "soc-q3a3", "answer_text": "Reply with credentials", "is_correct": false},
+          {"answer_id": "soc-q3a4", "answer_text": "Ignore forever", "is_correct": false}
+        ]
+      },
+      {
+        "question_id": "soc-q4",
+        "question_text": "Social engineering often targets:",
+        "explanation": "Attackers target human trust rather than technical flaws.",
+        "answers": [
+          {"answer_id": "soc-q4a1", "answer_text": "Hardware only", "is_correct": false},
+          {"answer_id": "soc-q4a2", "answer_text": "Human behavior and trust", "is_correct": true},
+          {"answer_id": "soc-q4a3", "answer_text": "Encryption standards", "is_correct": false},
+          {"answer_id": "soc-q4a4", "answer_text": "Operating system patches", "is_correct": false}
+        ]
+      }
+    ]
+  },
+  {
+    "quiz_id": "quiz-urgency",
+    "title": "Sense of Urgency",
+    "description": "Recognize time pressure tactics.",
+    "video_url": "/static/videos/urgency.mp4",
+    "questions": [
+      {
+        "question_id": "urg-q1",
+        "question_text": "Why do attackers create urgency?",
+        "explanation": "Urgency reduces careful evaluation.",
+        "answers": [
+          {"answer_id": "urg-q1a1", "answer_text": "To slow responses", "is_correct": false},
+          {"answer_id": "urg-q1a2", "answer_text": "To push quick actions", "is_correct": true},
+          {"answer_id": "urg-q1a3", "answer_text": "To improve security", "is_correct": false},
+          {"answer_id": "urg-q1a4", "answer_text": "To simplify content", "is_correct": false}
+        ]
+      },
+      {
+        "question_id": "urg-q2",
+        "question_text": "What is a safe response to urgent requests?",
+        "explanation": "Verify before acting.",
+        "answers": [
+          {"answer_id": "urg-q2a1", "answer_text": "Act immediately", "is_correct": false},
+          {"answer_id": "urg-q2a2", "answer_text": "Confirm via trusted channels", "is_correct": true},
+          {"answer_id": "urg-q2a3", "answer_text": "Share passwords", "is_correct": false},
+          {"answer_id": "urg-q2a4", "answer_text": "Ignore all emails", "is_correct": false}
+        ]
+      },
+      {
+        "question_id": "urg-q3",
+        "question_text": "Urgent payment requests are often linked to:",
+        "explanation": "They often indicate business email compromise.",
+        "answers": [
+          {"answer_id": "urg-q3a1", "answer_text": "Routine payroll", "is_correct": false},
+          {"answer_id": "urg-q3a2", "answer_text": "Business email compromise", "is_correct": true},
+          {"answer_id": "urg-q3a3", "answer_text": "System updates", "is_correct": false},
+          {"answer_id": "urg-q3a4", "answer_text": "Bug fixes", "is_correct": false}
+        ]
+      },
+      {
+        "question_id": "urg-q4",
+        "question_text": "What is the best time to respond to urgent requests?",
+        "explanation": "After verifying authenticity.",
+        "answers": [
+          {"answer_id": "urg-q4a1", "answer_text": "Immediately", "is_correct": false},
+          {"answer_id": "urg-q4a2", "answer_text": "After verification", "is_correct": true},
+          {"answer_id": "urg-q4a3", "answer_text": "Never", "is_correct": false},
+          {"answer_id": "urg-q4a4", "answer_text": "Only at night", "is_correct": false}
+        ]
+      }
+    ]
+  },
+  {
+    "quiz_id": "quiz-fake-invoice",
+    "title": "Fake Invoice",
+    "description": "Detect invoice fraud and payment scams.",
+    "video_url": "/static/videos/fake-invoice.mp4",
+    "questions": [
+      {
+        "question_id": "inv-q1",
+        "question_text": "A surprise invoice arrives. What should you check first?",
+        "explanation": "Verify vendor and purchase records.",
+        "answers": [
+          {"answer_id": "inv-q1a1", "answer_text": "Pay immediately", "is_correct": false},
+          {"answer_id": "inv-q1a2", "answer_text": "Confirm vendor and order history", "is_correct": true},
+          {"answer_id": "inv-q1a3", "answer_text": "Forward to everyone", "is_correct": false},
+          {"answer_id": "inv-q1a4", "answer_text": "Ignore and delete", "is_correct": false}
+        ]
+      },
+      {
+        "question_id": "inv-q2",
+        "question_text": "Which is a red flag in invoice emails?",
+        "explanation": "Urgent payment requests with mismatched domains are suspicious.",
+        "answers": [
+          {"answer_id": "inv-q2a1", "answer_text": "Known vendor domain", "is_correct": false},
+          {"answer_id": "inv-q2a2", "answer_text": "Mismatched sender domain", "is_correct": true},
+          {"answer_id": "inv-q2a3", "answer_text": "Purchase order attached", "is_correct": false},
+          {"answer_id": "inv-q2a4", "answer_text": "Clear contact details", "is_correct": false}
+        ]
+      },
+      {
+        "question_id": "inv-q3",
+        "question_text": "What is the safest way to pay invoices?",
+        "explanation": "Use approved payment workflows.",
+        "answers": [
+          {"answer_id": "inv-q3a1", "answer_text": "Through approved workflows", "is_correct": true},
+          {"answer_id": "inv-q3a2", "answer_text": "Direct bank transfer from email", "is_correct": false},
+          {"answer_id": "inv-q3a3", "answer_text": "Gift cards", "is_correct": false},
+          {"answer_id": "inv-q3a4", "answer_text": "Cryptocurrency", "is_correct": false}
+        ]
+      },
+      {
+        "question_id": "inv-q4",
+        "question_text": "If an invoice includes a QR code, what should you do?",
+        "explanation": "Confirm the destination before scanning.",
+        "answers": [
+          {"answer_id": "inv-q4a1", "answer_text": "Scan immediately", "is_correct": false},
+          {"answer_id": "inv-q4a2", "answer_text": "Verify the source and destination", "is_correct": true},
+          {"answer_id": "inv-q4a3", "answer_text": "Ignore all QR codes", "is_correct": false},
+          {"answer_id": "inv-q4a4", "answer_text": "Forward to personal email", "is_correct": false}
+        ]
+      }
+    ]
+  },
+  {
+    "quiz_id": "quiz-malicious-attachment",
+    "title": "Malicious Attachments",
+    "description": "Recognize dangerous attachments.",
+    "video_url": "/static/videos/malicious-attachment.mp4",
+    "questions": [
+      {
+        "question_id": "att-q1",
+        "question_text": "What is suspicious about \"invoice.pdf.exe\"?",
+        "explanation": "The last extension indicates an executable file.",
+        "answers": [
+          {"answer_id": "att-q1a1", "answer_text": "It is a normal PDF", "is_correct": false},
+          {"answer_id": "att-q1a2", "answer_text": "It is an executable with a double extension", "is_correct": true},
+          {"answer_id": "att-q1a3", "answer_text": "It is a compressed image", "is_correct": false},
+          {"answer_id": "att-q1a4", "answer_text": "It is a text file", "is_correct": false}
+        ]
+      },
+      {
+        "question_id": "att-q2",
+        "question_text": "What should you do with unexpected attachments?",
+        "explanation": "Verify sender and content before opening.",
+        "answers": [
+          {"answer_id": "att-q2a1", "answer_text": "Open immediately", "is_correct": false},
+          {"answer_id": "att-q2a2", "answer_text": "Verify with the sender", "is_correct": true},
+          {"answer_id": "att-q2a3", "answer_text": "Forward to everyone", "is_correct": false},
+          {"answer_id": "att-q2a4", "answer_text": "Disable antivirus", "is_correct": false}
+        ]
+      },
+      {
+        "question_id": "att-q3",
+        "question_text": "Macro-enabled documents can be risky because:",
+        "explanation": "Macros can run hidden code.",
+        "answers": [
+          {"answer_id": "att-q3a1", "answer_text": "They are faster", "is_correct": false},
+          {"answer_id": "att-q3a2", "answer_text": "They can execute code", "is_correct": true},
+          {"answer_id": "att-q3a3", "answer_text": "They block downloads", "is_correct": false},
+          {"answer_id": "att-q3a4", "answer_text": "They encrypt files", "is_correct": false}
+        ]
+      },
+      {
+        "question_id": "att-q4",
+        "question_text": "What is a safe policy for attachments?",
+        "explanation": "Use secure scanning and verification.",
+        "answers": [
+          {"answer_id": "att-q4a1", "answer_text": "Open everything", "is_correct": false},
+          {"answer_id": "att-q4a2", "answer_text": "Scan and verify before opening", "is_correct": true},
+          {"answer_id": "att-q4a3", "answer_text": "Disable security tools", "is_correct": false},
+          {"answer_id": "att-q4a4", "answer_text": "Trust unknown senders", "is_correct": false}
+        ]
+      }
+    ]
+  },
+  {
+    "quiz_id": "quiz-fake-login",
+    "title": "Fake Login Pages",
+    "description": "Identify credential harvesting sites.",
+    "video_url": "/static/videos/fake-login.mp4",
+    "questions": [
+      {
+        "question_id": "login-q1",
+        "question_text": "What is a sign of a fake login page?",
+        "explanation": "Mismatched domain names are a key indicator.",
+        "answers": [
+          {"answer_id": "login-q1a1", "answer_text": "HTTPS always means safe", "is_correct": false},
+          {"answer_id": "login-q1a2", "answer_text": "Domain does not match the real site", "is_correct": true},
+          {"answer_id": "login-q1a3", "answer_text": "The page has a logo", "is_correct": false},
+          {"answer_id": "login-q1a4", "answer_text": "The page uses a form", "is_correct": false}
+        ]
+      },
+      {
+        "question_id": "login-q2",
+        "question_text": "How should you access login pages safely?",
+        "explanation": "Use bookmarks or type the known URL.",
+        "answers": [
+          {"answer_id": "login-q2a1", "answer_text": "Click links from emails", "is_correct": false},
+          {"answer_id": "login-q2a2", "answer_text": "Use a trusted bookmark or type the URL", "is_correct": true},
+          {"answer_id": "login-q2a3", "answer_text": "Use shortened links", "is_correct": false},
+          {"answer_id": "login-q2a4", "answer_text": "Trust QR codes", "is_correct": false}
+        ]
+      },
+      {
+        "question_id": "login-q3",
+        "question_text": "Why is MFA important against fake login pages?",
+        "explanation": "It reduces impact of stolen passwords.",
+        "answers": [
+          {"answer_id": "login-q3a1", "answer_text": "It removes phishing risk", "is_correct": false},
+          {"answer_id": "login-q3a2", "answer_text": "It limits access even if a password is stolen", "is_correct": true},
+          {"answer_id": "login-q3a3", "answer_text": "It encrypts emails", "is_correct": false},
+          {"answer_id": "login-q3a4", "answer_text": "It blocks links", "is_correct": false}
+        ]
+      },
+      {
+        "question_id": "login-q4",
+        "question_text": "A login link uses a shortened URL. What should you do?",
+        "explanation": "Shortened URLs hide the destination.",
+        "answers": [
+          {"answer_id": "login-q4a1", "answer_text": "Click it", "is_correct": false},
+          {"answer_id": "login-q4a2", "answer_text": "Navigate to the site directly", "is_correct": true},
+          {"answer_id": "login-q4a3", "answer_text": "Forward to coworkers", "is_correct": false},
+          {"answer_id": "login-q4a4", "answer_text": "Disable browser protections", "is_correct": false}
+        ]
+      }
+    ]
+  },
+  {
+    "quiz_id": "quiz-side-channel",
+    "title": "Side Channel Communication",
+    "description": "Recognize unusual off-platform requests.",
+    "video_url": "/static/videos/side-channel.mp4",
+    "questions": [
+      {
+        "question_id": "side-q1",
+        "question_text": "A requester asks you to continue via personal SMS. Why is this risky?",
+        "explanation": "It bypasses monitoring and verification.",
+        "answers": [
+          {"answer_id": "side-q1a1", "answer_text": "It is faster", "is_correct": false},
+          {"answer_id": "side-q1a2", "answer_text": "It avoids official oversight", "is_correct": true},
+          {"answer_id": "side-q1a3", "answer_text": "It is encrypted", "is_correct": false},
+          {"answer_id": "side-q1a4", "answer_text": "It is required", "is_correct": false}
+        ]
+      },
+      {
+        "question_id": "side-q2",
+        "question_text": "What should you do if asked to move to WhatsApp?",
+        "explanation": "Keep communication on approved channels.",
+        "answers": [
+          {"answer_id": "side-q2a1", "answer_text": "Agree immediately", "is_correct": false},
+          {"answer_id": "side-q2a2", "answer_text": "Insist on approved channels", "is_correct": true},
+          {"answer_id": "side-q2a3", "answer_text": "Send credentials to verify", "is_correct": false},
+          {"answer_id": "side-q2a4", "answer_text": "Ignore forever", "is_correct": false}
+        ]
+      },
+      {
+        "question_id": "side-q3",
+        "question_text": "Side channel requests often signal:",
+        "explanation": "They are common in social engineering.",
+        "answers": [
+          {"answer_id": "side-q3a1", "answer_text": "Regular IT maintenance", "is_correct": false},
+          {"answer_id": "side-q3a2", "answer_text": "An attempt to evade controls", "is_correct": true},
+          {"answer_id": "side-q3a3", "answer_text": "Security compliance", "is_correct": false},
+          {"answer_id": "side-q3a4", "answer_text": "Data backups", "is_correct": false}
+        ]
+      },
+      {
+        "question_id": "side-q4",
+        "question_text": "Which response is safest?",
+        "explanation": "Verify through known processes.",
+        "answers": [
+          {"answer_id": "side-q4a1", "answer_text": "Follow the side channel", "is_correct": false},
+          {"answer_id": "side-q4a2", "answer_text": "Use official procedures", "is_correct": true},
+          {"answer_id": "side-q4a3", "answer_text": "Share OTP codes", "is_correct": false},
+          {"answer_id": "side-q4a4", "answer_text": "Disable security tools", "is_correct": false}
+        ]
+      }
+    ]
+  },
+  {
+    "quiz_id": "quiz-evilginx",
+    "title": "Evilginx and Proxy Phishing",
+    "description": "Understand adversary-in-the-middle phishing kits.",
+    "video_url": "/static/videos/evilginx.mp4",
+    "questions": [
+      {
+        "question_id": "evil-q1",
+        "question_text": "Evilginx primarily targets:",
+        "explanation": "It proxies authentication to steal session tokens.",
+        "answers": [
+          {"answer_id": "evil-q1a1", "answer_text": "Only passwords", "is_correct": false},
+          {"answer_id": "evil-q1a2", "answer_text": "Session cookies and tokens", "is_correct": true},
+          {"answer_id": "evil-q1a3", "answer_text": "Hardware devices", "is_correct": false},
+          {"answer_id": "evil-q1a4", "answer_text": "Network cables", "is_correct": false}
+        ]
+      },
+      {
+        "question_id": "evil-q2",
+        "question_text": "Why can Evilginx bypass some MFA?",
+        "explanation": "It captures tokens after MFA is completed.",
+        "answers": [
+          {"answer_id": "evil-q2a1", "answer_text": "MFA is useless", "is_correct": false},
+          {"answer_id": "evil-q2a2", "answer_text": "It steals session tokens post-authentication", "is_correct": true},
+          {"answer_id": "evil-q2a3", "answer_text": "It disables MFA automatically", "is_correct": false},
+          {"answer_id": "evil-q2a4", "answer_text": "It only affects SMS", "is_correct": false}
+        ]
+      },
+      {
+        "question_id": "evil-q3",
+        "question_text": "A link uses a lookalike domain and valid HTTPS. What should you do?",
+        "explanation": "HTTPS alone does not ensure legitimacy.",
+        "answers": [
+          {"answer_id": "evil-q3a1", "answer_text": "Trust it because it is HTTPS", "is_correct": false},
+          {"answer_id": "evil-q3a2", "answer_text": "Verify the domain carefully", "is_correct": true},
+          {"answer_id": "evil-q3a3", "answer_text": "Disable MFA", "is_correct": false},
+          {"answer_id": "evil-q3a4", "answer_text": "Share credentials", "is_correct": false}
+        ]
+      },
+      {
+        "question_id": "evil-q4",
+        "question_text": "Which defense best reduces proxy phishing risk?",
+        "explanation": "Use phishing-resistant MFA and domain checks.",
+        "answers": [
+          {"answer_id": "evil-q4a1", "answer_text": "Reuse passwords", "is_correct": false},
+          {"answer_id": "evil-q4a2", "answer_text": "Phishing-resistant MFA (FIDO2)", "is_correct": true},
+          {"answer_id": "evil-q4a3", "answer_text": "Disable browser updates", "is_correct": false},
+          {"answer_id": "evil-q4a4", "answer_text": "Ignore security warnings", "is_correct": false}
+        ]
+      }
+    ]
+  }
+]

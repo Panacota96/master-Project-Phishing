@@ -1,0 +1,7 @@
+- name: Deploy phishing app
+  hosts: app
+  become: true
+  roles:
+    - app
+    - gunicorn
+    - nginx

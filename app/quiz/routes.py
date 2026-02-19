@@ -1,4 +1,4 @@
-from flask import flash, redirect, render_template, session, url_for
+from flask import flash, jsonify, redirect, render_template, session, url_for
 from flask_login import current_user, login_required
 
 from app.models import (
@@ -47,6 +47,12 @@ def start_quiz(quiz_id):
             video_url=video_url,
         )
 
+    video_url = quiz.get('video_url')
+    if video_url:
+        watched = session.get('quiz_video_watched', {}).get(quiz_id)
+        if not watched:
+            return redirect(url_for('quiz.video_gate', quiz_id=quiz_id))
+
     questions = quiz.get('questions', [])
     if not questions:
         flash('This quiz has no questions yet.', 'warning')
@@ -58,6 +64,34 @@ def start_quiz(quiz_id):
     session['question_ids'] = [q['question_id'] for q in questions]
     session['current_index'] = 0
     return redirect(url_for('quiz.take_question'))
+
+
+@bp.route('/<quiz_id>/video')
+@login_required
+def video_gate(quiz_id):
+    quiz = get_quiz(quiz_id)
+    if not quiz:
+        flash('Quiz not found.', 'danger')
+        return redirect(url_for('quiz.quiz_list'))
+    video_url = quiz.get('video_url')
+    if not video_url:
+        return redirect(url_for('quiz.start_quiz', quiz_id=quiz_id))
+    return render_template('quiz/video_gate.html', quiz=quiz, video_url=video_url)
+
+
+@bp.route('/<quiz_id>/video-watched', methods=['POST'])
+@login_required
+def video_watched(quiz_id):
+    quiz = get_quiz(quiz_id)
+    if not quiz:
+        return jsonify({'error': 'Quiz not found.'}), 404
+    video_url = quiz.get('video_url')
+    if not video_url:
+        return jsonify({'error': 'Video not configured.'}), 400
+    watched = session.get('quiz_video_watched', {})
+    watched[quiz_id] = True
+    session['quiz_video_watched'] = watched
+    return jsonify({'success': True})
 
 
 @bp.route('/question', methods=['GET', 'POST'])
