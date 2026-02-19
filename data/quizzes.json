@@ -931,7 +931,7 @@
     "quiz_id": "quiz-fake-login",
     "title": "Fake Login Pages",
     "description": "Identify credential harvesting sites.",
-    "video_url": "/static/videos/fake-login.mp4",
+    "video_url": "/static/videos/The_Impersonator_in_Your_Inbox.mp4",
     "questions": [
       {
         "question_id": "quiz-fake-login-q1",
