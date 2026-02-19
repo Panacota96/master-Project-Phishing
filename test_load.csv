@@ -1,4 +1,4 @@
-username,email,password,group
-testuser1,test1@company.com,TempPass1,engineering
-testuser2,test2@company.com,TempPass2,marketing
-testuser3,test3@company.com,TempPass3,engineering
+username,email,password,class,academic_year,major,group
+testuser1,test1@company.com,TempPass1,Class A,2025,CS,engineering
+testuser2,test2@company.com,TempPass2,Class B,2025,Security,marketing
+testuser3,test3@company.com,TempPass3,Class A,2026,Data Science,engineering
