@@ -39,7 +39,7 @@ def list_users():
 def remove_user(username):
     if not current_user.is_admin:
         abort(403)
-    
+
     if username == current_user.username:
         flash("You cannot delete your own account.", "danger")
         return redirect(url_for('dashboard.list_users'))
@@ -186,7 +186,7 @@ def index():
     inspector_spam = sum(1 for a in inspector_attempts if a.get('classification') == 'Spam')
 
     # Signal Accuracy Stats
-    signal_stats = {} # {signal_alias: {expected: 0, identified: 0}}
+    signal_stats = {}  # {signal_alias: {expected: 0, identified: 0}}
     for attempt in inspector_attempts:
         expected = attempt.get('expected_signals', [])
         selected = attempt.get('selected_signals', [])
@@ -196,7 +196,7 @@ def index():
             signal_stats[sig]['expected'] += 1
             if sig in selected:
                 signal_stats[sig]['identified'] += 1
-    
+
     signal_accuracy = []
     for sig, stats in signal_stats.items():
         rate = round((stats['identified'] / stats['expected'] * 100), 1) if stats['expected'] > 0 else 0
