@@ -3,50 +3,61 @@ ANSWER_KEY = {
     "fakeinvoice-urgency-spoofing-socialeng.eml": {
         "classification": "Phishing",
         "signals": ["fakeinvoice", "urgency", "spoof"],
+        "explanation": "This email uses a fake PayPal invoice to create panic. Note the spoofed 'From' address and the extreme urgency used to force a quick payment.",
     },
     "invoice-2.eml": {
         "classification": "Phishing",
         "signals": ["fakeinvoice", "urgency", "spoof"],
+        "explanation": "A classic 'payment declined' scam. The email mimics Microsoft branding but uses a non-Microsoft domain and threatens immediate data deletion.",
     },
     "invoice-3.eml": {
         "classification": "Phishing",
         "signals": ["fakeinvoice", "externaldomain", "impersonation"],
+        "explanation": "This FedEx impersonation uses a high-quality template to demand 'customs fees'. The tracking number is fake and the link leads to a non-FedEx domain.",
     },
     "invoice-4.eml": {
         "classification": "Phishing",
         "signals": ["impersonation", "fakeinvoice", "externaldomain"],
+        "explanation": "An authentic-looking Apple receipt. Phishers use high-value 'purchases' to trick you into clicking 'Report a Problem' to steal your Apple ID credentials.",
     },
 
     # ─── 2. IMPERSONATION ─────────────────────────────────────────────────────
     "impersonation-attachment-socialeng-spoof.eml": {
         "classification": "Phishing",
         "signals": ["impersonation", "attachment", "spoof"],
+        "explanation": "This email pretends to be a voice message notification. The HTML attachment is a credential harvester designed to look like an audio player.",
     },
     "impersonation-2.eml": {
         "classification": "Phishing",
         "signals": ["impersonation", "externaldomain", "socialeng"],
+        "explanation": "Microsoft SharePoint sharing alerts are a common entry point. Note that the sender domain does not match the official SharePoint service.",
     },
     "impersonation-3.eml": {
         "classification": "Phishing",
         "signals": ["impersonation", "socialeng", "externaldomain"],
+        "explanation": "A fake Zoom invitation. It uses curiosity about 'Internal Restructuring' to bait employees into clicking a malicious registration link.",
     },
     "impersonation-4.eml": {
         "classification": "Phishing",
         "signals": ["impersonation", "socialeng", "spoof"],
+        "explanation": "IT Helpdesk impersonation. It asks you to 'rate your experience' via a link that actually captures your corporate login session.",
     },
 
     # ─── 3. IMPERSONATION URGENCY ─────────────────────────────────────────────
     "impersonation-socialeng-urgency.eml": {
         "classification": "Phishing",
         "signals": ["impersonation", "socialeng", "urgency"],
+        "explanation": "This high-pressure email uses a 'Security Incident' as a cover to request unauthorized VPN access. Real IT will never ask for credentials via email.",
     },
     "urgency-2.eml": {
         "classification": "Phishing",
         "signals": ["impersonation", "socialeng", "urgency"],
+        "explanation": "A DocuSign lure. The vague document name 'Internal_Audit_Requirements' is designed to make financial staff click without thinking.",
     },
     "urgency-3.eml": {
         "classification": "Phishing",
         "signals": ["impersonation", "urgency", "externaldomain"],
+        "explanation": "OneDrive storage alerts are effective because they threaten 'file deletion'. Check the link—it does not point to a microsoft.com domain.",
     },
     "urgency-4.eml": {
         "classification": "Phishing",
@@ -61,38 +72,46 @@ ANSWER_KEY = {
     "legit-app-2.eml": {
         "classification": "Phishing",
         "signals": ["impersonation", "socialeng", "externaldomain"],
+        "explanation": "Slack app authorization requests are a modern phishing tactic. The 'Deep-Research-AI' app is fake, and the link captures your workspace token.",
     },
     "legit-app-3.eml": {
         "classification": "Phishing",
         "signals": ["impersonation", "urgency", "externaldomain"],
+        "explanation": "Adobe ID alerts about 'password resets' trick users into clicking a fake security link. Notice the sender domain is adobe.com.security-service.net.",
     },
     "legit-app-4.eml": {
         "classification": "Phishing",
         "signals": ["attachment", "socialeng", "spoof"],
+        "explanation": "A fake insurance reminder with a malicious attachment. The .exe extension hidden in the filename is a clear red flag.",
     },
 
     # ─── 5. PUNYCODE ──────────────────────────────────────────────────────────
     "punycode-impersonation-legitapp-socialeng.eml": {
         "classification": "Phishing",
         "signals": ["punycode", "impersonation", "socialeng"],
+        "explanation": "This email uses a Punycode domain that looks identical to a real brand but contains non-standard characters to redirect you to a malicious site.",
     },
     "punycode-2.eml": {
         "classification": "Phishing",
         "signals": ["punycode", "impersonation", "externaldomain"],
+        "explanation": "Google security alerts using 'googIe.com' (with a capital I) instead of 'google.com' are classic examples of typosquatting and Punycode deception.",
     },
     "punycode-3.eml": {
         "classification": "Phishing",
         "signals": ["punycode", "urgency", "spoof"],
+        "explanation": "Another Punycode attack. The sense of urgency is used to prevent the user from carefully inspecting the suspicious URL.",
     },
     "punycode-4.eml": {
         "classification": "Phishing",
         "signals": ["punycode", "fakelogin", "externaldomain"],
+        "explanation": "Combining Punycode with a fake login page. The domain looks right at a glance, but leads to a credential harvesting portal.",
     },
 
     # ─── 6. SPAM ──────────────────────────────────────────────────────────────
     "marketing-spam-logistics.eml": {
         "classification": "Spam",
         "signals": [],
+        "explanation": "This is legitimate unsolicited marketing (Spam). While annoying, it does not use deception, fake links, or malicious attachments.",
     },
     "spam-2.eml": {
         "classification": "Spam",

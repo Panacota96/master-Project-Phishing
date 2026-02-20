@@ -1151,6 +1151,14 @@
             statusEl.classList.add("success");
             statusEl.classList.remove("error");
 
+            if (payload.explanation) {
+              const explanationEl = document.createElement("div");
+              explanationEl.className = "alert alert-info mt-3";
+              explanationEl.style.borderLeft = "4px solid #3b82f6";
+              explanationEl.innerHTML = `<strong>Educational Feedback:</strong><br>${escapeHtml(payload.explanation)}`;
+              form.appendChild(explanationEl);
+            }
+
             const savedAt = new Date();
             statusEl.textContent = `Answer saved at ${savedAt.toLocaleTimeString()}.`;
             form.querySelectorAll("input, button").forEach((el) => {

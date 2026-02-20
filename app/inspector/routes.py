@@ -407,4 +407,5 @@ def api_submit():
         'success': True,
         'message': 'Answer saved.',
         'completed': completed,
+        'explanation': requirement.get('explanation', 'No detailed explanation available for this sample.')
     })
