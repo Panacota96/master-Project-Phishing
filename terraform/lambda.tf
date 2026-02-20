@@ -22,6 +22,7 @@ resource "aws_lambda_function" "app" {
       DYNAMODB_RESPONSES = aws_dynamodb_table.responses.name
       DYNAMODB_INSPECTOR = aws_dynamodb_table.inspector_attempts.name
       DYNAMODB_INSPECTOR_ANON = aws_dynamodb_table.inspector_attempts_anon.name
+      DYNAMODB_BUGS      = aws_dynamodb_table.bugs.name
       S3_BUCKET          = aws_s3_bucket.app.id
     }
   }

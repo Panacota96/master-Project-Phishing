@@ -39,6 +39,7 @@ The following tables are created using the `PAY_PER_REQUEST` billing mode:
 - **`DYNAMODB_RESPONSES`**: Hash key `username_quiz_id`, Range key `question_id`. GSI on `quiz_question_id`.
 - **`DYNAMODB_INSPECTOR`**: Hash key `username`, Range key `submitted_at`. GSIs on `group` and `email_file`.
 - **`DYNAMODB_INSPECTOR_ANON`**: Hash key `attempt_id`, Range key `submitted_at`. GDPR-compliant.
+- **`DYNAMODB_BUGS`**: Hash key `bug_id`. Stores user-submitted bug reports.
 
 ### Storage
 - **S3 Bucket**: Stores EML samples and Lambda deployment packages (`lambda.zip`).

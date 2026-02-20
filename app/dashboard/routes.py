@@ -2,24 +2,57 @@ import csv
 import io
 from datetime import datetime, timezone
 
-from flask import abort, current_app, jsonify, render_template, request
+from flask import abort, current_app, flash, jsonify, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 
 from app.dashboard import bp
 from app.inspector.answer_key import ANSWER_KEY
 from app.models import (
     count_users,
+    create_bug_report,
     get_distinct_cohorts,
     get_quiz,
     get_user,
     list_all_users,
     list_all_attempts,
     list_attempts_by_quiz,
+    list_bug_reports,
     list_inspector_attempts_anonymous,
     list_quizzes,
     reset_user_inspector_state,
     reset_users_inspector_state,
 )
+
+
+@bp.route('/bugs')
+@login_required
+def list_bugs():
+    if not current_user.is_admin:
+        abort(403)
+    bugs = list_bug_reports()
+    return render_template('admin/bugs.html', bugs=bugs)
+
+
+@bp.route('/report-bug', methods=['POST'])
+@login_required
+def report_bug():
+    description = request.form.get('description', '').strip()
+    if not description:
+        flash('Bug description cannot be empty.', 'danger')
+        return redirect(request.referrer or url_for('quiz.quiz_list'))
+
+    try:
+        create_bug_report(
+            username=current_user.username,
+            description=description,
+            page_url=request.referrer or 'Unknown'
+        )
+        flash('Bug reported successfully. Thank you!', 'success')
+    except Exception as e:
+        current_app.logger.error(f"Failed to report bug: {e}")
+        flash('Failed to report bug. Please try again later.', 'danger')
+
+    return redirect(request.referrer or url_for('quiz.quiz_list'))
 
 
 @bp.route('/inspector/answer-key')

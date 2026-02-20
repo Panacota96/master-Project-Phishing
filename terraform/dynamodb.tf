@@ -187,3 +187,17 @@ resource "aws_dynamodb_table" "inspector_attempts_anon" {
     type = "S"
   }
 }
+
+# ─── Bugs Table ────────────────────────────────────────────────────────────────
+
+resource "aws_dynamodb_table" "bugs" {
+  name         = "${local.prefix}-bugs"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "bug_id"
+
+  attribute {
+    name = "bug_id"
+    type = "S"
+  }
+}
+

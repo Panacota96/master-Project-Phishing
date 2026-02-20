@@ -15,6 +15,7 @@ class Config:
         'DYNAMODB_INSPECTOR_ANON',
         'phishing-app-prod-inspector-attempts-anon',
     )
+    DYNAMODB_BUGS = os.environ.get('DYNAMODB_BUGS', 'phishing-app-prod-bugs')
 
     # S3
     S3_BUCKET = os.environ.get('S3_BUCKET', 'phishing-app-prod-eu-west-3')

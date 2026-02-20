@@ -35,7 +35,13 @@ Monitor how students classify and identify phishing signals in real-world emails
     - **Live Preview**: Open a modal to view exactly how the Inspector parses and cleans (placeholders) each email for student training.
 4. **Reset Inspector Access**: If a student needs to retake the Inspector analysis, use the **Reset Access** button.
 
-## ⚙️ 4. Operational Tasks
+## 🐛 4. Bug Report Management
+Monitor student feedback and system issues.
+1. **View Reports**: Go to **Admin → Bug Reports** to see a list of all submitted issues.
+2. **Contextual Info**: Each report automatically includes the student's username and the exact page URL where the issue occurred.
+3. **Status Tracking**: Track the progress of reported bugs (Open/Fixed).
+
+## ⚙️ 5. Operational Tasks
 - **Seeding**: For new environments, use `seed_dynamodb.py` to initialize default users and quizzes.
 - **Database Migrations**: Use scripts in `scripts/` to migrate data between `dev` and `prod`.
 - **S3 Sync**: Sync `.eml` samples to the bucket's `eml-samples/` prefix.

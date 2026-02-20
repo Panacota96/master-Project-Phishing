@@ -511,3 +511,28 @@ def count_inspector_attempts_anonymous():
     table = _get_table('DYNAMODB_INSPECTOR_ANON')
     resp = table.scan(Select='COUNT')
     return resp['Count']
+
+
+# ─── Bug Report CRUD ─────────────────────────────────────────────────────────
+
+def create_bug_report(username, description, page_url):
+    """Create a new bug report entry in DynamoDB."""
+    table = _get_table('DYNAMODB_BUGS')
+    item = {
+        'bug_id': str(uuid4()),
+        'submitted_at': _now_iso(),
+        'username': username,
+        'description': description,
+        'page_url': page_url,
+        'status': 'Open',
+    }
+    table.put_item(Item=item)
+    return item
+
+
+def list_bug_reports():
+    """List all bug reports from DynamoDB."""
+    table = _get_table('DYNAMODB_BUGS')
+    resp = table.scan()
+    items = resp.get('Items', [])
+    return sorted(items, key=lambda x: x.get('submitted_at', ''), reverse=True)

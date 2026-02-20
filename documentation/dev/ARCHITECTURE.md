@@ -41,6 +41,7 @@ erDiagram
     QUIZ ||--o{ ATTEMPT : of
     ATTEMPT ||--o{ RESPONSE : contains
     USER ||--o{ INSPECTOR_ATTEMPT : submits
+    USER ||--o{ BUG_REPORT : reports
     
     USER {
         string username PK
@@ -74,6 +75,15 @@ erDiagram
         string selected_answer_id
         boolean is_correct
     }
+    
+    BUG_REPORT {
+        string bug_id PK
+        string username FK
+        string submitted_at
+        string description
+        string page_url
+        string status
+    }
 ```
 
 ## Backend Architecture (Flask)
@@ -83,7 +93,7 @@ The app uses the Flask Application Factory pattern (`app/__init__.py`). It is ad
 - **`app/auth`**: Manages user registration, login, and sessions using `Flask-Login`.
 - **`app/quiz`**: Handles quiz listing, taking quizzes, and score history.
 - **`app/inspector`**: A tool for analyzing `.eml` files. Includes a **`_clean_placeholders`** helper to replace template strings (e.g., `{{.FirstName}}`, `{{.URL}}`) with generic, realistic values.
-- **`app/dashboard`**: Provides administrative statistics, cohort-level analytics, and an **Answer Key & Troubleshoot** view for ground-truth verification.
+- **`app/dashboard`**: Provides administrative statistics, cohort-level analytics, an **Answer Key & Troubleshoot** view for ground-truth verification, and management of user-submitted bug reports.
 
 ## Security Features
 - **Authentication**: Password hashing with `Werkzeug`.
