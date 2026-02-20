@@ -85,6 +85,61 @@ def report_bug():
     return redirect(request.referrer or url_for('quiz.quiz_list'))
 
 
+@bp.route('/risk')
+@login_required
+def risk_dashboard():
+    if not current_user.is_admin:
+        abort(403)
+
+    inspector_attempts = list_inspector_attempts_anonymous()
+    quiz_attempts = list_all_attempts()
+    
+    # Risk Score Calculation (0-100, where 100 is high risk)
+    # Factor 1: Signal Miss Rate (Students missing phishing indicators)
+    # Factor 2: Quiz Failure Rate (Score < 70%)
+    
+    cohort_risk = {} # {(class, year, major): {signal_misses: 0, quiz_fails: 0, total_actions: 0}}
+    
+    for a in inspector_attempts:
+        key = (a.get('class_name', 'unknown'), a.get('academic_year', 'unknown'), a.get('major', 'unknown'))
+        if key not in cohort_risk:
+            cohort_risk[key] = {'signal_misses': 0, 'quiz_fails': 0, 'total_actions': 0}
+        
+        cohort_risk[key]['total_actions'] += 1
+        if not a.get('is_correct'):
+            cohort_risk[key]['signal_misses'] += 1
+            
+    for a in quiz_attempts:
+        key = (a.get('class_name', 'unknown'), a.get('academic_year', 'unknown'), a.get('major', 'unknown'))
+        if key not in cohort_risk:
+            cohort_risk[key] = {'signal_misses': 0, 'quiz_fails': 0, 'total_actions': 0}
+        
+        cohort_risk[key]['total_actions'] += 1
+        if float(a.get('percentage', 0)) < 70:
+            cohort_risk[key]['quiz_fails'] += 1
+            
+    risk_data = []
+    for (c, y, m), stats in cohort_risk.items():
+        if stats['total_actions'] > 0:
+            # Risk = Average of (miss rate + fail rate)
+            miss_rate = (stats['signal_misses'] / stats['total_actions']) * 100
+            fail_rate = (stats['quiz_fails'] / stats['total_actions']) * 100
+            risk_score = round((miss_rate + fail_rate) / 2, 1)
+            
+            risk_data.append({
+                'class_name': c,
+                'academic_year': y,
+                'major': m,
+                'risk_score': risk_score,
+                'label': f"{c} | {y} | {m}",
+                'level': 'High' if risk_score > 60 else 'Medium' if risk_score > 30 else 'Low'
+            })
+            
+    risk_data.sort(key=lambda x: x['risk_score'], reverse=True)
+    
+    return render_template('admin/risk_dashboard.html', risk_data=risk_data)
+
+
 @bp.route('/inspector/answer-key')
 @login_required
 def inspector_answer_key():

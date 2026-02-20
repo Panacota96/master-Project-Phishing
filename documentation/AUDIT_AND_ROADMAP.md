@@ -42,9 +42,9 @@ This document provides a comprehensive overview of the current feature set of th
 - **Automated Dependency Audits**: Integrate `pip-audit` or `safety` into the GitLab CI pipeline to detect vulnerable libraries.
 - **Penetration Testing**: Conduct a "Grey Box" security audit and document findings in a formal security report.
 
-### 🚀 Phase 3: Advanced Intelligence (Long-Term)
+### 🚀 Phase 3: Advanced Intelligence (Completed & Ongoing)
+- **Vulnerability Risk Scoring (IMPLEMENTED)**: Automated calculation of cohort-level risk based on signal identification failure rates and knowledge gaps.
 - **Adaptive Difficulty Engine**: Dynamically serve harder emails to students who maintain a high identification rate.
-- **Vulnerability Risk Scoring**: Algorithmically calculate the "Cyber Risk" of specific cohorts based on their misunderstanding of specific phishing signals.
 - **AI-Generated Content**: Fully integrate the `phishing-content-creator` skill to allow admins to generate infinite new training scenarios via the UI.
 
 ---

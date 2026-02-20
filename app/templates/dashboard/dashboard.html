@@ -1,7 +1,10 @@
 {% extends "base.html" %}
 {% block title %}Admin Dashboard{% endblock %}
 {% block content %}
-<h2>Admin Dashboard</h2>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Admin Dashboard</h2>
+    <a href="{{ url_for('dashboard.risk_dashboard') }}" class="btn btn-danger">View Human Risk Analysis &rsaquo;</a>
+</div>
 
 <!-- Stat Cards -->
 <div class="row mb-4">

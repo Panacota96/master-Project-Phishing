@@ -22,7 +22,10 @@ Gain insights into user performance and training effectiveness.
 1. **Global Stats**: View total users, total attempts, and average scores on the main dashboard.
 2. **Score Distribution**: Analyze the score distribution bar chart (Chart.js) to see how users are performing.
 3. **Signal Accuracy**: Use the **Signal Accuracy Polar Chart** to identify which phishing signals (e.g., Punycode, Spoofing) students are failing to recognize. This helps prioritize future training videos.
-4. **Quiz Analytics**: See stats for each quiz (e.g., number of attempts, average score).
+4. **Human Risk Analysis**: Click the **View Human Risk Analysis** button to see the **Vulnerability Index**. 
+    - **Risk Scoring**: Visualizes which cohorts (Class/Year/Major) are most susceptible to attacks based on their simulation failure rates.
+    - **Color Coding**: Automatically flags high-risk groups in Red, moderate in Yellow, and low-risk in Green.
+5. **Quiz Analytics**: See stats for each quiz (e.g., number of attempts, average score).
 4. **Cohort Reports**: Filter by class, academic year, or major to see performance by cohort.
 5. **Download Reports**:
     - **Quiz Reports**: Download CSV reports for quiz attempts and scores.

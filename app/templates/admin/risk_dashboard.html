@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block title %}Vulnerability Risk Dashboard{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Vulnerability Index (Human Risk)</h2>
+    <a href="{{ url_for('dashboard.index') }}" class="btn btn-outline-secondary">Back to Dashboard</a>
+</div>
+
+<div class="alert alert-info py-2 small mb-4">
+    <strong>Risk Calculation Logic:</strong> This index represents the probability of a cohort falling for a real phishing attack. It is calculated by aggregating <strong>Signal Miss Rates</strong> (Email Inspector) and <strong>Knowledge Gaps</strong> (Quiz Failures).
+</div>
+
+<div class="row">
+    <!-- Risk Chart -->
+    <div class="col-md-7">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-dark text-white"><h5>Cohort Risk Comparison</h5></div>
+            <div class="card-body">
+                <canvas id="riskChart"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Top Risk Groups -->
+    <div class="col-md-5">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-danger text-white"><h5>High Risk Priority List</h5></div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    {% for item in risk_data %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>{{ item.class_name }}</strong>
+                            <div class="text-muted small">{{ item.major }} ({{ item.academic_year }})</div>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge {% if item.level == 'High' %}bg-danger{% elif item.level == 'Medium' %}bg-warning text-dark{% else %}bg-success{% endif %} fs-6">
+                                {{ item.risk_score }}
+                            </span>
+                            <div class="small text-uppercase" style="font-size: 0.65rem;">Risk Score</div>
+                        </div>
+                    </li>
+                    {% endfor %}
+                    {% if not risk_data %}
+                    <li class="list-group-item text-center py-4 text-muted">No training data available to calculate risk.</li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm mt-2">
+    <div class="card-header"><h5>Improvement Strategy</h5></div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                <h6>🔴 High Risk (>60)</h6>
+                <p class="small text-muted">Requires mandatory remedial training and 1-on-1 awareness sessions. Priority for new simulation cycles.</p>
+            </div>
+            <div class="col-md-4">
+                <h6>🟡 Medium Risk (30-60)</h6>
+                <p class="small text-muted">Encourage review of previous quiz explanations and specific "Signal Highlight" training.</p>
+            </div>
+            <div class="col-md-4">
+                <h6>🟢 Low Risk (<30)</h6>
+                <p class="small text-muted">Sustaining awareness. Transition to advanced AI-generated spear-phishing simulations.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script>
+const riskCtx = document.getElementById('riskChart').getContext('2d');
+new Chart(riskCtx, {
+    type: 'bar',
+    data: {
+        labels: {{ risk_data | map(attribute='label') | list | tojson }},
+        datasets: [{
+            label: 'Risk Score',
+            data: {{ risk_data | map(attribute='risk_score') | list | tojson }},
+            backgroundColor: {{ risk_data | map(attribute='risk_score') | list | tojson }}.map(score => {
+                if (score > 60) return 'rgba(220, 53, 69, 0.7)'; // Red
+                if (score > 30) return 'rgba(255, 193, 7, 0.7)';  // Yellow
+                return 'rgba(25, 135, 84, 0.7)';                // Green
+            }),
+            borderColor: '#333',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        indexAxis: 'y',
+        responsive: true,
+        scales: {
+            x: { 
+                beginAtZero: true, 
+                max: 100,
+                title: { display: true, text: 'Vulnerability Probability (%)' }
+            }
+        },
+        plugins: {
+            legend: { display: false }
+        }
+    }
+});
+</script>
+{% endblock %}
