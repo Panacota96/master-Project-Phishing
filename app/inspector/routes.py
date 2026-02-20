@@ -307,7 +307,7 @@ def api_email_detail(filename):
     if state['locked'] and not current_user.is_admin:
         return jsonify({'error': 'Inspector access is locked. Please return to main.'}), 403
     pool, _ = _get_or_create_email_pool()
-    if filename not in pool:
+    if filename not in pool and not current_user.is_admin:
         return jsonify({'error': 'Email not found'}), 404
     key = _find_eml_key_by_filename(filename)
     if not key:
