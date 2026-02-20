@@ -235,8 +235,6 @@ def inspector_analytics():
         filtered = [a for a in filtered if a.get('email_file') == selected_email]
 
     if date_from or date_to:
-        from datetime import datetime
-
         def parse_date(value, end_of_day=False):
             if not value:
                 return None
@@ -512,124 +510,126 @@ def generate_inspector_report():
     if not current_user.is_admin:
         abort(403)
 
-    class_filter = request.form.get('class_name', '').strip()
-    year_filter = request.form.get('academic_year', '').strip()
-    major_filter = request.form.get('major', '').strip()
-    email_filter = request.form.get('email', '')
-    date_from = request.form.get('date_from', '').strip()
-    date_to = request.form.get('date_to', '').strip()
-    report_scope = request.form.get('report_scope', 'email')
+    try:
+        class_filter = request.form.get('class_name', '').strip()
+        year_filter = request.form.get('academic_year', '').strip()
+        major_filter = request.form.get('major', '').strip()
+        email_filter = request.form.get('email', '')
+        date_from = request.form.get('date_from', '').strip()
+        date_to = request.form.get('date_to', '').strip()
+        report_scope = request.form.get('report_scope', 'email')
 
-    attempts = list_inspector_attempts_anonymous()
-    if class_filter:
-        attempts = [a for a in attempts if a.get('class_name') == class_filter]
-    if year_filter:
-        attempts = [a for a in attempts if a.get('academic_year') == year_filter]
-    if major_filter:
-        attempts = [a for a in attempts if a.get('major') == major_filter]
-    if email_filter:
-        attempts = [a for a in attempts if a.get('email_file') == email_filter]
-    if date_from or date_to:
-        from datetime import datetime
+        attempts = list_inspector_attempts_anonymous()
+        if class_filter:
+            attempts = [a for a in attempts if a.get('class_name') == class_filter]
+        if year_filter:
+            attempts = [a for a in attempts if a.get('academic_year') == year_filter]
+        if major_filter:
+            attempts = [a for a in attempts if a.get('major') == major_filter]
+        if email_filter:
+            attempts = [a for a in attempts if a.get('email_file') == email_filter]
+        if date_from or date_to:
+            def parse_date(value, end_of_day=False):
+                if not value:
+                    return None
+                if end_of_day:
+                    return datetime.fromisoformat(f'{value}T23:59:59+00:00')
+                return datetime.fromisoformat(f'{value}T00:00:00+00:00')
 
-        def parse_date(value, end_of_day=False):
-            if not value:
-                return None
-            if end_of_day:
-                return datetime.fromisoformat(f'{value}T23:59:59+00:00')
-            return datetime.fromisoformat(f'{value}T00:00:00+00:00')
+            start_dt = parse_date(date_from, end_of_day=False)
+            end_dt = parse_date(date_to, end_of_day=True)
 
-        start_dt = parse_date(date_from, end_of_day=False)
-        end_dt = parse_date(date_to, end_of_day=True)
+            def in_range(item):
+                submitted_at = item.get('submitted_at')
+                if not submitted_at:
+                    return False
+                try:
+                    submitted_dt = datetime.fromisoformat(submitted_at)
+                except ValueError:
+                    return False
+                if start_dt and submitted_dt < start_dt:
+                    return False
+                if end_dt and submitted_dt > end_dt:
+                    return False
+                return True
 
-        def in_range(item):
-            submitted_at = item.get('submitted_at')
-            if not submitted_at:
-                return False
-            try:
-                submitted_dt = datetime.fromisoformat(submitted_at)
-            except ValueError:
-                return False
-            if start_dt and submitted_dt < start_dt:
-                return False
-            if end_dt and submitted_dt > end_dt:
-                return False
-            return True
+            attempts = [a for a in attempts if in_range(a)]
 
-        attempts = [a for a in attempts if in_range(a)]
-
-    output = io.StringIO()
-    writer = csv.writer(output)
-    header = [
-        'Class',
-        'Academic Year',
-        'Major',
-    ]
-    if report_scope != 'cohort':
-        header.append('Email')
-    header += [
-        'Attempts',
-        'Correct Count',
-        'Correct %',
-        'Phishing Count',
-        'Spam Count',
-    ]
-    writer.writerow(header)
-    grouped = {}
-    for a in attempts:
-        key_parts = [
-            a.get('class_name', 'unknown'),
-            a.get('academic_year', 'unknown'),
-            a.get('major', 'unknown'),
+        output = io.StringIO()
+        writer = csv.writer(output)
+        header = [
+            'Class',
+            'Academic Year',
+            'Major',
         ]
         if report_scope != 'cohort':
-            key_parts.append(a.get('email_file', 'unknown'))
-        key = tuple(key_parts)
-        if key not in grouped:
-            grouped[key] = {'count': 0, 'correct': 0, 'phishing': 0, 'spam': 0}
-        grouped[key]['count'] += 1
-        if a.get('is_correct'):
-            grouped[key]['correct'] += 1
-        if a.get('classification') == 'Phishing':
-            grouped[key]['phishing'] += 1
-        if a.get('classification') == 'Spam':
-            grouped[key]['spam'] += 1
-    for key, stats in grouped.items():
-        if report_scope == 'cohort':
-            class_name, academic_year, major = key
-            email_file = None
-        else:
-            class_name, academic_year, major, email_file = key
-        count = stats['count']
-        correct_pct = round((stats['correct'] / count * 100), 1) if count > 0 else 0
-        row = [class_name, academic_year, major]
-        if report_scope != 'cohort':
-            row.append(email_file)
-        row += [
-            count,
-            stats['correct'],
-            correct_pct,
-            stats['phishing'],
-            stats['spam'],
+            header.append('Email')
+        header += [
+            'Attempts',
+            'Correct Count',
+            'Correct %',
+            'Phishing Count',
+            'Spam Count',
         ]
-        writer.writerow(row)
+        writer.writerow(header)
+        grouped = {}
+        for a in attempts:
+            key_parts = [
+                a.get('class_name', 'unknown'),
+                a.get('academic_year', 'unknown'),
+                a.get('major', 'unknown'),
+            ]
+            if report_scope != 'cohort':
+                key_parts.append(a.get('email_file', 'unknown'))
+            key = tuple(key_parts)
+            if key not in grouped:
+                grouped[key] = {'count': 0, 'correct': 0, 'phishing': 0, 'spam': 0}
+            grouped[key]['count'] += 1
+            if a.get('is_correct'):
+                grouped[key]['correct'] += 1
+            if a.get('classification') == 'Phishing':
+                grouped[key]['phishing'] += 1
+            if a.get('classification') == 'Spam':
+                grouped[key]['spam'] += 1
+        for key, stats in grouped.items():
+            if report_scope == 'cohort':
+                class_name, academic_year, major = key
+                email_file = None
+            else:
+                class_name, academic_year, major, email_file = key
+            count = stats['count']
+            correct_pct = round((stats['correct'] / count * 100), 1) if count > 0 else 0
+            row = [class_name, academic_year, major]
+            if report_scope != 'cohort':
+                row.append(email_file)
+            row += [
+                count,
+                stats['correct'],
+                correct_pct,
+                stats['phishing'],
+                stats['spam'],
+            ]
+            writer.writerow(row)
 
-    now = datetime.now(timezone.utc).strftime('%Y-%m-%d_%H%M%S')
-    scope_suffix = 'cohort' if report_scope == 'cohort' else 'by_email'
-    s3_key = f'reports/{now}_inspector_{scope_suffix}_report.csv'
-    bucket = current_app.config['S3_BUCKET']
+        now = datetime.now(timezone.utc).strftime('%Y-%m-%d_%H%M%S')
+        scope_suffix = 'cohort' if report_scope == 'cohort' else 'by_email'
+        s3_key = f'reports/{now}_inspector_{scope_suffix}_report.csv'
+        bucket = current_app.config['S3_BUCKET']
 
-    current_app.s3_client.put_object(
-        Bucket=bucket,
-        Key=s3_key,
-        Body=output.getvalue().encode('utf-8'),
-        ContentType='text/csv',
-    )
+        current_app.s3_client.put_object(
+            Bucket=bucket,
+            Key=s3_key,
+            Body=output.getvalue().encode('utf-8'),
+            ContentType='text/csv',
+        )
 
-    download_url = current_app.s3_client.generate_presigned_url(
-        'get_object',
-        Params={'Bucket': bucket, 'Key': s3_key},
-        ExpiresIn=3600,
-    )
+        download_url = current_app.s3_client.generate_presigned_url(
+            'get_object',
+            Params={'Bucket': bucket, 'Key': s3_key},
+            ExpiresIn=3600,
+        )
 
-    return jsonify({'download_url': download_url, 'filename': s3_key.split('/')[-1]})
+        return jsonify({'download_url': download_url, 'filename': s3_key.split('/')[-1]})
+    except Exception:
+        current_app.logger.exception('Failed to generate inspector report')
+        return jsonify({'error': 'Failed to generate inspector report.'}), 500
