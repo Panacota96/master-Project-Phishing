@@ -100,6 +100,13 @@ def get_user_by_email(email):
     return User.from_dynamo(items[0]) if items else None
 
 
+def delete_user(username):
+    """Remove a user from DynamoDB."""
+    table = _get_table('DYNAMODB_USERS')
+    table.delete_item(Key={'username': username})
+    return True
+
+
 def create_user(
     username,
     email,

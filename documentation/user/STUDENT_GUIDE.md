@@ -53,7 +53,16 @@ The Email Threat Inspector is a powerful tool to analyze real-world phishing and
 - **Social Engineering**: Manipulating you into revealing sensitive information.
 - **Malicious Attachment**: Including dangerous files.
 
-## 🐛 5. Reporting Bugs
+## 🏆 5. Training Journey & Ranks
+Stay motivated by tracking your progress and leveling up:
+- **Progress Bar**: See how many of the available quizzes you've completed.
+- **Ranks**: Earn badges based on your performance:
+    - **Novice**: Just starting out.
+    - **Trainee**: Making progress.
+    - **Defender**: Consistently identifying threats.
+    - **Cyber Sentinel**: Mastery of phishing awareness (90%+ average score).
+
+## 🐛 6. Reporting Bugs
 If you encounter any technical issues or errors:
 1. **Click 'Report Bug'**: Located in the top navigation bar next to Logout.
 2. **Describe the Issue**: Provide a brief description of what went wrong.

@@ -93,7 +93,7 @@ The app uses the Flask Application Factory pattern (`app/__init__.py`). It is ad
 - **`app/auth`**: Manages user registration, login, and sessions using `Flask-Login`.
 - **`app/quiz`**: Handles quiz listing, taking quizzes, and score history.
 - **`app/inspector`**: A tool for analyzing `.eml` files. Includes a **`_clean_placeholders`** helper to replace template strings (e.g., `{{.FirstName}}`, `{{.URL}}`) with generic, realistic values.
-- **`app/dashboard`**: Provides administrative statistics, cohort-level analytics, an **Answer Key & Troubleshoot** view for ground-truth verification, and management of user-submitted bug reports.
+- **`app/dashboard`**: Provides administrative statistics, cohort-level analytics, an **Answer Key & Troubleshoot** view for ground-truth verification, management of user-submitted bug reports, and a comprehensive **User Management** interface. It also includes logic for calculating **Signal Identification Rates** to identify which phishing tactics are most misunderstood.
 
 ## Security Features
 - **Authentication**: Password hashing with `Werkzeug`.

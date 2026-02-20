@@ -41,7 +41,7 @@
 
 <div class="row mb-4">
     <!-- Score Distribution Chart -->
-    <div class="col-md-6">
+    <div class="col-md-4">
         <div class="card">
             <div class="card-header"><h5>Score Distribution</h5></div>
             <div class="card-body">
@@ -49,10 +49,23 @@
             </div>
         </div>
     </div>
-    <!-- Cohort Comparison Chart -->
-    <div class="col-md-6">
+    <!-- Signal Identification Chart -->
+    <div class="col-md-4">
         <div class="card">
-            <div class="card-header"><h5>Average Score by Cohort</h5></div>
+            <div class="card-header"><h5>Signal Accuracy (%)</h5></div>
+            <div class="card-body">
+                {% if signal_accuracy %}
+                <canvas id="signalChart"></canvas>
+                {% else %}
+                <p class="text-muted">No signal data available yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <!-- Cohort Comparison Chart -->
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header"><h5>Avg Score by Cohort</h5></div>
             <div class="card-body">
                 {% if group_stats %}
                 <canvas id="groupChart"></canvas>
@@ -173,6 +186,33 @@ new Chart(scoreCtx, {
         plugins: { legend: { display: false } }
     }
 });
+
+// Signal Identification Chart
+{% if signal_accuracy %}
+const signalCtx = document.getElementById('signalChart').getContext('2d');
+new Chart(signalCtx, {
+    type: 'polarArea',
+    data: {
+        labels: {{ signal_accuracy | map(attribute='signal') | list | tojson }},
+        datasets: [{
+            label: 'Accuracy %',
+            data: {{ signal_accuracy | map(attribute='rate') | list | tojson }},
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.5)',
+                'rgba(54, 162, 235, 0.5)',
+                'rgba(255, 206, 86, 0.5)',
+                'rgba(75, 192, 192, 0.5)',
+                'rgba(153, 102, 255, 0.5)',
+                'rgba(255, 159, 64, 0.5)'
+            ]
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: { r: { beginAtZero: true, max: 100 } }
+    }
+});
+{% endif %}
 
 // Cohort Comparison Chart
 {% if group_stats %}

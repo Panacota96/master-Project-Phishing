@@ -211,9 +211,42 @@ def finish_quiz():
 @login_required
 def history():
     attempts = list_attempts_by_user(current_user.username)
+    quizzes = list_quizzes()
+    total_quizzes = len(quizzes)
+    completed_count = len(attempts)
+    
+    avg_score = 0
+    if completed_count > 0:
+        avg_score = sum(float(a.get('percentage', 0)) for a in attempts) / completed_count
+    
     # Enrich with quiz titles
     for attempt in attempts:
         quiz = get_quiz(attempt['quiz_id'])
         attempt['quiz_title'] = quiz['title'] if quiz else 'Unknown Quiz'
+    
     attempts.sort(key=lambda a: a.get('completed_at', ''), reverse=True)
-    return render_template('quiz/history.html', attempts=attempts)
+    
+    # Calculate rank
+    rank = "Novice"
+    badge_color = "secondary"
+    if completed_count >= total_quizzes / 2:
+        if avg_score >= 90:
+            rank = "Cyber Sentinel"
+            badge_color = "success"
+        elif avg_score >= 70:
+            rank = "Defender"
+            badge_color = "primary"
+        else:
+            rank = "Trainee"
+            badge_color = "info"
+
+    return render_template(
+        'quiz/history.html', 
+        attempts=attempts,
+        total_quizzes=total_quizzes,
+        completed_count=completed_count,
+        avg_score=round(avg_score, 1),
+        rank=rank,
+        badge_color=badge_color,
+        completion_pct=int((completed_count / total_quizzes * 100) if total_quizzes > 0 else 0)
+    )

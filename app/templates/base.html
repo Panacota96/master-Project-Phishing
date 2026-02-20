@@ -10,7 +10,10 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="{{ url_for('quiz.quiz_list') }}">Phishing Awareness</a>
+            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('quiz.quiz_list') }}">
+                <img src="{{ url_for('static', filename='images/esme_logo.png') }}" alt="ESME Logo" height="40" class="me-3">
+                <span>Phishing Awareness</span>
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -30,6 +33,7 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="{{ url_for('dashboard.index') }}">Dashboard</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('dashboard.list_users') }}">Manage Users</a></li>
                             <li><a class="dropdown-item" href="{{ url_for('dashboard.inspector_analytics') }}">Inspector Analytics</a></li>
                             <li><a class="dropdown-item" href="{{ url_for('auth.import_users') }}">Import Users</a></li>
                             <li><a class="dropdown-item" href="{{ url_for('dashboard.reports') }}">Reports</a></li>

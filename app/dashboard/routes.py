@@ -10,6 +10,7 @@ from app.inspector.answer_key import ANSWER_KEY
 from app.models import (
     count_users,
     create_bug_report,
+    delete_user,
     get_distinct_cohorts,
     get_quiz,
     get_user,
@@ -22,6 +23,35 @@ from app.models import (
     reset_user_inspector_state,
     reset_users_inspector_state,
 )
+
+
+@bp.route('/users')
+@login_required
+def list_users():
+    if not current_user.is_admin:
+        abort(403)
+    users = list_all_users()
+    return render_template('admin/users.html', users=users)
+
+
+@bp.route('/users/delete/<username>', methods=['POST'])
+@login_required
+def remove_user(username):
+    if not current_user.is_admin:
+        abort(403)
+    
+    if username == current_user.username:
+        flash("You cannot delete your own account.", "danger")
+        return redirect(url_for('dashboard.list_users'))
+
+    try:
+        delete_user(username)
+        flash(f"User {username} has been deleted.", "success")
+    except Exception as e:
+        current_app.logger.error(f"Failed to delete user {username}: {e}")
+        flash("Failed to delete user.", "danger")
+
+    return redirect(url_for('dashboard.list_users'))
 
 
 @bp.route('/bugs')
@@ -155,6 +185,24 @@ def index():
     inspector_phishing = sum(1 for a in inspector_attempts if a.get('classification') == 'Phishing')
     inspector_spam = sum(1 for a in inspector_attempts if a.get('classification') == 'Spam')
 
+    # Signal Accuracy Stats
+    signal_stats = {} # {signal_alias: {expected: 0, identified: 0}}
+    for attempt in inspector_attempts:
+        expected = attempt.get('expected_signals', [])
+        selected = attempt.get('selected_signals', [])
+        for sig in expected:
+            if sig not in signal_stats:
+                signal_stats[sig] = {'expected': 0, 'identified': 0}
+            signal_stats[sig]['expected'] += 1
+            if sig in selected:
+                signal_stats[sig]['identified'] += 1
+    
+    signal_accuracy = []
+    for sig, stats in signal_stats.items():
+        rate = round((stats['identified'] / stats['expected'] * 100), 1) if stats['expected'] > 0 else 0
+        signal_accuracy.append({'signal': sig, 'rate': rate})
+    signal_accuracy.sort(key=lambda x: x['rate'], reverse=True)
+
     per_email = {}
     for attempt in inspector_attempts:
         email_file = attempt.get('email_file', 'unknown')
@@ -188,6 +236,7 @@ def index():
         inspector_spam=inspector_spam,
         inspector_recent=[],
         inspector_per_email=inspector_per_email,
+        signal_accuracy=signal_accuracy,
     )
 
 

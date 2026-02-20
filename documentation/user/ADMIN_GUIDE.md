@@ -15,12 +15,14 @@ Managing users by cohort is key to tracking progress across different groups.
     - **Format**: `username,email,password,class_name,academic_year,major,group`.
     - **Upload**: Go to **Admin → Import Users**, choose your CSV, and click **Import**.
 4. **Reset Password**: Find the user in the **Users** list and use the **Reset Password** button.
+5. **Manage Users**: Use the **Admin → Manage Users** page to view the entire user base, check their roles, and delete inactive accounts.
 
 ## 📊 2. Analytics and Reporting
 Gain insights into user performance and training effectiveness.
 1. **Global Stats**: View total users, total attempts, and average scores on the main dashboard.
 2. **Score Distribution**: Analyze the score distribution bar chart (Chart.js) to see how users are performing.
-3. **Quiz Analytics**: See stats for each quiz (e.g., number of attempts, average score).
+3. **Signal Accuracy**: Use the **Signal Accuracy Polar Chart** to identify which phishing signals (e.g., Punycode, Spoofing) students are failing to recognize. This helps prioritize future training videos.
+4. **Quiz Analytics**: See stats for each quiz (e.g., number of attempts, average score).
 4. **Cohort Reports**: Filter by class, academic year, or major to see performance by cohort.
 5. **Download Reports**:
     - **Quiz Reports**: Download CSV reports for quiz attempts and scores.
