@@ -32,6 +32,9 @@ resource "aws_s3_bucket_public_access_block" "app" {
 resource "aws_s3_bucket_policy" "app_public_videos" {
   count  = var.environment == "dev" ? 1 : 0
   bucket = aws_s3_bucket.app.id
+  depends_on = [
+    aws_s3_bucket_public_access_block.app
+  ]
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
