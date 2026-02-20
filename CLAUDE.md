@@ -17,7 +17,10 @@ This is a SecDevOps project for ESME engineering school, featuring interactive q
 - **Infrastructure**: Terraform (`terraform/` directory).
 - **CI/CD**: GitLab CI (`.gitlab-ci.yml`).
 
-## Recent Features (2026-02-20)
+## Recent Features (2026-02-21)
+- **Human Risk Dashboard**: Visual analytics for cohort vulnerability (`/dashboard/risk`).
+- **Live Threat Ticker**: Admin dashboard component for real-time threat intelligence updates.
+- **Malicious Attachments**: Inspector now parses and flags double extensions and deceptive filenames.
 - **Bug Reporting**: Global "Report Bug" modal + Admin management view (`/dashboard/bugs`).
 - **Inspector Troubleshooting**: Admin view (`/inspector/answer-key`) to preview email parsing and verify ground truths.
 - **Privacy**: Automated placeholder cleaning for .eml files (e.g., `{{.FirstName}}` -> "Valued Customer").
@@ -33,3 +36,4 @@ This is a SecDevOps project for ESME engineering school, featuring interactive q
 - **Blueprints**: `app/auth`, `app/quiz`, `app/inspector`, `app/dashboard`.
 - **Models**: ALL DynamoDB access must go through `app/models.py`.
 - **Secrets**: Never commit. Use `config.py` + Environment Variables.
+- **MIME Standards**: All emails must use `multipart/alternative` structure for consistent parsing.

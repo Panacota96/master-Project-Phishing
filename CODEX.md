@@ -27,9 +27,16 @@
 ## Operational Scripts
 - `scripts/build_lambda.sh`: Packages app for deployment.
 - `scripts/seed_dynamodb.py`: Populates local/dev tables.
-- `scripts/validate_eml_realism.py`: Checks .eml files for required headers.
+- `scripts/validate_eml_realism.py`: Checks .eml files for required headers and MIME structure.
 
 ## New Features to Maintain
+- **Human Risk Dashboard**: `get_cohort_risk_analysis` in models, `/dashboard/risk` route.
+- **Live Threat Ticker**: AJAX polling endpoint in dashboard routes.
+- **Attachment Parsing**: Enhanced logic in `_parse_eml_detail` for malicious file detection.
 - **Bug Reporting**: `create_bug_report` in models, `/report-bug` in dashboard routes.
 - **Inspector Troubleshoot**: `api_email_detail` bypasses pool check for admins.
 - **Placeholder Cleaning**: `_clean_placeholders` regex helper in inspector routes.
+
+## Development Standards
+- **MIME Structure**: All generated emails must be `multipart/alternative`.
+- **Secrets**: No hardcoded credentials. Use environment variables.

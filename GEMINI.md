@@ -13,11 +13,12 @@ This project is a **Phishing Awareness Training Web Application** developed for 
 ### Architecture Highlights
 - **Serverless Backend:** The application is packaged using `mangum` to run on AWS Lambda.
 - **Custom DynamoDB Layer:** Instead of an ORM like SQLAlchemy, `app/models.py` uses `boto3` to interact directly with DynamoDB tables.
+- **Human Risk Analytics:** Dedicated dashboard for cohort-based vulnerability scoring and real-time threat intelligence.
 - **Module Structure:**
     - `app/auth`: User authentication (Login, Register, Logout).
     - `app/quiz`: Quiz listing, taking quizzes, and score history.
-    - `app/inspector`: EML file parser and threat analysis tool.
-    - `app/dashboard`: Admin statistics and cohort reports.
+    - `app/inspector`: EML file parser (with attachment analysis) and threat analysis tool.
+    - `app/dashboard`: Admin statistics, cohort risk reports, and bug management.
 - **Security:** Password hashing with `Werkzeug`, CSRF protection with `Flask-WTF`, and sandboxed HTML previews for EML files.
 
 ## Building and Running
