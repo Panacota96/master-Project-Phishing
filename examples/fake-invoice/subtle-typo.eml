@@ -5,15 +5,20 @@ Date: Mon, 23 Feb 2026 09:00:00 +0000
 MIME-Version: 1.0
 Content-Type: text/html; charset="UTF-8"
 
-<div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e1e1e1; padding: 20px;">
-  <h2 style="color: #0078d4;">Payment Failed</h2>
-  <p>Dear {{.FirstName}}, We were unable to process your latest payment for your <strong>Microsoft 365 Personal</strong> subscription.</p>
-  <p>Please update your payment method immediately to avoid service interruption.</p>
-  <div style="text-align: center; margin-top: 30px;">
-    <a href="{{.URL}}" style="background: #0078d4; color: white; padding: 12px 25px; text-decoration: none; font-weight: bold;">Update Payment Now</a>
+<div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e1e1e1; padding: 0;">
+  <div style="padding: 20px; border-bottom: 1px solid #eee;">
+    <img src="https://www.microsoft.com/content/dam/dotcom/en-us/common/glow/Microsoft-logo_rgb_c-gray.png" alt="Microsoft" style="height: 24px;">
   </div>
-  <p style="font-size: 11px; color: #999; margin-top: 50px; text-align: center;">
-    © 2026 Microsof Corporation. All right reserved. 
-    One Microsoft Way, Redmond, WA 98052, USA
-  </p>
+  <div style="padding: 30px;">
+    <h2 style="color: #0078d4; margin-top: 0;">Payment Failed</h2>
+    <p>Dear {{.FirstName}},</p>
+    <p>We were unable to process your latest payment for your <strong>Microsoft 365 Personal</strong> subscription.</p>
+    <p>Please update your payment method immediately to avoid service interruption and potential data loss in OneDrive.</p>
+    <div style="text-align: left; margin-top: 30px;">
+      <a href="{{.URL}}" style="background: #0078d4; color: white; padding: 12px 30px; text-decoration: none; border-radius: 0; font-weight: bold; display: inline-block;">Update Payment Now</a>
+    </div>
+  </div>
+  <div style="background-color: #f2f2f2; color: #666; padding: 20px; font-size: 11px; border-top: 1px solid #ddd;">
+    <p>&copy; 2026 Microsof Corporation. All right reserved. One Microsoft Way, Redmond, WA 98052, USA</p>
+  </div>
 </div>

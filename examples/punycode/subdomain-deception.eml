@@ -8,6 +8,9 @@ Content-Type: text/html; charset="UTF-8"
 
 <div style="background: #f2f2f2; padding: 40px; font-family: 'Segoe UI', Arial, sans-serif;">
   <div style="max-width: 500px; margin: auto; background: white; padding: 40px; border: 1px solid #ddd;">
+    <div style="margin-bottom: 25px;">
+      <img src="https://www.microsoft.com/content/dam/dotcom/en-us/common/glow/Microsoft-logo_rgb_c-gray.png" alt="Microsoft" style="height: 24px;">
+    </div>
     <h2 style="color: #333; font-size: 20px; font-weight: normal;">Microsoft account</h2>
     <h3 style="color: #333; font-size: 24px; margin-top: 5px;">Unusual sign-in activity</h3>
     <p style="color: #444; font-size: 15px;">We detected something unusual about a recent sign-in to the Microsoft account <b>{{.FirstName}}@company.com</b>.</p>
