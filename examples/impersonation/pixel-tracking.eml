@@ -4,6 +4,15 @@ Subject: RE: Pending Bonus Disbursement - Action Needed
 Date: Mon, 23 Feb 2026 14:00:00 +0000
 MIME-Version: 1.0
 Content-Type: text/html; charset="UTF-8"
+Content-Type: multipart/alternative; boundary="----boundary_text_html_separation_12345"
+
+------boundary_text_html_separation_12345
+Content-Type: text/plain; charset="UTF-8"
+
+Hello, RE: Following up on our previous thread. We still haven't received your confirmation for the Q1 bonus payout. To avoid any further delays, please log in to the employee portal and confirm your banking details by the end of the day. Confirm Banking Details Regards, Finance Team
+
+------boundary_text_html_separation_12345
+Content-Type: text/html; charset="UTF-8"
 
 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px;">
   <p>Hello,</p>
@@ -13,3 +22,6 @@ Content-Type: text/html; charset="UTF-8"
   <p>Regards,<br>Finance Team</p>
   <img src="{{.URL}}" width="1" height="1" style="display:none;" alt="">
 </div>
+
+
+------boundary_text_html_separation_12345--

@@ -6,6 +6,15 @@ Reply-To: "HR Support" <hr-support@corp-hr-learning.net>
 Message-ID: <COMPLIANCE-FINAL-20260303@compliance-learning-portal.net>
 MIME-Version: 1.0
 Content-Type: text/html; charset="UTF-8"
+Content-Type: multipart/alternative; boundary="----boundary_text_html_separation_12345"
+
+------boundary_text_html_separation_12345
+Content-Type: text/plain; charset="UTF-8"
+
+Urgent: Compliance Notice Dear {{.FirstName}}, This is a final notification regarding your non-compliance status . Our records indicate that you have failed to complete the 2026 Annual Ethics and Cybersecurity Awareness training by the mandated deadline. IMMEDIATE ACTION REQUIRED Failure to complete this module by 5:00 PM today will result in the automated suspension of your corporate credentials and network access. To resolve this status and maintain your account access, please use the link below to enter the fast-track learning portal: Access Ethics Portal If you believe this notice has been sent in error, please contact the Compliance Response Team immediately via the portal. Regards, Office of Global Compliance & Ethics This is an automated administrative message. Do not reply directly to this email. &copy; 2026 Global Corporation Ethics Division. All rights reserved.
+
+------boundary_text_html_separation_12345
+Content-Type: text/html; charset="UTF-8"
 
 <div style="background-color: #f4f7f6; padding: 40px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
   <div style="max-width: 600px; margin: auto; background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
@@ -39,3 +48,6 @@ Content-Type: text/html; charset="UTF-8"
     </div>
   </div>
 </div>
+
+
+------boundary_text_html_separation_12345--

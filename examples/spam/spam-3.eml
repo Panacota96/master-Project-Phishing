@@ -4,6 +4,15 @@ Subject: Your website is losing traffic - Free SEO Audit
 Date: Fri, 27 Feb 2026 10:15:00 +0000
 MIME-Version: 1.0
 Content-Type: text/html; charset="UTF-8"
+Content-Type: multipart/alternative; boundary="----boundary_text_html_separation_12345"
+
+------boundary_text_html_separation_12345
+Content-Type: text/plain; charset="UTF-8"
+
+SEO Performance Audit Hello {{.FirstName}}, I was performing a competitive analysis of your industry and noticed that your domain is currently ranking for 0 organic keywords on the first page of search results. Our team of white-hat SEO experts can help you reach the top of Google results in just 30 days. Would you like a free audit of your current domain performance? Request Free Audit
+
+------boundary_text_html_separation_12345
+Content-Type: text/html; charset="UTF-8"
 
 <div style="background: #f8fafc; font-family: 'Segoe UI', Arial, sans-serif; padding: 40px;">
   <div style="max-width: 600px; margin: auto; background: white; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
@@ -21,3 +30,6 @@ Content-Type: text/html; charset="UTF-8"
     </div>
   </div>
 </div>
+
+
+------boundary_text_html_separation_12345--

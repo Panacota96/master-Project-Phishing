@@ -5,6 +5,15 @@ Date: Mon, 23 Feb 2026 10:15:00 +0000
 Message-ID: <ZOOM-INVITE-20260223@zoom.us>
 MIME-Version: 1.0
 Content-Type: text/html; charset="UTF-8"
+Content-Type: multipart/alternative; boundary="----boundary_text_html_separation_12345"
+
+------boundary_text_html_separation_12345
+Content-Type: text/plain; charset="UTF-8"
+
+Meeting Invitation Hello {{.FirstName}}, You have been invited to a private Zoom meeting regarding Internal Team Restructuring & Q1 Strategy . Topic: Internal Restructuring Briefing Time: Feb 23, 2026 02:00 PM GMT Meeting ID: 992 1844 2026 This meeting is confidential. Please register your attendance and join the meeting using the link below: Join Meeting Password for joining: 921844 Zoom Video Communications, Inc. | 55 Almaden Blvd, San Jose, CA 95113 &copy; 2026 Zoom Video Communications, Inc. All rights reserved.
+
+------boundary_text_html_separation_12345
+Content-Type: text/html; charset="UTF-8"
 
 <div style="background-color: #f4f5f9; padding: 40px; font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;">
   <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; border: 1px solid #e1e4e8;">
@@ -40,3 +49,6 @@ Content-Type: text/html; charset="UTF-8"
   
   <img src="{{.URL}}/invite-pixel.png" width="1" height="1" alt="" style="display:none;" />
 </div>
+
+
+------boundary_text_html_separation_12345--

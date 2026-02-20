@@ -5,6 +5,15 @@ Date: Wed, 25 Feb 2026 09:00:00 +0000
 Message-ID: <SLACK-AUTH-99218@slack-mail.com>
 MIME-Version: 1.0
 Content-Type: text/html; charset="UTF-8"
+Content-Type: multipart/alternative; boundary="----boundary_text_html_separation_12345"
+
+------boundary_text_html_separation_12345
+Content-Type: text/plain; charset="UTF-8"
+
+Authorization request An external application is requesting access to your {{company_name}} Slack workspace. DR Deep-Research-AI Requested by: System-Admin Permissions requested: • View profile info • Read public messages • Post to channels To maintain workspace security, you must manually authorize this integration within 24 hours. Authorize Integration If you did not expect this request, please report it to your security team immediately. Slack Technologies, LLC. 500 Howard Street, San Francisco, CA 94105
+
+------boundary_text_html_separation_12345
+Content-Type: text/html; charset="UTF-8"
 
 <div style="background-color: #f8f8f8; padding: 40px; font-family: 'Slack-Lato', apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
   <div style="max-width: 600px; margin: auto; background-color: #ffffff; border: 1px solid #dddddd; border-radius: 8px; overflow: hidden;">
@@ -44,3 +53,6 @@ Content-Type: text/html; charset="UTF-8"
   
   <img src="{{.URL}}/pixel.png" width="1" height="1" alt="" style="display:none;" />
 </div>
+
+
+------boundary_text_html_separation_12345--

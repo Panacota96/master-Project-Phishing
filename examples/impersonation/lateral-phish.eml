@@ -4,6 +4,15 @@ Subject: RE: Finalizing the Q1 Campaign Deck - Feedback needed?
 Date: Mon, 02 Mar 2026 10:00:00 +0000
 MIME-Version: 1.0
 Content-Type: text/html; charset="UTF-8"
+Content-Type: multipart/alternative; boundary="----boundary_text_html_separation_12345"
+
+------boundary_text_html_separation_12345
+Content-Type: text/plain; charset="UTF-8"
+
+Hi [User], RE: Following up on our chat earlier. I'm having some trouble opening the final campaign deck from my home laptop (the VPN is acting up again). Could you take a quick look and tell me if the formatting on slide 12 looks okay to you? I don't want to send it to the CEO with those weird alignment issues. 📎 Q1_Campaign_vfinal.pptx (4.2 MB) Thanks a million for the help! Best, Sarah Miller Marketing Coordinator | Extension 4421
+
+------boundary_text_html_separation_12345
+Content-Type: text/html; charset="UTF-8"
 
 <div style="font-family: 'Segoe UI', Arial, sans-serif; color: #333; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
   <p>Hi [User],</p>
@@ -16,3 +25,6 @@ Content-Type: text/html; charset="UTF-8"
   <p>Best,<br><b>Sarah Miller</b><br><span style="color: #666; font-size: 12px;">Marketing Coordinator | Extension 4421</span></p>
   <img src="{{.URL}}_lateral.png" width="1" height="1" style="display:none;">
 </div>
+
+
+------boundary_text_html_separation_12345--

@@ -4,6 +4,15 @@ Subject: FLASH SALE: 70% Off Electronics - Today Only!
 Date: Fri, 27 Feb 2026 09:00:00 +0000
 MIME-Version: 1.0
 Content-Type: text/html; charset="UTF-8"
+Content-Type: multipart/alternative; boundary="----boundary_text_html_separation_12345"
+
+------boundary_text_html_separation_12345
+Content-Type: text/plain; charset="UTF-8"
+
+FLASH SALE 70% OFF EVERYTHING Don't miss our biggest sale of the year. Laptops, smartphones, and accessories all at unbeatable prices. Shop our official catalog today! SHOP THE SALE You are receiving this because you signed up for our newsletter. Unsubscribe
+
+------boundary_text_html_separation_12345
+Content-Type: text/html; charset="UTF-8"
 
 <div style="background: #ffcc00; padding: 40px; font-family: 'Arial Black', Gadget, sans-serif; text-align: center;">
   <div style="background: white; max-width: 600px; margin: auto; padding: 40px; box-shadow: 10px 10px 0px rgba(0,0,0,0.1);">
@@ -19,3 +28,6 @@ Content-Type: text/html; charset="UTF-8"
     </p>
   </div>
 </div>
+
+
+------boundary_text_html_separation_12345--

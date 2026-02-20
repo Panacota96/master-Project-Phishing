@@ -4,6 +4,15 @@ Subject: Security Alert: Your Apple ID password has been reset
 Date: Thu, 26 Feb 2026 10:15:00 +0000
 MIME-Version: 1.0
 Content-Type: text/html; charset="UTF-8"
+Content-Type: multipart/alternative; boundary="----boundary_text_html_separation_12345"
+
+------boundary_text_html_separation_12345
+Content-Type: text/plain; charset="UTF-8"
+
+Your password was reset. The password for your Apple ID (victim@example.com) was reset at 10:12 AM GMT . If you initiated this change, no further action is required. Didn't reset your password? If you did not reset your password, your account may be at risk. Click the button below to secure your Apple ID immediately. Secure Account Apple Support | One Apple Park Way, Cupertino, CA 95014
+
+------boundary_text_html_separation_12345
+Content-Type: text/html; charset="UTF-8"
 
 <div style="background: #ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: auto; padding: 40px; border: 1px solid #e1e1e1; border-radius: 12px;">
   <div style="text-align: center; margin-bottom: 35px;">
@@ -22,3 +31,6 @@ Content-Type: text/html; charset="UTF-8"
     Apple Support | One Apple Park Way, Cupertino, CA 95014
   </p>
 </div>
+
+
+------boundary_text_html_separation_12345--

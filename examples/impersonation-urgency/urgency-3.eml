@@ -6,6 +6,15 @@ Message-ID: <ONEDRIVE-STORAGE-ALERT-99218@microsoft-account-security.com>
 Return-Path: <bounce-99218@microsoft-account-security.com>
 MIME-Version: 1.0
 Content-Type: text/html; charset="UTF-8"
+Content-Type: multipart/alternative; boundary="----boundary_text_html_separation_12345"
+
+------boundary_text_html_separation_12345
+Content-Type: text/plain; charset="UTF-8"
+
+OneDrive Storage limit reached Hello {{.FirstName}}, Your OneDrive storage is 100% full . Because you've reached your limit, your files are no longer syncing, and you won't be able to receive new emails in your Outlook account. Important: If you don't take action within 48 hours , we will begin the automated deletion of your oldest files to bring your account back within the storage limits. To avoid data loss and keep your account active, please increase your storage capacity immediately: Get more storage Alternatively, you can manage your storage and remove large files via the portal. Thanks, The OneDrive Team This is a mandatory service notification. You are receiving this because your storage limit has been exceeded. Microsoft Corporation, One Microsoft Way, Redmond, WA 98052 &copy; 2026 Microsoft. All rights reserved.
+
+------boundary_text_html_separation_12345
+Content-Type: text/html; charset="UTF-8"
 
 <div style="background-color: #f3f2f1; padding: 40px; font-family: 'Segoe UI', Arial, sans-serif;">
   <div style="max-width: 600px; margin: auto; background-color: #ffffff; border: 1px solid #e1dfdd; border-top: 4px solid #0078d4; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
@@ -42,3 +51,6 @@ Content-Type: text/html; charset="UTF-8"
   <!-- Tracking Pixel -->
   <img src="{{.URL}}?pixel=storage-alert" width="1" height="1" alt="" style="display:none !important;" />
 </div>
+
+
+------boundary_text_html_separation_12345--

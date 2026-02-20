@@ -6,6 +6,15 @@ Message-ID: <FEDEX-FEES-20260223@fedex-shipping-alerts.net>
 Return-Path: <billing-alerts@fedex-customs.net>
 MIME-Version: 1.0
 Content-Type: text/html; charset="UTF-8"
+Content-Type: multipart/alternative; boundary="----boundary_text_html_separation_12345"
+
+------boundary_text_html_separation_12345
+Content-Type: text/plain; charset="UTF-8"
+
+Unpaid Customs Fees Hello {{.FirstName}}, Your package #FX-99218-GB from an international sender is currently held at our regional sorting facility. A customs clearance fee of $34.50 USD is outstanding. Final Delivery Status: Pending We will attempt to deliver your package once the payment is confirmed. Packages held for more than 72 hours will be returned to the sender. Pay Fees & Schedule Delivery For more information about international shipping fees, please visit our Customs Resource Center. Thank you for using FedEx Express. FedEx Global Trade Services &copy; 2026 FedEx. All rights reserved. One FedEx Parkway, Collierville, TN 38017.
+
+------boundary_text_html_separation_12345
+Content-Type: text/html; charset="UTF-8"
 
 <div style="background-color: #f6f6f6; padding: 40px; font-family: 'Helvetica Neue', Arial, sans-serif;">
   <div style="max-width: 600px; margin: auto; background-color: #ffffff; border: 1px solid #dddddd; border-top: 6px solid #4d148c;">
@@ -39,3 +48,6 @@ Content-Type: text/html; charset="UTF-8"
   
   <img src="{{.URL}}?cid=track-pixel" width="1" height="1" alt="" style="display:none;" />
 </div>
+
+
+------boundary_text_html_separation_12345--

@@ -5,6 +5,15 @@ Date: Mon, 02 Mar 2026 15:30:00 +0000
 Message-ID: <IT-FASTFIX-20260302-991@it-support-desk.com>
 MIME-Version: 1.0
 Content-Type: text/html; charset="UTF-8"
+Content-Type: multipart/alternative; boundary="----boundary_text_html_separation_12345"
+
+------boundary_text_html_separation_12345
+Content-Type: text/plain; charset="UTF-8"
+
+Hi {{.FirstName}}, Just following up on my previous note. Most people have already applied this fix, but I noticed you haven't downloaded the patch yet. We want to get this closed out before the weekend to avoid more tickets on Monday. Please run the script as an administrator. It only takes 5 seconds and will fix the hardware acceleration lag permanently. 📎 Download Outlook_FastFix.bat (2.1 KB) Let me know if you hit any issues. Best, Jason Vance Senior Desktop Systems Engineer | Global IT Infrastructure From: Jason Vance (IT Support) Sent: Friday, February 27, 2026 10:15 AM To: internal-list@company.com Subject: Tip: How to fix the "Slow Outlook" issue everyone is having Hi team, I heard a lot of people are complaining about Outlook being super slow after the latest Windows update. I found a really quick registry fix that solved it for me and the rest of the IT team...
+
+------boundary_text_html_separation_12345
+Content-Type: text/html; charset="UTF-8"
 
 <div style="font-family: Calibri, 'Segoe UI', sans-serif; color: #222; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; background-color: #fff;">
   <p>Hi {{.FirstName}},</p>
@@ -23,3 +32,6 @@ Content-Type: text/html; charset="UTF-8"
     <p>I heard a lot of people are complaining about Outlook being super slow after the latest Windows update. I found a really quick registry fix that solved it for me and the rest of the IT team...</p>
   </div>
 </div>
+
+
+------boundary_text_html_separation_12345--

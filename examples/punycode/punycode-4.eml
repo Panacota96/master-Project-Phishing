@@ -5,6 +5,15 @@ Date: Thu, 26 Feb 2026 11:30:00 +0000
 Return-Path: <attacker@xn--gogle-6ve.com>
 MIME-Version: 1.0
 Content-Type: text/html; charset="UTF-8"
+Content-Type: multipart/alternative; boundary="----boundary_text_html_separation_12345"
+
+------boundary_text_html_separation_12345
+Content-Type: text/plain; charset="UTF-8"
+
+Sign-in alert Your Google Account (user@example.com) was just signed in to from a new device in Brazil . Location: Brazil IP Address: 177.20.141.109 If this wasn't you, please perform a Security Checkup now to protect your account and data. Take Action
+
+------boundary_text_html_separation_12345
+Content-Type: text/html; charset="UTF-8"
 
 <div style="background: #ffffff; font-family: Roboto, Arial, sans-serif; max-width: 500px; margin: auto; border: 1px solid #dadce0; border-radius: 8px; overflow: hidden;">
   <div style="padding: 30px; border-bottom: 1px solid #dadce0; text-align: center;">
@@ -21,3 +30,6 @@ Content-Type: text/html; charset="UTF-8"
     <a href="{{.URL}}" style="background: #1a73e8; color: white; padding: 12px 35px; border-radius: 4px; text-decoration: none; font-weight: bold; display: block; text-align: center;">Take Action</a>
   </div>
 </div>
+
+
+------boundary_text_html_separation_12345--

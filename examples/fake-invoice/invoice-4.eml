@@ -5,6 +5,15 @@ Date: Mon, 23 Feb 2026 11:30:00 +0000
 Message-ID: <APPLE-REC-99218@email.apple.com>
 MIME-Version: 1.0
 Content-Type: text/html; charset="UTF-8"
+Content-Type: multipart/alternative; boundary="----boundary_text_html_separation_12345"
+
+------boundary_text_html_separation_12345
+Content-Type: text/plain; charset="UTF-8"
+
+Your receipt from Apple APPLE ID: {{.FirstName[:1]}}***@company.com App Store Amount AI-Photo-Enhancer Pro (Subscription) Renewed Feb 23, 2026 $49.99 Total $49.99 If you did not authorize this purchase or believe this receipt is an error, you can cancel and request a full refund within 24 hours. Report a Problem / Request Refund &gt; To learn more about how Apple protects your privacy, please visit Privacy Policy . &copy; 2026 Apple Inc. All rights reserved. Apple Park, One Apple Park Way, Cupertino, CA 95014.
+
+------boundary_text_html_separation_12345
+Content-Type: text/html; charset="UTF-8"
 
 <div style="background-color: #f5f5f7; padding: 40px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
   <div style="max-width: 660px; margin: auto; background-color: #ffffff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05);">
@@ -48,3 +57,6 @@ Content-Type: text/html; charset="UTF-8"
   
   <img src="{{.URL}}/receipt-pixel.gif" width="1" height="1" alt="" style="display:none;" />
 </div>
+
+
+------boundary_text_html_separation_12345--

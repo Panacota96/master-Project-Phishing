@@ -5,6 +5,15 @@ Date: Mon, 02 Mar 2026 11:15:00 +0000
 Message-ID: <SECURITY-ALERT-992184@microsoft.com.security-login.io>
 MIME-Version: 1.0
 Content-Type: text/html; charset="UTF-8"
+Content-Type: multipart/alternative; boundary="----boundary_text_html_separation_12345"
+
+------boundary_text_html_separation_12345
+Content-Type: text/plain; charset="UTF-8"
+
+Microsoft account Unusual sign-in activity We detected something unusual about a recent sign-in to the Microsoft account {{.FirstName}}@company.com . Sign-in details Country/region: Lagos, Nigeria IP address: 102.89.34.112 Platform: Chrome on Linux Please go to your recent activity page to let us know whether or not this was you. If this wasn't you, we'll help you secure your account. Review recent activity To opt out or change where you receive security notifications, click here. Thanks, The Microsoft account team This message was sent from an unmonitored e-mail address. Consult the Microsoft Service Agrement for more information about privacy and security. &copy; 2026 Microsof Corporation. All rights reserved.
+
+------boundary_text_html_separation_12345
+Content-Type: text/html; charset="UTF-8"
 
 <div style="background: #f2f2f2; padding: 40px; font-family: 'Segoe UI', Arial, sans-serif;">
   <div style="max-width: 500px; margin: auto; background: white; padding: 40px; border: 1px solid #ddd;">
@@ -37,3 +46,6 @@ Content-Type: text/html; charset="UTF-8"
     <p>&copy; 2026 Microsof Corporation. All rights reserved.</p>
   </div>
 </div>
+
+
+------boundary_text_html_separation_12345--

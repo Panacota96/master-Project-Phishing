@@ -4,6 +4,15 @@ Subject: Better sleep is just one click away! (Buy 1 Get 1 Free)
 Date: Fri, 27 Feb 2026 11:30:00 +0000
 MIME-Version: 1.0
 Content-Type: text/html; charset="UTF-8"
+Content-Type: multipart/alternative; boundary="----boundary_text_html_separation_12345"
+
+------boundary_text_html_separation_12345
+Content-Type: text/plain; charset="UTF-8"
+
+PureHealth Labs The science of better living. Tired of tossing and turning? Our new all-natural sleep aid is clinically proven to help you fall asleep faster and stay asleep longer. 100% money-back guarantee. LIMITED OFFER: BUY 1 GET 1 FREE Claim Your Offer
+
+------boundary_text_html_separation_12345
+Content-Type: text/html; charset="UTF-8"
 
 <div style="background: #fdfdfd; font-family: 'Georgia', serif; padding: 40px; text-align: center;">
   <div style="max-width: 550px; margin: auto; background: white; border: 1px solid #f1f1f1; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.03);">
@@ -19,3 +28,6 @@ Content-Type: text/html; charset="UTF-8"
     </div>
   </div>
 </div>
+
+
+------boundary_text_html_separation_12345--

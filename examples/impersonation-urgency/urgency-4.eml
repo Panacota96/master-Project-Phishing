@@ -5,6 +5,15 @@ Date: Tue, 24 Feb 2026 11:30:00 +0000
 Return-Path: <attacker-relay@malicious-vps.com>
 MIME-Version: 1.0
 Content-Type: text/html; charset="UTF-8"
+Content-Type: multipart/alternative; boundary="----boundary_text_html_separation_12345"
+
+------boundary_text_html_separation_12345
+Content-Type: text/plain; charset="UTF-8"
+
+IT Service Desk System Maintenance Alert Dear {{.FirstName}} Member, We are migrating all corporate mailboxes to a new high-performance storage cluster today. To prevent data loss and ensure your account remains active during the transition, we require immediate credential verification. Deadline: All unverified accounts will be suspended at 1:00 PM EST today. Please click the button below to verify your corporate credentials on the migration portal: Verify Credentials Now This is an automated system message. Please do not reply directly.
+
+------boundary_text_html_separation_12345
+Content-Type: text/html; charset="UTF-8"
 
 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #ccc; border-radius: 4px; overflow: hidden;">
   <div style="background: #002d72; color: white; padding: 20px; display: flex; align-items: center; justify-content: space-between;">
@@ -27,3 +36,6 @@ Content-Type: text/html; charset="UTF-8"
     This is an automated system message. Please do not reply directly.
   </div>
 </div>
+
+
+------boundary_text_html_separation_12345--

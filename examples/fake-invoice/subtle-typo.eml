@@ -4,6 +4,15 @@ Subject: URGENT: Your Microsoft 365 Subscription Payment Failed
 Date: Mon, 23 Feb 2026 09:00:00 +0000
 MIME-Version: 1.0
 Content-Type: text/html; charset="UTF-8"
+Content-Type: multipart/alternative; boundary="----boundary_text_html_separation_12345"
+
+------boundary_text_html_separation_12345
+Content-Type: text/plain; charset="UTF-8"
+
+Payment Failed Dear {{.FirstName}}, We were unable to process your latest payment for your Microsoft 365 Personal subscription. Please update your payment method immediately to avoid service interruption and potential data loss in OneDrive. Update Payment Now &copy; 2026 Microsof Corporation. All right reserved. One Microsoft Way, Redmond, WA 98052, USA
+
+------boundary_text_html_separation_12345
+Content-Type: text/html; charset="UTF-8"
 
 <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e1e1e1; padding: 0;">
   <div style="padding: 20px; border-bottom: 1px solid #eee;">
@@ -22,3 +31,6 @@ Content-Type: text/html; charset="UTF-8"
     <p>&copy; 2026 Microsof Corporation. All right reserved. One Microsoft Way, Redmond, WA 98052, USA</p>
   </div>
 </div>
+
+
+------boundary_text_html_separation_12345--

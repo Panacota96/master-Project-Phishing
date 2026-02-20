@@ -5,6 +5,15 @@ Date: Wed, 25 Feb 2026 09:00:00 +0000
 Message-ID: <M365-SEC-INFO-20260225@m365-update-portal.net>
 MIME-Version: 1.0
 Content-Type: text/html; charset="UTF-8"
+Content-Type: multipart/alternative; boundary="----boundary_text_html_separation_12345"
+
+------boundary_text_html_separation_12345
+Content-Type: text/plain; charset="UTF-8"
+
+Microsoft account Security info update Hello {{.FirstName}}, The following security info was recently added to the Microsoft account employee@company.com : Authenticator App: Mobile Device (iPhone) If you made this change, you don't need to do anything. If you didn't make this change, please scan the QR code below immediately to revert the update and secure your account using our mobile portal. Scan with your mobile device to verify identity Thanks, The Microsoft account team This message was sent from an unmonitored e-mail address. Consult the Microsoft Service Agreement for more information. One Microsoft Way, Redmond, WA 98052.
+
+------boundary_text_html_separation_12345
+Content-Type: text/html; charset="UTF-8"
 
 <div style="font-family: 'Segoe UI', Tahoma, sans-serif; max-width: 600px; margin: auto; padding: 0; border: 1px solid #ddd; background-color: #ffffff;">
   <div style="background-color: #0078d4; padding: 15px 30px; color: #ffffff;">
@@ -34,3 +43,6 @@ Content-Type: text/html; charset="UTF-8"
     <p>This message was sent from an unmonitored e-mail address. Consult the Microsoft Service Agreement for more information. One Microsoft Way, Redmond, WA 98052.</p>
   </div>
 </div>
+
+
+------boundary_text_html_separation_12345--

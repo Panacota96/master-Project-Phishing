@@ -4,6 +4,15 @@ Subject: Welcome to the New Enterprise Workspace for {{company_name}}
 Date: Mon, 02 Mar 2026 12:30:00 +0000
 MIME-Version: 1.0
 Content-Type: text/html; charset="UTF-8"
+Content-Type: multipart/alternative; boundary="----boundary_text_html_separation_12345"
+
+------boundary_text_html_separation_12345
+Content-Type: text/plain; charset="UTF-8"
+
+Your workspace is ready. Your organization has successfully migrated to Slack Enterprise Grid . This new workspace offers enhanced security, unlimited history, and better collaboration features. To activate your new account and sync your existing channels, please sign in via your corporate SSO portal: Launch Workspace Need help? Visit our Help Center or contact your local IT Administrator.
+
+------boundary_text_html_separation_12345
+Content-Type: text/html; charset="UTF-8"
 
 <div style="font-family: 'Slack-Lato', apple-system, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
   <div style="background: #4a154b; padding: 25px; text-align: center;">
@@ -19,3 +28,6 @@ Content-Type: text/html; charset="UTF-8"
     <p style="font-size: 12px; color: #666;">Need help? Visit our <a href="#" style="color: #1264a3;">Help Center</a> or contact your local IT Administrator.</p>
   </div>
 </div>
+
+
+------boundary_text_html_separation_12345--
