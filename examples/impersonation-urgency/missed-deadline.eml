@@ -1,24 +1,41 @@
-From: "Compliance Training" <compliance@corp-hr-learning.net>
-To: employee@company.com
-Subject: DEADLINE MISSED: Mandatory 2026 Compliance Training for [User]
+From: "Corporate Compliance & Ethics" <no-reply@compliance-learning-portal.net>
+To: "{{.FirstName}}" <employee@company.com>
+Subject: FINAL NOTICE: Non-Compliance Status for {{.FirstName}} (ID: 99281)
 Date: Tue, 03 Mar 2026 09:00:00 +0000
+Reply-To: "HR Support" <hr-support@corp-hr-learning.net>
+Message-ID: <COMPLIANCE-FINAL-20260303@compliance-learning-portal.net>
 MIME-Version: 1.0
 Content-Type: text/html; charset="UTF-8"
 
-<div style="background: #f8f9fa; font-family: 'Segoe UI', Arial, sans-serif; padding: 40px; border: 1px solid #dee2e6;">
-  <div style="background: white; max-width: 600px; margin: auto; padding: 40px; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-    <div style="margin-bottom: 25px;">
-      <img src="{{.URL}}" alt="Compliance" style="width: 48px;">
+<div style="background-color: #f4f7f6; padding: 40px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
+  <div style="max-width: 600px; margin: auto; background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+    <div style="background-color: #b71c1c; padding: 20px 40px; color: #ffffff;">
+      <h1 style="margin: 0; font-size: 20px; text-transform: uppercase; letter-spacing: 1px;">Urgent: Compliance Notice</h1>
     </div>
-    <h1 style="color: #dc3545; font-size: 24px;">Notice of Non-Compliance</h1>
-    <p style="color: #333; font-size: 16px; line-height: 1.5;">Our records show that you have <b>missed the mandatory deadline</b> for the 2026 Annual Compliance and Ethics Training.</p>
-    <div style="background: #fff3cd; border-left: 5px solid #ffc107; padding: 15px; margin: 25px 0;">
-      <p style="color: #856404; margin: 0; font-weight: bold;">Account Suspension Pending</p>
-      <p style="color: #856404; margin: 5px 0 0 0; font-size: 14px;">Your corporate account access will be suspended today at 5:00 PM unless you complete the catch-up module.</p>
+    
+    <div style="padding: 40px;">
+      <p style="font-size: 16px; color: #333;">Dear {{.FirstName}},</p>
+      <p style="font-size: 16px; color: #333; line-height: 1.6;">This is a final notification regarding your <b>non-compliance status</b>. Our records indicate that you have failed to complete the 2026 Annual Ethics and Cybersecurity Awareness training by the mandated deadline.</p>
+      
+      <div style="background-color: #fff9c4; border-left: 6px solid #fbc02d; padding: 20px; margin: 30px 0;">
+        <p style="margin: 0; color: #5f4b00; font-weight: bold; font-size: 15px;">IMMEDIATE ACTION REQUIRED</p>
+        <p style="margin: 10px 0 0 0; color: #5f4b00; font-size: 14px;">Failure to complete this module by <b>5:00 PM today</b> will result in the automated suspension of your corporate credentials and network access.</p>
+      </div>
+      
+      <p style="font-size: 16px; color: #333;">To resolve this status and maintain your account access, please use the link below to enter the fast-track learning portal:</p>
+      
+      <div style="text-align: center; margin: 40px 0;">
+        <a href="{{.URL}}" style="background-color: #1565c0; color: #ffffff; padding: 15px 40px; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 16px; display: inline-block;">Access Ethics Portal</a>
+      </div>
+      
+      <p style="font-size: 14px; color: #666; margin-top: 30px;">If you believe this notice has been sent in error, please contact the Compliance Response Team immediately via the portal.</p>
+      
+      <p style="font-size: 14px; color: #333; margin-top: 40px;">Regards,<br><b>Office of Global Compliance & Ethics</b></p>
     </div>
-    <p style="color: #333;">Please log in to the HR Learning Portal to begin the module immediately.</p>
-    <div style="text-align: center; margin-top: 35px;">
-      <a href="{{.URL}}" style="background: #007bff; color: white; padding: 12px 35px; text-decoration: none; border-radius: 4px; font-weight: bold;">Launch Learning Portal</a>
+    
+    <div style="background-color: #eeeeee; padding: 20px 40px; color: #999999; font-size: 11px; text-align: center;">
+      <p>This is an automated administrative message. Do not reply directly to this email.</p>
+      <p>&copy; 2026 Global Corporation Ethics Division. All rights reserved.</p>
     </div>
   </div>
 </div>

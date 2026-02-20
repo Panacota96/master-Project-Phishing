@@ -1,16 +1,36 @@
-From: "Microsoft 365 Security" <admin@m365-update-portal.net>
-To: employee@company.com
-Subject: ACTION REQUIRED: Secure Your Account with Mobile Verification
+From: "Microsoft account team" <account-security-noreply@accountprotection.microsoft.com.m365-update-portal.net>
+To: "{{.FirstName}}" <employee@company.com>
+Subject: Your Microsoft 365 security info was updated
 Date: Wed, 25 Feb 2026 09:00:00 +0000
+Message-ID: <M365-SEC-INFO-20260225@m365-update-portal.net>
 MIME-Version: 1.0
 Content-Type: text/html; charset="UTF-8"
 
-<div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 580px; margin: auto; padding: 40px; border: 1px solid #e1e1e1; text-align: center;">
-  <h2 style="color: #333;">Mobile Verification Required</h2>
-  <p style="color: #555; font-size: 16px;">To enhance your account security, we've implemented a mandatory mobile verification step.</p>
-  <p style="color: #555; font-size: 16px;">Please scan the QR code below on your mobile device to complete the verification process.</p>
-  <div style="margin: 30px 0;">
-    <img src="{{.URL}}://m365-update-portal.net/auth/login.php" alt="Verification QR Code" style="width: 150px;">
+<div style="font-family: 'Segoe UI', Tahoma, sans-serif; max-width: 600px; margin: auto; padding: 0; border: 1px solid #ddd; background-color: #ffffff;">
+  <div style="background-color: #0078d4; padding: 15px 30px; color: #ffffff;">
+    <h1 style="margin: 0; font-size: 22px;">Microsoft account</h1>
   </div>
-  <p style="font-size: 12px; color: #999;">Scan using your phone's camera or a QR code reader app.</p>
+  
+  <div style="padding: 30px;">
+    <h2 style="color: #333; margin-top: 0; font-weight: normal; font-size: 24px;">Security info update</h2>
+    <p style="font-size: 15px; color: #444;">Hello {{.FirstName}},</p>
+    <p style="font-size: 15px; color: #444;">The following security info was recently added to the Microsoft account <b>employee@company.com</b>:</p>
+    
+    <div style="background-color: #f9f9f9; padding: 20px; border: 1px solid #eee; margin: 20px 0; border-left: 4px solid #0078d4;">
+      <p style="margin: 0; font-size: 14px;"><b>Authenticator App:</b> Mobile Device (iPhone)</p>
+    </div>
+    
+    <p style="font-size: 15px; color: #444;">If you made this change, you don't need to do anything. If you didn't make this change, please scan the QR code below immediately to revert the update and secure your account using our mobile portal.</p>
+    
+    <div style="text-align: center; margin: 35px 0; padding: 20px; border: 2px dashed #0078d4; border-radius: 8px;">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data={{.URL}}" alt="Verification QR Code" style="width: 180px;">
+      <p style="font-size: 13px; color: #666; margin-top: 15px;">Scan with your mobile device to verify identity</p>
+    </div>
+    
+    <p style="font-size: 14px; color: #666;">Thanks,<br>The Microsoft account team</p>
+  </div>
+  
+  <div style="background-color: #f2f2f2; padding: 20px; color: #888; font-size: 11px;">
+    <p>This message was sent from an unmonitored e-mail address. Consult the Microsoft Service Agreement for more information. One Microsoft Way, Redmond, WA 98052.</p>
+  </div>
 </div>

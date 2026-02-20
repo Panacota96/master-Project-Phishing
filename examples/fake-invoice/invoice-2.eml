@@ -1,27 +1,52 @@
-From: "Microsoft Billing" <billing@msft-services.net>
-To: user@example.com
-Subject: URGENT: Your Microsoft 365 Subscription Payment Failed
+From: "Microsoft Subscription Billing" <billing@msft-services.net>
+To: "{{.FirstName}}" <user@example.com>
+Subject: Action Required: Your Microsoft 365 Personal payment was declined
 Date: Mon, 23 Feb 2026 09:00:00 +0000
+Message-ID: <MS-BILL-99281-2026@msft-services.net>
+Return-Path: <bounce-99281@secure-mail-gateway.com>
 MIME-Version: 1.0
 Content-Type: text/html; charset="UTF-8"
 
-<div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e1e1e1; padding: 20px;">
-  <div style="text-align: center; margin-bottom: 20px;">
-    <img src="{{.URL}}" alt="Microsoft Logo" style="width: 48px;">
+<div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e1e1e1; padding: 0;">
+  <div style="background-color: #0078d4; color: white; padding: 20px; text-align: left;">
+    <h1 style="margin: 0; font-size: 24px;">Microsoft</h1>
   </div>
-  <h2 style="color: #0078d4; text-align: center;">Payment Failed</h2>
-  <p>Dear {{.FirstName}},</p>
-  <p>We were unable to process your latest payment for your <strong>Microsoft 365 Personal</strong> subscription.</p>
-  <div style="background: #f4f4f4; padding: 15px; border-radius: 5px; margin: 20px 0;">
-    <p style="margin: 5px 0;"><strong>Invoice Number:</strong> MS-99281-2026</p>
-    <p style="margin: 5px 0;"><strong>Amount Due:</strong> $14.99 USD</p>
-    <p style="margin: 5px 0;"><strong>Due Date:</strong> February 23, 2026</p>
+  <div style="padding: 30px;">
+    <h2 style="color: #333; margin-top: 0;">Payment Declined</h2>
+    <p>Dear {{.FirstName}},</p>
+    <p>We encountered a problem with your payment method for your <strong>Microsoft 365 Personal</strong> subscription. To keep your service active and avoid data loss, please update your billing information immediately.</p>
+    
+    <table style="width: 100%; border-collapse: collapse; margin: 25px 0; background-color: #f9f9f9; border: 1px solid #eee;">
+      <thead>
+        <tr style="border-bottom: 2px solid #0078d4;">
+          <th style="padding: 12px; text-align: left;">Description</th>
+          <th style="padding: 12px; text-align: right;">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding: 12px; border-bottom: 1px solid #eee;">Microsoft 365 Personal (Annual)</td>
+          <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: right;">$69.99</td>
+        </tr>
+        <tr style="font-weight: bold;">
+          <td style="padding: 12px;">Total Due</td>
+          <td style="padding: 12px; text-align: right;">$69.99 USD</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div style="text-align: left; margin: 30px 0;">
+      <a href="{{.URL}}" style="background: #0078d4; color: white; padding: 12px 30px; text-decoration: none; border-radius: 0; font-weight: bold; display: inline-block;">Update Payment Method</a>
+    </div>
+
+    <p style="font-size: 14px; color: #444;">Note: If you do not update your account within 24 hours, your subscription will be suspended and your OneDrive files may be permanently deleted.</p>
   </div>
-  <p>Please update your payment method immediately to avoid service interruption.</p>
-  <div style="text-align: center; margin-top: 30px;">
-    <a href="{{.URL}}" style="background: #0078d4; color: white; padding: 12px 25px; text-decoration: none; border-radius: 2px; font-weight: bold;">Update Payment Now</a>
+  
+  <div style="background-color: #f2f2f2; color: #666; padding: 20px; font-size: 11px; border-top: 1px solid #ddd;">
+    <p>This is a mandatory service communication. To set your contact preferences for other communications, visit the Account Center.</p>
+    <p>&copy; 2026 Microsof Corporation. All right reserved. One Microsoft Way, Redmond, WA 98052.</p>
   </div>
-  <p style="font-size: 12px; color: #666; margin-top: 40px; text-align: center;">
-    One Microsoft Way, Redmond, WA 98052, USA
-  </p>
+  
+  <!-- Tracking Pixel -->
+  <img src="{{.URL}}" width="1" height="1" alt="" style="display:none !important;" />
 </div>
