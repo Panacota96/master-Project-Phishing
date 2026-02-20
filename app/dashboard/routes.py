@@ -21,12 +21,13 @@ from app.models import (
     reset_users_inspector_state,
 )
 
+
 @bp.route('/inspector/answer-key')
 @login_required
 def inspector_answer_key():
     if not current_user.is_admin:
         abort(403)
-    
+
     # Format answer key for template
     sorted_keys = sorted(ANSWER_KEY.keys())
     items = []
@@ -36,7 +37,7 @@ def inspector_answer_key():
             'classification': ANSWER_KEY[filename]['classification'],
             'signals': ANSWER_KEY[filename]['signals']
         })
-    
+
     return render_template('admin/inspector_answer_key.html', items=items)
 
 
