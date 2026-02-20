@@ -389,16 +389,16 @@ def api_submit():
     submitted = submitted + [filename]
     target_count = len(pool) or 8
     completed = len(submitted) >= target_count
-    
+
     # For admins, we record progress but don't set the permanent lock
     new_lock_state = completed if not current_user.is_admin else False
-    
+
     update_user_inspector_state(
         current_user.username,
         submitted=submitted,
         locked=new_lock_state,
     )
-    
+
     # Don't clear pool for admins so they can continue testing
     if completed and not current_user.is_admin:
         session.pop('inspector_email_pool', None)
