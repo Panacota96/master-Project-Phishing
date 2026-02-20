@@ -26,3 +26,8 @@ To make your phishing awareness training as effective as possible, your simulati
 **The Tactic:** Instead of a clickable text link, include a QR code for "Quick Verification" or "Mobile Login."
 - **Why it works:** Users often scan QR codes on their mobile devices, where security protections are often weaker and URLs are harder to inspect. It also bypasses many email scanners that only look for text-based URLs.
 - **Implementation:** Include an image of a QR code with the caption: "Scan to verify your identity on your mobile device."
+
+## 6. Malicious Attachments (Payload Delivery)
+**The Tactic:** Attach a file with a deceptive name or a double extension to bypass the user's initial suspicion.
+- **Why it works:** Users often trust common file types like `.docx` or `.pdf`. Phishers use double extensions like `Invoice.pdf.exe` or `Salary_Adjustment.doc.zip` to hide the true nature of the file. In many email clients, the second extension is hidden, making the file look like a harmless document.
+- **Implementation:** `Content-Disposition: attachment; filename="Bonus_Agreement.doc.exe"`

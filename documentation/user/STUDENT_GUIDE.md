@@ -40,7 +40,7 @@ The Email Threat Inspector is a powerful tool to analyze real-world phishing and
     - **Headers**: Examine technical details like `Return-Path`, `Reply-To`, and authentication results (SPF/DKIM).
     - **HTML Preview**: View the email as it would appear in an inbox (safely sandboxed).
     - **Links**: Inspect all extracted URLs for look-alike domains or suspicious destinations.
-    - **Attachments**: Check for malicious file types and names.
+    - **Attachments**: Check for malicious file types (e.g., `.exe`, `.zip`, `.html`) and double extensions (e.g., `.pdf.exe`). The Inspector provides a detailed view of the attachment metadata, including filename, size, and MIME type.
 4. **Classify the Threat**: Select whether the email is **Phishing**, **Spam**, or **Legit**.
 5. **Identify Signals**: Choose the phishing signals you've identified (e.g., Impersonation, Urgency, Typosquatting).
 6. **Submit**: Save your analysis. You can only analyze each email once.

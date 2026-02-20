@@ -185,6 +185,10 @@ ANSWER_KEY = {
     "phishing-attachment-1.eml": {
         "classification": "Phishing",
         "signals": ["impersonation", "attachment", "urgency"],
+        "explanation": (
+            "This email impersonates internal payroll and uses a double extension (.doc.zip) "
+            "to hide the true nature of the attachment."
+        ),
     },
     "phishing-attachment-2.eml": {
         "classification": "Phishing",
