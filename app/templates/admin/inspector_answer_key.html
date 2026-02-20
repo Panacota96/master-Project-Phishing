@@ -125,14 +125,46 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         }
 
+        let attachmentsHtml = '';
+        if (attachments && attachments.length > 0) {
+            attachmentsHtml = `
+                <div class="card mt-3">
+                    <div class="card-header py-1 bg-light small">Attachments</div>
+                    <ul class="list-group list-group-flush small">
+                        ${attachments.map(a => `
+                            <li class="list-group-item">
+                                <strong>${a.fileName}</strong> <span class="text-muted">(${a.contentType}, ${a.size} bytes)</span>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+            `;
+        }
+
         let linksHtml = '';
         if (links && links.length > 0) {
             linksHtml = `
                 <div class="card mt-3">
-                    <div class="card-header py-1 bg-light small">Links Detected</div>
+                    <div class="card-header py-1 bg-light small">Links Detected (Cleaned)</div>
                     <ul class="list-group list-group-flush small">
                         ${links.map(l => `<li class="list-group-item text-break">${l}</li>`).join('')}
                     </ul>
+                </div>
+            `;
+        }
+
+        let headersHtml = '';
+        if (headers && headers.length > 0) {
+            headersHtml = `
+                <div class="card mt-3">
+                    <div class="card-header py-1 bg-light small">SMTP Headers</div>
+                    <div style="max-height: 300px; overflow: auto;">
+                        <table class="table table-sm table-striped mb-0" style="font-size: 0.75rem;">
+                            <tbody>
+                                ${headers.map(h => `<tr><th style="width: 30%;">${h.name}</th><td>${h.value}</td></tr>`).join('')}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             `;
         }
@@ -148,17 +180,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             </div>
             
-            <h6>HTML Body (Sandboxed)</h6>
-            <div class="border rounded bg-white p-1 mb-3" style="min-height: 400px;">
-                <iframe srcdoc="${htmlBody.replace(/"/g, '&quot;')}" 
-                    sandbox="allow-same-origin" 
-                    style="width: 100%; height: 500px; border: none;">
-                </iframe>
+            <ul class="nav nav-tabs nav-fill mb-3" id="previewTabs" role="tablist">
+                <li class="nav-item"><button class="nav-link active py-1" data-bs-toggle="tab" data-bs-target="#tab-html" type="button">HTML</button></li>
+                <li class="nav-item"><button class="nav-link py-1" data-bs-toggle="tab" data-bs-target="#tab-text" type="button">Plain Text</button></li>
+                <li class="nav-item"><button class="nav-link py-1" data-bs-toggle="tab" data-bs-target="#tab-headers" type="button">Headers</button></li>
+            </ul>
+
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="tab-html">
+                    <div class="border rounded bg-white p-1" style="min-height: 400px;">
+                        <iframe srcdoc="${htmlBody.replace(/"/g, '&quot;')}" 
+                            sandbox="allow-same-origin" 
+                            style="width: 100%; height: 500px; border: none;">
+                        </iframe>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="tab-text">
+                    <pre class="bg-light p-2 border rounded small" style="max-height: 500px; overflow: auto; white-space: pre-wrap;">${textBody}</pre>
+                </div>
+                <div class="tab-pane fade" id="tab-headers">
+                    ${headersHtml}
+                </div>
             </div>
 
-            <h6>Plain Text Body</h6>
-            <pre class="bg-light p-2 border rounded small" style="max-height: 200px; overflow: auto;">${textBody}</pre>
-
+            ${attachmentsHtml}
             ${linksHtml}
         `;
     }
