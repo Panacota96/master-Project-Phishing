@@ -18,7 +18,7 @@ Hello,
 
 Here are your weekly deals. Limited-time offers inside.
 
-View deals: https://dailydeals-mail.com.offers-hub.net/deals
+View deals: {{.URL}}
 
 --alt-011
 Content-Type: text/html; charset="UTF-8"
@@ -29,13 +29,13 @@ Content-Transfer-Encoding: 7bit
     <h2>Weekly Deals Roundup</h2>
     <p>Limited-time offers inside. Save big today.</p>
     <p>
-      <a href="https://dailydeals-mail.com.offers-hub.net/deals"
+      <a href="{{.URL}}"
          style="display:inline-block;padding:10px 16px;background:#f97316;color:#fff;text-decoration:none;border-radius:4px;">
         View Deals
       </a>
     </p>
     <p style="font-size:12px;color:#6b7280;">To unsubscribe, click here.</p>
-    <img src="https://tracking.dailydeals-mail.com/pixel?id=DEALS" width="1" height="1" alt="" />
+    <img src="{{.URL}}" width="1" height="1" alt="" />
   </body>
 </html>
 

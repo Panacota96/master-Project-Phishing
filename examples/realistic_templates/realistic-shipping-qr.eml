@@ -17,11 +17,11 @@ Content-Type: multipart/alternative; boundary="alt-003"
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 
-Hello Casey,
+Hello {{.FirstName}},
 
 We attempted delivery but could not confirm your address. Please update your address to avoid delays.
 
-Update: https://global-ship.com.tracking-center.co/address/verify
+Update: {{.URL}}
 
 Scan the QR code to open your shipment page.
 
@@ -45,7 +45,7 @@ Content-Transfer-Encoding: 7bit
           <h2 style="margin: 0 0 8px;">Delivery Issue</h2>
           <p>We could not confirm your address. Update it now to prevent delays.</p>
           <p>
-            <a href="https://global-ship.com.tracking-center.co/address/verify"
+            <a href="{{.URL}}"
                style="display:inline-block;padding:10px 16px;background:#dc2626;color:#fff;text-decoration:none;border-radius:4px;">
               Verify Address
             </a>
@@ -60,7 +60,7 @@ Content-Transfer-Encoding: 7bit
         </td>
       </tr>
     </table>
-    <img src="https://tracking.global-ship.com/pixel?shipment=SHIP-1140" width="1" height="1" alt="" />
+    <img src="{{.URL}}" width="1" height="1" alt="" />
   </body>
 </html>
 

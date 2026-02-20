@@ -21,7 +21,7 @@ Hello,
 
 Scan the QR code to claim your free gift today.
 
-Claim: https://promo-hub-mail.com.gift-center.net/claim
+Claim: {{.URL}}
 
 --alt-012
 Content-Type: text/html; charset="UTF-8"
@@ -32,13 +32,13 @@ Content-Transfer-Encoding: 7bit
     <h2>Free Gift Inside</h2>
     <p>Scan the QR code to claim your reward.</p>
     <p>
-      <a href="https://promo-hub-mail.com.gift-center.net/claim"
+      <a href="{{.URL}}"
          style="display:inline-block;padding:10px 16px;background:#2563eb;color:#fff;text-decoration:none;border-radius:4px;">
         Claim Gift
       </a>
     </p>
     <img src="cid:qr-code-spam" alt="Scan QR" width="140" height="140" />
-    <img src="https://tracking.promo-hub-mail.com/pixel?id=QR-SPAM" width="1" height="1" alt="" />
+    <img src="{{.URL}}" width="1" height="1" alt="" />
   </body>
 </html>
 

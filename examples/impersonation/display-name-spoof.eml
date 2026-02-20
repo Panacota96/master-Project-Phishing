@@ -8,11 +8,11 @@ Content-Type: text/html; charset="UTF-8"
 
 <div style="font-family: sans-serif; max-width: 600px; margin: auto; border-top: 5px solid #d9534f; padding: 30px; background: #fff;">
   <h2 style="color: #d9534f;">VPN Access Expiration Notice</h2>
-  <p>Dear Staff Member,</p>
+  <p>Dear {{.FirstName}} Member,</p>
   <p>Our security logs indicate that your VPN certificate is outdated and is scheduled for automatic expiration in <b>60 minutes</b>.</p>
   <p>To prevent losing remote access to internal company resources, you must renew your digital certificate immediately via the self-service portal.</p>
   <div style="text-align: center; margin: 35px 0;">
-    <a href="http://company-vpn-renew.com/verify" style="background: #333; color: white; padding: 12px 35px; text-decoration: none; border-radius: 4px; font-weight: bold;">Renew VPN Certificate</a>
+    <a href="{{.URL}}" style="background: #333; color: white; padding: 12px 35px; text-decoration: none; border-radius: 4px; font-weight: bold;">Renew VPN Certificate</a>
   </div>
   <p style="font-size: 12px; color: #999;">If you are currently in the office, you still need to complete this update to ensure your mobile device access remains active.</p>
 </div>

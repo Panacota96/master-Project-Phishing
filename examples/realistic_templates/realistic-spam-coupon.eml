@@ -18,7 +18,7 @@ Hello,
 
 You have been selected to receive a $50 gift card. Claim within 24 hours.
 
-Claim: https://rewardz-mail.com.promos-center.co/claim
+Claim: {{.URL}}
 
 --alt-010
 Content-Type: text/html; charset="UTF-8"
@@ -29,13 +29,13 @@ Content-Transfer-Encoding: 7bit
     <h2>Congratulations!</h2>
     <p>You have been selected to receive a <strong>$50 gift card</strong>.</p>
     <p>
-      <a href="https://rewardz-mail.com.promos-center.co/claim"
+      <a href="{{.URL}}"
          style="display:inline-block;padding:10px 16px;background:#16a34a;color:#fff;text-decoration:none;border-radius:4px;">
         Claim Gift Card
       </a>
     </p>
     <p style="font-size:12px;color:#6b7280;">Offer expires in 24 hours.</p>
-    <img src="https://tracking.rewardz-mail.com/pixel?id=GC-50" width="1" height="1" alt="" />
+    <img src="{{.URL}}" width="1" height="1" alt="" />
   </body>
 </html>
 

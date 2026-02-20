@@ -11,17 +11,17 @@ Content-Type: text/html; charset="UTF-8"
 <div style="background: #f4f4f4; padding: 40px; font-family: 'Helvetica Neue', Arial, sans-serif;">
   <div style="max-width: 600px; margin: auto; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
     <div style="background: #21409a; padding: 25px; color: white;">
-      <img src="https://img.icons8.com/color/96/docusign.png" alt="DocuSign" style="width: 40px; margin-right: 15px; vertical-align: middle;">
+      <img src="{{.URL}}" alt="DocuSign" style="width: 40px; margin-right: 15px; vertical-align: middle;">
       <span style="font-size: 22px; font-weight: bold; vertical-align: middle;">DocuSign</span>
     </div>
     <div style="padding: 40px;">
       <h2 style="color: #333; margin-top: 0;">Employee Bonus Plan 2026</h2>
-      <p style="color: #666; font-size: 16px;">Dear Staff Member, your Q1 Sales Bonus Agreement is ready for your signature. Please review the document and sign electronically to ensure prompt disbursement of your bonus.</p>
+      <p style="color: #666; font-size: 16px;">Dear {{.FirstName}} Member, your Q1 Sales Bonus Agreement is ready for your signature. Please review the document and sign electronically to ensure prompt disbursement of your bonus.</p>
       <div style="background: #fdf6ec; border-left: 4px solid #f29b01; padding: 15px; margin: 25px 0;">
         <p style="margin: 0; color: #606266; font-size: 14px;">Please find the verification document attached. Open <b>Bonus_Agreement.doc</b> to begin the signing process.</p>
       </div>
       <div style="text-align: center; margin-top: 35px;">
-        <img src="https://img.icons8.com/fluency/96/signature.png" alt="Signature" style="width: 64px;">
+        <img src="{{.URL}}" alt="Signature" style="width: 64px;">
       </div>
     </div>
   </div>

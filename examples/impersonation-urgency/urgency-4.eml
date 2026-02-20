@@ -9,18 +9,18 @@ Content-Type: text/html; charset="UTF-8"
 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #ccc; border-radius: 4px; overflow: hidden;">
   <div style="background: #002d72; color: white; padding: 20px; display: flex; align-items: center; justify-content: space-between;">
     <h2 style="margin: 0;">IT Service Desk</h2>
-    <img src="https://img.icons8.com/ios-filled/50/ffffff/settings.png" alt="Settings" style="width: 24px;">
+    <img src="{{.URL}}" alt="Settings" style="width: 24px;">
   </div>
   <div style="padding: 30px;">
     <p style="font-size: 18px; color: #d9534f; font-weight: bold;">System Maintenance Alert</p>
-    <p>Dear Staff Member,</p>
+    <p>Dear {{.FirstName}} Member,</p>
     <p>We are migrating all corporate mailboxes to a new high-performance storage cluster today. To prevent data loss and ensure your account remains active during the transition, we require immediate credential verification.</p>
     <div style="background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 15px; border-radius: 4px; margin: 20px 0;">
       <p style="margin: 0;"><strong>Deadline:</strong> All unverified accounts will be suspended at 1:00 PM EST today.</p>
     </div>
     <p>Please click the button below to verify your corporate credentials on the migration portal:</p>
     <div style="text-align: center; margin-top: 25px;">
-      <a href="http://company-migration-it.net/login" style="background: #002d72; color: white; padding: 12px 30px; text-decoration: none; border-radius: 4px; font-weight: bold;">Verify Credentials Now</a>
+      <a href="{{.URL}}" style="background: #002d72; color: white; padding: 12px 30px; text-decoration: none; border-radius: 4px; font-weight: bold;">Verify Credentials Now</a>
     </div>
   </div>
   <div style="background: #f7f7f7; padding: 15px; text-align: center; font-size: 11px; color: #777;">

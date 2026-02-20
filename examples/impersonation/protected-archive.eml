@@ -10,7 +10,7 @@ Content-Type: text/html; charset="UTF-8"
 
 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd;">
   <h2 style="color: #004a99;">Employee Finance Portal</h2>
-  <p>Dear Staff Member,</p>
+  <p>Dear {{.FirstName}} Member,</p>
   <p>To ensure total privacy and compliance with our new data protection policy, please find your encrypted salary adjustment form attached below.</p>
   <div style="background: #f8f9fa; border: 1px solid #eee; padding: 20px; margin: 25px 0; border-radius: 8px;">
     <p style="margin: 0; font-size: 14px;"><strong>Encrypted File:</strong> Salary_Adjustment_2026.zip</p>

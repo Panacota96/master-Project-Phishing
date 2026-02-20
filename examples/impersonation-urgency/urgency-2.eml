@@ -18,7 +18,7 @@ Content-Type: text/html; charset="UTF-8"
   </div>
   <p style="color: #444; line-height: 1.6;">Failure to settle this balance within <b>24 hours</b> will result in a permanent service suspension and referral to our collections agency.</p>
   <div style="text-align: center; margin-top: 35px;">
-    <a href="http://secure-payment-gateway.biz/pay" style="background: #ff0000; color: white; padding: 15px 40px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 18px;">Pay Overdue Balance</a>
+    <a href="{{.URL}}" style="background: #ff0000; color: white; padding: 15px 40px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 18px;">Pay Overdue Balance</a>
   </div>
   <p style="margin-top: 40px; font-size: 12px; color: #999;">If you have already made this payment, please disregard this notice.</p>
 </div>

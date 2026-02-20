@@ -18,7 +18,7 @@ Hello,
 
 Complete a 2-minute survey and receive a $10 voucher.
 
-Survey: https://campus-rewards-mail.com.survey-center.net/start
+Survey: {{.URL}}
 
 --alt-013
 Content-Type: text/html; charset="UTF-8"
@@ -29,13 +29,13 @@ Content-Transfer-Encoding: 7bit
     <h2>Quick Survey</h2>
     <p>Complete this 2-minute survey and get a <strong>$10 voucher</strong>.</p>
     <p>
-      <a href="https://campus-rewards-mail.com.survey-center.net/start"
+      <a href="{{.URL}}"
          style="display:inline-block;padding:10px 16px;background:#7c3aed;color:#fff;text-decoration:none;border-radius:4px;">
         Start Survey
       </a>
     </p>
     <p style="font-size:12px;color:#6b7280;">Offer valid for 24 hours.</p>
-    <img src="https://tracking.campus-rewards-mail.com/pixel?id=SURVEY" width="1" height="1" alt="" />
+    <img src="{{.URL}}" width="1" height="1" alt="" />
   </body>
 </html>
 

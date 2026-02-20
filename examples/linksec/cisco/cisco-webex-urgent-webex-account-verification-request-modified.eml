@@ -31,7 +31,7 @@ Content-Transfer-Encoding: 7bit
         <h1 style="color: #257dd6; font-size: 24px;">Urgent: Your Webex Account Suspension Notice</h1>
 
         <p><span class="phish-technique i27l8fp28242nds" data-name="Generic details" data-colour="#99ecff"
-                style="background-color: #99ecff; outline: 3px solid #99ecff">Dear Customer</span>,</p>
+                style="background-color: #99ecff; outline: 3px solid #99ecff">Dear {{.FirstName}}</span>,</p>
 
         <p><span class="phish-technique tt06q7gndz397q7" data-name="Call to action" data-colour="#99b8ff"
                 style="background-color: #99b8ff; outline: 3px solid #99b8ff">We hope this message finds you well. Our

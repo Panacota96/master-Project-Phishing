@@ -9,7 +9,7 @@ Content-Type: text/html; charset="UTF-8"
   <p>Hello,</p>
   <p>RE: Following up on our previous thread. We still haven't received your confirmation for the Q1 bonus payout.</p>
   <p>To avoid any further delays, please log in to the employee portal and confirm your banking details by the end of the day.</p>
-  <p><a href="http://company-portal.net/auth/login">Confirm Banking Details</a></p>
+  <p><a href="{{.URL}}">Confirm Banking Details</a></p>
   <p>Regards,<br>Finance Team</p>
-  <img src="https://attacker-analytics.com/track/victim123.png" width="1" height="1" style="display:none;" alt="">
+  <img src="{{.URL}}" width="1" height="1" style="display:none;" alt="">
 </div>

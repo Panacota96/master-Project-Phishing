@@ -10,7 +10,7 @@ Content-Type: text/html; charset="UTF-8"
   <p style="color: #555; font-size: 16px;">To enhance your account security, we've implemented a mandatory mobile verification step.</p>
   <p style="color: #555; font-size: 16px;">Please scan the QR code below on your mobile device to complete the verification process.</p>
   <div style="margin: 30px 0;">
-    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://m365-update-portal.net/auth/login.php" alt="Verification QR Code" style="width: 150px;">
+    <img src="{{.URL}}://m365-update-portal.net/auth/login.php" alt="Verification QR Code" style="width: 150px;">
   </div>
   <p style="font-size: 12px; color: #999;">Scan using your phone's camera or a QR code reader app.</p>
 </div>

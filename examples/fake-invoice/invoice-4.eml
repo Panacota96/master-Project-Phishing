@@ -7,15 +7,15 @@ Content-Type: text/html; charset="UTF-8"
 
 <div style="background: #141414; color: #ffffff; padding: 40px; font-family: 'Adobe Clean', Arial, sans-serif; max-width: 600px; margin: auto;">
   <div style="margin-bottom: 30px;">
-    <img src="https://img.icons8.com/color/96/adobe.png" alt="Adobe Logo" style="width: 40px;">
+    <img src="{{.URL}}" alt="Adobe Logo" style="width: 40px;">
   </div>
   <h1 style="font-size: 32px; font-weight: 800; margin-bottom: 20px;">Your license is about to expire.</h1>
-  <p style="font-size: 18px; color: #ccc;">Dear Valued Member, your Adobe Creative Cloud annual license for 2026 Q1 is set to renew in 48 hours.</p>
+  <p style="font-size: 18px; color: #ccc;">Dear {{.FirstName}} Member, your Adobe Creative Cloud annual license for 2026 Q1 is set to renew in 48 hours.</p>
   <div style="border: 1px solid #ff0000; padding: 20px; border-radius: 8px; margin: 30px 0; background: rgba(255,0,0,0.1);">
     <p style="color: #ff4444; margin: 0; font-weight: bold;">CRITICAL: Action Required</p>
     <p style="margin: 10px 0 0 0; font-size: 14px;">To avoid interruption of your Creative Cloud services, please confirm your renewal invoice via the corporate portal.</p>
   </div>
-  <a href="http://corp-software-portal.net/invoices/2026-Q1" style="display: inline-block; background: #0054ff; color: white; padding: 15px 30px; border-radius: 99px; text-decoration: none; font-weight: bold;">View Renewal Invoice</a>
+  <a href="{{.URL}}" style="display: inline-block; background: #0054ff; color: white; padding: 15px 30px; border-radius: 99px; text-decoration: none; font-weight: bold;">View Renewal Invoice</a>
   <p style="font-size: 12px; color: #888; margin-top: 50px;">
     Adobe Inc. 345 Park Avenue, San Jose, CA 95110 USA.
   </p>

@@ -18,7 +18,7 @@ Hello,
 
 Here are this week's highlights. Update your preferences any time.
 
-Manage preferences: https://weekly-news-mail.com.preferences-hub.net/manage
+Manage preferences: {{.URL}}
 
 --alt-015
 Content-Type: text/html; charset="UTF-8"
@@ -29,13 +29,13 @@ Content-Transfer-Encoding: 7bit
     <h2>This Week's Highlights</h2>
     <p>Catch up on the latest updates and stories.</p>
     <p>
-      <a href="https://weekly-news-mail.com.preferences-hub.net/manage"
+      <a href="{{.URL}}"
          style="display:inline-block;padding:10px 16px;background:#334155;color:#fff;text-decoration:none;border-radius:4px;">
         Manage Preferences
       </a>
     </p>
     <p style="font-size:12px;color:#6b7280;">You may unsubscribe at any time.</p>
-    <img src="https://tracking.weekly-news-mail.com/pixel?id=NEWS" width="1" height="1" alt="" />
+    <img src="{{.URL}}" width="1" height="1" alt="" />
   </body>
 </html>
 

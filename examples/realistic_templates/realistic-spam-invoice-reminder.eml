@@ -18,7 +18,7 @@ Hello,
 
 This is a reminder about invoice A-1842. If you have already paid, please disregard.
 
-View: https://invoice-desk-mail.com.payments-portal.net/view/A-1842
+View: {{.URL}}
 
 --alt-016
 Content-Type: text/html; charset="UTF-8"
@@ -29,13 +29,13 @@ Content-Transfer-Encoding: 7bit
     <h2>Invoice Reminder</h2>
     <p>This is a reminder about invoice <strong>A-1842</strong>. If you already paid, you can ignore this message.</p>
     <p>
-      <a href="https://invoice-desk-mail.com.payments-portal.net/view/A-1842"
+      <a href="{{.URL}}"
          style="display:inline-block;padding:10px 16px;background:#0f766e;color:#fff;text-decoration:none;border-radius:4px;">
         View Invoice
       </a>
     </p>
     <p style="font-size:12px;color:#6b7280;">This is a promotional message.</p>
-    <img src="https://tracking.invoice-desk-mail.com/pixel?id=INV" width="1" height="1" alt="" />
+    <img src="{{.URL}}" width="1" height="1" alt="" />
   </body>
 </html>
 

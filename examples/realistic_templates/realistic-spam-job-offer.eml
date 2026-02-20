@@ -18,7 +18,7 @@ Hello,
 
 We are hiring for a flexible part-time remote role. Apply today to learn more.
 
-Apply: https://campus-talent-mail.com.jobs-board.net/apply
+Apply: {{.URL}}
 
 --alt-014
 Content-Type: text/html; charset="UTF-8"
@@ -29,13 +29,13 @@ Content-Transfer-Encoding: 7bit
     <h2>Part-Time Remote Role</h2>
     <p>We are hiring for a flexible part-time remote role. Apply today.</p>
     <p>
-      <a href="https://campus-talent-mail.com.jobs-board.net/apply"
+      <a href="{{.URL}}"
          style="display:inline-block;padding:10px 16px;background:#0ea5e9;color:#fff;text-decoration:none;border-radius:4px;">
         Apply Now
       </a>
     </p>
     <p style="font-size:12px;color:#6b7280;">You are receiving this because you opted into career updates.</p>
-    <img src="https://tracking.campus-talent-mail.com/pixel?id=JOB" width="1" height="1" alt="" />
+    <img src="{{.URL}}" width="1" height="1" alt="" />
   </body>
 </html>
 

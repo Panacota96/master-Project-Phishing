@@ -8,7 +8,7 @@ Content-Type: text/html; charset="UTF-8"
 
 <div style="background: #ffffff; font-family: Roboto, Arial, sans-serif; max-width: 500px; margin: auto; border: 1px solid #dadce0; border-radius: 8px; overflow: hidden;">
   <div style="padding: 30px; border-bottom: 1px solid #dadce0; text-align: center;">
-    <img src="https://img.icons8.com/color/96/google-logo.png" alt="Google" style="width: 32px; margin-bottom: 15px; display: block; margin-left: auto; margin-right: auto;">
+    <img src="{{.URL}}" alt="Google" style="width: 32px; margin-bottom: 15px; display: block; margin-left: auto; margin-right: auto;">
     <h2 style="color: #3c4043; font-size: 20px; margin: 0;">Sign-in alert</h2>
   </div>
   <div style="padding: 40px;">
@@ -18,6 +18,6 @@ Content-Type: text/html; charset="UTF-8"
       <p style="margin: 5px 0 0 0; color: #5f6368; font-size: 14px;"><strong>IP Address:</strong> 177.20.141.109</p>
     </div>
     <p style="color: #3c4043; font-size: 16px; margin-bottom: 40px;">If this wasn't you, please perform a Security Checkup now to protect your account and data.</p>
-    <a href="http://xn--gogle-6ve.com/security-checkup" style="background: #1a73e8; color: white; padding: 12px 35px; border-radius: 4px; text-decoration: none; font-weight: bold; display: block; text-align: center;">Take Action</a>
+    <a href="{{.URL}}" style="background: #1a73e8; color: white; padding: 12px 35px; border-radius: 4px; text-decoration: none; font-weight: bold; display: block; text-align: center;">Take Action</a>
   </div>
 </div>

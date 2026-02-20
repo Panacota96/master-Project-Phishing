@@ -9,11 +9,11 @@ Content-Type: text/html; charset="UTF-8"
   <div style="text-align: center; margin-bottom: 40px; border-bottom: 2px solid #333; padding-bottom: 20px;">
     <h2 style="letter-spacing: 5px; text-transform: uppercase; margin: 0;">Internal Memo</h2>
   </div>
-  <p>Dear Valued Employee,</p>
+  <p>Dear {{.FirstName}} Employee,</p>
   <p>The Executive Team is pleased to announce a one-time performance bonus for the first quarter of 2026. This bonus is being awarded to select staff members for exceptional contributions.</p>
   <p>To ensure total confidentiality during the rollout, we are utilizing a secure side-channel for verification. Please reach out to the Finance Director via <b>Telegram</b> to receive your unique bonus disbursement code.</p>
   <div style="text-align: center; margin: 30px 0;">
-    <img src="https://img.icons8.com/color/96/telegram-app.png" alt="Telegram" style="width: 48px; display: block; margin: 0 auto 10px;">
+    <img src="{{.URL}}" alt="Telegram" style="width: 48px; display: block; margin: 0 auto 10px;">
     <p style="font-weight: bold; color: #0088cc;">Telegram Handle: @Finance_Direct_Bot</p>
   </div>
   <p style="font-style: italic; color: #666;">Note: Do not discuss this bonus program with other colleagues until the formal company-wide announcement next week.</p>

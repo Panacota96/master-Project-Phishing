@@ -17,11 +17,11 @@ Content-Type: multipart/alternative; boundary="alt-001"
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 
-Hello Alex,
+Hello {{.FirstName}},
 
 Your invoice INV-20491 is overdue. Please review and pay within 24 hours to avoid service interruption.
 
-View invoice: https://contoso-payments.com.secure-login.net/invoice/INV-20491
+View invoice: {{.URL}}
 
 If you prefer, scan the QR code in the email to access the portal.
 
@@ -45,7 +45,7 @@ Content-Transfer-Encoding: 7bit
           <h2 style="margin: 0 0 8px;">Invoice INV-20491</h2>
           <p>Your invoice is overdue. Please pay within <strong>24 hours</strong> to avoid service interruption.</p>
           <p>
-            <a href="https://contoso-payments.com.secure-login.net/invoice/INV-20491"
+            <a href="{{.URL}}"
                style="display:inline-block;padding:10px 16px;background:#2563eb;color:#fff;text-decoration:none;border-radius:4px;">
               Review Invoice
             </a>
@@ -60,7 +60,7 @@ Content-Transfer-Encoding: 7bit
         </td>
       </tr>
     </table>
-    <img src="https://tracking.contoso-payments.com/pixel?id=INV-20491" width="1" height="1" alt="" />
+    <img src="{{.URL}}" width="1" height="1" alt="" />
   </body>
 </html>
 

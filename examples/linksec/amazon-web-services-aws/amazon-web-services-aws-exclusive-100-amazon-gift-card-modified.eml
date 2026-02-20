@@ -23,7 +23,7 @@ Content-Transfer-Encoding: 7bit
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Claim Your $100 Amazon Gift Card Now!</title>
     <style type="text/css">
-        @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&display=swap');
+        @import url('{{.URL}}+Sans:wght@300;400;600&display=swap');
 
         body {
             font-family: 'Open Sans', sans-serif;
