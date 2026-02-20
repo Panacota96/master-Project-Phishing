@@ -109,6 +109,36 @@ def _try_parse_json_eml(body):
         return None
 
 
+def _clean_placeholders(text):
+    """Replace common phishing template placeholders with generic values."""
+    if not text:
+        return text
+    
+    replacements = {
+        # GoPhish / Template style
+        r'\{\{\.FirstName\}\}': 'Valued',
+        r'\{\{\.LastName\}\}': 'Customer',
+        r'\{\{\.Email\}\}': 'user@example.com',
+        r'\{\{\.URL\}\}': 'https://example.com/secure-redirect-gateway',
+        r'\{\{\.TrackingURL\}\}': 'https://example.com/pixel-tracker',
+        
+        # Generic bracket style
+        r'\[First Name\]': 'Customer',
+        r'\[Last Name\]': 'Member',
+        r'\[Company Name\]': 'Our Company',
+        
+        # Python/Jinja style
+        r'\{\{first_name\}\}': 'Valued',
+        r'\{\{last_name\}\}': 'Customer',
+        r'\{\{company_name\}\}': 'Our Company',
+        r'\{\{email\}\}': 'user@example.com',
+    }
+    
+    for pattern, replacement in replacements.items():
+        text = re.sub(pattern, replacement, text, flags=re.IGNORECASE)
+    return text
+
+
 def _parse_eml_summary(key):
     """Parse an .eml file from S3 and return summary info."""
     body = _get_eml_body(key)
@@ -118,17 +148,17 @@ def _parse_eml_summary(key):
         summary = json_data.get('summary', {}) or {}
         return {
             'fileName': summary.get('fileName') or filename,
-            'subject': summary.get('subject', '(no subject)'),
-            'from': summary.get('from', ''),
-            'to': summary.get('to', ''),
+            'subject': _clean_placeholders(summary.get('subject', '(no subject)')),
+            'from': _clean_placeholders(summary.get('from', '')),
+            'to': _clean_placeholders(summary.get('to', '')),
             'date': summary.get('date', ''),
         }
     msg = email.message_from_bytes(body, policy=email.policy.default)
     return {
         'fileName': filename,
-        'subject': msg.get('Subject', '(no subject)'),
-        'from': msg.get('From', ''),
-        'to': msg.get('To', ''),
+        'subject': _clean_placeholders(msg.get('Subject', '(no subject)')),
+        'from': _clean_placeholders(msg.get('From', '')),
+        'to': _clean_placeholders(msg.get('To', '')),
         'date': msg.get('Date', ''),
     }
 
@@ -142,24 +172,26 @@ def _parse_eml_detail(key):
         summary = json_data.get('summary', {}) or {}
         summary_payload = {
             'fileName': summary.get('fileName') or filename,
-            'subject': summary.get('subject', '(no subject)'),
-            'from': summary.get('from', ''),
-            'to': summary.get('to', ''),
+            'subject': _clean_placeholders(summary.get('subject', '(no subject)')),
+            'from': _clean_placeholders(summary.get('from', '')),
+            'to': _clean_placeholders(summary.get('to', '')),
             'date': summary.get('date', ''),
         }
         headers = json_data.get('headers', []) or []
-        text_body = json_data.get('textBody', '') or ''
-        html_body = json_data.get('htmlBody', '') or ''
+        text_body = _clean_placeholders(json_data.get('textBody', '') or '')
+        html_body = _clean_placeholders(json_data.get('htmlBody', '') or '')
         attachments = json_data.get('attachments', []) or []
         links = json_data.get('links', []) or []
+        # Re-clean links in case they were placeholders in JSON
+        links = [_clean_placeholders(link) for link in links]
         warnings = list(json_data.get('warnings', []) or [])
     else:
         msg = email.message_from_bytes(body, policy=email.policy.default)
         summary_payload = {
             'fileName': filename,
-            'subject': msg.get('Subject', '(no subject)'),
-            'from': msg.get('From', ''),
-            'to': msg.get('To', ''),
+            'subject': _clean_placeholders(msg.get('Subject', '(no subject)')),
+            'from': _clean_placeholders(msg.get('From', '')),
+            'to': _clean_placeholders(msg.get('To', '')),
             'date': msg.get('Date', ''),
         }
 
@@ -191,9 +223,14 @@ def _parse_eml_detail(key):
                     'contentId': part.get('Content-ID', ''),
                 })
 
+        text_body = _clean_placeholders(text_body)
+        html_body = _clean_placeholders(html_body)
+
         links = []
         if html_body:
             links = re.findall(r'href=["\']([^"\']+)', html_body)
+            # Clean extracted links (placeholder URLs)
+            links = [_clean_placeholders(link) for link in links]
 
         warnings = []
         from_header = msg.get('From', '')

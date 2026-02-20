@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+{% block title %}Inspector Answer Key{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Inspector Ground Truth (Answer Key)</h2>
+    <a href="{{ url_for('dashboard.inspector_analytics') }}" class="btn btn-outline-secondary">Back to Analytics</a>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header bg-dark text-white"><h5 class="mb-0">Reference Dataset ({{ items|length }} emails)</h5></div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover table-sm">
+                <thead>
+                    <tr>
+                        <th>Filename</th>
+                        <th>Ground Truth Classification</th>
+                        <th>Required Phishing Signals (3)</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td><code>{{ item.filename }}</code></td>
+                        <td>
+                            <span class="badge {% if item.classification == 'Phishing' %}bg-danger{% else %}bg-info{% endif %}">
+                                {{ item.classification }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if item.signals %}
+                                {% for s in item.signals %}
+                                <span class="badge bg-secondary">{{ s }}</span>
+                                {% endfor %}
+                            {% else %}
+                                <span class="text-muted small">None (Spam)</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary preview-btn" 
+                                    data-filename="{{ item.filename }}"
+                                    data-classification="{{ item.classification }}"
+                                    data-signals="{{ item.signals|join(', ') }}">
+                                Preview & Troubleshoot
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Detailed Preview -->
+<div class="modal fade" id="emailPreviewModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="previewTitle">Email Content Preview</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="previewStatus" class="alert alert-info py-2 small mb-3">
+                    <strong>Ground Truth:</strong> <span id="truthClass"></span> | 
+                    <strong>Key Signals:</strong> <span id="truthSignals"></span>
+                </div>
+                <div id="previewContent">
+                    <div class="text-center p-5">
+                        <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const previewModal = new bootstrap.Modal(document.getElementById('emailPreviewModal'));
+    const previewTitle = document.getElementById('previewTitle');
+    const truthClass = document.getElementById('truthClass');
+    const truthSignals = document.getElementById('truthSignals');
+    const previewContent = document.getElementById('previewContent');
+
+    document.querySelectorAll('.preview-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const filename = btn.dataset.filename;
+            const classification = btn.dataset.classification;
+            const signals = btn.dataset.signals;
+
+            previewTitle.textContent = `Inspecting Ground Truth: ${filename}`;
+            truthClass.textContent = classification;
+            truthClass.className = `badge ${classification === 'Phishing' ? 'bg-danger' : 'bg-info'}`;
+            truthSignals.textContent = signals || 'None (Spam)';
+            
+            previewContent.innerHTML = '<div class="text-center p-5"><div class="spinner-border text-primary" role="status"></div></div>';
+            previewModal.show();
+
+            try {
+                const resp = await fetch(`/inspector/api/emails/${encodeURIComponent(filename)}`);
+                const data = await resp.json();
+                if (!resp.ok) throw new Error(data.error || 'Failed to fetch details');
+                
+                renderPreview(data);
+            } catch (err) {
+                previewContent.innerHTML = `<div class="alert alert-danger">${err.message}</div>`;
+            }
+        });
+    });
+
+    function renderPreview(data) {
+        const { summary, headers, textBody, htmlBody, links, attachments, warnings } = data;
+        
+        let warningsHtml = '';
+        if (warnings && warnings.length > 0) {
+            warningsHtml = `
+                <div class="alert alert-warning py-1 small">
+                    <strong>Security Warnings:</strong>
+                    <ul class="mb-0">
+                        ${warnings.map(w => `<li>${w}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+        }
+
+        let linksHtml = '';
+        if (links && links.length > 0) {
+            linksHtml = `
+                <div class="card mt-3">
+                    <div class="card-header py-1 bg-light small">Links Detected</div>
+                    <ul class="list-group list-group-flush small">
+                        ${links.map(l => `<li class="list-group-item text-break">${l}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+        }
+
+        previewContent.innerHTML = `
+            ${warningsHtml}
+            <div class="card mb-3">
+                <div class="card-body p-2 small">
+                    <strong>Subject:</strong> ${summary.subject}<br>
+                    <strong>From:</strong> ${summary.from}<br>
+                    <strong>To:</strong> ${summary.to}<br>
+                    <strong>Date:</strong> ${summary.date}
+                </div>
+            </div>
+            
+            <h6>HTML Body (Sandboxed)</h6>
+            <div class="border rounded bg-white p-1 mb-3" style="min-height: 400px;">
+                <iframe srcdoc="${htmlBody.replace(/"/g, '&quot;')}" 
+                    sandbox="allow-same-origin" 
+                    style="width: 100%; height: 500px; border: none;">
+                </iframe>
+            </div>
+
+            <h6>Plain Text Body</h6>
+            <pre class="bg-light p-2 border rounded small" style="max-height: 200px; overflow: auto;">${textBody}</pre>
+
+            ${linksHtml}
+        `;
+    }
+});
+</script>
+{% endblock %}

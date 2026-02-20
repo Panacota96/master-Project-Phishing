@@ -1158,13 +1158,8 @@
             });
 
             if (payload.completed) {
-              const message = document.createElement("div");
-              message.className = "alert alert-info mt-3";
-              message.innerHTML = 'All emails completed. Please return to <a href=\"/\">main</a>.';
-              emailDetailsContainer.prepend(message);
-              document.querySelectorAll(".email-item").forEach((item) => {
-                item.disabled = true;
-              });
+              alert("All emails completed! You will now be returned to the main page.");
+              window.location.href = "/";
             }
 
             classificationLog.push({

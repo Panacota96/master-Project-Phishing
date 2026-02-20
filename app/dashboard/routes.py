@@ -6,6 +6,7 @@ from flask import abort, current_app, jsonify, render_template, request
 from flask_login import current_user, login_required
 
 from app.dashboard import bp
+from app.inspector.answer_key import ANSWER_KEY
 from app.models import (
     count_users,
     get_distinct_cohorts,
@@ -19,6 +20,24 @@ from app.models import (
     reset_user_inspector_state,
     reset_users_inspector_state,
 )
+
+@bp.route('/inspector/answer-key')
+@login_required
+def inspector_answer_key():
+    if not current_user.is_admin:
+        abort(403)
+    
+    # Format answer key for template
+    sorted_keys = sorted(ANSWER_KEY.keys())
+    items = []
+    for filename in sorted_keys:
+        items.append({
+            'filename': filename,
+            'classification': ANSWER_KEY[filename]['classification'],
+            'signals': ANSWER_KEY[filename]['signals']
+        })
+    
+    return render_template('admin/inspector_answer_key.html', items=items)
 
 
 @bp.route('/')
