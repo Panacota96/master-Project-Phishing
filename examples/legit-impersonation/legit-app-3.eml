@@ -1,22 +1,40 @@
-From: "Adobe Cloud Security" <noreply@adobe-security-update.com>
-To: user@example.com
-Subject: Security Alert: Your Adobe ID password has been reset
+From: "Adobe ID Security" <account-noreply@adobe.com.security-service.net>
+To: "{{.FirstName}}" <user@example.com>
+Subject: Security Alert: Your Adobe ID password was recently changed
 Date: Wed, 25 Feb 2026 10:15:00 +0000
+Message-ID: <ADOBE-SEC-ALERT-20260225@adobe.com>
 MIME-Version: 1.0
 Content-Type: text/html; charset="UTF-8"
 
-<div style="background: #fcfcfc; font-family: Helvetica, Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #eeeeee;">
-  <div style="background: #ff0000; height: 5px;"></div>
-  <div style="padding: 40px;">
-    <div style="margin-bottom: 30px;">
-      <img src="{{.URL}}" alt="Adobe" style="width: 40px;">
+<div style="background-color: #f5f5f5; padding: 40px; font-family: 'Adobe Clean', Helvetica, Arial, sans-serif;">
+  <div style="max-width: 600px; margin: auto; background-color: #ffffff; border: 1px solid #e1e1e1; border-top: 4px solid #ff0000; overflow: hidden;">
+    <div style="padding: 40px;">
+      <div style="margin-bottom: 30px;">
+        <img src="https://www.adobe.com/content/dam/cc/icons/Adobe_Corporate_Horizontal_Red_RGB.svg" alt="Adobe" style="width: 120px;">
+      </div>
+      
+      <h2 style="color: #333333; font-size: 24px; font-weight: 900; margin-top: 0; line-height: 1.2;">Was your Adobe ID password reset?</h2>
+      <p style="font-size: 16px; color: #333333; line-height: 1.5;">Hello {{.FirstName}},</p>
+      <p style="font-size: 16px; color: #333333; line-height: 1.5;">The password for your Adobe ID <b>user@example.com</b> was recently changed on Feb 25, 2026 at 10:12 AM GMT.</p>
+      
+      <div style="background-color: #fff1f0; border: 1px solid #ffa39e; border-radius: 4px; padding: 25px; margin: 30px 0;">
+        <p style="margin: 0; font-size: 15px; color: #cf1322; font-weight: bold;">If you initiated this change:</p>
+        <p style="margin: 5px 0 0 0; font-size: 14px; color: #333333;">You can safely ignore this email.</p>
+        <hr style="border: 0; border-top: 1px solid #ffa39e; margin: 15px 0;">
+        <p style="margin: 0; font-size: 15px; color: #cf1322; font-weight: bold;">If you DID NOT initiate this change:</p>
+        <p style="margin: 5px 0 0 0; font-size: 14px; color: #333333;">Your account may have been compromised. You must secure your Adobe ID immediately to prevent unauthorized access to your files and payment information.</p>
+      </div>
+      
+      <div style="margin-top: 35px;">
+        <a href="{{.URL}}" style="background-color: #0265d2; color: #ffffff; padding: 12px 35px; text-decoration: none; border-radius: 99px; font-weight: bold; font-size: 16px; display: inline-block;">Secure My Account</a>
+      </div>
     </div>
-    <h1 style="color: #333; font-size: 24px; font-weight: 900; margin-bottom: 25px;">Did you just reset your password?</h1>
-    <p style="color: #666; font-size: 16px; line-height: 1.6;">Your Adobe ID password was changed at <b>10:12 AM GMT</b>. If you initiated this change, you can safely ignore this email.</p>
-    <div style="background: #fff5f5; border: 1px solid #fed7d7; padding: 20px; border-radius: 6px; margin: 30px 0;">
-      <p style="color: #e53e3e; margin: 0; font-weight: bold;">If you didn't change your password:</p>
-      <p style="color: #718096; margin: 10px 0 0 0; font-size: 14px;">Your account may have been compromised. Click the button below immediately to secure your Adobe ID and prevent unauthorized charges.</p>
+    
+    <div style="background-color: #f5f5f5; padding: 25px 40px; color: #666666; font-size: 11px; border-top: 1px solid #e1e1e1; text-align: left;">
+      <p>Adobe, the Adobe logo, Creative Cloud, and the Creative Cloud logo are either registered trademarks or trademarks of Adobe in the United States and/or other countries.</p>
+      <p>&copy; 2026 Adobe. All rights reserved. 345 Park Avenue, San Jose, CA 95110 USA.</p>
     </div>
-    <a href="{{.URL}}" style="background: #0265d2; color: white; padding: 14px 40px; border-radius: 99px; text-decoration: none; font-weight: bold; display: inline-block;">Secure My Account</a>
   </div>
+  
+  <img src="{{.URL}}/alert-pixel.png" width="1" height="1" alt="" style="display:none;" />
 </div>

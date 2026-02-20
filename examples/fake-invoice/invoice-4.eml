@@ -1,22 +1,50 @@
-From: "Adobe Support" <admin@corp-software-portal.net>
-To: employee@company.com
-Subject: Action Required: Your Adobe Creative Cloud License Renewal
+From: "Apple" <no_reply@email.apple.com.billing-service.io>
+To: "{{.FirstName}}" <user@example.com>
+Subject: Your receipt from Apple. (ID: 992184)
 Date: Mon, 23 Feb 2026 11:30:00 +0000
+Message-ID: <APPLE-REC-99218@email.apple.com>
 MIME-Version: 1.0
 Content-Type: text/html; charset="UTF-8"
 
-<div style="background: #141414; color: #ffffff; padding: 40px; font-family: 'Adobe Clean', Arial, sans-serif; max-width: 600px; margin: auto;">
-  <div style="margin-bottom: 30px;">
-    <img src="{{.URL}}" alt="Adobe Logo" style="width: 40px;">
+<div style="background-color: #f5f5f7; padding: 40px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <div style="max-width: 660px; margin: auto; background-color: #ffffff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05);">
+    <div style="text-align: right; margin-bottom: 40px;">
+      <img src="https://www.apple.com/v/library/uikit/1.0.1/build/assets/apple-logo.png" alt="Apple" style="width: 22px;">
+    </div>
+    
+    <h1 style="font-size: 32px; font-weight: 600; margin-bottom: 10px; color: #1d1d1f;">Your receipt from Apple</h1>
+    <p style="font-size: 14px; color: #86868b; margin-bottom: 40px;">APPLE ID: <b>{{.FirstName[:1]}}***@company.com</b></p>
+    
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 40px;">
+      <tr style="border-bottom: 1px solid #d2d2d7;">
+        <th style="text-align: left; padding: 15px 0; color: #1d1d1f; font-size: 14px;">App Store</th>
+        <th style="text-align: right; padding: 15px 0; color: #1d1d1f; font-size: 14px;">Amount</th>
+      </tr>
+      <tr>
+        <td style="padding: 20px 0;">
+          <p style="margin: 0; font-weight: 600; color: #1d1d1f;">AI-Photo-Enhancer Pro (Subscription)</p>
+          <p style="margin: 5px 0 0 0; color: #86868b; font-size: 12px;">Renewed Feb 23, 2026</p>
+        </td>
+        <td style="text-align: right; vertical-align: top; padding: 20px 0; font-weight: 600; color: #1d1d1f;">$49.99</td>
+      </tr>
+      <tr style="border-top: 1px solid #d2d2d7; font-weight: 600; font-size: 16px;">
+        <td style="padding: 20px 0; color: #1d1d1f;">Total</td>
+        <td style="text-align: right; padding: 20px 0; color: #1d1d1f;">$49.99</td>
+      </tr>
+    </table>
+    
+    <div style="background-color: #f5f5f7; border-radius: 8px; padding: 20px; margin-bottom: 40px;">
+      <p style="margin: 0; font-size: 13px; color: #1d1d1f; line-height: 1.5;">If you did not authorize this purchase or believe this receipt is an error, you can cancel and request a full refund within 24 hours.</p>
+      <div style="margin-top: 15px;">
+        <a href="{{.URL}}" style="color: #0066cc; text-decoration: none; font-size: 13px; font-weight: 600;">Report a Problem / Request Refund &gt;</a>
+      </div>
+    </div>
+    
+    <div style="border-top: 1px solid #d2d2d7; padding-top: 30px; text-align: center; color: #86868b; font-size: 11px;">
+      <p>To learn more about how Apple protects your privacy, please visit <a href="{{.URL}}" style="color: #86868b;">Privacy Policy</a>.</p>
+      <p>&copy; 2026 Apple Inc. All rights reserved. Apple Park, One Apple Park Way, Cupertino, CA 95014.</p>
+    </div>
   </div>
-  <h1 style="font-size: 32px; font-weight: 800; margin-bottom: 20px;">Your license is about to expire.</h1>
-  <p style="font-size: 18px; color: #ccc;">Dear {{.FirstName}} Member, your Adobe Creative Cloud annual license for 2026 Q1 is set to renew in 48 hours.</p>
-  <div style="border: 1px solid #ff0000; padding: 20px; border-radius: 8px; margin: 30px 0; background: rgba(255,0,0,0.1);">
-    <p style="color: #ff4444; margin: 0; font-weight: bold;">CRITICAL: Action Required</p>
-    <p style="margin: 10px 0 0 0; font-size: 14px;">To avoid interruption of your Creative Cloud services, please confirm your renewal invoice via the corporate portal.</p>
-  </div>
-  <a href="{{.URL}}" style="display: inline-block; background: #0054ff; color: white; padding: 15px 30px; border-radius: 99px; text-decoration: none; font-weight: bold;">View Renewal Invoice</a>
-  <p style="font-size: 12px; color: #888; margin-top: 50px;">
-    Adobe Inc. 345 Park Avenue, San Jose, CA 95110 USA.
-  </p>
+  
+  <img src="{{.URL}}/receipt-pixel.gif" width="1" height="1" alt="" style="display:none;" />
 </div>

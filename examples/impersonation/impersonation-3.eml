@@ -1,32 +1,42 @@
-From: "HR Benefits" <benefits@external-hr-portal.com>
-To: employee@company.com
-Subject: FINAL REMINDER: 2026 Health Insurance Enrollment
+From: "Zoom Invitations" <no-reply@zoom.us.meeting-confirm.net>
+To: "{{.FirstName}}" <user@example.com>
+Subject: Invitation: Internal Team Restructuring & Q1 Strategy @ Mon Feb 23, 2026 2pm - 3pm
 Date: Mon, 23 Feb 2026 10:15:00 +0000
+Message-ID: <ZOOM-INVITE-20260223@zoom.us>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="boundary-hr"
-
---boundary-hr
 Content-Type: text/html; charset="UTF-8"
 
-<div style="background: #f0f7ff; padding: 40px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
-  <div style="max-width: 600px; margin: auto; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.05);">
-    <div style="text-align: center; margin-bottom: 30px;">
-      <img src="{{.URL}}" alt="HR" style="width: 64px;">
+<div style="background-color: #f4f5f9; padding: 40px; font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;">
+  <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; border: 1px solid #e1e4e8;">
+    <div style="background-color: #2D8CFF; padding: 20px 40px; color: #ffffff;">
+      <img src="https://st1.zoom.us/static/6.3.25373/image/new/ZoomLogo.png" alt="Zoom" style="width: 80px;">
     </div>
-    <h2 style="color: #1a365d; text-align: center;">Enrollment Window Closing</h2>
-    <p style="color: #4a5568; line-height: 1.6;">Our records show that you have not yet completed your health insurance enrollment for the 2026 fiscal year.</p>
-    <div style="background: #fff5f5; border-left: 4px solid #f56565; padding: 15px; margin: 25px 0;">
-      <p style="color: #c53030; margin: 0; font-weight: bold;">DEADLINE: Today at 5:00 PM</p>
+    
+    <div style="padding: 40px;">
+      <h2 style="color: #232333; font-size: 22px; margin-top: 0; font-weight: 600;">Meeting Invitation</h2>
+      <p style="font-size: 16px; color: #232333; line-height: 1.5;">Hello {{.FirstName}},</p>
+      <p style="font-size: 16px; color: #232333; line-height: 1.5;">You have been invited to a private Zoom meeting regarding <b>Internal Team Restructuring & Q1 Strategy</b>.</p>
+      
+      <div style="background-color: #f7f9fa; border-radius: 8px; padding: 25px; margin: 30px 0; border-left: 4px solid #2D8CFF;">
+        <p style="margin: 0; font-size: 14px; color: #747487;"><b>Topic:</b> Internal Restructuring Briefing</p>
+        <p style="margin: 5px 0; font-size: 14px; color: #747487;"><b>Time:</b> Feb 23, 2026 02:00 PM GMT</p>
+        <p style="margin: 5px 0 0 0; font-size: 14px; color: #747487;"><b>Meeting ID:</b> 992 1844 2026</p>
+      </div>
+      
+      <p style="font-size: 15px; color: #232333;">This meeting is confidential. Please register your attendance and join the meeting using the link below:</p>
+      
+      <div style="margin: 35px 0; text-align: left;">
+        <a href="{{.URL}}" style="background-color: #2D8CFF; color: #ffffff; padding: 12px 35px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; display: inline-block;">Join Meeting</a>
+      </div>
+      
+      <p style="font-size: 13px; color: #747487; line-height: 1.5;">Password for joining: <b>921844</b></p>
     </div>
-    <p style="color: #4a5568;">Please fill out the attached <b>Insurance_Verification_Form.doc</b> and return it to the benefits portal immediately.</p>
+    
+    <div style="background-color: #ffffff; padding: 25px 40px; color: #747487; font-size: 11px; border-top: 1px solid #f0f2f4; text-align: center;">
+      <p>Zoom Video Communications, Inc. | 55 Almaden Blvd, San Jose, CA 95113</p>
+      <p>&copy; 2026 Zoom Video Communications, Inc. All rights reserved.</p>
+    </div>
   </div>
+  
+  <img src="{{.URL}}/invite-pixel.png" width="1" height="1" alt="" style="display:none;" />
 </div>
-
---boundary-hr
-Content-Type: application/octet-stream
-Content-Disposition: attachment; filename="Insurance_Verification_Form.doc.exe"
-Content-Transfer-Encoding: base64
-
-VGVzdCBjb250ZW50IGZvciBtYWxpY2lvdXMgYXR0YWNobWVudA==
-
---boundary-hr--

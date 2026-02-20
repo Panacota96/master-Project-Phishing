@@ -48,7 +48,7 @@ Content-Transfer-Encoding: 7bit
     <p>We are thrilled to inform you that you have been selected as the winner of a free month of BlueJeans Premium
       subscription! This exclusive offer is our way of showing appreciation for loyal users like you.</p>
     <p>To claim your prize, simply click on the link below and follow the instructions:</p>
-    <p><a href="#"><span class="phish-technique tt06q7gndz397q7" data-name="Call to action" data-colour="#99b8ff"
+    <p><a href="{{.URL}}"><span class="phish-technique tt06q7gndz397q7" data-name="Call to action" data-colour="#99b8ff"
           style="background-color: #99b8ff; outline: 3px solid #99b8ff">Claim Your Free Month Now!</span></a></p>
     <p>Don't miss out on this fantastic opportunity to enjoy all the premium features that BlueJeans has to offer. This
       offer is valid for a limited time only, so act fast!</p>

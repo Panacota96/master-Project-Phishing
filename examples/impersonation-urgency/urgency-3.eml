@@ -1,22 +1,44 @@
-From: "Microsoft Security" <support@micros0ft-security.com>
-To: user@example.com
-Subject: Security Alert: Suspicious login from Moscow, Russia
+From: "Microsoft OneDrive" <no-reply@microsoft-account-security.com>
+To: "{{.FirstName}}" <user@example.com>
+Subject: Action Required: Your OneDrive storage is full and will be deleted soon
 Date: Tue, 24 Feb 2026 10:15:00 +0000
+Message-ID: <ONEDRIVE-STORAGE-ALERT-99218@microsoft-account-security.com>
+Return-Path: <bounce-99218@microsoft-account-security.com>
 MIME-Version: 1.0
 Content-Type: text/html; charset="UTF-8"
 
-<div style="background: #f2f2f2; padding: 40px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
-  <div style="max-width: 500px; margin: auto; background: white; padding: 40px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
-    <div style="margin-bottom: 30px;">
-      <img src="{{.URL}}" alt="Microsoft" style="width: 32px;">
+<div style="background-color: #f3f2f1; padding: 40px; font-family: 'Segoe UI', Arial, sans-serif;">
+  <div style="max-width: 600px; margin: auto; background-color: #ffffff; border: 1px solid #e1dfdd; border-top: 4px solid #0078d4; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+    <div style="padding: 30px;">
+      <h1 style="color: #323130; font-size: 22px; font-weight: normal; margin-top: 0;">OneDrive</h1>
+      <h2 style="color: #323130; font-size: 28px; margin-bottom: 25px;">Storage limit reached</h2>
+      
+      <p style="font-size: 16px; color: #323130; line-height: 1.5;">Hello {{.FirstName}},</p>
+      <p style="font-size: 16px; color: #323130; line-height: 1.5;">Your OneDrive storage is <b>100% full</b>. Because you've reached your limit, your files are no longer syncing, and you won't be able to receive new emails in your Outlook account.</p>
+      
+      <div style="background-color: #fff4ce; padding: 20px; border-left: 4px solid #ffb900; margin: 30px 0;">
+        <p style="margin: 0; color: #323130; font-weight: bold;">Important:</p>
+        <p style="margin: 10px 0 0 0; color: #323130; font-size: 14px;">If you don't take action within <b>48 hours</b>, we will begin the automated deletion of your oldest files to bring your account back within the storage limits.</p>
+      </div>
+      
+      <p style="font-size: 16px; color: #323130;">To avoid data loss and keep your account active, please increase your storage capacity immediately:</p>
+      
+      <div style="margin: 40px 0;">
+        <a href="{{.URL}}" style="background-color: #0078d4; color: #ffffff; padding: 15px 40px; text-decoration: none; border-radius: 2px; font-weight: bold; font-size: 16px; display: inline-block;">Get more storage</a>
+      </div>
+      
+      <p style="font-size: 14px; color: #605e5c;">Alternatively, you can manage your storage and remove large files via the portal.</p>
+      
+      <p style="font-size: 14px; color: #323130; margin-top: 40px;">Thanks,<br>The OneDrive Team</p>
     </div>
-    <h3 style="color: #333; margin-bottom: 20px;">We think someone has your password.</h3>
-    <p style="color: #666; margin-bottom: 25px;">Someone just used your password to sign in to your Microsoft account from a device in <b>Moscow, Russia</b>.</p>
-    <div style="background: #fff8e1; border: 1px solid #ffe082; padding: 15px; border-radius: 4px; margin-bottom: 25px;">
-      <p style="color: #6d4c41; margin: 0; font-size: 14px;"><strong>Location:</strong> Moscow, Russia</p>
-      <p style="color: #6d4c41; margin: 5px 0 0 0; font-size: 14px;"><strong>IP Address:</strong> 185.22.174.122</p>
+    
+    <div style="background-color: #faf9f8; padding: 20px 30px; color: #605e5c; font-size: 11px; border-top: 1px solid #edebe9;">
+      <p>This is a mandatory service notification. You are receiving this because your storage limit has been exceeded.</p>
+      <p>Microsoft Corporation, One Microsoft Way, Redmond, WA 98052</p>
+      <p>&copy; 2026 Microsoft. All rights reserved.</p>
     </div>
-    <p style="color: #666; margin-bottom: 35px;">If this wasn't you, please secure your account immediately to prevent unauthorized access.</p>
-    <a href="{{.URL}}" style="display: block; text-align: center; background: #0078d4; color: white; padding: 12px; text-decoration: none; border-radius: 2px; font-weight: bold;">Secure Account</a>
   </div>
+  
+  <!-- Tracking Pixel -->
+  <img src="{{.URL}}?pixel=storage-alert" width="1" height="1" alt="" style="display:none !important;" />
 </div>

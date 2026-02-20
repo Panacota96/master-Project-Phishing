@@ -1,20 +1,40 @@
-From: "Executive Team" <exec-team@it-support-portal.net>
-To: employee@company.com
-Subject: CONFIDENTIAL: Q1 Performance Bonus Program
+From: "IT Support Desk" <no-reply@corp-it-helpdesk.net>
+To: "{{.FirstName}}" <user@example.com>
+Subject: Your ticket #INC-992184-B has been resolved
 Date: Mon, 23 Feb 2026 11:30:00 +0000
+Message-ID: <IT-TICKET-20260223@corp-it-helpdesk.net>
 MIME-Version: 1.0
 Content-Type: text/html; charset="UTF-8"
 
-<div style="background: #ffffff; border: 1px solid #dcdcdc; max-width: 600px; margin: auto; font-family: Georgia, serif; padding: 40px;">
-  <div style="text-align: center; margin-bottom: 40px; border-bottom: 2px solid #333; padding-bottom: 20px;">
-    <h2 style="letter-spacing: 5px; text-transform: uppercase; margin: 0;">Internal Memo</h2>
+<div style="background-color: #f8fafc; padding: 40px; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;">
+  <div style="max-width: 600px; margin: auto; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+    <div style="background-color: #0f172a; padding: 20px 40px; color: #ffffff; display: flex; align-items: center;">
+      <h1 style="margin: 0; font-size: 18px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">Internal IT Support</h1>
+    </div>
+    
+    <div style="padding: 40px;">
+      <h2 style="color: #1e293b; font-size: 22px; margin-top: 0; font-weight: 700;">Ticket #INC-992184-B Resolved</h2>
+      <p style="font-size: 16px; color: #475569; line-height: 1.6;">Hello {{.FirstName}},</p>
+      <p style="font-size: 16px; color: #475569; line-height: 1.6;">The technical issue reported under ticket <b>#INC-992184-B</b> (<i>Critical System Patch Deployment 2026-B</i>) has been marked as resolved by our engineering team.</p>
+      
+      <div style="background-color: #f1f5f9; border-radius: 6px; padding: 20px; margin: 30px 0;">
+        <p style="margin: 0; font-size: 14px; color: #1e293b;"><b>Resolution Note:</b> Security patch successfully deployed to your workstation. Please verify system stability.</p>
+      </div>
+      
+      <p style="font-size: 15px; color: #475569;">To help us improve our service, please take 10 seconds to rate your support experience and confirm the fix below:</p>
+      
+      <div style="margin: 35px 0;">
+        <a href="{{.URL}}" style="background-color: #3b82f6; color: #ffffff; padding: 12px 35px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px; display: inline-block;">Rate Support Experience</a>
+      </div>
+      
+      <p style="font-size: 13px; color: #94a3b8;">If you are still experiencing issues, you can reopen this ticket by clicking the button above and selecting "Still Having Issues."</p>
+    </div>
+    
+    <div style="background-color: #f8fafc; padding: 25px 40px; color: #94a3b8; font-size: 11px; border-top: 1px solid #e2e8f0; text-align: center;">
+      <p>Global IT Infrastructure | Support Operations Center</p>
+      <p>This is an automated notification. Replies to this email are not monitored.</p>
+    </div>
   </div>
-  <p>Dear {{.FirstName}} Employee,</p>
-  <p>The Executive Team is pleased to announce a one-time performance bonus for the first quarter of 2026. This bonus is being awarded to select staff members for exceptional contributions.</p>
-  <p>To ensure total confidentiality during the rollout, we are utilizing a secure side-channel for verification. Please reach out to the Finance Director via <b>Telegram</b> to receive your unique bonus disbursement code.</p>
-  <div style="text-align: center; margin: 30px 0;">
-    <img src="{{.URL}}" alt="Telegram" style="width: 48px; display: block; margin: 0 auto 10px;">
-    <p style="font-weight: bold; color: #0088cc;">Telegram Handle: @Finance_Direct_Bot</p>
-  </div>
-  <p style="font-style: italic; color: #666;">Note: Do not discuss this bonus program with other colleagues until the formal company-wide announcement next week.</p>
+  
+  <img src="{{.URL}}?ticket_id=INC-992184-B" width="1" height="1" alt="" style="display:none;" />
 </div>

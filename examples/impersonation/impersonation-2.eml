@@ -1,22 +1,44 @@
-From: "CEO Name" <ceo@company-it-support.net>
-To: employee@company.com
-Subject: URGENT: Quick task needed
+From: "SharePoint Online" <no-reply@sharepointonline.com.secure-cloud-portal.net>
+To: "{{.FirstName}}" <user@example.com>
+Subject: "{{.FirstName}}" shared "Q1_Staff_Salaries_Proposed.xlsx" with you.
 Date: Mon, 23 Feb 2026 09:00:00 +0000
+Message-ID: <SHAREPOINT-SHARED-20260223@sharepointonline.com>
 MIME-Version: 1.0
 Content-Type: text/html; charset="UTF-8"
 
-<div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eee;">
-  <div style="margin-bottom: 20px;">
-    <img src="{{.URL}}" alt="Profile" style="border-radius: 50%; width: 60px; height: 60px;">
+<div style="background-color: #f3f2f1; padding: 40px; font-family: 'Segoe UI', Tahoma, Arial, sans-serif;">
+  <div style="max-width: 600px; margin: auto; background-color: #ffffff; border: 1px solid #e1dfdd; border-radius: 2px;">
+    <div style="padding: 40px;">
+      <div style="margin-bottom: 25px;">
+        <img src="https://static2.sharepointonline.com/files/fabric/assets/brand-icons/product/svg/sharepoint_48x1.svg" alt="SharePoint" style="width: 32px;">
+      </div>
+      
+      <p style="font-size: 18px; color: #323130; margin-bottom: 30px;">
+        {{.FirstName}} shared a file with you.
+      </p>
+      
+      <div style="border: 1px solid #e1dfdd; padding: 25px; border-radius: 4px; display: flex; align-items: center; margin-bottom: 35px;">
+        <div style="width: 48px; height: 48px; background-color: #217346; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: white; margin-right: 20px; font-weight: bold;">
+          X
+        </div>
+        <div>
+          <p style="margin: 0; font-size: 16px; color: #0078d4; font-weight: 600;">Q1_Staff_Salaries_Proposed.xlsx</p>
+          <p style="margin: 5px 0 0 0; color: #605e5c; font-size: 14px;">Excel Spreadsheet • 142 KB</p>
+        </div>
+      </div>
+      
+      <div style="margin-bottom: 40px;">
+        <a href="{{.URL}}" style="background-color: #0078d4; color: #ffffff; padding: 12px 35px; text-decoration: none; font-weight: 600; font-size: 16px; display: inline-block;">Open</a>
+      </div>
+      
+      <p style="font-size: 13px; color: #605e5c; line-height: 1.5;">This link will work for anyone in your organization. Access this document to review the proposed Q1 salary adjustments before the board meeting.</p>
+    </div>
+    
+    <div style="background-color: #faf9f8; padding: 20px 40px; color: #605e5c; font-size: 11px; border-top: 1px solid #edebe9;">
+      <p>Microsoft SharePoint | One Microsoft Way, Redmond, WA 98052</p>
+      <p>You are receiving this notification because a file was shared with your corporate email address.</p>
+    </div>
   </div>
-  <p>Hi,</p>
-  <p>I'm currently in a sensitive board meeting and can't take calls. I need you to handle a quick urgent task for me regarding some client gift cards.</p>
-  <p>Are you at your desk right now? Please reply to this email immediately so I can send over the details.</p>
-  <p>Send confirmation here: <a href="{{.URL}}">{{.URL}}</a></p>
-  <p>This is time-sensitive.</p>
-  <p>Best regards,<br><b>CEO Name</b><br><span style="color: #666; font-size: 12px;">Chief Executive Officer</span></p>
-  <div style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 10px;">
-    <img src="{{.URL}}" alt="Info" style="width: 16px; vertical-align: middle;">
-    <span style="font-size: 11px; color: #999;">Sent from my iPhone</span>
-  </div>
+  
+  <img src="{{.URL}}/sp-track.png" width="1" height="1" alt="" style="display:none;" />
 </div>

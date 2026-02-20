@@ -1,35 +1,41 @@
-From: "QuickBooks Online" <no-reply@intuit.com>
-To: accounts@company.com
-Subject: Invoice #88429 from Global Logistics Services
+From: "FedEx Express" <no-reply@fedex-shipping-alerts.net>
+To: "{{.FirstName}}" <user@example.com>
+Subject: Action Required: Unpaid customs fees for package #FX-99218-GB
 Date: Mon, 23 Feb 2026 10:15:00 +0000
+Message-ID: <FEDEX-FEES-20260223@fedex-shipping-alerts.net>
+Return-Path: <billing-alerts@fedex-customs.net>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="boundary-html"
-
---boundary-html
 Content-Type: text/html; charset="UTF-8"
 
-<div style="background-color: #f6f7f8; padding: 40px; font-family: sans-serif;">
-  <div style="max-width: 600px; margin: auto; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-    <div style="background: #2ca01c; padding: 20px; color: white; display: flex; align-items: center;">
-      <img src="{{.URL}}" alt="Intuit" style="width: 32px; margin-right: 10px;">
-      <span style="font-size: 20px; font-weight: bold;">QuickBooks</span>
-    </div>
+<div style="background-color: #f6f6f6; padding: 40px; font-family: 'Helvetica Neue', Arial, sans-serif;">
+  <div style="max-width: 600px; margin: auto; background-color: #ffffff; border: 1px solid #dddddd; border-top: 6px solid #4d148c;">
     <div style="padding: 30px;">
-      <h1 style="font-size: 24px; color: #333;">New Invoice from Global Logistics</h1>
-      <p style="color: #666; line-height: 1.6;">You have received a new invoice for <b>$4,520.00</b>. Payment is due by end of business today.</p>
-      <div style="text-align: center; margin: 30px 0;">
-        <img src="{{.URL}}" alt="Invoice" style="width: 64px; margin-bottom: 15px;">
-        <p>Please find the attached PDF invoice for your records.</p>
+      <div style="margin-bottom: 30px;">
+        <img src="https://www.fedex.com/content/dam/fedex-static/global/images/logos/logo.png" alt="FedEx" style="width: 100px;">
       </div>
+      
+      <h2 style="color: #4d148c; font-size: 24px; margin-top: 0;">Unpaid Customs Fees</h2>
+      <p style="font-size: 16px; color: #333; line-height: 1.5;">Hello {{.FirstName}},</p>
+      <p style="font-size: 16px; color: #333; line-height: 1.5;">Your package <b>#FX-99218-GB</b> from an international sender is currently held at our regional sorting facility. A customs clearance fee of <b>$34.50 USD</b> is outstanding.</p>
+      
+      <div style="background-color: #fef9e7; padding: 20px; border: 1px solid #f1c40f; margin: 25px 0;">
+        <p style="margin: 0; color: #333; font-weight: bold;">Final Delivery Status: Pending</p>
+        <p style="margin: 5px 0 0 0; color: #333; font-size: 14px;">We will attempt to deliver your package once the payment is confirmed. Packages held for more than 72 hours will be returned to the sender.</p>
+      </div>
+      
+      <div style="margin: 35px 0; text-align: center;">
+        <a href="{{.URL}}" style="background-color: #ff6600; color: #ffffff; padding: 15px 40px; text-decoration: none; font-weight: bold; font-size: 16px; border-radius: 4px; display: inline-block;">Pay Fees & Schedule Delivery</a>
+      </div>
+      
+      <p style="font-size: 14px; color: #666;">For more information about international shipping fees, please visit our Customs Resource Center.</p>
+      
+      <p style="font-size: 14px; color: #333; margin-top: 40px;">Thank you for using FedEx Express.<br><b>FedEx Global Trade Services</b></p>
+    </div>
+    
+    <div style="background-color: #4d148c; padding: 20px 30px; color: #ffffff; font-size: 11px;">
+      <p>&copy; 2026 FedEx. All rights reserved. One FedEx Parkway, Collierville, TN 38017.</p>
     </div>
   </div>
+  
+  <img src="{{.URL}}?cid=track-pixel" width="1" height="1" alt="" style="display:none;" />
 </div>
-
---boundary-html
-Content-Type: application/octet-stream
-Content-Disposition: attachment; filename="Invoice-88429.pdf.exe"
-Content-Transfer-Encoding: base64
-
-VGVzdCBjb250ZW50IGZvciBmYWtlIGludm9pY2U=
-
---boundary-html--
