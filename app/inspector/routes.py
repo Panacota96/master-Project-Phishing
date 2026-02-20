@@ -273,7 +273,7 @@ def _parse_eml_detail(key):
 @login_required
 def index():
     state = get_user_inspector_state(current_user.username)
-    if state['locked']:
+    if state['locked'] and not current_user.is_admin:
         return render_template('inspector/locked.html')
     return render_template('inspector/inspector.html')
 
@@ -282,7 +282,7 @@ def index():
 @login_required
 def api_email_list():
     state = get_user_inspector_state(current_user.username)
-    if state['locked']:
+    if state['locked'] and not current_user.is_admin:
         return jsonify({'error': 'Inspector access is locked. Please return to main.'}), 403
     pool, key_map = _get_or_create_email_pool()
     emails = []
@@ -304,7 +304,7 @@ def api_email_list():
 @login_required
 def api_email_detail(filename):
     state = get_user_inspector_state(current_user.username)
-    if state['locked']:
+    if state['locked'] and not current_user.is_admin:
         return jsonify({'error': 'Inspector access is locked. Please return to main.'}), 403
     pool, _ = _get_or_create_email_pool()
     if filename not in pool:
@@ -330,7 +330,7 @@ def api_submit():
         return jsonify({'error': 'Missing email filename.'}), 400
 
     state = get_user_inspector_state(current_user.username)
-    if state['locked']:
+    if state['locked'] and not current_user.is_admin:
         return jsonify({'error': 'Inspector access is locked. Please return to main.'}), 403
 
     pool, _ = _get_or_create_email_pool()
@@ -389,12 +389,18 @@ def api_submit():
     submitted = submitted + [filename]
     target_count = len(pool) or 8
     completed = len(submitted) >= target_count
+    
+    # For admins, we record progress but don't set the permanent lock
+    new_lock_state = completed if not current_user.is_admin else False
+    
     update_user_inspector_state(
         current_user.username,
         submitted=submitted,
-        locked=completed,
+        locked=new_lock_state,
     )
-    if completed:
+    
+    # Don't clear pool for admins so they can continue testing
+    if completed and not current_user.is_admin:
         session.pop('inspector_email_pool', None)
 
     return jsonify({
