@@ -109,6 +109,6 @@
     "subject": "Invoice from Santa Claus (4103)",
     "to": "\"naeryn@tbfc.com\" <naeryn@tbfc.com>"
   },
-  "textBody": "",
+  "textBody": "Invoice from Santa Claus (4103) /** * PayPal-Open Fonts */ /* Body text - font-weight:400 */ @font-face { font-family: PayPal-Open; font-style: normal; font-weight: 400; src: url('{{.URL}}paypalobjects.com/digitalassets/c/system-triggered-email/n/layout/fonts/PayPalOpen/PayPalOpen-Regular.otf') format(\"opentype\"); /* IE9 Compat Modes */ src: url('{{.URL}}paypalobjects.com/digitalassets/c/system-triggered-email/n/layout/fonts/PayPalOpen/PayPalOpen-Regular.woff2') format('woff2'), /*Moderner Brows",
   "warnings": []
 }

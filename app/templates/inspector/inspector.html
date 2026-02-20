@@ -1042,9 +1042,20 @@
           ${classificationMarkup}
         `;
 
-        const iframe = emailDetailsContainer.querySelector("iframe.email-html");
         if (iframe && htmlBody) {
-          iframe.srcdoc = htmlBody;
+          let processedHtml = htmlBody;
+          if (!IS_ADMIN) {
+            // Strip phishing technique highlights for students
+            const tempDiv = document.createElement("div");
+            tempDiv.innerHTML = htmlBody;
+            tempDiv.querySelectorAll(".phish-technique").forEach((span) => {
+              // Replace span with its text content
+              const textNode = document.createTextNode(span.textContent);
+              span.parentNode.replaceChild(textNode, span);
+            });
+            processedHtml = tempDiv.innerHTML;
+          }
+          iframe.srcdoc = processedHtml;
         }
 
         setupClassificationForm(summary.fileName);

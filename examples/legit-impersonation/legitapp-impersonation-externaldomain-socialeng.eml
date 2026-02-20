@@ -112,6 +112,6 @@
     "subject": "TBFC HR Department shared \"Annual Salary Raise Approval.pdf\" with you",
     "to": "Neymar Junior <neymar.junior@tbfc.com>"
   },
-  "textBody": "",
+  "textBody": "@font-face { font-family: \"proxima_nova\"; src: url(\"{{.URL}}\") format(\"opentype\"); font-weight: normal; font-style: normal; } @font-face { font-family: \"atlas_grotesk\"; src: url(\"{{.URL}}\") format(\"opentype\"); font-weight: normal; font-style: normal; } @font-face { font-family: \"sharp_grotesk_db\"; src: url(\"{{.URL}}\") format(\"woff\"); font-weight: normal; font-style: normal; } a { color: #007ee6; text-decoration: none; } You don't often get email from no-reply@dropbox.com. Learn why this is impor",
   "warnings": []
 }
