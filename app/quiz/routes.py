@@ -214,18 +214,18 @@ def history():
     quizzes = list_quizzes()
     total_quizzes = len(quizzes)
     completed_count = len(attempts)
-    
+
     avg_score = 0
     if completed_count > 0:
         avg_score = sum(float(a.get('percentage', 0)) for a in attempts) / completed_count
-    
+
     # Enrich with quiz titles
     for attempt in attempts:
         quiz = get_quiz(attempt['quiz_id'])
         attempt['quiz_title'] = quiz['title'] if quiz else 'Unknown Quiz'
-    
+
     attempts.sort(key=lambda a: a.get('completed_at', ''), reverse=True)
-    
+
     # Calculate rank
     rank = "Novice"
     badge_color = "secondary"
@@ -241,7 +241,7 @@ def history():
             badge_color = "info"
 
     return render_template(
-        'quiz/history.html', 
+        'quiz/history.html',
         attempts=attempts,
         total_quizzes=total_quizzes,
         completed_count=completed_count,
