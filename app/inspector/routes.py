@@ -113,7 +113,7 @@ def _clean_placeholders(text):
     """Replace common phishing template placeholders with generic values."""
     if not text:
         return text
-    
+
     replacements = {
         # GoPhish / Template style
         r'\{\{\.FirstName\}\}': 'Valued',
@@ -121,19 +121,19 @@ def _clean_placeholders(text):
         r'\{\{\.Email\}\}': 'user@example.com',
         r'\{\{\.URL\}\}': 'https://example.com/secure-redirect-gateway',
         r'\{\{\.TrackingURL\}\}': 'https://example.com/pixel-tracker',
-        
+
         # Generic bracket style
         r'\[First Name\]': 'Customer',
         r'\[Last Name\]': 'Member',
         r'\[Company Name\]': 'Our Company',
-        
+
         # Python/Jinja style
         r'\{\{first_name\}\}': 'Valued',
         r'\{\{last_name\}\}': 'Customer',
         r'\{\{company_name\}\}': 'Our Company',
         r'\{\{email\}\}': 'user@example.com',
     }
-    
+
     for pattern, replacement in replacements.items():
         text = re.sub(pattern, replacement, text, flags=re.IGNORECASE)
     return text
