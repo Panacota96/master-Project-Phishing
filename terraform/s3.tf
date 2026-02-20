@@ -24,7 +24,24 @@ resource "aws_s3_bucket_public_access_block" "app" {
   bucket = aws_s3_bucket.app.id
 
   block_public_acls       = true
-  block_public_policy     = true
+  block_public_policy     = var.environment == "dev" ? false : true
   ignore_public_acls      = true
-  restrict_public_buckets = true
+  restrict_public_buckets = var.environment == "dev" ? false : true
+}
+
+resource "aws_s3_bucket_policy" "app_public_videos" {
+  count  = var.environment == "dev" ? 1 : 0
+  bucket = aws_s3_bucket.app.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid       = "PublicReadVideos"
+        Effect    = "Allow"
+        Principal = "*"
+        Action    = ["s3:GetObject"]
+        Resource  = ["${aws_s3_bucket.app.arn}/videos/*"]
+      }
+    ]
+  })
 }
