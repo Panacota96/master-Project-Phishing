@@ -17,6 +17,7 @@ Thank you for contributing to the Phishing Awareness Training project! This guid
 ## Testing Requirements
 All new features and bug fixes must be accompanied by relevant tests:
 - **Unit/Integration Tests**: Use `pytest` and `moto` for mocking AWS services.
+- **Inspector Parsing Tests**: Run `pytest tests/test_inspector_parsing.py` to verify all `.eml` samples are correctly viewed and placeholders cleaned.
 - **Run Tests**: Use `make test`.
 - **Validation**: For changes to `.eml` samples, run `make validate-eml`.
 

@@ -30,7 +30,10 @@ Gain insights into user performance and training effectiveness.
 Monitor how students classify and identify phishing signals in real-world emails.
 1. **Inspector Overview**: View the total number of classification attempts.
 2. **Signal Distribution**: See which phishing signals are most and least identified.
-3. **Reset Inspector Access**: If a student needs to retake the Inspector analysis, use the **Reset Access** button for that specific user or a bulk reset for a cohort.
+3. **Answer Key & Troubleshoot**: Use the **View Answer Key & Troubleshoot** button to see the ground-truth for all 98 emails.
+    - **Reference View**: See the correct classification (Spam/Phishing) and the 3 required signals for each file.
+    - **Live Preview**: Open a modal to view exactly how the Inspector parses and cleans (placeholders) each email for student training.
+4. **Reset Inspector Access**: If a student needs to retake the Inspector analysis, use the **Reset Access** button.
 
 ## ⚙️ 4. Operational Tasks
 - **Seeding**: For new environments, use `seed_dynamodb.py` to initialize default users and quizzes.
