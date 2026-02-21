@@ -1552,5 +1552,57 @@
         ]
       }
     ]
+  },
+  {
+    "quiz_id": "quiz-advanced-tactics",
+    "title": "Advanced Phishing Tactics",
+    "description": "Master the sophisticated techniques used by modern threat actors.",
+    "video_url": "/static/videos/advanced-tactics.mp4",
+    "questions": [
+      {
+        "question_id": "quiz-adv-q1",
+        "question_text": "You receive an email with no links or attachments, but it contains a tiny, 1x1 transparent image. What is its likely purpose?",
+        "explanation": "Pixel tracking allows attackers to verify your email is active and collect data like your IP address and device type.",
+        "answers": [
+          { "answer_id": "quiz-adv-q1a1", "answer_text": "To improve email loading speed", "is_correct": false },
+          { "answer_id": "quiz-adv-q1a2", "answer_text": "To 'fingerprint' your device and track when you open the email", "is_correct": true },
+          { "answer_id": "quiz-adv-q1a3", "answer_text": "To encrypt the message body", "is_correct": false },
+          { "answer_id": "quiz-adv-q1a4", "answer_text": "It is a technical error in the email client", "is_correct": false }
+        ]
+      },
+      {
+        "question_id": "quiz-adv-q2",
+        "question_text": "A suspicious email subject line begins with 'RE:' or 'FW:', appearing to be part of a past conversation. Why is this a red flag?",
+        "explanation": "Thread hijacking exploits psychological trust by making a malicious email look like a continuation of a legitimate thread.",
+        "answers": [
+          { "answer_id": "quiz-adv-q2a1", "answer_text": "It means the email was definitely sent by a colleague", "is_correct": false },
+          { "answer_id": "quiz-adv-q2a2", "answer_text": "It is a tactic to bypass your initial skepticism through false familiarity", "is_correct": true },
+          { "answer_id": "quiz-adv-q2a3", "answer_text": "It indicates the email is a formal corporate announcement", "is_correct": false },
+          { "answer_id": "quiz-adv-q2a4", "answer_text": "The sender is replying to a message you never sent", "is_correct": false }
+        ]
+      },
+      {
+        "question_id": "quiz-adv-q3",
+        "question_text": "Why might an advanced phisher include a small, subtle typo (like 'Microsof') only in the legal disclaimer at the bottom of a perfect email?",
+        "explanation": "Modern phishers avoid obvious errors in the pitch but use 'professional' flaws to make the email seem more 'human' and less automated.",
+        "answers": [
+          { "answer_id": "quiz-adv-q3a1", "answer_text": "Because they have poor grammar skills", "is_correct": false },
+          { "answer_id": "quiz-adv-q3a2", "answer_text": "To make the email appear more legitimate and less like a bot-generated template", "is_correct": true },
+          { "answer_id": "quiz-adv-q3a3", "answer_text": "To avoid being caught by spell-checkers", "is_correct": false },
+          { "answer_id": "quiz-adv-q3a4", "answer_text": "It is a secret code for other attackers", "is_correct": false }
+        ]
+      },
+      {
+        "question_id": "quiz-adv-q4",
+        "question_text": "What makes 'Quishing' (QR Phishing) particularly dangerous compared to standard link-based phishing?",
+        "explanation": "QR codes often redirect users to mobile devices where security controls are weaker and URLs are harder to inspect.",
+        "answers": [
+          { "answer_id": "quiz-adv-q4a1", "answer_text": "QR codes can only be scanned by secure devices", "is_correct": false },
+          { "answer_id": "quiz-adv-q4a2", "answer_text": "They bypass many email scanners and move the attack to less-protected mobile devices", "is_correct": true },
+          { "answer_id": "quiz-adv-q4a3", "answer_text": "Scanning a QR code always installs a virus immediately", "is_correct": false },
+          { "answer_id": "quiz-adv-q4a4", "answer_text": "QR codes are harder for phishers to generate than links", "is_correct": false }
+        ]
+      }
+    ]
   }
 ]
