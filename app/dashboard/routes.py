@@ -146,14 +146,14 @@ def risk_dashboard():
     # Risk Score Calculation (0-100, where 100 is high risk)
     # Factor 1: Signal Miss Rate (Students missing phishing indicators)
     # Factor 2: Quiz Failure Rate (Score < 70%)
-    
-    cohort_risk = {} # {(class, year, major): {signal_misses: 0, quiz_fails: 0, total_actions: 0}}
-    
+
+    cohort_risk = {}  # {(class, year, major): {signal_misses: 0, quiz_fails: 0, total_actions: 0}}
+
     for a in inspector_attempts:
         key = (a.get('class_name', 'unknown'), a.get('academic_year', 'unknown'), a.get('major', 'unknown'))
         if key not in cohort_risk:
             cohort_risk[key] = {'signal_misses': 0, 'quiz_fails': 0, 'total_actions': 0}
-        
+
         cohort_risk[key]['total_actions'] += 1
         if not a.get('is_correct'):
             cohort_risk[key]['signal_misses'] += 1
