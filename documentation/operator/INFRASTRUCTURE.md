@@ -24,26 +24,55 @@ architecture-beta
 ## AWS Resource Mapping
 Infrastructure is located in the `terraform/` directory.
 
-### Computing (Serverless)
+### 🏗️ Bootstrap (Initial Setup)
+Before deploying the main infrastructure, a bootstrap process (`terraform/bootstrap/`) is required to create:
+- **S3 Bucket**: For Terraform state storage.
+- **DynamoDB Table**: For Terraform state locking (`LockID`).
+
+### ⚡ Computing (Serverless)
 - **AWS Lambda**: Runs the Flask application (`lambda_handler.py`).
     - **Runtime**: `python3.12`.
     - **Memory**: `var.lambda_memory_size` (default: 512MB).
     - **Timeout**: `var.lambda_timeout` (default: 30s).
+    - **Environment Variables**:
+        - `FLASK_ENV`: Deployment environment (`dev`, `prod`).
+        - `SECRET_KEY`: Flask session signing key.
+        - `AWS_REGION_NAME`: Target region.
+        - `DYNAMODB_*`: Table names for Users, Quizzes, Attempts, etc.
+        - `S3_BUCKET`: Storage for EML samples.
 - **API Gateway (v2 HTTP API)**: Provides the public endpoint for the Lambda function.
+    - **Integration**: AWS Proxy to Lambda.
+    - **Logging**: Detailed request/response logs in CloudWatch.
 
-### NoSQL Database (DynamoDB)
+### 📊 NoSQL Database (DynamoDB)
 The following tables are created using the `PAY_PER_REQUEST` billing mode:
-- **`DYNAMODB_USERS`**: Hash key `username`. GSIs on `email` and `group`.
-- **`DYNAMODB_QUIZZES`**: Hash key `quiz_id`.
-- **`DYNAMODB_ATTEMPTS`**: Hash key `username`, Range key `quiz_id`. GSIs on `quiz_id` and `group`.
-- **`DYNAMODB_RESPONSES`**: Hash key `username_quiz_id`, Range key `question_id`. GSI on `quiz_question_id`.
-- **`DYNAMODB_INSPECTOR`**: Hash key `username`, Range key `submitted_at`. GSIs on `group` and `email_file`.
-- **`DYNAMODB_INSPECTOR_ANON`**: Hash key `attempt_id`, Range key `submitted_at`. GDPR-compliant.
-- **`DYNAMODB_BUGS`**: Hash key `bug_id`. Stores user-submitted bug reports.
+- **`DYNAMODB_USERS`**: 
+    - PK: `username`. 
+    - GSIs: `email-index` (hash: `email`), `group-index` (hash: `group`, range: `username`).
+- **`DYNAMODB_QUIZZES`**: 
+    - PK: `quiz_id`.
+- **`DYNAMODB_ATTEMPTS`**: 
+    - PK: `username`, SK: `quiz_id`. 
+    - GSIs: `quiz-index` (hash: `quiz_id`, range: `completed_at`), `group-index` (hash: `group`, range: `completed_at`).
+- **`DYNAMODB_RESPONSES`**: 
+    - PK: `username_quiz_id`, SK: `question_id`. 
+    - GSI: `quiz-question-index` (hash: `quiz_question_id`, range: `username`).
+- **`DYNAMODB_INSPECTOR`**: 
+    - PK: `username`, SK: `submitted_at`. 
+    - GSIs: `group-index` (hash: `group`, range: `submitted_at`), `email-index` (hash: `email_file`, range: `submitted_at`).
+- **`DYNAMODB_INSPECTOR_ANON`**: 
+    - PK: `attempt_id`, SK: `submitted_at`. 
+    - *Purpose*: GDPR-compliant anonymous tracking.
+- **`DYNAMODB_BUGS`**: 
+    - PK: `bug_id`.
 
-### Storage
-- **S3 Bucket**: Stores EML samples and Lambda deployment packages (`lambda.zip`).
-- **CloudWatch Logs**: Log Group `/aws/lambda/phishing-app-<env>-app` with 14-day retention.
+### 📂 Storage & Monitoring
+- **S3 Bucket**: Stores EML samples and Lambda deployment packages.
+    - *Feature*: Public read access to `/videos/*` enabled in `dev` for training content.
+- **CloudWatch Logs**: 
+    - `/aws/lambda/phishing-app-<env>-app`: App execution logs.
+    - `/aws/apigateway/phishing-app-<env>-api`: Access logs.
+    - Retention: 14 days.
 
 ## Configuration & Variables
 Managed in `terraform/variables.tf` and `terraform/env/*.tfvars`.
