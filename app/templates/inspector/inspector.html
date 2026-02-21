@@ -1042,6 +1042,7 @@
           ${classificationMarkup}
         `;
 
+        const iframe = emailDetailsContainer.querySelector("iframe.email-html");
         if (iframe && htmlBody) {
           let processedHtml = htmlBody;
           if (!IS_ADMIN) {
