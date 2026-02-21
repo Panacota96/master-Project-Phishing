@@ -32,42 +32,49 @@ THREAT_CACHE = {
     'timestamp': 0
 }
 
+
 @bp.route('/api/threat-feed')
 @login_required
 def api_threat_feed():
     """Fetch and defang real-time phishing URLs from OpenPhish."""
     if not current_user.is_admin:
         abort(403)
-        
+
     # Check cache (1 hour expiry)
     now = time.time()
     if now - THREAT_CACHE['timestamp'] < 3600 and THREAT_CACHE['data']:
         return jsonify(THREAT_CACHE['data'])
-        
+
     try:
         # OpenPhish free feed provides raw URLs
         resp = requests.get('https://openphish.com/feed.txt', timeout=5)
         if resp.status_code == 200:
-            urls = resp.text.splitlines()[:10] # Top 10 recent
+            urls = resp.text.splitlines()[:10]  # Top 10 recent
             defanged = []
             for u in urls:
-                if not u.strip(): continue
+                if not u.strip():
+                    continue
                 # Defang for safety
                 safe_url = u.replace('http', 'hxxp').replace('.', '[.]')
                 # Simple heuristic to guess target (very rough)
                 target = "Unknown"
-                if 'paypal' in u: target = "PayPal"
-                elif 'microsoft' in u or 'office365' in u: target = "Microsoft"
-                elif 'google' in u or 'gmail' in u: target = "Google"
-                elif 'amazon' in u: target = "Amazon"
-                elif 'apple' in u or 'icloud' in u: target = "Apple"
-                
+                if 'paypal' in u:
+                    target = "PayPal"
+                elif 'microsoft' in u or 'office365' in u:
+                    target = "Microsoft"
+                elif 'google' in u or 'gmail' in u:
+                    target = "Google"
+                elif 'amazon' in u:
+                    target = "Amazon"
+                elif 'apple' in u or 'icloud' in u:
+                    target = "Apple"
+
                 defanged.append({'target': target, 'url': safe_url})
-            
+
             THREAT_CACHE['data'] = defanged
             THREAT_CACHE['timestamp'] = now
             return jsonify(defanged)
-            
+
     except Exception as e:
         current_app.logger.error(f"Threat feed fetch failed: {e}")
 
