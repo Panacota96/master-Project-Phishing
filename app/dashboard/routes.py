@@ -70,8 +70,8 @@ def api_threat_feed():
             
     except Exception as e:
         current_app.logger.error(f"Threat feed fetch failed: {e}")
-        
-    return jsonify([]) # Return empty list on failure
+
+    return jsonify([])  # Return empty list on failure
 
 
 @bp.route('/users')
@@ -142,7 +142,7 @@ def risk_dashboard():
 
     inspector_attempts = list_inspector_attempts_anonymous()
     quiz_attempts = list_all_attempts()
-    
+
     # Risk Score Calculation (0-100, where 100 is high risk)
     # Factor 1: Signal Miss Rate (Students missing phishing indicators)
     # Factor 2: Quiz Failure Rate (Score < 70%)
