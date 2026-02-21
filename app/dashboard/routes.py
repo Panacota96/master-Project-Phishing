@@ -1,8 +1,9 @@
 import csv
 import io
 import time
-import requests
 from datetime import datetime, timezone
+
+import requests
 
 from flask import abort, current_app, flash, jsonify, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
