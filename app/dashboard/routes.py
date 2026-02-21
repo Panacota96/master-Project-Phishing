@@ -174,7 +174,7 @@ def risk_dashboard():
             miss_rate = (stats['signal_misses'] / stats['total_actions']) * 100
             fail_rate = (stats['quiz_fails'] / stats['total_actions']) * 100
             risk_score = round((miss_rate + fail_rate) / 2, 1)
-            
+
             risk_data.append({
                 'class_name': c,
                 'academic_year': y,
@@ -183,9 +183,9 @@ def risk_dashboard():
                 'label': f"{c} | {y} | {m}",
                 'level': 'High' if risk_score > 60 else 'Medium' if risk_score > 30 else 'Low'
             })
-            
+
     risk_data.sort(key=lambda x: x['risk_score'], reverse=True)
-    
+
     return render_template('admin/risk_dashboard.html', risk_data=risk_data)
 
 
