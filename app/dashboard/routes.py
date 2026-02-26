@@ -9,14 +9,18 @@ from flask import abort, current_app, flash, jsonify, redirect, render_template,
 from flask_login import current_user, login_required
 
 from app.dashboard import bp
-from app.inspector.answer_key import ANSWER_KEY
 from app.models import (
     count_users,
     create_bug_report,
+    create_user,
+    delete_answer_key_override,
     delete_user,
     get_distinct_cohorts,
+    get_distinct_facilities,
+    get_effective_answer_key,
     get_quiz,
     get_user,
+    get_user_by_email,
     list_all_users,
     list_all_attempts,
     list_attempts_by_quiz,
@@ -25,6 +29,7 @@ from app.models import (
     list_quizzes,
     reset_user_inspector_state,
     reset_users_inspector_state,
+    set_answer_key_override,
 )
 
 # Simple in-memory cache for threat feed
@@ -111,6 +116,52 @@ def remove_user(username):
     return redirect(url_for('dashboard.list_users'))
 
 
+@bp.route('/users/add', methods=['POST'])
+@login_required
+def add_user():
+    if not current_user.is_admin:
+        abort(403)
+
+    username = request.form.get('username', '').strip()
+    email = request.form.get('email', '').strip()
+    password = request.form.get('password', '').strip()
+    class_name = request.form.get('class_name', 'unknown').strip() or 'unknown'
+    academic_year = request.form.get('academic_year', 'unknown').strip() or 'unknown'
+    major = request.form.get('major', 'unknown').strip() or 'unknown'
+    facility = request.form.get('facility', 'unknown').strip() or 'unknown'
+    group = request.form.get('group', 'default').strip() or 'default'
+
+    if not username or not email or not password:
+        flash('Username, email, and password are required.', 'danger')
+        return redirect(url_for('dashboard.list_users'))
+
+    if get_user(username):
+        flash(f'Username "{username}" already exists.', 'danger')
+        return redirect(url_for('dashboard.list_users'))
+
+    if get_user_by_email(email):
+        flash(f'Email "{email}" is already in use.', 'danger')
+        return redirect(url_for('dashboard.list_users'))
+
+    try:
+        create_user(
+            username=username,
+            email=email,
+            password=password,
+            class_name=class_name,
+            academic_year=academic_year,
+            major=major,
+            facility=facility,
+            group=group,
+        )
+        flash(f'User "{username}" created successfully.', 'success')
+    except Exception as e:
+        current_app.logger.error(f'Failed to create user {username}: {e}')
+        flash('Failed to create user.', 'danger')
+
+    return redirect(url_for('dashboard.list_users'))
+
+
 @bp.route('/bugs')
 @login_required
 def list_bugs():
@@ -155,10 +206,15 @@ def risk_dashboard():
     # Factor 1: Signal Miss Rate (Students missing phishing indicators)
     # Factor 2: Quiz Failure Rate (Score < 70%)
 
-    cohort_risk = {}  # {(class, year, major): {signal_misses: 0, quiz_fails: 0, total_actions: 0}}
+    cohort_risk = {}  # {(class, year, major, facility): {signal_misses: 0, quiz_fails: 0, total_actions: 0}}
 
     for a in inspector_attempts:
-        key = (a.get('class_name', 'unknown'), a.get('academic_year', 'unknown'), a.get('major', 'unknown'))
+        key = (
+            a.get('class_name', 'unknown'),
+            a.get('academic_year', 'unknown'),
+            a.get('major', 'unknown'),
+            a.get('facility', 'unknown'),
+        )
         if key not in cohort_risk:
             cohort_risk[key] = {'signal_misses': 0, 'quiz_fails': 0, 'total_actions': 0}
 
@@ -167,7 +223,12 @@ def risk_dashboard():
             cohort_risk[key]['signal_misses'] += 1
 
     for a in quiz_attempts:
-        key = (a.get('class_name', 'unknown'), a.get('academic_year', 'unknown'), a.get('major', 'unknown'))
+        key = (
+            a.get('class_name', 'unknown'),
+            a.get('academic_year', 'unknown'),
+            a.get('major', 'unknown'),
+            a.get('facility', 'unknown'),
+        )
         if key not in cohort_risk:
             cohort_risk[key] = {'signal_misses': 0, 'quiz_fails': 0, 'total_actions': 0}
 
@@ -176,7 +237,7 @@ def risk_dashboard():
             cohort_risk[key]['quiz_fails'] += 1
 
     risk_data = []
-    for (c, y, m), stats in cohort_risk.items():
+    for (c, y, m, f), stats in cohort_risk.items():
         if stats['total_actions'] > 0:
             # Risk = Average of (miss rate + fail rate)
             miss_rate = (stats['signal_misses'] / stats['total_actions']) * 100
@@ -187,8 +248,9 @@ def risk_dashboard():
                 'class_name': c,
                 'academic_year': y,
                 'major': m,
+                'facility': f,
                 'risk_score': risk_score,
-                'label': f"{c} | {y} | {m}",
+                'label': f"{c} | {y} | {m} | {f}",
                 'level': 'High' if risk_score > 60 else 'Medium' if risk_score > 30 else 'Low'
             })
 
@@ -203,17 +265,53 @@ def inspector_answer_key():
     if not current_user.is_admin:
         abort(403)
 
-    # Format answer key for template
-    sorted_keys = sorted(ANSWER_KEY.keys())
+    from app.models import get_answer_key_overrides
+    overrides = get_answer_key_overrides()
+    effective = get_effective_answer_key()
+
+    sorted_keys = sorted(effective.keys())
     items = []
     for filename in sorted_keys:
+        entry = effective[filename]
         items.append({
             'filename': filename,
-            'classification': ANSWER_KEY[filename]['classification'],
-            'signals': ANSWER_KEY[filename]['signals']
+            'classification': entry['classification'],
+            'signals': entry.get('signals', []),
+            'explanation': entry.get('explanation', ''),
+            'has_override': filename in overrides,
         })
 
     return render_template('admin/inspector_answer_key.html', items=items)
+
+
+@bp.route('/inspector/answer-key/edit', methods=['POST'])
+@login_required
+def edit_answer_key():
+    if not current_user.is_admin:
+        abort(403)
+    email_file = request.form.get('email_file', '').strip()
+    classification = request.form.get('classification', '').strip()
+    signals_raw = request.form.get('signals', '').strip()
+    explanation = request.form.get('explanation', '').strip()
+
+    if not email_file or classification not in ('Phishing', 'Spam'):
+        return jsonify({'error': 'Invalid input.'}), 400
+
+    signals = [s.strip() for s in signals_raw.split(',') if s.strip()] if signals_raw else []
+    set_answer_key_override(email_file, classification, signals, explanation)
+    return jsonify({'success': True})
+
+
+@bp.route('/inspector/answer-key/reset', methods=['POST'])
+@login_required
+def reset_answer_key():
+    if not current_user.is_admin:
+        abort(403)
+    email_file = request.form.get('email_file', '').strip()
+    if not email_file:
+        return jsonify({'error': 'email_file is required.'}), 400
+    delete_answer_key_override(email_file)
+    return jsonify({'success': True})
 
 
 @bp.route('/')
@@ -265,29 +363,31 @@ def index():
             avg = 0
         quiz_stats.append({'title': quiz['title'], 'count': count, 'avg': avg})
 
-    # Cohort stats (class/year/major)
+    # Cohort stats (class/year/major/facility)
     cohort_stats = {}
     for attempt in attempts:
         class_name = attempt.get('class_name', 'unknown')
         academic_year = attempt.get('academic_year', 'unknown')
         major = attempt.get('major', 'unknown')
-        key = (class_name, academic_year, major)
+        facility = attempt.get('facility', 'unknown')
+        key = (class_name, academic_year, major, facility)
         if key not in cohort_stats:
             cohort_stats[key] = {'count': 0, 'total_pct': 0.0}
         cohort_stats[key]['count'] += 1
         cohort_stats[key]['total_pct'] += float(attempt.get('percentage', 0))
 
     group_stats = []
-    for (class_name, academic_year, major), stats in cohort_stats.items():
+    for (class_name, academic_year, major, facility), stats in cohort_stats.items():
         count = stats['count']
         avg = round(stats['total_pct'] / count, 1) if count > 0 else 0
         group_stats.append({
             'class_name': class_name,
             'academic_year': academic_year,
             'major': major,
+            'facility': facility,
             'count': count,
             'avg': avg,
-            'label': f'{class_name} | {academic_year} | {major}',
+            'label': f'{class_name} | {academic_year} | {major} | {facility}',
         })
 
     # Inspector analytics
@@ -406,11 +506,13 @@ def reports():
     classes = sorted({c[0] for c in cohorts})
     years = sorted({c[1] for c in cohorts})
     majors = sorted({c[2] for c in cohorts})
+    facilities = get_distinct_facilities()
     return render_template(
         'admin/reports.html',
         classes=classes,
         years=years,
         majors=majors,
+        facilities=facilities,
     )
 
 
@@ -427,11 +529,13 @@ def inspector_analytics():
     years = sorted({a.get('academic_year', 'unknown') for a in attempts_sorted})
     majors = sorted({a.get('major', 'unknown') for a in attempts_sorted})
     emails = sorted({a.get('email_file', '') for a in attempts_sorted if a.get('email_file')})
+    facilities = get_distinct_facilities()
 
     selected_class = request.args.get('class_name', '')
     selected_year = request.args.get('academic_year', '')
     selected_major = request.args.get('major', '')
     selected_email = request.args.get('email', '')
+    selected_facility = request.args.get('facility', '')
     date_from = request.args.get('date_from', '').strip()
     date_to = request.args.get('date_to', '').strip()
     sort_by = request.args.get('sort_by', 'attempts')
@@ -447,6 +551,8 @@ def inspector_analytics():
         filtered = [a for a in filtered if a.get('major', 'unknown') == selected_major]
     if selected_email:
         filtered = [a for a in filtered if a.get('email_file') == selected_email]
+    if selected_facility:
+        filtered = [a for a in filtered if a.get('facility', 'unknown') == selected_facility]
 
     if date_from or date_to:
         def parse_date(value, end_of_day=False):
@@ -481,6 +587,7 @@ def inspector_analytics():
             a.get('class_name', 'unknown'),
             a.get('academic_year', 'unknown'),
             a.get('major', 'unknown'),
+            a.get('facility', 'unknown'),
         )
         if key not in aggregated:
             aggregated[key] = {'attempts': 0, 'correct': 0, 'phishing': 0, 'spam': 0}
@@ -493,13 +600,14 @@ def inspector_analytics():
             aggregated[key]['spam'] += 1
 
     aggregated_rows = []
-    for (class_name, academic_year, major), stats in aggregated.items():
+    for (class_name, academic_year, major, facility), stats in aggregated.items():
         attempts_count = stats['attempts']
         correct_pct = round((stats['correct'] / attempts_count * 100), 1) if attempts_count > 0 else 0
         aggregated_rows.append({
             'class_name': class_name,
             'academic_year': academic_year,
             'major': major,
+            'facility': facility,
             'attempts': attempts_count,
             'correct': stats['correct'],
             'correct_pct': correct_pct,
@@ -511,6 +619,7 @@ def inspector_analytics():
         'class_name': lambda a: a.get('class_name', ''),
         'academic_year': lambda a: a.get('academic_year', ''),
         'major': lambda a: a.get('major', ''),
+        'facility': lambda a: a.get('facility', ''),
         'attempts': lambda a: a.get('attempts', 0),
         'correct_pct': lambda a: a.get('correct_pct', 0),
         'phishing': lambda a: a.get('phishing', 0),
@@ -560,10 +669,12 @@ def inspector_analytics():
         years=years,
         majors=majors,
         emails=emails,
+        facilities=facilities,
         selected_class=selected_class,
         selected_year=selected_year,
         selected_major=selected_major,
         selected_email=selected_email,
+        selected_facility=selected_facility,
         date_from=date_from,
         date_to=date_to,
         sort_by=sort_by,
@@ -602,6 +713,7 @@ def reset_inspector_bulk():
     class_filter = request.form.get('class_name', '').strip()
     year_filter = request.form.get('academic_year', '').strip()
     major_filter = request.form.get('major', '').strip()
+    facility_filter = request.form.get('facility', '').strip()
 
     users = list_all_users()
     filtered_users = []
@@ -614,6 +726,8 @@ def reset_inspector_bulk():
             if year_filter and user.academic_year != year_filter:
                 continue
             if major_filter and user.major != major_filter:
+                continue
+            if facility_filter and user.facility != facility_filter:
                 continue
         filtered_users.append(user.username)
 
@@ -639,6 +753,7 @@ def generate_report():
     class_filter = request.form.get('class_name', '').strip()
     year_filter = request.form.get('academic_year', '').strip()
     major_filter = request.form.get('major', '').strip()
+    facility_filter = request.form.get('facility', '').strip()
 
     attempts = list_all_attempts()
     if class_filter:
@@ -647,6 +762,8 @@ def generate_report():
         attempts = [a for a in attempts if a.get('academic_year') == year_filter]
     if major_filter:
         attempts = [a for a in attempts if a.get('major') == major_filter]
+    if facility_filter:
+        attempts = [a for a in attempts if a.get('facility') == facility_filter]
 
     # Enrich with quiz titles
     for a in attempts:
@@ -658,42 +775,44 @@ def generate_report():
     if report_type == 'detailed':
         # Detailed: per-cohort per-quiz
         writer = csv.writer(output)
-        writer.writerow(['Class', 'Academic Year', 'Major', 'Quiz', 'Attempts', 'Average Score (%)'])
+        writer.writerow(['Class', 'Academic Year', 'Major', 'Facility', 'Quiz', 'Attempts', 'Average Score (%)'])
         grouped = {}
         for a in attempts:
             key = (
                 a.get('class_name', 'unknown'),
                 a.get('academic_year', 'unknown'),
                 a.get('major', 'unknown'),
+                a.get('facility', 'unknown'),
                 a.get('quiz_title', 'Unknown'),
             )
             if key not in grouped:
                 grouped[key] = {'count': 0, 'total_pct': 0.0}
             grouped[key]['count'] += 1
             grouped[key]['total_pct'] += float(a.get('percentage', 0))
-        for (class_name, academic_year, major, quiz_title), stats in grouped.items():
+        for (class_name, academic_year, major, facility, quiz_title), stats in grouped.items():
             count = stats['count']
             avg = round(stats['total_pct'] / count, 1) if count > 0 else 0
-            writer.writerow([class_name, academic_year, major, quiz_title, count, avg])
+            writer.writerow([class_name, academic_year, major, facility, quiz_title, count, avg])
     else:
         # Summary: cohort averages
         writer = csv.writer(output)
-        writer.writerow(['Class', 'Academic Year', 'Major', 'Attempts', 'Average Score (%)'])
+        writer.writerow(['Class', 'Academic Year', 'Major', 'Facility', 'Attempts', 'Average Score (%)'])
         grouped = {}
         for a in attempts:
             key = (
                 a.get('class_name', 'unknown'),
                 a.get('academic_year', 'unknown'),
                 a.get('major', 'unknown'),
+                a.get('facility', 'unknown'),
             )
             if key not in grouped:
                 grouped[key] = {'count': 0, 'total_pct': 0.0}
             grouped[key]['count'] += 1
             grouped[key]['total_pct'] += float(a.get('percentage', 0))
-        for (class_name, academic_year, major), stats in grouped.items():
+        for (class_name, academic_year, major, facility), stats in grouped.items():
             count = stats['count']
             avg = round(stats['total_pct'] / count, 1) if count > 0 else 0
-            writer.writerow([class_name, academic_year, major, count, avg])
+            writer.writerow([class_name, academic_year, major, facility, count, avg])
 
     # Upload to S3
     now = datetime.now(timezone.utc).strftime('%Y-%m-%d_%H%M%S')
@@ -728,6 +847,7 @@ def generate_inspector_report():
         class_filter = request.form.get('class_name', '').strip()
         year_filter = request.form.get('academic_year', '').strip()
         major_filter = request.form.get('major', '').strip()
+        facility_filter = request.form.get('facility', '').strip()
         email_filter = request.form.get('email', '')
         date_from = request.form.get('date_from', '').strip()
         date_to = request.form.get('date_to', '').strip()
@@ -740,6 +860,8 @@ def generate_inspector_report():
             attempts = [a for a in attempts if a.get('academic_year') == year_filter]
         if major_filter:
             attempts = [a for a in attempts if a.get('major') == major_filter]
+        if facility_filter:
+            attempts = [a for a in attempts if a.get('facility') == facility_filter]
         if email_filter:
             attempts = [a for a in attempts if a.get('email_file') == email_filter]
         if date_from or date_to:
@@ -775,6 +897,7 @@ def generate_inspector_report():
             'Class',
             'Academic Year',
             'Major',
+            'Facility',
         ]
         if report_scope != 'cohort':
             header.append('Email')
@@ -792,6 +915,7 @@ def generate_inspector_report():
                 a.get('class_name', 'unknown'),
                 a.get('academic_year', 'unknown'),
                 a.get('major', 'unknown'),
+                a.get('facility', 'unknown'),
             ]
             if report_scope != 'cohort':
                 key_parts.append(a.get('email_file', 'unknown'))
@@ -807,13 +931,13 @@ def generate_inspector_report():
                 grouped[key]['spam'] += 1
         for key, stats in grouped.items():
             if report_scope == 'cohort':
-                class_name, academic_year, major = key
+                class_name, academic_year, major, facility = key
                 email_file = None
             else:
-                class_name, academic_year, major, email_file = key
+                class_name, academic_year, major, facility, email_file = key
             count = stats['count']
             correct_pct = round((stats['correct'] / count * 100), 1) if count > 0 else 0
-            row = [class_name, academic_year, major]
+            row = [class_name, academic_year, major, facility]
             if report_scope != 'cohort':
                 row.append(email_file)
             row += [

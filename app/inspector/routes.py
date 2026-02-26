@@ -8,9 +8,9 @@ from flask import current_app, jsonify, render_template, request, session
 from flask_login import current_user, login_required
 
 from app.inspector import bp
-from app.inspector.answer_key import ANSWER_KEY
 from app.models import (
     create_inspector_attempt_anonymous,
+    get_effective_answer_key,
     get_user_inspector_state,
     update_user_inspector_state,
 )
@@ -48,12 +48,13 @@ def _get_or_create_email_pool():
     if pool and all(name in key_map for name in pool):
         return pool, key_map
 
-    filenames = [name for name in key_map.keys() if name in ANSWER_KEY]
+    answer_key = get_effective_answer_key()
+    filenames = [name for name in key_map.keys() if name in answer_key]
     if not filenames:
         session['inspector_email_pool'] = []
         return [], key_map
 
-    spam_files = [name for name in filenames if ANSWER_KEY.get(name, {}).get('classification') == 'Spam']
+    spam_files = [name for name in filenames if answer_key.get(name, {}).get('classification') == 'Spam']
     phishing_files = [name for name in filenames if name not in spam_files]
 
     spam_max = min(3, len(spam_files))
@@ -313,7 +314,14 @@ def api_email_detail(filename):
     if not key:
         return jsonify({'error': 'Email not found'}), 404
     try:
-        return jsonify(_parse_eml_detail(key))
+        detail = _parse_eml_detail(key)
+        answer_key = get_effective_answer_key()
+        requirement = answer_key.get(filename, {})
+        if requirement.get('classification') == 'Phishing':
+            detail['requiredSignals'] = len(requirement.get('signals', []))
+        else:
+            detail['requiredSignals'] = 0
+        return jsonify(detail)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
@@ -341,7 +349,7 @@ def api_submit():
     if filename in submitted:
         return jsonify({'error': 'Answer already submitted for this email.'}), 409
 
-    requirement = ANSWER_KEY.get(filename)
+    requirement = get_effective_answer_key().get(filename)
     if not requirement:
         return jsonify({'error': 'No answer key defined for this email.'}), 400
 
@@ -349,8 +357,9 @@ def api_submit():
         return jsonify({'error': 'Select either Spam or Phishing.'}), 400
 
     if classification == 'Phishing':
-        if len(selected_signals) != 3:
-            return jsonify({'error': 'Select exactly three phishing signals.'}), 400
+        expected_count = len(requirement.get('signals', []))
+        if len(selected_signals) != expected_count:
+            return jsonify({'error': f'Select exactly {expected_count} phishing signal(s).'}), 400
     else:
         if selected_signals:
             return jsonify({'error': 'Spam classifications should not include phishing signals.'}), 400

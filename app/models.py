@@ -28,7 +28,8 @@ class User(UserMixin):
 
     def __init__(self, username, email, password_hash, is_admin=False,
                  group='default', quiz_completed=False, created_at=None,
-                 class_name='unknown', academic_year='unknown', major='unknown'):
+                 class_name='unknown', academic_year='unknown', major='unknown',
+                 facility='unknown'):
         self.username = username
         self.email = email
         self.password_hash = password_hash
@@ -39,6 +40,7 @@ class User(UserMixin):
         self.class_name = class_name
         self.academic_year = academic_year
         self.major = major
+        self.facility = facility
 
     # Flask-Login requires get_id(); we use username as the identifier
     def get_id(self):
@@ -62,6 +64,7 @@ class User(UserMixin):
             'class_name': self.class_name,
             'academic_year': self.academic_year,
             'major': self.major,
+            'facility': self.facility,
         }
 
     @classmethod
@@ -79,6 +82,7 @@ class User(UserMixin):
             class_name=item.get('class_name', 'unknown'),
             academic_year=item.get('academic_year', 'unknown'),
             major=item.get('major', 'unknown'),
+            facility=item.get('facility', 'unknown'),
         )
 
 
@@ -116,6 +120,7 @@ def create_user(
     class_name='unknown',
     academic_year='unknown',
     major='unknown',
+    facility='unknown',
 ):
     table = _get_table('DYNAMODB_USERS')
     user = User(
@@ -127,6 +132,7 @@ def create_user(
         class_name=class_name,
         academic_year=academic_year,
         major=major,
+        facility=facility,
     )
     table.put_item(Item=user.to_dynamo())
     return user
@@ -134,7 +140,8 @@ def create_user(
 
 def batch_create_users(users_list):
     """Write multiple users to DynamoDB in batch.
-    users_list: list of dicts with keys username, email, password, group, class_name, academic_year, major.
+    users_list: list of dicts with keys username, email, password, group, class_name,
+    academic_year, major, facility.
     Returns (created_count, skipped_usernames).
     """
     table = _get_table('DYNAMODB_USERS')
@@ -161,6 +168,7 @@ def batch_create_users(users_list):
                 class_name=u.get('class_name', 'unknown'),
                 academic_year=u.get('academic_year', 'unknown'),
                 major=u.get('major', 'unknown'),
+                facility=u.get('facility', 'unknown'),
             )
             batch.put_item(Item=user.to_dynamo())
             created += 1
@@ -200,6 +208,12 @@ def get_distinct_cohorts():
     users = list_all_users()
     cohorts = {(u.class_name, u.academic_year, u.major) for u in users}
     return sorted(cohorts)
+
+
+def get_distinct_facilities():
+    """Return a sorted list of unique facility names."""
+    users = list_all_users()
+    return sorted({u.facility for u in users})
 
 
 def mark_quiz_completed(username):
@@ -518,6 +532,46 @@ def count_inspector_attempts_anonymous():
     table = _get_table('DYNAMODB_INSPECTOR_ANON')
     resp = table.scan(Select='COUNT')
     return resp['Count']
+
+
+# ─── Answer Key Overrides ────────────────────────────────────────────────────
+
+def get_answer_key_overrides():
+    """Return all admin-written answer key overrides keyed by email_file."""
+    table = _get_table('DYNAMODB_ANSWER_KEY_OVERRIDES')
+    resp = table.scan()
+    return {item['email_file']: item for item in resp.get('Items', [])}
+
+
+def get_effective_answer_key():
+    """Merge static ANSWER_KEY with DynamoDB overrides (overrides win)."""
+    from app.inspector.answer_key import ANSWER_KEY
+    overrides = get_answer_key_overrides()
+    merged = dict(ANSWER_KEY)
+    for email_file, override in overrides.items():
+        merged[email_file] = {
+            'classification': override['classification'],
+            'signals': list(override.get('signals', [])),
+            'explanation': override.get('explanation', ''),
+        }
+    return merged
+
+
+def set_answer_key_override(email_file, classification, signals, explanation=''):
+    """Write or update an admin override for an email's answer key entry."""
+    table = _get_table('DYNAMODB_ANSWER_KEY_OVERRIDES')
+    table.put_item(Item={
+        'email_file': email_file,
+        'classification': classification,
+        'signals': signals,
+        'explanation': explanation,
+    })
+
+
+def delete_answer_key_override(email_file):
+    """Remove an override, reverting to the static answer_key.py baseline."""
+    table = _get_table('DYNAMODB_ANSWER_KEY_OVERRIDES')
+    table.delete_item(Key={'email_file': email_file})
 
 
 # ─── Bug Report CRUD ─────────────────────────────────────────────────────────

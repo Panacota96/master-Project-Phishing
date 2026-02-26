@@ -30,6 +30,7 @@ def aws_env(monkeypatch):
     monkeypatch.setenv('DYNAMODB_RESPONSES', 'test-responses')
     monkeypatch.setenv('DYNAMODB_INSPECTOR', 'test-inspector')
     monkeypatch.setenv('DYNAMODB_INSPECTOR_ANON', 'test-inspector-anon')
+    monkeypatch.setenv('DYNAMODB_ANSWER_KEY_OVERRIDES', 'test-answer-key-overrides')
     monkeypatch.setenv('S3_BUCKET', 'test-bucket')
 
 
@@ -179,6 +180,14 @@ def _create_dynamodb_tables(region='eu-west-3'):
             {'AttributeName': 'attempt_id', 'AttributeType': 'S'},
             {'AttributeName': 'submitted_at', 'AttributeType': 'S'},
         ],
+        BillingMode='PAY_PER_REQUEST',
+    )
+
+    # Answer key overrides table
+    dynamodb.create_table(
+        TableName='test-answer-key-overrides',
+        KeySchema=[{'AttributeName': 'email_file', 'KeyType': 'HASH'}],
+        AttributeDefinitions=[{'AttributeName': 'email_file', 'AttributeType': 'S'}],
         BillingMode='PAY_PER_REQUEST',
     )
 

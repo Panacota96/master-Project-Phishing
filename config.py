@@ -16,6 +16,10 @@ class Config:
         'phishing-app-prod-inspector-attempts-anon',
     )
     DYNAMODB_BUGS = os.environ.get('DYNAMODB_BUGS', 'phishing-app-prod-bugs')
+    DYNAMODB_ANSWER_KEY_OVERRIDES = os.environ.get(
+        'DYNAMODB_ANSWER_KEY_OVERRIDES',
+        'phishing-app-prod-answer-key-overrides',
+    )
 
     # S3
     S3_BUCKET = os.environ.get('S3_BUCKET', 'phishing-app-prod-eu-west-3')

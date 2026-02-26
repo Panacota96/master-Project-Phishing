@@ -15,20 +15,25 @@
                     <tr>
                         <th>Filename</th>
                         <th>Ground Truth Classification</th>
-                        <th>Required Phishing Signals (3)</th>
+                        <th>Required Signals</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for item in items %}
-                    <tr>
-                        <td><code>{{ item.filename }}</code></td>
+                    <tr id="row-{{ loop.index }}">
                         <td>
-                            <span class="badge {% if item.classification == 'Phishing' %}bg-danger{% else %}bg-info{% endif %}">
+                            <code>{{ item.filename }}</code>
+                            {% if item.has_override %}
+                            <span class="badge bg-warning text-dark ms-1" title="Admin override active">overridden</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="badge {% if item.classification == 'Phishing' %}bg-danger{% else %}bg-info{% endif %}" id="cls-badge-{{ loop.index }}">
                                 {{ item.classification }}
                             </span>
                         </td>
-                        <td>
+                        <td id="signals-cell-{{ loop.index }}">
                             {% if item.signals %}
                                 {% for s in item.signals %}
                                 <span class="badge bg-secondary">{{ s }}</span>
@@ -38,11 +43,20 @@
                             {% endif %}
                         </td>
                         <td>
-                            <button class="btn btn-sm btn-outline-primary preview-btn" 
+                            <button class="btn btn-sm btn-outline-primary preview-btn me-1"
                                     data-filename="{{ item.filename }}"
                                     data-classification="{{ item.classification }}"
                                     data-signals="{{ item.signals|join(', ') }}">
-                                Preview & Troubleshoot
+                                Preview &amp; Troubleshoot
+                            </button>
+                            <button class="btn btn-sm btn-outline-warning edit-btn"
+                                    data-filename="{{ item.filename }}"
+                                    data-classification="{{ item.classification }}"
+                                    data-signals="{{ item.signals|join(',') }}"
+                                    data-explanation="{{ item.explanation | e }}"
+                                    data-has-override="{{ 'true' if item.has_override else 'false' }}"
+                                    data-row="{{ loop.index }}">
+                                Edit
                             </button>
                         </td>
                     </tr>
@@ -63,7 +77,7 @@
             </div>
             <div class="modal-body">
                 <div id="previewStatus" class="alert alert-info py-2 small mb-3">
-                    <strong>Ground Truth:</strong> <span id="truthClass"></span> | 
+                    <strong>Ground Truth:</strong> <span id="truthClass"></span> |
                     <strong>Key Signals:</strong> <span id="truthSignals"></span>
                 </div>
                 <div id="previewContent">
@@ -76,8 +90,72 @@
     </div>
 </div>
 
+<!-- Modal for Editing Answer Key Entry -->
+<div class="modal fade" id="editAnswerKeyModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Answer Key: <span id="editFilename"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="editAlertArea"></div>
+                <form id="editAnswerKeyForm">
+                    <input type="hidden" id="editEmailFile" name="email_file" />
+                    <input type="hidden" id="editRowIndex" />
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Classification</label>
+                        <div class="d-flex gap-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="classification" id="editClsPhishing" value="Phishing" />
+                                <label class="form-check-label text-danger fw-semibold" for="editClsPhishing">Phishing</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="classification" id="editClsSpam" value="Spam" />
+                                <label class="form-check-label text-info fw-semibold" for="editClsSpam">Spam</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3" id="signalsSection">
+                        <label class="form-label fw-semibold">Phishing Signals</label>
+                        <div class="row g-2">
+                            {% set all_signals = ['impersonation', 'punycode', 'externaldomain', 'spoof', 'socialeng', 'urgency', 'fakeinvoice', 'attachment', 'fakelogin', 'sidechannel'] %}
+                            {% for sig in all_signals %}
+                            <div class="col-6 col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input signal-checkbox" type="checkbox"
+                                           id="editSig-{{ sig }}" value="{{ sig }}" />
+                                    <label class="form-check-label" for="editSig-{{ sig }}">{{ sig }}</label>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" for="editExplanation">Explanation <span class="text-muted fw-normal">(shown to student after submit)</span></label>
+                        <textarea class="form-control" id="editExplanation" name="explanation" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer d-flex justify-content-between">
+                <button type="button" class="btn btn-outline-danger" id="resetToDefaultBtn" style="display:none!important">
+                    Reset to Default
+                </button>
+                <div class="ms-auto">
+                    <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-warning" id="saveAnswerKeyBtn">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+    // ── Preview modal ────────────────────────────────────────────────────────
     const previewModal = new bootstrap.Modal(document.getElementById('emailPreviewModal'));
     const previewTitle = document.getElementById('previewTitle');
     const truthClass = document.getElementById('truthClass');
@@ -94,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
             truthClass.textContent = classification;
             truthClass.className = `badge ${classification === 'Phishing' ? 'bg-danger' : 'bg-info'}`;
             truthSignals.textContent = signals || 'None (Spam)';
-            
+
             previewContent.innerHTML = '<div class="text-center p-5"><div class="spinner-border text-primary" role="status"></div></div>';
             previewModal.show();
 
@@ -102,7 +180,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const resp = await fetch(`/inspector/api/emails/${encodeURIComponent(filename)}`);
                 const data = await resp.json();
                 if (!resp.ok) throw new Error(data.error || 'Failed to fetch details');
-                
                 renderPreview(data);
             } catch (err) {
                 previewContent.innerHTML = `<div class="alert alert-danger">${err.message}</div>`;
@@ -112,7 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderPreview(data) {
         const { summary, headers, textBody, htmlBody, links, attachments, warnings } = data;
-        
+
         let warningsHtml = '';
         if (warnings && warnings.length > 0) {
             warningsHtml = `
@@ -179,7 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <strong>Date:</strong> ${summary.date}
                 </div>
             </div>
-            
+
             <ul class="nav nav-tabs nav-fill mb-3" id="previewTabs" role="tablist">
                 <li class="nav-item"><button class="nav-link active py-1" data-bs-toggle="tab" data-bs-target="#tab-html" type="button">HTML</button></li>
                 <li class="nav-item"><button class="nav-link py-1" data-bs-toggle="tab" data-bs-target="#tab-text" type="button">Plain Text</button></li>
@@ -189,8 +266,8 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="tab-html">
                     <div class="border rounded bg-white p-1" style="min-height: 400px;">
-                        <iframe srcdoc="${htmlBody.replace(/"/g, '&quot;')}" 
-                            sandbox="allow-same-origin" 
+                        <iframe srcdoc="${htmlBody.replace(/"/g, '&quot;')}"
+                            sandbox="allow-same-origin"
                             style="width: 100%; height: 500px; border: none;">
                         </iframe>
                     </div>
@@ -206,6 +283,193 @@ document.addEventListener('DOMContentLoaded', () => {
             ${attachmentsHtml}
             ${linksHtml}
         `;
+    }
+
+    // ── Edit modal ───────────────────────────────────────────────────────────
+    const editModal = new bootstrap.Modal(document.getElementById('editAnswerKeyModal'));
+    const editFilenameEl = document.getElementById('editFilename');
+    const editEmailFileInput = document.getElementById('editEmailFile');
+    const editRowIndexInput = document.getElementById('editRowIndex');
+    const editExplanationEl = document.getElementById('editExplanation');
+    const signalsSection = document.getElementById('signalsSection');
+    const resetBtn = document.getElementById('resetToDefaultBtn');
+    const saveBtn = document.getElementById('saveAnswerKeyBtn');
+    const alertArea = document.getElementById('editAlertArea');
+    const classificationRadios = document.querySelectorAll('input[name="classification"]');
+    const signalCheckboxes = document.querySelectorAll('.signal-checkbox');
+
+    function showSignalsSection(visible) {
+        signalsSection.style.display = visible ? '' : 'none';
+        if (!visible) {
+            signalCheckboxes.forEach(cb => { cb.checked = false; });
+        }
+    }
+
+    classificationRadios.forEach(radio => {
+        radio.addEventListener('change', () => {
+            showSignalsSection(radio.value === 'Phishing' && radio.checked);
+        });
+    });
+
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const filename = btn.dataset.filename;
+            const cls = btn.dataset.classification;
+            const signalsStr = btn.dataset.signals || '';
+            const explanation = btn.dataset.explanation || '';
+            const hasOverride = btn.dataset.hasOverride === 'true';
+            const rowIdx = btn.dataset.row;
+
+            editFilenameEl.textContent = filename;
+            editEmailFileInput.value = filename;
+            editRowIndexInput.value = rowIdx;
+            editExplanationEl.value = explanation;
+            alertArea.innerHTML = '';
+
+            // Set classification radio
+            classificationRadios.forEach(r => { r.checked = r.value === cls; });
+            showSignalsSection(cls === 'Phishing');
+
+            // Set signal checkboxes
+            const activeSignals = signalsStr ? signalsStr.split(',').map(s => s.trim().toLowerCase()) : [];
+            signalCheckboxes.forEach(cb => {
+                cb.checked = activeSignals.includes(cb.value.toLowerCase());
+            });
+
+            // Show/hide reset button
+            if (hasOverride) {
+                resetBtn.style.removeProperty('display');
+            } else {
+                resetBtn.style.setProperty('display', 'none', 'important');
+            }
+
+            editModal.show();
+        });
+    });
+
+    saveBtn.addEventListener('click', async () => {
+        alertArea.innerHTML = '';
+        const emailFile = editEmailFileInput.value;
+        const selectedCls = Array.from(classificationRadios).find(r => r.checked);
+        if (!selectedCls) {
+            alertArea.innerHTML = '<div class="alert alert-danger py-2">Select a classification.</div>';
+            return;
+        }
+        const classification = selectedCls.value;
+        const selectedSignals = Array.from(signalCheckboxes)
+            .filter(cb => cb.checked)
+            .map(cb => cb.value);
+        const signalsParam = selectedSignals.join(',');
+        const explanation = editExplanationEl.value.trim();
+        const rowIdx = editRowIndexInput.value;
+
+        const formData = new FormData();
+        formData.append('email_file', emailFile);
+        formData.append('classification', classification);
+        formData.append('signals', signalsParam);
+        formData.append('explanation', explanation);
+
+        try {
+            const resp = await fetch('/dashboard/inspector/answer-key/edit', {
+                method: 'POST',
+                body: formData,
+            });
+            const data = await resp.json();
+            if (!resp.ok || !data.success) throw new Error(data.error || 'Save failed.');
+
+            // Update table row DOM
+            updateRow(rowIdx, emailFile, classification, selectedSignals, true);
+
+            // Update edit button data for re-opening
+            const editBtnEl = document.querySelector(`.edit-btn[data-row="${rowIdx}"]`);
+            if (editBtnEl) {
+                editBtnEl.dataset.classification = classification;
+                editBtnEl.dataset.signals = selectedSignals.join(',');
+                editBtnEl.dataset.explanation = explanation;
+                editBtnEl.dataset.hasOverride = 'true';
+            }
+            // Show reset button since it's now overridden
+            resetBtn.style.removeProperty('display');
+
+            alertArea.innerHTML = '<div class="alert alert-success py-2">Saved successfully.</div>';
+        } catch (err) {
+            alertArea.innerHTML = `<div class="alert alert-danger py-2">${err.message}</div>`;
+        }
+    });
+
+    resetBtn.addEventListener('click', async () => {
+        alertArea.innerHTML = '';
+        const emailFile = editEmailFileInput.value;
+        const rowIdx = editRowIndexInput.value;
+
+        const formData = new FormData();
+        formData.append('email_file', emailFile);
+
+        try {
+            const resp = await fetch('/dashboard/inspector/answer-key/reset', {
+                method: 'POST',
+                body: formData,
+            });
+            const data = await resp.json();
+            if (!resp.ok || !data.success) throw new Error(data.error || 'Reset failed.');
+
+            // Remove override badge from row
+            const row = document.getElementById(`row-${rowIdx}`);
+            if (row) {
+                const badge = row.querySelector('.badge.bg-warning');
+                if (badge) badge.remove();
+            }
+            // Update edit button
+            const editBtnEl = document.querySelector(`.edit-btn[data-row="${rowIdx}"]`);
+            if (editBtnEl) {
+                editBtnEl.dataset.hasOverride = 'false';
+            }
+            resetBtn.style.setProperty('display', 'none', 'important');
+            alertArea.innerHTML = '<div class="alert alert-info py-2">Reset to default. Values now reflect answer_key.py. Reload the page to see the original values.</div>';
+        } catch (err) {
+            alertArea.innerHTML = `<div class="alert alert-danger py-2">${err.message}</div>`;
+        }
+    });
+
+    function updateRow(rowIdx, emailFile, classification, signals, hasOverride) {
+        const row = document.getElementById(`row-${rowIdx}`);
+        if (!row) return;
+
+        // Update classification badge
+        const clsBadge = document.getElementById(`cls-badge-${rowIdx}`);
+        if (clsBadge) {
+            clsBadge.textContent = classification;
+            clsBadge.className = `badge ${classification === 'Phishing' ? 'bg-danger' : 'bg-info'}`;
+        }
+
+        // Update signals cell
+        const signalsCell = document.getElementById(`signals-cell-${rowIdx}`);
+        if (signalsCell) {
+            if (signals.length) {
+                signalsCell.innerHTML = signals.map(s => `<span class="badge bg-secondary">${s}</span>`).join(' ');
+            } else {
+                signalsCell.innerHTML = '<span class="text-muted small">None (Spam)</span>';
+            }
+        }
+
+        // Add or keep override badge on filename cell
+        if (hasOverride) {
+            const filenameCell = row.cells[0];
+            if (filenameCell && !filenameCell.querySelector('.badge.bg-warning')) {
+                const badge = document.createElement('span');
+                badge.className = 'badge bg-warning text-dark ms-1';
+                badge.title = 'Admin override active';
+                badge.textContent = 'overridden';
+                filenameCell.appendChild(badge);
+            }
+        }
+
+        // Update preview button data-signals
+        const previewBtnEl = row.querySelector('.preview-btn');
+        if (previewBtnEl) {
+            previewBtnEl.dataset.classification = classification;
+            previewBtnEl.dataset.signals = signals.join(', ');
+        }
     }
 });
 </script>

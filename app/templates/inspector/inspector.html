@@ -832,6 +832,8 @@
         await loadEmailDetails(fileName);
       }
 
+      let currentRequiredSignals = 3;
+
       async function loadEmailDetails(fileName) {
         showDetailsLoading();
         try {
@@ -840,6 +842,7 @@
           if (!response.ok) {
             throw new Error(payload.error || "Unable to load the email.");
           }
+          currentRequiredSignals = (typeof payload.requiredSignals === 'number') ? payload.requiredSignals : 3;
           renderEmailDetails(payload);
         } catch (error) {
           renderDetailsError(error.message);
@@ -951,16 +954,21 @@
             `;
         }).join("");
 
+        const reqCount = currentRequiredSignals;
+        const signalPrompt = reqCount === 1
+          ? `Select exactly 1 phishing signal:`
+          : `Select exactly ${reqCount} phishing signals:`;
+
         const classificationMarkup = `
           <article class="card classification-card">
             <h3>Classification</h3>
-            <form class="classification-form" data-email="${escapeHtml(summary.fileName)}">
+            <form class="classification-form" data-email="${escapeHtml(summary.fileName)}" data-required-signals="${reqCount}">
               <div class="classification-choices">
                 <label><input type="radio" name="classification" value="Spam" /> Spam</label>
                 <label><input type="radio" name="classification" value="Phishing" /> Phishing</label>
               </div>
               <div class="signal-section" hidden>
-                <p>Select exactly three phishing signals:</p>
+                <p>${signalPrompt}</p>
                 <div class="signal-grid">
                   ${signalCheckboxes}
                 </div>
@@ -1068,6 +1076,11 @@
           return;
         }
 
+        const requiredSignals = parseInt(form.dataset.requiredSignals, 10) || 0;
+        const signalLabel = requiredSignals === 1
+          ? "exactly 1 phishing signal"
+          : `exactly ${requiredSignals} phishing signals`;
+
         const statusEl = form.querySelector(".classification-status");
         const signalSection = form.querySelector(".signal-section");
         const classificationInputs = Array.from(form.querySelectorAll('input[name="classification"]'));
@@ -1076,10 +1089,10 @@
         signalInputs.forEach((input) => {
           input.addEventListener("change", () => {
             const checkedSignals = signalInputs.filter((checkbox) => checkbox.checked);
-            if (checkedSignals.length > 3) {
+            if (checkedSignals.length > requiredSignals) {
               input.checked = false;
               if (statusEl) {
-                statusEl.textContent = "Select exactly three phishing signals.";
+                statusEl.textContent = `Select ${signalLabel}.`;
                 statusEl.classList.add("error");
               }
             }
@@ -1132,8 +1145,8 @@
           const selectedSignals = Array.from(form.querySelectorAll('input[name="signals"]:checked'));
           const selectedAliases = selectedSignals.map((input) => input.dataset.alias || aliasForSignal(input.value));
 
-          if (selectedClassification === "Phishing" && selectedAliases.length !== 3) {
-            statusEl.textContent = "Select exactly three phishing signals.";
+          if (selectedClassification === "Phishing" && selectedAliases.length !== requiredSignals) {
+            statusEl.textContent = `Select ${signalLabel}.`;
             statusEl.classList.add("error");
             return;
           }
