@@ -43,6 +43,15 @@
                             {% endfor %}
                         </select>
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label">Facility</label>
+                        <select name="facility" class="form-select">
+                            <option value="">All</option>
+                            {% for facility in facilities %}
+                            <option value="{{ facility }}">{{ facility }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
                     <button type="submit" class="btn btn-primary" id="generateBtn">Generate Report</button>
                 </form>
             </div>

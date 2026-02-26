@@ -6,6 +6,57 @@
     <span class="badge bg-primary">{{ users|length }} Total Users</span>
 </div>
 
+<!-- Add User form -->
+<div class="card shadow-sm mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center" role="button"
+         data-bs-toggle="collapse" data-bs-target="#addUserForm" aria-expanded="false">
+        <h5 class="mb-0">Add Single User</h5>
+        <span class="text-muted small">Click to expand</span>
+    </div>
+    <div class="collapse" id="addUserForm">
+        <div class="card-body">
+            <form action="{{ url_for('dashboard.add_user') }}" method="POST" class="row g-3">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="col-md-3">
+                    <label class="form-label">Username <span class="text-danger">*</span></label>
+                    <input type="text" name="username" class="form-control" required placeholder="jdoe">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Email <span class="text-danger">*</span></label>
+                    <input type="email" name="email" class="form-control" required placeholder="jdoe@esme.fr">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Password <span class="text-danger">*</span></label>
+                    <input type="password" name="password" class="form-control" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Class</label>
+                    <input type="text" name="class_name" class="form-control" placeholder="Class A">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Academic Year</label>
+                    <input type="text" name="academic_year" class="form-control" placeholder="2025">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Major</label>
+                    <input type="text" name="major" class="form-control" placeholder="CS">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Facility</label>
+                    <input type="text" name="facility" class="form-control" placeholder="Paris">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Group</label>
+                    <input type="text" name="group" class="form-control" placeholder="default">
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-success">Create User</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <div class="card shadow-sm">
     <div class="card-body">
         <div class="table-responsive">
@@ -15,6 +66,7 @@
                         <th>Username</th>
                         <th>Email</th>
                         <th>Cohort (Class | Year | Major)</th>
+                        <th>Facility</th>
                         <th>Role</th>
                         <th class="text-end">Actions</th>
                     </tr>
@@ -30,6 +82,9 @@
                             </small>
                         </td>
                         <td>
+                            <small class="text-muted">{{ user.facility }}</small>
+                        </td>
+                        <td>
                             {% if user.is_admin %}
                             <span class="badge bg-dark">Admin</span>
                             {% else %}
@@ -38,9 +93,10 @@
                         </td>
                         <td class="text-end">
                             {% if user.username != current_user.username %}
-                            <form action="{{ url_for('dashboard.remove_user', username=user.username) }}" 
+                            <form action="{{ url_for('dashboard.remove_user', username=user.username) }}"
                                   method="POST" class="d-inline"
                                   onsubmit="return confirm('Are you sure you want to delete user {{ user.username }}? This action cannot be undone.');">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                 <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
                             </form>
                             {% else %}

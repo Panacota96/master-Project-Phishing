@@ -34,6 +34,15 @@
             {% endfor %}
         </select>
     </div>
+    <div class="col-md-3">
+        <label class="form-label">Facility</label>
+        <select name="facility" class="form-select">
+            <option value="">All</option>
+            {% for facility in facilities %}
+            <option value="{{ facility }}" {% if facility == selected_facility %}selected{% endif %}>{{ facility }}</option>
+            {% endfor %}
+        </select>
+    </div>
     <div class="col-md-4">
         <label class="form-label">Email</label>
         <select name="email" class="form-select">
@@ -121,6 +130,7 @@
                     <th><a href="#" data-sort="class_name">Class <span class="sort-indicator" data-indicator="class_name"></span></a></th>
                     <th><a href="#" data-sort="academic_year">Year <span class="sort-indicator" data-indicator="academic_year"></span></a></th>
                     <th><a href="#" data-sort="major">Major <span class="sort-indicator" data-indicator="major"></span></a></th>
+                    <th><a href="#" data-sort="facility">Facility <span class="sort-indicator" data-indicator="facility"></span></a></th>
                     <th><a href="#" data-sort="attempts">Attempts <span class="sort-indicator" data-indicator="attempts"></span></a></th>
                     <th><a href="#" data-sort="correct_pct">Correct % <span class="sort-indicator" data-indicator="correct_pct"></span></a></th>
                     <th><a href="#" data-sort="phishing">Phishing <span class="sort-indicator" data-indicator="phishing"></span></a></th>
@@ -133,6 +143,7 @@
                     <td>{{ attempt.class_name }}</td>
                     <td>{{ attempt.academic_year }}</td>
                     <td>{{ attempt.major }}</td>
+                    <td>{{ attempt.facility }}</td>
                     <td>{{ attempt.attempts }}</td>
                     <td>{{ attempt.correct_pct }}%</td>
                     <td>{{ attempt.phishing }}</td>
@@ -174,6 +185,7 @@ function buildReportFormData(scope) {
     formData.append('class_name', '{{ selected_class }}');
     formData.append('academic_year', '{{ selected_year }}');
     formData.append('major', '{{ selected_major }}');
+    formData.append('facility', '{{ selected_facility }}');
     formData.append('email', '{{ selected_email }}');
     formData.append('date_from', '{{ date_from }}');
     formData.append('date_to', '{{ date_to }}');
@@ -223,6 +235,7 @@ async function submitBulkReset(scope) {
         formData.append('class_name', '{{ selected_class }}');
         formData.append('academic_year', '{{ selected_year }}');
         formData.append('major', '{{ selected_major }}');
+        formData.append('facility', '{{ selected_facility }}');
         const resp = await fetch('{{ url_for("dashboard.reset_inspector_bulk") }}', {
             method: 'POST',
             body: formData,
