@@ -52,7 +52,7 @@ class TestCSVImport:
     def test_import_csv(self, client, app, seed_admin):
         login(client, 'admin', 'admin123')
 
-        csv_content = b'username,email,password,class,academic_year,major,group\njdoe,jdoe@test.com,pass123,Class A,2025,CS,sales\nasmith,asmith@test.com,pass456,Class A,2025,CS,sales'
+        csv_content = b'username,email,password,class,academic_year,major,facility,group\njdoe,jdoe@test.com,pass123,Class A,2025,CS,Paris,sales\nasmith,asmith@test.com,pass456,Class A,2025,CS,Paris,sales'
         from io import BytesIO
         data = {
             'csv_file': (BytesIO(csv_content), 'users.csv'),
@@ -71,7 +71,7 @@ class TestCSVImport:
     def test_import_csv_skips_existing(self, client, app, seed_admin):
         login(client, 'admin', 'admin123')
 
-        csv_content = b'username,email,password,class,academic_year,major,group\nadmin,other@test.com,pass,Class A,2025,CS,x\nnewuser,new@test.com,pass,Class A,2025,CS,x'
+        csv_content = b'username,email,password,class,academic_year,major,facility,group\nadmin,other@test.com,pass,Class A,2025,CS,Paris,x\nnewuser,new@test.com,pass,Class A,2025,CS,Paris,x'
         from io import BytesIO
         data = {
             'csv_file': (BytesIO(csv_content), 'users.csv'),
