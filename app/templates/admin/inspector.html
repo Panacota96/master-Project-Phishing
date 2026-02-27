@@ -190,6 +190,7 @@ function buildReportFormData(scope) {
     formData.append('date_from', '{{ date_from }}');
     formData.append('date_to', '{{ date_to }}');
     formData.append('report_scope', scope);
+    formData.append('csrf_token', window.CSRF_TOKEN);
     return formData;
 }
 
@@ -209,6 +210,7 @@ if (resetBtn) {
         try {
             const formData = new FormData();
             formData.append('username', username);
+            formData.append('csrf_token', window.CSRF_TOKEN);
             const resp = await fetch('{{ url_for("dashboard.reset_inspector_user") }}', {
                 method: 'POST',
                 body: formData,
@@ -236,6 +238,7 @@ async function submitBulkReset(scope) {
         formData.append('academic_year', '{{ selected_year }}');
         formData.append('major', '{{ selected_major }}');
         formData.append('facility', '{{ selected_facility }}');
+        formData.append('csrf_token', window.CSRF_TOKEN);
         const resp = await fetch('{{ url_for("dashboard.reset_inspector_bulk") }}', {
             method: 'POST',
             body: formData,

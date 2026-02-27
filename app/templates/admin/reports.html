@@ -9,6 +9,7 @@
             <div class="card-header"><h5>Report Options</h5></div>
             <div class="card-body">
                 <form id="reportForm">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <div class="mb-3">
                         <label class="form-label">Report Type</label>
                         <select name="report_type" class="form-select" id="reportType">

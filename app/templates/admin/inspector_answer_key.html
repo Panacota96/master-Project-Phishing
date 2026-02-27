@@ -368,6 +368,7 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.append('classification', classification);
         formData.append('signals', signalsParam);
         formData.append('explanation', explanation);
+        formData.append('csrf_token', window.CSRF_TOKEN);
 
         try {
             const resp = await fetch('/dashboard/inspector/answer-key/edit', {
@@ -404,6 +405,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const formData = new FormData();
         formData.append('email_file', emailFile);
+        formData.append('csrf_token', window.CSRF_TOKEN);
 
         try {
             const resp = await fetch('/dashboard/inspector/answer-key/reset', {

@@ -21,6 +21,31 @@ def _now_iso():
     return datetime.now(timezone.utc).isoformat()
 
 
+def _paginated_scan(table, **kwargs):
+    """Scan a DynamoDB table handling pagination via LastEvaluatedKey.
+
+    Accepts the same keyword arguments as table.scan() (e.g. FilterExpression,
+    ProjectionExpression, Select, etc.).  Returns a list of all matching items,
+    or an integer total when Select='COUNT' is passed.
+    """
+    is_count = kwargs.get('Select') == 'COUNT'
+    items = []
+    total = 0
+    last_key = None
+    while True:
+        if last_key:
+            kwargs['ExclusiveStartKey'] = last_key
+        resp = table.scan(**kwargs)
+        if is_count:
+            total += resp.get('Count', 0)
+        else:
+            items.extend(resp.get('Items', []))
+        last_key = resp.get('LastEvaluatedKey')
+        if not last_key:
+            break
+    return total if is_count else items
+
+
 # ─── User "model" (works with Flask-Login) ────────────────────────────────────
 
 class User(UserMixin):
@@ -187,14 +212,12 @@ def list_users_by_group(group):
 
 def list_all_users():
     table = _get_table('DYNAMODB_USERS')
-    resp = table.scan()
-    return [User.from_dynamo(item) for item in resp.get('Items', [])]
+    return [User.from_dynamo(item) for item in _paginated_scan(table)]
 
 
 def count_users():
     table = _get_table('DYNAMODB_USERS')
-    resp = table.scan(Select='COUNT')
-    return resp['Count']
+    return _paginated_scan(table, Select='COUNT')
 
 
 def get_distinct_groups():
@@ -289,8 +312,7 @@ def get_quiz(quiz_id):
 
 def list_quizzes():
     table = _get_table('DYNAMODB_QUIZZES')
-    resp = table.scan()
-    items = resp.get('Items', [])
+    items = _paginated_scan(table)
     return sorted(items, key=lambda q: q.get('created_at', ''), reverse=True)
 
 
@@ -375,8 +397,7 @@ def list_attempts_by_group(group):
 
 def list_all_attempts():
     table = _get_table('DYNAMODB_ATTEMPTS')
-    resp = table.scan()
-    return resp.get('Items', [])
+    return _paginated_scan(table)
 
 
 def list_attempts_by_user(username):
@@ -458,8 +479,7 @@ def create_inspector_attempt(
 
 def list_inspector_attempts():
     table = _get_table('DYNAMODB_INSPECTOR')
-    resp = table.scan()
-    return resp.get('Items', [])
+    return _paginated_scan(table)
 
 
 def list_inspector_attempts_by_group(group):
@@ -482,8 +502,7 @@ def list_inspector_attempts_by_email(email_file):
 
 def count_inspector_attempts():
     table = _get_table('DYNAMODB_INSPECTOR')
-    resp = table.scan(Select='COUNT')
-    return resp['Count']
+    return _paginated_scan(table, Select='COUNT')
 
 
 # ─── Inspector Attempt CRUD (Anonymous) ───────────────────────────────────────
@@ -519,8 +538,7 @@ def create_inspector_attempt_anonymous(
 
 def list_inspector_attempts_anonymous():
     table = _get_table('DYNAMODB_INSPECTOR_ANON')
-    resp = table.scan()
-    return resp.get('Items', [])
+    return _paginated_scan(table)
 
 
 def list_inspector_attempts_anonymous_by_email(email_file):
@@ -530,8 +548,7 @@ def list_inspector_attempts_anonymous_by_email(email_file):
 
 def count_inspector_attempts_anonymous():
     table = _get_table('DYNAMODB_INSPECTOR_ANON')
-    resp = table.scan(Select='COUNT')
-    return resp['Count']
+    return _paginated_scan(table, Select='COUNT')
 
 
 # ─── Answer Key Overrides ────────────────────────────────────────────────────
@@ -544,8 +561,7 @@ def get_answer_key_overrides():
     """
     try:
         table = _get_table('DYNAMODB_ANSWER_KEY_OVERRIDES')
-        resp = table.scan()
-        return {item['email_file']: item for item in resp.get('Items', [])}
+        return {item['email_file']: item for item in _paginated_scan(table)}
     except Exception as e:
         # Table may not exist yet in this environment; fall back to empty overrides
         current_app.logger.warning('get_answer_key_overrides: %s', e)
@@ -603,6 +619,5 @@ def create_bug_report(username, description, page_url):
 def list_bug_reports():
     """List all bug reports from DynamoDB."""
     table = _get_table('DYNAMODB_BUGS')
-    resp = table.scan()
-    items = resp.get('Items', [])
+    items = _paginated_scan(table)
     return sorted(items, key=lambda x: x.get('submitted_at', ''), reverse=True)

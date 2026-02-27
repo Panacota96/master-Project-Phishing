@@ -11,9 +11,20 @@ Database schema changes are infrequent in DynamoDB, but data migrations may be n
 
 ## User Management
 For large cohorts, bulk importing users from CSV is the most efficient method:
-1. **Prepare CSV**: Follow the format in `README.md` (`username`, `email`, `password`, `class`, `academic_year`, `major`, `group`).
+1. **Prepare CSV**: Required columns: `username`, `email`, `password`, `class_name`, `academic_year`, `major`, `facility` (all mandatory), `group` (optional, defaults to `default`).
+   ```
+   username,email,password,class_name,academic_year,major,facility,group
+   jdoe,jdoe@example.com,pass123,Class A,2025,CS,Paris,lab-1
+   ```
 2. **Import via UI**: Login as admin and use **Admin → Import Users**.
 3. **Seeding Script**: For initial environment setup, use `seed_dynamodb.py`.
+
+## Answer Key Management
+The Inspector's ground-truth answer key can be edited without a code deployment:
+- Go to **Admin → Inspector Analytics → View Answer Key & Troubleshoot**
+- Click **Edit** on any email row to change its classification (Phishing/Spam) or required signals
+- Overrides are stored in the `DYNAMODB_ANSWER_KEY_OVERRIDES` table and take effect immediately
+- Click **Reset to Default** to revert to the static `app/inspector/answer_key.py` baseline
 
 ## Monitoring & Troubleshooting
 - **CloudWatch Logs**: Check logs at `/aws/lambda/phishing-app-<env>-app` for runtime errors.

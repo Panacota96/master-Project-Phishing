@@ -63,8 +63,11 @@ The following tables are created using the `PAY_PER_REQUEST` billing mode:
 - **`DYNAMODB_INSPECTOR_ANON`**: 
     - PK: `attempt_id`, SK: `submitted_at`. 
     - *Purpose*: GDPR-compliant anonymous tracking.
-- **`DYNAMODB_BUGS`**: 
+- **`DYNAMODB_BUGS`**:
     - PK: `bug_id`.
+- **`DYNAMODB_ANSWER_KEY_OVERRIDES`**:
+    - PK: `email_file`.
+    - *Purpose*: Admin-editable overrides for the Inspector answer key (classification + signals). Overrides the static `answer_key.py` at runtime.
 
 ### 📂 Storage & Monitoring
 - **S3 Bucket**: Stores EML samples and Lambda deployment packages.

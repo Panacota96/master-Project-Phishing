@@ -10,9 +10,10 @@ Managing users by cohort is key to tracking progress across different groups.
     - **Class Name**: (e.g., `Class A`)
     - **Academic Year**: (e.g., `2025`)
     - **Major**: (e.g., `CS`, `Engineering`)
+    - **Facility**: (e.g., `Paris`, `Lyon`)
     - **Group**: (e.g., `default`, `lab-1`)
 3. **Import Users (CSV)**: For large cohorts, use the bulk import feature:
-    - **Format**: `username,email,password,class_name,academic_year,major,group`.
+    - **Format**: `username,email,password,class_name,academic_year,major,facility,group` (`facility` is mandatory; `group` defaults to `default` if omitted).
     - **Upload**: Go to **Admin → Import Users**, choose your CSV, and click **Import**.
 4. **Reset Password**: Find the user in the **Users** list and use the **Reset Password** button.
 5. **Manage Users**: Use the **Admin → Manage Users** page to view the entire user base, check their roles, and delete inactive accounts.
@@ -35,8 +36,9 @@ Gain insights into user performance and training effectiveness.
 Monitor how students classify and identify phishing signals in real-world emails.
 1. **Inspector Overview**: View the total number of classification attempts.
 2. **Signal Distribution**: See which phishing signals are most and least identified.
-3. **Answer Key & Troubleshoot**: Use the **View Answer Key & Troubleshoot** button to see the ground-truth for all 98 emails.
-    - **Reference View**: See the correct classification (Spam/Phishing) and the 3 required signals for each file.
+3. **Answer Key & Troubleshoot**: Use the **View Answer Key & Troubleshoot** button to see the ground-truth for all emails.
+    - **Reference View**: See the correct classification (Spam/Phishing) and the required signals for each file (signal count is dynamic per email, not fixed at 3).
+    - **Edit Overrides**: Click **Edit** on any row to change an email's classification or required signals. Changes are saved to DynamoDB and take effect immediately — overrides are marked with a yellow "overridden" badge. Click **Reset to Default** to revert to the static answer key.
     - **Live Preview**: Open a modal to view exactly how the Inspector parses and cleans (placeholders) each email for student training.
 4. **Reset Inspector Access**: If a student needs to retake the Inspector analysis, use the **Reset Access** button.
 

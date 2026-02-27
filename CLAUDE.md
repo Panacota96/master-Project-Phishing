@@ -84,8 +84,8 @@ The Email Threat Inspector (`app/inspector/routes.py`) works as a JSON API consu
 1. EML files are stored in S3 under `eml-samples/` prefix
 2. `api_email_list` → builds a per-session pool of up to 8 emails (1–3 spam, rest phishing) from files that exist in both S3 and `ANSWER_KEY`
 3. `api_email_detail` → parses EML (stdlib `email` module) or JSON-formatted EML; cleans template placeholders via `_clean_placeholders()`
-4. `api_submit` → validates classification + exactly 3 signals for Phishing (0 for Spam), checks against `ANSWER_KEY`, writes to anonymous table, locks user after all 8 submitted
-5. Ground truths live in `app/inspector/answer_key.py` (`ANSWER_KEY` dict keyed by filename)
+4. `api_submit` → validates classification + exactly N signals for Phishing (N = `len(entry['signals'])` from the effective answer key; 0 for Spam), checks against the effective answer key, writes to anonymous table, locks user after all 8 submitted
+5. Ground truths live in `app/inspector/answer_key.py` (`ANSWER_KEY` dict keyed by filename); admins can override per-email via `DYNAMODB_ANSWER_KEY_OVERRIDES` table — overrides win at runtime via `get_effective_answer_key()` in `app/models.py`
 
 ### Quiz Flow
 

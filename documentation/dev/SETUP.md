@@ -37,6 +37,8 @@ export DYNAMODB_ATTEMPTS=phishing-app-dev-attempts
 export DYNAMODB_RESPONSES=phishing-app-dev-responses
 export DYNAMODB_INSPECTOR=phishing-app-dev-inspector-attempts
 export DYNAMODB_INSPECTOR_ANON=phishing-app-dev-inspector-attempts-anon
+export DYNAMODB_BUGS=phishing-app-dev-bugs
+export DYNAMODB_ANSWER_KEY_OVERRIDES=phishing-app-dev-answer-key-overrides
 
 # Storage
 export S3_BUCKET=phishing-app-dev

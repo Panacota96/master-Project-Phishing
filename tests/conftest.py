@@ -191,6 +191,14 @@ def _create_dynamodb_tables(region='eu-west-3'):
         BillingMode='PAY_PER_REQUEST',
     )
 
+    # Bugs table
+    dynamodb.create_table(
+        TableName='test-bugs',
+        KeySchema=[{'AttributeName': 'bug_id', 'KeyType': 'HASH'}],
+        AttributeDefinitions=[{'AttributeName': 'bug_id', 'AttributeType': 'S'}],
+        BillingMode='PAY_PER_REQUEST',
+    )
+
 
 def _create_s3_bucket(region='eu-west-3'):
     s3 = boto3.client('s3', region_name=region)

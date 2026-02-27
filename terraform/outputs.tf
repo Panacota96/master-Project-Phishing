@@ -52,3 +52,8 @@ output "dynamodb_answer_key_overrides_table" {
   description = "DynamoDB answer key overrides table name"
   value       = aws_dynamodb_table.answer_key_overrides.name
 }
+
+output "dynamodb_bugs_table" {
+  description = "DynamoDB bug reports table name"
+  value       = aws_dynamodb_table.bugs.name
+}
