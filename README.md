@@ -64,6 +64,9 @@ export DYNAMODB_QUIZZES=phishing-app-dev-quizzes
 export DYNAMODB_ATTEMPTS=phishing-app-dev-attempts
 export DYNAMODB_RESPONSES=phishing-app-dev-responses
 export DYNAMODB_INSPECTOR=phishing-app-dev-inspector-attempts
+export DYNAMODB_INSPECTOR_ANON=phishing-app-dev-inspector-attempts-anon
+export DYNAMODB_BUGS=phishing-app-dev-bugs
+export DYNAMODB_ANSWER_KEY_OVERRIDES=phishing-app-dev-answer-key-overrides
 export S3_BUCKET=phishing-app-dev
 export SECRET_KEY=dev-secret
 python seed_dynamodb.py
@@ -126,15 +129,15 @@ See `ansible/README.md` for required variables.
 1. Log in as an admin.
 2. Go to **Admin → Import Users**.
 3. Upload a CSV with these required columns:
-   - `username`, `email`, `password`, `class`, `academic_year`, `major`
-   - Optional: `group`
+   - `username`, `email`, `password`, `class`, `academic_year`, `major`, `facility` (all mandatory)
+   - Optional: `group` (defaults to `default`)
 4. Click **Import Users** and confirm the import summary.
 
 Example CSV:
 ```csv
-username,email,password,class,academic_year,major,group
-jdoe,jdoe@school.edu,TempPass123,Class A,2025,CS,engineering
-asmith,asmith@school.edu,TempPass456,Class B,2025,Marketing,marketing
+username,email,password,class,academic_year,major,facility,group
+jdoe,jdoe@school.edu,TempPass123,Class A,2025,CS,Paris,engineering
+asmith,asmith@school.edu,TempPass456,Class B,2025,Marketing,Lyon,marketing
 ```
 
 ### Upload Email Samples (.eml)
@@ -188,11 +191,14 @@ These GitHub projects can be used as inspiration or sources for realistic exampl
 Each user can submit answers for the assigned 8 emails once. After completing all 8, the Inspector is locked until an admin resets access in **Admin → Inspector Analytics**. Admins can reset a single user or bulk reset by cohort filters or all users.
 
 ## DynamoDB Usage Summary
-**Users table**: login credentials + cohort fields (class/year/major).  
-**Quizzes table**: quiz definitions and questions.  
-**Attempts table**: quiz scores + cohort fields for analytics.  
-**Responses table**: per‑question responses for reporting.  
-**Inspector attempts table**: email classification attempts + cohort fields.
+**Users table**: login credentials + cohort fields (class/year/major/facility).
+**Quizzes table**: quiz definitions and questions.
+**Attempts table**: quiz scores + cohort fields for analytics.
+**Responses table**: per‑question responses for reporting.
+**Inspector attempts table**: authenticated email classification attempts + cohort fields.
+**Inspector attempts (anon) table**: GDPR-safe anonymous inspector attempts (no username).
+**Bugs table**: user-submitted bug reports with status tracking.
+**Answer key overrides table**: admin-editable overrides for the Inspector ground-truth (classification + signals); merges with static `answer_key.py` at runtime.
 
 ## Docker
 
@@ -262,22 +268,25 @@ Set these in GitLab CI/CD:
 master-Project-Phishing/
 ├── app/
 │   ├── __init__.py          # Flask app factory
-│   ├── models.py            # User, Quiz, Question, Answer, QuizAttempt
-│   ├── auth/                # Login, register, logout
+│   ├── models.py            # DynamoDB data access layer (all table operations)
+│   ├── auth/                # Login, register, logout, CSV import
 │   ├── quiz/                # Quiz list, take quiz, results, history
-│   ├── dashboard/           # Admin stats and charts
-│   ├── inspector/           # Email Threat Inspector (EML parsing + API)
+│   ├── dashboard/           # Admin stats, analytics, answer key editor
+│   ├── inspector/           # Email Threat Inspector (EML parsing + JSON API)
+│   │   └── answer_key.py    # Static ground-truth baseline (classification + signals)
 │   ├── templates/           # Jinja2 templates (base, auth, quiz, dashboard, inspector)
-│   └── static/css/          # Custom styles
-├── examples/                # 6 real phishing/spam .eml samples
-├── Phishing AOC/            # TryHackMe lab reference materials
-├── aws/                     # AWS deployment guide and scripts
+│   └── static/              # CSS, JS, video assets
+├── tests/                   # Pytest suite (moto-mocked AWS)
+├── scripts/                 # Migration, build, and utility scripts
+├── terraform/               # IaC: Lambda, API Gateway, DynamoDB, S3
+├── aws/                     # AWS EC2 deployment guide
 ├── nginx/                   # Nginx reverse proxy config
+├── documentation/           # Full docs suite (dev, user, operator, compliance)
 ├── Dockerfile               # Python 3.12-slim + Gunicorn
 ├── docker-compose.yml       # Web + Nginx services
-├── seed.py                  # Database seeder (admin + 10 questions)
-├── config.py                # App configuration
-├── run.py                   # Entry point
+├── seed_dynamodb.py         # DynamoDB seeder (admin user + quizzes)
+├── config.py                # App configuration (env var mapping)
+├── run.py                   # Local dev entry point
 ├── requirements.txt         # Python dependencies
 ├── CHANGELOG.md             # Version history
 └── CLAUDE.md                # AI assistant context

@@ -24,12 +24,15 @@ flowchart TD
         DB_Attempts[Attempts Table]
         DB_Responses[Responses Table]
         DB_Inspector[Inspector Table]
+        DB_InspectorAnon[Inspector Anon Table]
+        DB_Bugs[Bugs Table]
+        DB_AKOverrides[Answer Key Overrides Table]
     end
-    
+
     User <--> Factory
     Factory --> Auth & Quiz & Insp & Dash
     Auth & Quiz & Insp & Dash <--> Models
-    Models <--> DB_Users & DB_Quizzes & DB_Attempts & DB_Responses & DB_Inspector
+    Models <--> DB_Users & DB_Quizzes & DB_Attempts & DB_Responses & DB_Inspector & DB_InspectorAnon & DB_Bugs & DB_AKOverrides
 ```
 
 ## Data Models (Entity Relationships)
@@ -96,7 +99,7 @@ The app uses the Flask Application Factory pattern (`app/__init__.py`). It is ad
     - **Parsing**: Supports both standard MIME multipart EML files and custom JSON-formatted email samples.
     - **Attachments**: Extracts metadata (filename, MIME type, size, disposition) from standard `Content-Disposition: attachment` parts and JSON `attachments` arrays.
     - **Placeholders**: Includes a **`_clean_placeholders`** helper to replace template strings (e.g., `{{.FirstName}}`, `{{.URL}}`) with generic, realistic values.
-- **`app/dashboard`**: Provides administrative statistics, cohort-level analytics, an **Answer Key & Troubleshoot** view for ground-truth verification, management of user-submitted bug reports, and a comprehensive **User Management** interface. It also includes logic for calculating **Signal Identification Rates** to identify which phishing tactics are most misunderstood.
+- **`app/dashboard`**: Provides administrative statistics, cohort-level analytics, an **Answer Key & Troubleshoot** view for ground-truth verification, management of user-submitted bug reports, and a comprehensive **User Management** interface. It also includes logic for calculating **Signal Identification Rates** to identify which phishing tactics are most misunderstood. The answer key editor (`POST /dashboard/inspector/answer-key/edit` and `POST /dashboard/inspector/answer-key/reset`) allows admins to override any email's classification and signals live via DynamoDB without a code deployment.
 
 ## Security Features
 - **Authentication**: Password hashing with `Werkzeug`.

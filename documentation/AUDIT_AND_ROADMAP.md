@@ -17,6 +17,8 @@ This document provides a comprehensive overview of the current feature set of th
 ### 🛠️ Administrative & Operational Tools
 - **Full User Lifecycle Management**: Admin UI to view, filter, and delete student accounts.
 - **Inspector Ground-Truth Dashboard**: Dedicated view to verify the "Answer Key" and preview how the parser handles specific emails.
+- **Editable Answer Key (IMPLEMENTED)**: Admins can override any email's classification (Phishing/Spam) and required signals directly from the UI. Overrides are stored in DynamoDB (`DYNAMODB_ANSWER_KEY_OVERRIDES`) and take effect immediately without a code deployment. The static `answer_key.py` remains the fallback baseline.
+- **Dynamic Signal Count (IMPLEMENTED)**: Required signal count per email is driven by the answer key (`len(signals)`), not hardcoded. Student UI and server-side validation both respect this dynamically.
 - **Advanced Analytics**:
     - **Signal Accuracy Heatmap**: Visual Polar Chart identifying which phishing tactics (e.g., Punycode, Spoofing) are most misunderstood.
     - **Cohort Reporting**: Automated CSV generation filtered by Class, Major, and Academic Year.
@@ -48,4 +50,4 @@ This document provides a comprehensive overview of the current feature set of th
 - **AI-Generated Content**: Fully integrate the `phishing-content-creator` skill to allow admins to generate infinite new training scenarios via the UI.
 
 ---
-*Document Generated: February 20, 2026*
+*Last Updated: February 27, 2026*

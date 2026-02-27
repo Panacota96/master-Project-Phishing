@@ -6,6 +6,38 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [1.2.0] - 2026-02-27
+
+### Added
+
+- **Editable Answer Key (Admin UI)** — admins can now change any email's classification (Phishing ↔ Spam) and required signals without a code deployment
+  - New "Edit" button per row in **Admin → Inspector Analytics → View Answer Key & Troubleshoot**
+  - Edit modal with classification radio buttons, signal checkboxes (all 10 signal types), and explanation textarea
+  - "Save Changes" posts to `POST /dashboard/inspector/answer-key/edit`; row DOM is updated immediately without a page reload
+  - "Reset to Default" posts to `POST /dashboard/inspector/answer-key/reset`; reverts to `answer_key.py` baseline
+  - Yellow "overridden" badge shown on rows that have a DynamoDB override active
+- **DynamoDB Answer Key Overrides table** (`DYNAMODB_ANSWER_KEY_OVERRIDES`) — persists admin overrides keyed by `email_file`; survives Lambda restarts
+- **`get_effective_answer_key()`** in `app/models.py` — merges static `ANSWER_KEY` dict with DynamoDB overrides at runtime (overrides win); falls back gracefully if the table does not exist
+- **`get_answer_key_overrides()`**, **`set_answer_key_override()`**, **`delete_answer_key_override()`** added to `app/models.py`
+- **Dynamic signal count** — required signal count per email is now driven by `len(entry['signals'])` from the effective answer key, not hardcoded to 3
+  - `api_email_detail` response includes `requiredSignals` (integer)
+  - Student JS reads `requiredSignals` and updates instruction text ("Select exactly N phishing signal(s)") and submit validation accordingly
+  - Server-side `api_submit` validates against the dynamic count
+- New admin dashboard routes: `POST /dashboard/inspector/answer-key/edit` and `POST /dashboard/inspector/answer-key/reset`
+
+### Changed
+
+- `app/inspector/routes.py`: removed static `ANSWER_KEY` import; all answer key lookups now go through `get_effective_answer_key()`
+- `app/dashboard/routes.py`: `inspector_answer_key()` passes `has_override` flag per item to template
+- `app/templates/admin/inspector_answer_key.html`: column header renamed from "Required Phishing Signals (3)" → "Required Signals"
+- README project description updated: "Cloud SecDevOps course (TP1/TP2)" → "Master Project"
+
+### Fixed
+
+- `tests/conftest.py`: added `DYNAMODB_ANSWER_KEY_OVERRIDES` env var (`test-answer-key-overrides`) and table creation so `get_effective_answer_key()` works correctly in tests
+
+---
+
 ## [1.1.1] - 2026-02-18
 
 ### Fixed

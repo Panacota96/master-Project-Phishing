@@ -48,6 +48,14 @@
 - Use `AWS_PROFILE` to switch accounts safely.
 - Replace `<env>` placeholders with your target environment (e.g., `dev`, `prod`).
 
+## Session Notes (2026-02-27)
+- Editable answer key implemented: admins can override any email's classification and signals via the UI without a code deploy.
+- `DYNAMODB_ANSWER_KEY_OVERRIDES` table added to all environments (Terraform, conftest, CLAUDE.md, env vars).
+- `get_effective_answer_key()` in `app/models.py` merges static `answer_key.py` with DynamoDB overrides at runtime.
+- Dynamic signal count: `requiredSignals` returned by `api_email_detail`; student JS and server validation both read it (no more hardcoded 3).
+- New admin routes: `POST /dashboard/inspector/answer-key/edit` and `POST /dashboard/inspector/answer-key/reset`.
+- All 53 tests pass.
+
 ## Session Notes (2026-02-18)
 - Dev environment deployed via Terraform (Lambda + API Gateway + DynamoDB + S3).
 - Remote state bootstrapped: S3 state bucket + DynamoDB lock table.
