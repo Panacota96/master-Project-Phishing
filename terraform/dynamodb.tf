@@ -201,3 +201,16 @@ resource "aws_dynamodb_table" "bugs" {
   }
 }
 
+# ─── Answer Key Overrides Table ───────────────────────────────────────────────
+
+resource "aws_dynamodb_table" "answer_key_overrides" {
+  name         = "${local.prefix}-answer-key-overrides"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "email_file"
+
+  attribute {
+    name = "email_file"
+    type = "S"
+  }
+}
+

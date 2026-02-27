@@ -47,3 +47,8 @@ output "dynamodb_inspector_anon_table" {
   description = "DynamoDB anonymous inspector attempts table name"
   value       = aws_dynamodb_table.inspector_attempts_anon.name
 }
+
+output "dynamodb_answer_key_overrides_table" {
+  description = "DynamoDB answer key overrides table name"
+  value       = aws_dynamodb_table.answer_key_overrides.name
+}
