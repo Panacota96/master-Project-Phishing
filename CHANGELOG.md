@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [1.2.1] - 2026-02-27
+
+### Added
+
+- **CloudFront distribution** (`terraform/cloudfront.tf`) — stable `dXXXXX.cloudfront.net` URL in front of API Gateway; survives Lambda/API Gateway destroy-recreate cycles without changing the URL shared with students
+  - No custom domain or ACM certificate required (uses AWS-managed `*.cloudfront.net` certificate)
+  - Zero-TTL caching — all requests pass through to the Flask app (correct for session-based app)
+  - All cookies and query strings forwarded; all 7 HTTP methods allowed
+  - HTTP → HTTPS redirect enforced via `viewer_protocol_policy = "redirect-to-https"`
+- New Terraform output `cloudfront_url` in `terraform/outputs.tf` — prints the stable URL after `terraform apply`
+
+---
+
 ## [1.2.0] - 2026-02-27
 
 ### Added

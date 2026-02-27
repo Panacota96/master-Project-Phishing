@@ -55,6 +55,8 @@
 - Dynamic signal count: `requiredSignals` returned by `api_email_detail`; student JS and server validation both read it (no more hardcoded 3).
 - New admin routes: `POST /dashboard/inspector/answer-key/edit` and `POST /dashboard/inspector/answer-key/reset`.
 - All 53 tests pass.
+- CloudFront distribution added (`terraform/cloudfront.tf`): stable `dXXXXX.cloudfront.net` URL that survives API Gateway destroy/recreate cycles; no custom domain or ACM certificate required.
+- `terraform/outputs.tf` now exports `cloudfront_url` — run `terraform output cloudfront_url` after apply to get the URL to share with students.
 
 ## Session Notes (2026-02-18)
 - Dev environment deployed via Terraform (Lambda + API Gateway + DynamoDB + S3).

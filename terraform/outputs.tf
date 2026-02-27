@@ -57,3 +57,8 @@ output "dynamodb_bugs_table" {
   description = "DynamoDB bug reports table name"
   value       = aws_dynamodb_table.bugs.name
 }
+
+output "cloudfront_url" {
+  description = "Stable CloudFront URL for the application (share this with students)"
+  value       = "https://${aws_cloudfront_distribution.app.domain_name}"
+}
