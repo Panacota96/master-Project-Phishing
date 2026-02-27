@@ -170,6 +170,7 @@ Use this checklist for any environment by substituting `<env>` (e.g., `dev`, `pr
 #   - AmazonAPIGatewayAdministrator
 #   - IAMFullAccess
 #   - CloudWatchLogsFullAccess
+#   - CloudFrontFullAccess
 ```
 
 Save the **Access Key ID** and **Secret Access Key** — you'll need them.
