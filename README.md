@@ -1,6 +1,6 @@
 # Master-Project-Phishing
 
-A **phishing awareness training web application** built with Flask, created as part of the ESME engineering school Cloud SecDevOps course (TP1/TP2).
+A **phishing awareness training web application** built with Flask, created as part of the ESME engineering school Master Project.
 
 Users take interactive quizzes to learn how to identify phishing emails, and can inspect real-world phishing samples using the built-in Email Threat Inspector.
 
