@@ -1,0 +1,23 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/validate-python.sh",
+            "timeout": 30,
+            "statusMessage": "Checking Python syntax..."
+          },
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/validate-answer-key.sh",
+            "timeout": 15,
+            "statusMessage": "Validating answer key structure..."
+          }
+        ]
+      }
+    ]
+  }
+}

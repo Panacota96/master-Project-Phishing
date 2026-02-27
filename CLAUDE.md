@@ -110,3 +110,16 @@ Tests use `moto` to mock all AWS services. The `conftest.py` fixture `app()` wra
 - **MIME**: all `.eml` samples must use `multipart/alternative` structure for consistent parsing
 - **EML answer key**: when adding new `.eml` files to S3, add corresponding entries to `app/inspector/answer_key.py`; files without an entry are excluded from the inspector pool
 - **Phishing signals** (normalized lowercase, alphanumeric): `impersonation`, `punycode`, `externaldomain`, `spoof`, `socialeng`, `urgency`, `fakeinvoice`, `attachment`, `fakelogin`, `sidechannel`
+
+## Known Gotchas
+
+- **CSV import requires `facility`**: The user import CSV (`/auth/admin/import-users`) requires `facility` as a mandatory column alongside `username`, `email`, `password`, `class`, `academic_year`, `major`. Tests that build CSV fixtures must include this column or the route returns a validation error instead of importing.
+- **Answer key overrides table**: Any new environment (local dev, test, prod) needs `DYNAMODB_ANSWER_KEY_OVERRIDES` set. Tests use `test-answer-key-overrides`; local dev uses `phishing-app-dev-answer-key-overrides`.
+- **Inspector signal count is dynamic**: `api_submit` and the student JS both derive the required signal count from `len(requirement['signals'])`, not from a hardcoded `3`. When editing the answer key (static or via override), the signal list length drives validation on both client and server.
+
+## Hooks (automated checks)
+
+Project-level hooks are configured in `.claude/settings.json` and run automatically after every file edit:
+
+- **`validate-python.sh`** — runs `python3 -m py_compile` on any `.py` file after Edit/Write; exits 2 (blocking) on syntax error so Claude fixes immediately
+- **`validate-answer-key.sh`** — validates that every `ANSWER_KEY` entry in `answer_key.py` has `classification` and `signals` keys after the file is edited

@@ -49,8 +49,9 @@ examples/realism_report.json
 .DS_Store
 Thumbs.db
 
-# Claude Code
-.claude/
+# Claude Code — ignore personal/local settings, track shared hooks and project settings
+.claude/settings.local.json
+.claude/todos.json
 terraform/.terraform.lock.hcl
 
 # Source templates (already converted to examples/linksec)
