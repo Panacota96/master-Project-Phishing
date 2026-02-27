@@ -77,6 +77,7 @@ DynamoDB tables (configured via env vars, keys defined in `config.py`):
 - `DYNAMODB_INSPECTOR` — inspector submissions with cohort fields; GSI on `group` and `email_file`
 - `DYNAMODB_INSPECTOR_ANON` — GDPR-safe anonymous inspector attempts (no username)
 - `DYNAMODB_BUGS` — bug reports with status field
+- `DYNAMODB_ANSWER_KEY_OVERRIDES` — admin-editable overrides for email classifications and required signals; takes precedence over the static `ANSWER_KEY` dict at runtime via `get_effective_answer_key()`
 
 ### Inspector Flow
 
@@ -92,6 +93,8 @@ The Email Threat Inspector (`app/inspector/routes.py`) works as a JSON API consu
 Quizzes require watching a training video before starting (enforced via `session['quiz_video_watched']`). One attempt per user per quiz is enforced by a DynamoDB conditional `put_item`. Quiz data (questions, video URLs) is seeded via `seed_dynamodb.py`.
 
 ### Testing
+
+> **No self-registration**: there is no public registration flow. All user accounts are created by admins — either manually or via the CSV bulk-import endpoint (`/auth/admin/import-users`). When writing tests that need a student user, use the `seed_user` fixture from `conftest.py` rather than simulating a registration form.
 
 Tests use `moto` to mock all AWS services. The `conftest.py` fixture `app()` wraps everything in `mock_aws()`, creates all DynamoDB tables with correct schemas and GSIs, and creates an S3 bucket. CSRF is disabled in tests. Use `seed_admin`, `seed_user`, `seed_quiz` fixtures and the `login()` helper in `conftest.py`.
 
