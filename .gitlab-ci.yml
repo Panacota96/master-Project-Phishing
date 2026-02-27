@@ -126,6 +126,7 @@ deploy_dev:
     - terraform apply -auto-approve tfplan
     - S3_BUCKET="$(terraform output -raw s3_bucket_name)"
     - aws s3 sync ../examples/ "s3://${S3_BUCKET}/eml-samples/" --exclude "*" --include "*.eml"
+    - aws s3 sync ../app/static/videos/ "s3://${S3_BUCKET}/videos/" --exclude "*" --include "*.mp4"
     - |
       if [ "${SKIP_SEED:-false}" != "true" ]; then
         cd ..
@@ -140,6 +141,7 @@ deploy_dev:
         export DYNAMODB_ANSWER_KEY_OVERRIDES="$(terraform -chdir="${TF_DIR}" output -raw dynamodb_answer_key_overrides_table)"
         export S3_BUCKET="$(terraform -chdir="${TF_DIR}" output -raw s3_bucket_name)"
         export SECRET_KEY="${TF_VAR_secret_key}"
+        export VIDEO_BASE_URL="https://${S3_BUCKET}.s3.${AWS_DEFAULT_REGION}.amazonaws.com/videos"
         .venv/bin/python3 seed_dynamodb.py
       else
         echo "Skipping DynamoDB seed because SKIP_SEED=true"
@@ -184,6 +186,7 @@ deploy_prod:
     - terraform apply -auto-approve tfplan
     - S3_BUCKET="$(terraform output -raw s3_bucket_name)"
     - aws s3 sync ../examples/ "s3://${S3_BUCKET}/eml-samples/" --exclude "*" --include "*.eml"
+    - aws s3 sync ../app/static/videos/ "s3://${S3_BUCKET}/videos/" --exclude "*" --include "*.mp4"
     - |
       if [ "${SKIP_SEED:-false}" != "true" ]; then
         cd ..
@@ -198,6 +201,7 @@ deploy_prod:
         export DYNAMODB_ANSWER_KEY_OVERRIDES="$(terraform -chdir="${TF_DIR}" output -raw dynamodb_answer_key_overrides_table)"
         export S3_BUCKET="$(terraform -chdir="${TF_DIR}" output -raw s3_bucket_name)"
         export SECRET_KEY="${TF_VAR_secret_key}"
+        export VIDEO_BASE_URL="https://${S3_BUCKET}.s3.${AWS_DEFAULT_REGION}.amazonaws.com/videos"
         .venv/bin/python3 seed_dynamodb.py
       else
         echo "Skipping DynamoDB seed because SKIP_SEED=true"
