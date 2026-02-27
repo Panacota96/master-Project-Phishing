@@ -537,10 +537,19 @@ def count_inspector_attempts_anonymous():
 # ─── Answer Key Overrides ────────────────────────────────────────────────────
 
 def get_answer_key_overrides():
-    """Return all admin-written answer key overrides keyed by email_file."""
-    table = _get_table('DYNAMODB_ANSWER_KEY_OVERRIDES')
-    resp = table.scan()
-    return {item['email_file']: item for item in resp.get('Items', [])}
+    """Return all admin-written answer key overrides keyed by email_file.
+
+    Returns an empty dict if the table does not exist yet (e.g. before the
+    first Terraform apply that creates DYNAMODB_ANSWER_KEY_OVERRIDES).
+    """
+    try:
+        table = _get_table('DYNAMODB_ANSWER_KEY_OVERRIDES')
+        resp = table.scan()
+        return {item['email_file']: item for item in resp.get('Items', [])}
+    except Exception as e:
+        # Table may not exist yet in this environment; fall back to empty overrides
+        current_app.logger.warning('get_answer_key_overrides: %s', e)
+        return {}
 
 
 def get_effective_answer_key():
