@@ -27,12 +27,16 @@ const statusEl = document.getElementById('video-status');
 async function markWatched() {
     const resp = await fetch('{{ url_for('quiz.video_watched', quiz_id=quiz.quiz_id) }}', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': window.CSRF_TOKEN,
+        },
         body: JSON.stringify({ watched: true }),
     });
     if (!resp.ok) {
-        const data = await resp.json();
-        throw new Error(data.error || 'Unable to record video completion.');
+        let msg = 'Unable to record video completion.';
+        try { msg = (await resp.json()).error || msg; } catch (_) {}
+        throw new Error(msg);
     }
 }
 
