@@ -4,6 +4,12 @@ import os
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
 
+    # Flask-WTF CSRF — allow requests through CloudFront where the Referer
+    # header is the CloudFront domain, not the API Gateway origin.
+    # The CSRF token itself is still validated; only the referrer/origin header
+    # check is relaxed.
+    WTF_CSRF_SSL_STRICT = False
+
     # AWS / DynamoDB
     AWS_REGION = os.environ.get('AWS_REGION_NAME', 'eu-west-3')
     DYNAMODB_USERS = os.environ.get('DYNAMODB_USERS', 'phishing-app-prod-users')
