@@ -6,6 +6,7 @@ resource "aws_cloudfront_distribution" "app" {
   enabled             = true
   comment             = "${local.prefix} – stable login URL"
   default_root_object = ""
+  aliases             = var.domain_name != "" ? [var.domain_name] : []
 
   origin {
     domain_name = replace(aws_apigatewayv2_api.app.api_endpoint, "https://", "")
@@ -47,7 +48,10 @@ resource "aws_cloudfront_distribution" "app" {
   }
 
   viewer_certificate {
-    cloudfront_default_certificate = true
+    cloudfront_default_certificate = var.domain_name == "" ? true : false
+    acm_certificate_arn            = var.domain_name != "" ? aws_acm_certificate_validation.custom_domain[0].certificate_arn : null
+    ssl_support_method             = var.domain_name != "" ? "sni-only" : null
+    minimum_protocol_version       = var.domain_name != "" ? "TLSv1.2_2021" : null
   }
 
   tags = {

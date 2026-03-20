@@ -23,6 +23,11 @@ provider "aws" {
   }
 }
 
+provider "aws" {
+  alias  = "us_east_1"
+  region = "us-east-1"
+}
+
 locals {
   prefix = "${var.app_name}-${var.environment}"
 }

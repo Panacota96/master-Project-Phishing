@@ -1,0 +1,125 @@
+name: Deploy Dev
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      skip_seed:
+        description: "Skip DynamoDB seeding"
+        type: boolean
+        default: false
+
+jobs:
+  ci:
+    uses: ./.github/workflows/ci.yml
+
+  deploy:
+    needs: ci
+    runs-on: ubuntu-latest
+    environment: dev
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "~1.9"
+          terraform_wrapper: true
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: eu-west-3
+
+      - name: Build Lambda artifact
+        run: make lambda
+
+      - name: Verify lambda.zip
+        run: test -f lambda.zip
+
+      - name: Terraform init
+        working-directory: terraform
+        run: terraform init -reconfigure -backend-config="backend/dev.hcl"
+
+      - name: Terraform validate
+        working-directory: terraform
+        run: terraform validate
+
+      - name: Write dev tfvars
+        working-directory: terraform
+        run: |
+          mkdir -p env
+          cat > env/dev.tfvars <<EOF
+          aws_region = "eu-west-3"
+          environment = "dev"
+          app_name   = "en-garde"
+          secret_key = "${{ secrets.TF_VAR_SECRET_KEY }}"
+          EOF
+
+      - name: Terraform plan
+        working-directory: terraform
+        run: terraform plan -var-file="env/dev.tfvars" -out=tfplan
+
+      - name: Terraform apply
+        working-directory: terraform
+        run: terraform apply -auto-approve tfplan
+
+      - name: Capture Terraform outputs
+        id: tf_outputs
+        working-directory: terraform
+        run: |
+          echo "s3_bucket=$(terraform output -raw s3_bucket_name)" >> $GITHUB_OUTPUT
+          echo "cloudfront_url=$(terraform output -raw cloudfront_url)" >> $GITHUB_OUTPUT
+          echo "app_url=$(terraform output -raw app_url)" >> $GITHUB_OUTPUT
+          echo "dynamodb_users=$(terraform output -raw dynamodb_users_table)" >> $GITHUB_OUTPUT
+          echo "dynamodb_quizzes=$(terraform output -raw dynamodb_quizzes_table)" >> $GITHUB_OUTPUT
+          echo "dynamodb_attempts=$(terraform output -raw dynamodb_attempts_table)" >> $GITHUB_OUTPUT
+          echo "dynamodb_responses=$(terraform output -raw dynamodb_responses_table)" >> $GITHUB_OUTPUT
+          echo "dynamodb_inspector=$(terraform output -raw dynamodb_inspector_table)" >> $GITHUB_OUTPUT
+          echo "dynamodb_inspector_anon=$(terraform output -raw dynamodb_inspector_anon_table)" >> $GITHUB_OUTPUT
+          echo "dynamodb_bugs=$(terraform output -raw dynamodb_bugs_table)" >> $GITHUB_OUTPUT
+          echo "dynamodb_answer_key_overrides=$(terraform output -raw dynamodb_answer_key_overrides_table)" >> $GITHUB_OUTPUT
+
+      - name: Sync EML samples to S3
+        run: |
+          aws s3 sync examples/ s3://${{ steps.tf_outputs.outputs.s3_bucket }}/eml-samples/ --include "*.eml"
+
+      - name: Sync video assets to S3
+        run: |
+          aws s3 sync app/static/videos/ s3://${{ steps.tf_outputs.outputs.s3_bucket }}/videos/ --include "*.mp4"
+
+      - name: Seed DynamoDB
+        if: ${{ !inputs.skip_seed }}
+        env:
+          AWS_REGION_NAME: eu-west-3
+          DYNAMODB_USERS: ${{ steps.tf_outputs.outputs.dynamodb_users }}
+          DYNAMODB_QUIZZES: ${{ steps.tf_outputs.outputs.dynamodb_quizzes }}
+          DYNAMODB_ATTEMPTS: ${{ steps.tf_outputs.outputs.dynamodb_attempts }}
+          DYNAMODB_RESPONSES: ${{ steps.tf_outputs.outputs.dynamodb_responses }}
+          DYNAMODB_INSPECTOR: ${{ steps.tf_outputs.outputs.dynamodb_inspector }}
+          DYNAMODB_INSPECTOR_ANON: ${{ steps.tf_outputs.outputs.dynamodb_inspector_anon }}
+          DYNAMODB_BUGS: ${{ steps.tf_outputs.outputs.dynamodb_bugs }}
+          DYNAMODB_ANSWER_KEY_OVERRIDES: ${{ steps.tf_outputs.outputs.dynamodb_answer_key_overrides }}
+          S3_BUCKET: ${{ steps.tf_outputs.outputs.s3_bucket }}
+          SECRET_KEY: ${{ secrets.TF_VAR_SECRET_KEY }}
+        run: python3 seed_dynamodb.py
+
+      - name: Job summary
+        run: |
+          echo "## Deploy Dev" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**App URL:** ${{ steps.tf_outputs.outputs.app_url }}" >> $GITHUB_STEP_SUMMARY
+          echo "**CloudFront URL:** ${{ steps.tf_outputs.outputs.cloudfront_url }}" >> $GITHUB_STEP_SUMMARY

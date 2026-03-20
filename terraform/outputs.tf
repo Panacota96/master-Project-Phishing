@@ -62,3 +62,13 @@ output "cloudfront_url" {
   description = "Stable CloudFront URL for the application (share this with students)"
   value       = "https://${aws_cloudfront_distribution.app.domain_name}"
 }
+
+output "app_url" {
+  description = "Application URL (custom domain if configured, otherwise CloudFront)"
+  value       = var.domain_name != "" ? "https://${var.domain_name}" : "https://${aws_cloudfront_distribution.app.domain_name}"
+}
+
+output "custom_domain_url" {
+  description = "Custom domain URL (empty if not configured)"
+  value       = var.domain_name != "" ? "https://${var.domain_name}" : ""
+}

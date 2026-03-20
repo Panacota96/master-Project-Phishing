@@ -13,7 +13,7 @@ variable "environment" {
 variable "app_name" {
   description = "Application name used as prefix for resources"
   type        = string
-  default     = "phishing-app"
+  default     = "en-garde"
 }
 
 variable "lambda_memory_size" {
@@ -32,4 +32,16 @@ variable "secret_key" {
   description = "Flask SECRET_KEY for session signing"
   type        = string
   sensitive   = true
+}
+
+variable "domain_name" {
+  description = "Custom domain for CloudFront"
+  type        = string
+  default     = ""
+}
+
+variable "route53_zone_id" {
+  description = "Route 53 zone ID for DNS validation and A record"
+  type        = string
+  default     = ""
 }
