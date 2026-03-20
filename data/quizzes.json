@@ -235,7 +235,7 @@
     "quiz_id": "quiz-external-domain",
     "title": "External Sender Domains",
     "description": "Recognize when senders are outside your organization.",
-    "video_url": "/static/videos/placeholder.mp4",
+    "video_url": "/static/videos/Spotting_Fake_Senders.mp4",
     "questions": [
       {
         "question_id": "quiz-external-domain-q1",
@@ -351,7 +351,7 @@
     "quiz_id": "quiz-spoofing",
     "title": "Spoofing",
     "description": "Learn how spoofed sender identities are used.",
-    "video_url": "/static/videos/placeholder.mp4",
+    "video_url": "/static/videos/The_Deceptive_Email.mp4",
     "questions": [
       {
         "question_id": "quiz-spoofing-q1",
@@ -467,7 +467,7 @@
     "quiz_id": "quiz-social-engineering",
     "title": "Social Engineering Text",
     "description": "Understand manipulative language and pressure tactics.",
-    "video_url": "/static/videos/placeholder.mp4",
+    "video_url": "/static/videos/Social_Engineering.mp4",
     "questions": [
       {
         "question_id": "quiz-social-engineering-q1",
@@ -583,7 +583,7 @@
     "quiz_id": "quiz-urgency",
     "title": "Sense of Urgency",
     "description": "Recognize time pressure tactics.",
-    "video_url": "/static/videos/placeholder.mp4",
+    "video_url": "/static/videos/Phishing_s_Secret_Weapon.mp4",
     "questions": [
       {
         "question_id": "quiz-urgency-q1",
@@ -699,7 +699,7 @@
     "quiz_id": "quiz-fake-invoice",
     "title": "Fake Invoice",
     "description": "Detect invoice fraud and payment scams.",
-    "video_url": "/static/videos/placeholder.mp4",
+    "video_url": "/static/videos/Fake_Invoice_Fraud.mp4",
     "questions": [
       {
         "question_id": "quiz-fake-invoice-q1",
@@ -815,7 +815,7 @@
     "quiz_id": "quiz-malicious-attachment",
     "title": "Malicious Attachments",
     "description": "Recognize dangerous attachments.",
-    "video_url": "/static/videos/placeholder.mp4",
+    "video_url": "/static/videos/The_Human_Hack.mp4",
     "questions": [
       {
         "question_id": "quiz-malicious-attachment-q1",
@@ -931,7 +931,7 @@
     "quiz_id": "quiz-fake-login",
     "title": "Fake Login Pages",
     "description": "Identify credential harvesting sites.",
-    "video_url": "/static/videos/placeholder.mp4",
+    "video_url": "/static/videos/The_Deceptive_Login.mp4",
     "questions": [
       {
         "question_id": "quiz-fake-login-q1",
@@ -1047,7 +1047,7 @@
     "quiz_id": "quiz-side-channel",
     "title": "Side Channel Communication",
     "description": "Recognize unusual off-platform requests.",
-    "video_url": "/static/videos/placeholder.mp4",
+    "video_url": "/static/videos/Side_Channel_Attacks.mp4",
     "questions": [
       {
         "question_id": "quiz-side-channel-q1",
@@ -1163,7 +1163,7 @@
     "quiz_id": "quiz-evilginx",
     "title": "Evilginx and Proxy Phishing",
     "description": "Understand adversary-in-the-middle phishing kits.",
-    "video_url": "/static/videos/placeholder.mp4",
+    "video_url": "/static/videos/Bypassing_2FA.mp4",
     "questions": [
       {
         "question_id": "quiz-evilginx-q1",
@@ -1557,7 +1557,7 @@
     "quiz_id": "quiz-advanced-tactics",
     "title": "Advanced Phishing Tactics",
     "description": "Master the sophisticated techniques used by modern threat actors.",
-    "video_url": "/static/videos/placeholder.mp4",
+    "video_url": "/static/videos/Spotting_Advanced_Phishing.mp4",
     "questions": [
       {
         "question_id": "quiz-adv-q1",

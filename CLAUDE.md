@@ -33,21 +33,33 @@ make sync-assets
 
 ### Local Development with DynamoDB Local
 
+**Option A — Docker Compose (recommended):** The `docker-compose.yml` includes a `dynamodb-local` service (exposes port `8766` to the host). Copy `.env` (already present) and start everything, then create tables:
+
 ```bash
-docker run -d -p 8000:8000 amazon/dynamodb-local
-export DYNAMODB_ENDPOINT=http://localhost:8000
+docker compose up -d --build
+python setup_local_db.py   # creates DynamoDB tables directly via boto3
+python seed_dynamodb.py    # seeds admin user + quizzes via Flask app context
+```
+
+`setup_local_db.py` hits `http://localhost:8766` by default; `seed_dynamodb.py` reads the env vars below.
+
+**Option B — Standalone DynamoDB Local + `python run.py`:**
+
+```bash
+docker run -d -p 8766:8000 amazon/dynamodb-local
+export DYNAMODB_ENDPOINT=http://localhost:8766
 export AWS_REGION_NAME=eu-west-3
 export AWS_ACCESS_KEY_ID=fake
 export AWS_SECRET_ACCESS_KEY=fake
-export DYNAMODB_USERS=phishing-app-dev-users
-export DYNAMODB_QUIZZES=phishing-app-dev-quizzes
-export DYNAMODB_ATTEMPTS=phishing-app-dev-attempts
-export DYNAMODB_RESPONSES=phishing-app-dev-responses
-export DYNAMODB_INSPECTOR=phishing-app-dev-inspector-attempts
-export DYNAMODB_INSPECTOR_ANON=phishing-app-dev-inspector-attempts-anon
-export DYNAMODB_BUGS=phishing-app-dev-bugs
-export DYNAMODB_ANSWER_KEY_OVERRIDES=phishing-app-dev-answer-key-overrides
-export S3_BUCKET=phishing-app-dev
+export DYNAMODB_USERS=en-garde-dev-users
+export DYNAMODB_QUIZZES=en-garde-dev-quizzes
+export DYNAMODB_ATTEMPTS=en-garde-dev-attempts
+export DYNAMODB_RESPONSES=en-garde-dev-responses
+export DYNAMODB_INSPECTOR=en-garde-dev-inspector-attempts
+export DYNAMODB_INSPECTOR_ANON=en-garde-dev-inspector-attempts-anon
+export DYNAMODB_BUGS=en-garde-dev-bugs
+export DYNAMODB_ANSWER_KEY_OVERRIDES=en-garde-dev-answer-key-overrides
+export S3_BUCKET=en-garde-dev
 export SECRET_KEY=dev-secret
 python seed_dynamodb.py
 ```
@@ -102,8 +114,8 @@ Tests use `moto` to mock all AWS services. The `conftest.py` fixture `app()` wra
 
 - **Lambda**: Flask is wrapped with `mangum` for AWS Lambda + API Gateway
 - **Terraform**: `terraform/` manages all AWS infrastructure; `terraform/bootstrap/` creates the Terraform state bucket
-- **CI/CD**: GitLab CI — lints, tests, builds `lambda.zip`, Terraform plan/apply; `TF_ENV` selects `dev` or `prod`
-- **Docker**: `docker compose up -d --build` runs Nginx → Gunicorn → Flask on port 80
+- **CI/CD**: GitHub Actions — two workflows: `claude.yml` (responds to `@claude` mentions in issues/PRs) and `claude-code-review.yml` (auto-reviews every PR); `TF_ENV` selects `dev` or `prod` for Terraform
+- **Docker**: `docker compose up -d --build` starts three services: `dynamodb-local` (port 8766), `web` (Gunicorn/Flask, reads `.env`), and `nginx` (port 80). Static assets are served directly by Nginx; app routes go through the reverse proxy to Gunicorn.
 
 ## Code Conventions
 

@@ -39,7 +39,7 @@ Users take interactive quizzes to learn how to identify phishing emails, and can
 | Frontend | Jinja2 + Bootstrap 5 (CDN) |
 | Charts | Chart.js |
 | EML Parsing | Python `email` stdlib (no extra dependencies) |
-| Deployment | AWS Lambda + API Gateway + Terraform (CI/CD via GitLab), optional Ansible VM deploy |
+| Deployment | AWS Lambda + API Gateway + Terraform (CI/CD via GitHub Actions), optional Ansible VM deploy |
 
 ## Quick Start (Local)
 
@@ -52,22 +52,22 @@ source .venv/bin/activate
 python -m pip install -r requirements.txt
 
 # Start DynamoDB Local (optional, for local dev)
-docker run -d -p 8000:8000 amazon/dynamodb-local
+docker run -d -p 8766:8000 amazon/dynamodb-local
 
 # Configure local DynamoDB + seed
-export DYNAMODB_ENDPOINT=http://localhost:8000
+export DYNAMODB_ENDPOINT=http://localhost:8766
 export AWS_REGION_NAME=eu-west-3
 export AWS_ACCESS_KEY_ID=fake
 export AWS_SECRET_ACCESS_KEY=fake
-export DYNAMODB_USERS=phishing-app-dev-users
-export DYNAMODB_QUIZZES=phishing-app-dev-quizzes
-export DYNAMODB_ATTEMPTS=phishing-app-dev-attempts
-export DYNAMODB_RESPONSES=phishing-app-dev-responses
-export DYNAMODB_INSPECTOR=phishing-app-dev-inspector-attempts
-export DYNAMODB_INSPECTOR_ANON=phishing-app-dev-inspector-attempts-anon
-export DYNAMODB_BUGS=phishing-app-dev-bugs
-export DYNAMODB_ANSWER_KEY_OVERRIDES=phishing-app-dev-answer-key-overrides
-export S3_BUCKET=phishing-app-dev
+export DYNAMODB_USERS=en-garde-dev-users
+export DYNAMODB_QUIZZES=en-garde-dev-quizzes
+export DYNAMODB_ATTEMPTS=en-garde-dev-attempts
+export DYNAMODB_RESPONSES=en-garde-dev-responses
+export DYNAMODB_INSPECTOR=en-garde-dev-inspector-attempts
+export DYNAMODB_INSPECTOR_ANON=en-garde-dev-inspector-attempts-anon
+export DYNAMODB_BUGS=en-garde-dev-bugs
+export DYNAMODB_ANSWER_KEY_OVERRIDES=en-garde-dev-answer-key-overrides
+export S3_BUCKET=en-garde-dev
 export SECRET_KEY=dev-secret
 python seed_dynamodb.py
 
@@ -89,8 +89,8 @@ The app runs at **http://localhost:5000**. Default admin: `admin` / `admin123`
 - **`lambda.zip` missing**: run `./scripts/build_lambda.sh`.
 - **AWS profile issues**: set `AWS_PROFILE=terraform-deployer` before Terraform.
 - **Videos not loading on Lambda**: set `VIDEO_BASE_URL` to an S3/CloudFront base URL and re-run `seed_dynamodb.py`.
-  - Example: `VIDEO_BASE_URL=https://phishing-app-dev-eu-west-3.s3.eu-west-3.amazonaws.com/videos`
-  - Upload: `aws s3 sync app/static/videos/ s3://phishing-app-dev-eu-west-3/videos/`
+  - Example: `VIDEO_BASE_URL=https://en-garde-dev-eu-west-3.s3.eu-west-3.amazonaws.com/videos`
+  - Upload: `aws s3 sync app/static/videos/ s3://en-garde-dev-eu-west-3/videos/`
   - Ensure the bucket policy allows public read for `videos/*`.
 
 ## Make Targets
@@ -102,10 +102,9 @@ make lambda
 ```
 
 ## CI/CD Notes
-- GitLab CI expects `TF_VAR_secret_key` to be set as a masked variable.
-- GitLab CI uses `TF_ENV` (`dev` or `prod`) to select the backend and tfvars file.
-- Set `SKIP_SEED=true` to skip DynamoDB seeding during deploy.
-- Test reports are emitted as `report.xml` for JUnit artifacts.
+- GitHub Actions uses OIDC to assume the deploy role — no static AWS keys needed.
+- Set the `skip_seed` workflow input to `true` to skip DynamoDB seeding on manual dispatch.
+- Test reports are emitted as `report.xml` and uploaded as a GitHub Actions artifact.
 
 ## CI/CD Overview
 **Continuous Integration (CI)** automatically checks every change:
@@ -143,7 +142,7 @@ asmith,asmith@school.edu,TempPass456,Class B,2025,Marketing,Lyon,marketing
 ### Upload Email Samples (.eml)
 Use S3 and keep files under the `eml-samples/` prefix:
 ```bash
-aws s3 sync examples/ s3://phishing-app-<env>-eu-west-3/eml-samples/ --exclude "*" --include "*.eml"
+aws s3 sync examples/ s3://en-garde-<env>-eu-west-3/eml-samples/ --exclude "*" --include "*.eml"
 ```
 
 ### Migrate Inspector Attempts to GDPR-Safe Table
@@ -207,7 +206,7 @@ Each user can submit answers for the assigned 8 emails once. After completing al
 docker compose up -d --build
 
 # Seed the database
-docker compose exec web python seed.py
+docker compose exec web python seed_dynamodb.py
 
 # Stop
 docker compose down
@@ -254,13 +253,13 @@ terraform apply \
 
 ## CI/CD Environment Variables
 
-Set these in GitLab CI/CD:
+Set these in GitHub Actions (Settings → Secrets and variables → Actions):
 
-- `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_DEFAULT_REGION`
-- `TF_ENV` (`dev` or `prod`)
-- `TF_VAR_secret_key` (masked)
-- `TF_VAR_app_name` (optional, defaults to `phishing-app`)
-- `SKIP_SEED` (optional, `true` to skip seeding)
+**Secrets:**
+- `AWS_DEPLOY_ROLE_ARN` — IAM role ARN for OIDC deploy (output from `terraform output github_actions_deploy_role_arn`)
+- `TF_VAR_SECRET_KEY` — Flask secret key (generate with `python3 -c "import secrets; print(secrets.token_hex(32))"`)
+
+**Environments:** Create a `dev` environment at Settings → Environments.
 
 ## Project Structure
 

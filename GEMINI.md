@@ -1,14 +1,14 @@
-# GEMINI.md - Project Context: Phishing Awareness Training Application
+# GEMINI.md - Project Context: En Garde
 
 ## Project Overview
-This project is a **Phishing Awareness Training Web Application** developed for the ESME engineering school Cloud SecDevOps course. It allows users to take interactive quizzes on phishing techniques and analyze real-world phishing samples using a built-in "Email Threat Inspector."
+This project is **En Garde**, a phishing awareness training web application developed for the ESME engineering school Cloud SecDevOps course. It allows users to take interactive quizzes on phishing techniques and analyze real-world phishing samples using a built-in "Email Threat Inspector."
 
 ### Core Technologies
 - **Backend:** Flask (Python 3.12), Flask-Login, Flask-WTF.
 - **Database:** DynamoDB (AWS NoSQL) for users, quizzes, and attempts.
 - **Frontend:** Jinja2 templates, Bootstrap 5, Chart.js for analytics.
 - **Infrastructure:** AWS Lambda (Serverless), API Gateway, S3 (for EML storage).
-- **Deployment:** Terraform (Infrastructure as Code), Docker (for local dev/production), GitLab CI/CD.
+- **Deployment:** Terraform (Infrastructure as Code), Docker (for local dev/production), GitHub Actions CI/CD.
 
 ### Architecture Highlights
 - **Serverless Backend:** The application is packaged using `mangum` to run on AWS Lambda.
@@ -32,8 +32,8 @@ This project is a **Phishing Awareness Training Web Application** developed for 
    ```
 2. **Database (Local):**
    ```bash
-   docker run -d -p 8000:8000 amazon/dynamodb-local
-   export DYNAMODB_ENDPOINT=http://localhost:8000
+   docker run -d -p 8766:8000 amazon/dynamodb-local
+   export DYNAMODB_ENDPOINT=http://localhost:8766
    python seed_dynamodb.py
    ```
 3. **Execution:**
@@ -45,7 +45,7 @@ This project is a **Phishing Awareness Training Web Application** developed for 
 ### Docker Environment
 ```bash
 docker compose up -d --build
-docker compose exec web python seed.py
+docker compose exec web python seed_dynamodb.py
 ```
 Access at `http://localhost` (port 80).
 

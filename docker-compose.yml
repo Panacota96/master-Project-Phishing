@@ -1,9 +1,16 @@
 services:
+  dynamodb-local:
+    image: amazon/dynamodb-local
+    command: ["-jar", "DynamoDBLocal.jar", "-inMemory"]
+    ports:
+      - "8766:8000"
+    restart: unless-stopped
+
   web:
     build: .
     env_file: .env
-    volumes:
-      - sqlite-data:/data
+    depends_on:
+      - dynamodb-local
     restart: unless-stopped
 
   nginx:
@@ -16,6 +23,3 @@ services:
     depends_on:
       - web
     restart: unless-stopped
-
-volumes:
-  sqlite-data:

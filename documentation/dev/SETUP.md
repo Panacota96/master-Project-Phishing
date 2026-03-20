@@ -1,4 +1,4 @@
-# Local Development Setup - Phishing Awareness Training
+# Local Development Setup - En Garde
 
 ## Prerequisites
 - **Python 3.12+**
@@ -17,7 +17,7 @@ pip install -r requirements.txt
 ## Step 2: Database (Local)
 Start DynamoDB Local:
 ```bash
-docker run -d -p 8000:8000 amazon/dynamodb-local
+docker run -d -p 8766:8000 amazon/dynamodb-local
 ```
 
 ## Step 3: Environment Configuration
@@ -28,20 +28,20 @@ Create a `.env` file or export these variables for your local session:
 export AWS_REGION_NAME=eu-west-3
 export AWS_ACCESS_KEY_ID=fake
 export AWS_SECRET_ACCESS_KEY=fake
-export DYNAMODB_ENDPOINT=http://localhost:8000
+export DYNAMODB_ENDPOINT=http://localhost:8766
 
 # Table Names (matches seed_dynamodb.py)
-export DYNAMODB_USERS=phishing-app-dev-users
-export DYNAMODB_QUIZZES=phishing-app-dev-quizzes
-export DYNAMODB_ATTEMPTS=phishing-app-dev-attempts
-export DYNAMODB_RESPONSES=phishing-app-dev-responses
-export DYNAMODB_INSPECTOR=phishing-app-dev-inspector-attempts
-export DYNAMODB_INSPECTOR_ANON=phishing-app-dev-inspector-attempts-anon
-export DYNAMODB_BUGS=phishing-app-dev-bugs
-export DYNAMODB_ANSWER_KEY_OVERRIDES=phishing-app-dev-answer-key-overrides
+export DYNAMODB_USERS=en-garde-dev-users
+export DYNAMODB_QUIZZES=en-garde-dev-quizzes
+export DYNAMODB_ATTEMPTS=en-garde-dev-attempts
+export DYNAMODB_RESPONSES=en-garde-dev-responses
+export DYNAMODB_INSPECTOR=en-garde-dev-inspector-attempts
+export DYNAMODB_INSPECTOR_ANON=en-garde-dev-inspector-attempts-anon
+export DYNAMODB_BUGS=en-garde-dev-bugs
+export DYNAMODB_ANSWER_KEY_OVERRIDES=en-garde-dev-answer-key-overrides
 
 # Storage
-export S3_BUCKET=phishing-app-dev
+export S3_BUCKET=en-garde-dev
 export SECRET_KEY=dev-secret-key
 ```
 

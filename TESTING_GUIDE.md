@@ -1,6 +1,6 @@
 # Testing Guide — What to Expect
 
-This guide explains how to test the phishing awareness app at each stage: local development, automated tests, and post-deployment verification.
+This guide explains how to test the En Garde app at each stage: local development, automated tests, and post-deployment verification.
 
 ---
 ## Quick Runbook
@@ -18,7 +18,7 @@ make validate-eml
 - **PEP 668 / externally-managed-environment**: use a venv (`python3 -m venv .venv`).
 - **Missing `boto3` or `flask_login`**: ensure deps installed in the venv.
 - **Hangs on AWS calls**: tests use `moto`; verify `AWS_*` env vars are set by `tests/conftest.py`.
-- **CI artifacts**: `make test` writes `report.xml` for GitLab JUnit reports.
+- **CI artifacts**: `make test` writes `report.xml` uploaded as a GitHub Actions artifact.
 
 
 ## 1. Running Automated Tests Locally
@@ -115,29 +115,29 @@ You can run the full app locally using DynamoDB Local (Docker):
 ### 2.1 Start DynamoDB Local
 
 ```bash
-docker run -d -p 8000:8000 amazon/dynamodb-local
+docker run -d -p 8766:8000 amazon/dynamodb-local
 ```
 
 ### 2.2 Create Tables Locally
 
 ```bash
 # Set environment for local development
-export DYNAMODB_ENDPOINT=http://localhost:8000
+export DYNAMODB_ENDPOINT=http://localhost:8766
 export AWS_REGION_NAME=eu-west-3
 export AWS_ACCESS_KEY_ID=fake
 export AWS_SECRET_ACCESS_KEY=fake
-export DYNAMODB_USERS=phishing-app-dev-users
-export DYNAMODB_QUIZZES=phishing-app-dev-quizzes
-export DYNAMODB_ATTEMPTS=phishing-app-dev-attempts
-export DYNAMODB_RESPONSES=phishing-app-dev-responses
-export DYNAMODB_INSPECTOR=phishing-app-dev-inspector-attempts
-export S3_BUCKET=phishing-app-dev-local
+export DYNAMODB_USERS=en-garde-dev-users
+export DYNAMODB_QUIZZES=en-garde-dev-quizzes
+export DYNAMODB_ATTEMPTS=en-garde-dev-attempts
+export DYNAMODB_RESPONSES=en-garde-dev-responses
+export DYNAMODB_INSPECTOR=en-garde-dev-inspector-attempts
+export S3_BUCKET=en-garde-dev-local
 export SECRET_KEY=dev-secret
 
 # Create tables using AWS CLI pointed at local DynamoDB
 aws dynamodb create-table \
-  --endpoint-url http://localhost:8000 \
-  --table-name phishing-app-dev-users \
+  --endpoint-url http://localhost:8766 \
+  --table-name en-garde-dev-users \
   --key-schema AttributeName=username,KeyType=HASH \
   --attribute-definitions \
     AttributeName=username,AttributeType=S \
@@ -148,15 +148,15 @@ aws dynamodb create-table \
   --billing-mode PAY_PER_REQUEST
 
 aws dynamodb create-table \
-  --endpoint-url http://localhost:8000 \
-  --table-name phishing-app-dev-quizzes \
+  --endpoint-url http://localhost:8766 \
+  --table-name en-garde-dev-quizzes \
   --key-schema AttributeName=quiz_id,KeyType=HASH \
   --attribute-definitions AttributeName=quiz_id,AttributeType=S \
   --billing-mode PAY_PER_REQUEST
 
 aws dynamodb create-table \
-  --endpoint-url http://localhost:8000 \
-  --table-name phishing-app-dev-attempts \
+  --endpoint-url http://localhost:8766 \
+  --table-name en-garde-dev-attempts \
   --key-schema AttributeName=username,KeyType=HASH AttributeName=quiz_id,KeyType=RANGE \
   --attribute-definitions \
     AttributeName=username,AttributeType=S \
@@ -168,8 +168,8 @@ aws dynamodb create-table \
   --billing-mode PAY_PER_REQUEST
 
 aws dynamodb create-table \
-  --endpoint-url http://localhost:8000 \
-  --table-name phishing-app-dev-responses \
+  --endpoint-url http://localhost:8766 \
+  --table-name en-garde-dev-responses \
   --key-schema AttributeName=username_quiz_id,KeyType=HASH AttributeName=question_id,KeyType=RANGE \
   --attribute-definitions \
     AttributeName=username_quiz_id,AttributeType=S \
@@ -181,8 +181,8 @@ aws dynamodb create-table \
   --billing-mode PAY_PER_REQUEST
 
 aws dynamodb create-table \
-  --endpoint-url http://localhost:8000 \
-  --table-name phishing-app-dev-inspector-attempts \
+  --endpoint-url http://localhost:8766 \
+  --table-name en-garde-dev-inspector-attempts \
   --key-schema AttributeName=username,KeyType=HASH AttributeName=submitted_at,KeyType=RANGE \
   --attribute-definitions \
     AttributeName=username,AttributeType=S \
@@ -214,8 +214,8 @@ For full S3 support locally, use LocalStack:
 docker run -d -p 4566:4566 localstack/localstack
 
 export S3_ENDPOINT=http://localhost:4566
-aws --endpoint-url http://localhost:4566 s3 mb s3://phishing-app-dev-local
-aws --endpoint-url http://localhost:4566 s3 sync examples/ s3://phishing-app-dev-local/eml-samples/
+aws --endpoint-url http://localhost:4566 s3 mb s3://en-garde-dev-local
+aws --endpoint-url http://localhost:4566 s3 sync examples/ s3://en-garde-dev-local/eml-samples/
 ```
 
 ---
@@ -228,7 +228,7 @@ After deploying to AWS, run through this checklist manually:
 
 | Step | Expected Result |
 |------|----------------|
-| Visit API Gateway URL | Login page loads with "Phishing Awareness" navbar |
+| Visit CloudFront URL | Login page loads with "En Garde" navbar |
 | Check for HTTPS | URL starts with `https://` |
 | Check page load time | < 3 seconds (Lambda cold start may be up to 5s first time) |
 
@@ -464,32 +464,20 @@ Authentication: Change Password
 
 ---
 
-## 5. GitLab Pipeline Verification
+## 5. GitHub Actions Verification
 
-When you push to GitLab, check each stage:
+When you push to `main`, check the workflows at the Actions tab:
 
-### Stage: lint
-- **Pass**: No flake8 errors
-- **Fail**: Fix the reported style issues (line too long, unused import, etc.)
+### Job: ci
+- **Pass**: No flake8 errors, all tests pass, `report.xml` artifact uploaded
+- **Fail (lint)**: Fix the reported style issues (line too long, unused import, etc.)
+- **Fail (test)**: Read the test output — it shows which test failed and why
 
-### Stage: test
-- **Pass**: All 36 tests pass
-- **Fail**: Read the test output — it shows which test failed and why
-
-### Stage: build
-- **Pass**: `lambda.zip` artifact is created (visible in job artifacts)
-- **Fail**: Usually a `pip install` or `zip` issue
-
-### Stage: plan
-- **Pass**: Review the plan output in the job log. It shows what Terraform will create:
-  - `Plan: 15 to add, 0 to change, 0 to destroy` (first deploy)
-  - Subsequent deploys show only changes
-- **Fail**: Terraform configuration error — check `.tf` files
-
-### Stage: deploy
-- **Manual trigger**: Click the play button on the deploy job
-- **Pass**: Terraform apply completes, EML files uploaded to S3
-- **Fail**: Check Terraform error message (usually permissions or resource conflicts)
+### Job: deploy
+- **Runs after**: `ci` job passes
+- **Pass**: Terraform apply completes, EML and video files synced to S3, seeding done; job summary shows app URL
+- **Fail (terraform)**: Check the plan/apply log — usually permissions or resource conflicts
+- **Fail (OIDC)**: Verify `AWS_DEPLOY_ROLE_ARN` secret is set and the `dev` environment exists
 
 ---
 
@@ -525,32 +513,32 @@ curl -s -o /dev/null -w "%{http_code}" "$API_URL/quiz/"
 
 ```bash
 # View Lambda logs
-aws logs tail /aws/lambda/phishing-app-prod-app --follow
+aws logs tail /aws/lambda/en-garde-prod-app --follow
 
 # View API Gateway logs
-aws logs tail /aws/apigateway/phishing-app-prod-api --follow
+aws logs tail /aws/apigateway/en-garde-prod-api --follow
 ```
 
 ### DynamoDB Data Check
 
 ```bash
 # Count users
-aws dynamodb scan --table-name phishing-app-prod-users --select COUNT
+aws dynamodb scan --table-name en-garde-prod-users --select COUNT
 
 # List all quizzes
-aws dynamodb scan --table-name phishing-app-prod-quizzes \
+aws dynamodb scan --table-name en-garde-prod-quizzes \
   --projection-expression "quiz_id, title"
 
 # Count attempts
-aws dynamodb scan --table-name phishing-app-prod-attempts --select COUNT
+aws dynamodb scan --table-name en-garde-prod-attempts --select COUNT
 ```
 
 ### S3 Content Check
 
 ```bash
 # List EML files
-aws s3 ls s3://phishing-app-prod-eu-west-3/eml-samples/
+aws s3 ls s3://en-garde-prod-eu-west-3/eml-samples/
 
 # List generated reports
-aws s3 ls s3://phishing-app-prod-eu-west-3/reports/
+aws s3 ls s3://en-garde-prod-eu-west-3/reports/
 ```
