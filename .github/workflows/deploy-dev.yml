@@ -48,6 +48,20 @@ jobs:
         working-directory: terraform
         run: terraform validate
 
+      - name: Bootstrap IAM permissions
+        working-directory: terraform
+        run: |
+          mkdir -p env
+          cat > env/dev.tfvars <<EOF
+          aws_region = "eu-west-3"
+          environment = "dev"
+          app_name   = "en-garde"
+          secret_key = "${{ secrets.TF_VAR_SECRET_KEY }}"
+          EOF
+          terraform apply -auto-approve \
+            -var-file="env/dev.tfvars" \
+            -target=aws_iam_role_policy.github_actions_deploy
+
       - name: Write dev tfvars
         working-directory: terraform
         run: |

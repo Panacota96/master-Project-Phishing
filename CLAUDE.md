@@ -132,6 +132,19 @@ Tests use `moto` to mock all AWS services. The `conftest.py` fixture `app()` wra
 - **Answer key overrides table**: Any new environment (local dev, test, prod) needs `DYNAMODB_ANSWER_KEY_OVERRIDES` set. Tests use `test-answer-key-overrides`; local dev uses `phishing-app-dev-answer-key-overrides`.
 - **Inspector signal count is dynamic**: `api_submit` and the student JS both derive the required signal count from `len(requirement['signals'])`, not from a hardcoded `3`. When editing the answer key (static or via override), the signal list length drives validation on both client and server.
 
+## Documentation Updates (after major implementations)
+
+After completing any major implementation (new feature, infrastructure change, schema change, new flow, significant refactor), always update:
+
+1. **`documentation/ARCHITECTURE.md`** — update or add the relevant Mermaid diagram(s) to reflect the new components, flows, or data model
+2. **`CHANGELOG.md`** (if present) — add an entry under the current date describing what changed
+3. **`README.md`** — update any section that references the changed functionality (setup steps, feature list, environment variables, etc.)
+4. **`documentation/REQUIREMENTS.md`** — update if the change affects functional or non-functional requirements
+
+Minor fixes (typos, lint, single-line patches, doc-only edits) do not require documentation updates.
+
+---
+
 ## Hooks (automated checks)
 
 Project-level hooks are configured in `.claude/settings.json` and run automatically after every file edit:
