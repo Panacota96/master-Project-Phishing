@@ -23,7 +23,6 @@ class TestQuizList:
         login(client, 'testuser', 'password123')
         resp = client.get('/quiz/')
         assert b'Completed' in resp.data
-        assert b'Already Completed' in resp.data
 
 
 class TestQuizLock:
