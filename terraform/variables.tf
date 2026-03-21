@@ -45,3 +45,27 @@ variable "route53_zone_id" {
   type        = string
   default     = ""
 }
+
+variable "alert_email" {
+  description = "Email address to receive CloudWatch alarm notifications (leave empty to skip SNS subscription)"
+  type        = string
+  default     = ""
+}
+
+variable "enable_xray" {
+  description = "Enable AWS X-Ray active tracing on the Lambda function"
+  type        = bool
+  default     = true
+}
+
+variable "ses_from_email" {
+  description = "Verified SES email address used as the sender for registration confirmation emails"
+  type        = string
+  default     = ""
+}
+
+variable "registration_queue_arn" {
+  description = "Internal — populated from aws_sqs_queue.registration.arn (used by IAM policies)"
+  type        = string
+  default     = ""
+}

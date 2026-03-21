@@ -51,8 +51,13 @@ resource "aws_iam_role_policy" "github_actions_deploy" {
           "lambda:AddPermission",
           "lambda:RemovePermission",
           "lambda:GetPolicy",
+          "lambda:CreateEventSourceMapping",
+          "lambda:DeleteEventSourceMapping",
+          "lambda:GetEventSourceMapping",
+          "lambda:UpdateEventSourceMapping",
+          "lambda:ListEventSourceMappings",
         ]
-        Resource = "arn:aws:lambda:*:*:function:${local.prefix}-*"
+        Resource = "*"
       },
       {
         Sid    = "IAMRoleManagement"
@@ -168,6 +173,75 @@ resource "aws_iam_role_policy" "github_actions_deploy" {
           "route53:GetChange",
           "route53:ListHostedZones",
           "route53:ListResourceRecordSets",
+        ]
+        Resource = "*"
+      },
+      {
+        Sid    = "CloudWatchAlarmsDashboards"
+        Effect = "Allow"
+        Action = [
+          "cloudwatch:PutMetricAlarm",
+          "cloudwatch:DeleteAlarms",
+          "cloudwatch:DescribeAlarms",
+          "cloudwatch:PutDashboard",
+          "cloudwatch:DeleteDashboards",
+          "cloudwatch:GetDashboard",
+        ]
+        Resource = "*"
+      },
+      {
+        Sid    = "SNS"
+        Effect = "Allow"
+        Action = [
+          "sns:CreateTopic",
+          "sns:DeleteTopic",
+          "sns:Subscribe",
+          "sns:Unsubscribe",
+          "sns:GetTopicAttributes",
+          "sns:SetTopicAttributes",
+          "sns:ListTagsForResource",
+          "sns:TagResource",
+          "sns:GetSubscriptionAttributes",
+          "sns:ListSubscriptionsByTopic",
+        ]
+        Resource = "*"
+      },
+      {
+        Sid    = "SQS"
+        Effect = "Allow"
+        Action = [
+          "sqs:CreateQueue",
+          "sqs:DeleteQueue",
+          "sqs:GetQueueAttributes",
+          "sqs:SetQueueAttributes",
+          "sqs:TagQueue",
+          "sqs:GetQueueUrl",
+          "sqs:ListQueueTags",
+        ]
+        Resource = "*"
+      },
+      {
+        Sid    = "SES"
+        Effect = "Allow"
+        Action = [
+          "ses:VerifyEmailIdentity",
+          "ses:VerifyDomainIdentity",
+          "ses:GetIdentityVerificationAttributes",
+          "ses:DeleteIdentity",
+          "ses:SetIdentityNotificationTopic",
+          "ses:GetSendQuota",
+          "ses:ListIdentities",
+        ]
+        Resource = "*"
+      },
+      {
+        Sid    = "XRay"
+        Effect = "Allow"
+        Action = [
+          "xray:CreateGroup",
+          "xray:DeleteGroup",
+          "xray:GetGroup",
+          "xray:UpdateGroup",
         ]
         Resource = "*"
       },

@@ -57,8 +57,49 @@ resource "aws_iam_role_policy" "lambda_dynamodb" {
           "${aws_dynamodb_table.inspector_attempts.arn}/index/*",
           aws_dynamodb_table.inspector_attempts_anon.arn,
           aws_dynamodb_table.bugs.arn,
-          aws_dynamodb_table.answer_key_overrides.arn
+          aws_dynamodb_table.answer_key_overrides.arn,
+          aws_dynamodb_table.cohort_tokens.arn,
+          "${aws_dynamodb_table.cohort_tokens.arn}/index/*"
         ]
+      }
+    ]
+  })
+}
+
+# SQS access (enqueue registrations)
+resource "aws_iam_role_policy" "lambda_sqs" {
+  name = "${local.prefix}-lambda-sqs"
+  role = aws_iam_role.lambda.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = ["sqs:SendMessage"]
+        Resource = aws_sqs_queue.registration.arn
+      }
+    ]
+  })
+}
+
+# X-Ray tracing
+resource "aws_iam_role_policy" "lambda_xray" {
+  name = "${local.prefix}-lambda-xray"
+  role = aws_iam_role.lambda.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "xray:PutTraceSegments",
+          "xray:PutTelemetryRecords",
+          "xray:GetSamplingRules",
+          "xray:GetSamplingTargets",
+        ]
+        Resource = "*"
       }
     ]
   })
