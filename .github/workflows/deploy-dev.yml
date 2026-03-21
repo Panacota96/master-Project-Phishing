@@ -61,6 +61,8 @@ jobs:
           terraform apply -auto-approve \
             -var-file="env/dev.tfvars" \
             -target=aws_iam_role_policy.github_actions_deploy
+          echo "Waiting 20s for IAM policy propagation..."
+          sleep 20
 
       - name: Write dev tfvars
         working-directory: terraform
