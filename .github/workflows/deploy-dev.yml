@@ -66,7 +66,7 @@ jobs:
             "arn:aws:iam::${ACCOUNT_ID}:oidc-provider/token.actions.githubusercontent.com" || true
           terraform import -var-file="env/dev.tfvars" \
             aws_iam_role.github_actions_deploy \
-            "en-garde-dev-github-actions-deploy" || true
+            "phishing-app-dev-github-actions-deploy" || true
 
           terraform apply -auto-approve \
             -var-file="env/dev.tfvars" \
