@@ -43,48 +43,27 @@ body {
     flex-shrink: 0;
 }
 
-/* ── En Garde Wordmark ───────────────────────────────── */
-.en-garde-wordmark {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    font-family: 'Exo 2', 'Segoe UI', system-ui, sans-serif;
-    font-weight: 800;
-    font-size: 1.2rem;
-    letter-spacing: 0.05em;
-    background: linear-gradient(135deg, #93c5fd 0%, #34d399 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    transition: opacity 0.2s ease;
-}
-.en-garde-navbar .navbar-brand:hover .en-garde-wordmark {
-    opacity: 0.85;
+
+/* ── Footer ──────────────────────────────────────────── */
+.en-garde-footer {
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    padding: 1rem 0;
 }
 
-/* ── Shield Icon ─────────────────────────────────────── */
-.en-garde-icon {
-    fill: #60a5fa;
-    flex-shrink: 0;
+/* ── En Garde Logo (navbar) ──────────────────────────── */
+.en-garde-logo-navbar {
+    border-radius: 8px;
+    transition: opacity 0.2s ease;
+}
+.en-garde-navbar .navbar-brand:hover .en-garde-logo-navbar {
+    opacity: 0.85;
 }
 
 /* ── Login Hero ──────────────────────────────────────── */
 .en-garde-login-hero {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
     margin-top: 1rem;
 }
-.en-garde-hero-icon {
-    fill: #2563eb;
-}
-.en-garde-hero-wordmark {
-    font-family: 'Exo 2', 'Segoe UI', system-ui, sans-serif;
-    font-weight: 800;
-    font-size: 2rem;
-    letter-spacing: 0.06em;
-    background: linear-gradient(135deg, #2563eb 0%, #059669 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+.en-garde-hero-img {
+    height: 90px;
+    border-radius: 12px;
 }
