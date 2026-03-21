@@ -9,7 +9,7 @@ Content-Type: multipart/alternative; boundary="----boundary_text_html_separation
 ------boundary_text_html_separation_12345
 Content-Type: text/plain; charset="UTF-8"
 
-Payment Failed Dear {{.FirstName}}, We were unable to process your latest payment for your Microsoft 365 Personal subscription. Please update your payment method immediately to avoid service interruption and potential data loss in OneDrive. Update Payment Now &copy; 2026 Microsof Corporation. All right reserved. One Microsoft Way, Redmond, WA 98052, USA
+Payment Failed Dear Customer, We were unable to process your latest payment for your Microsoft 365 Personal subscription. Please update your payment method immediately to avoid service interruption and potential data loss in OneDrive. Update Payment Now &copy; 2026 Microsof Corporation. All right reserved. One Microsoft Way, Redmond, WA 98052, USA
 
 ------boundary_text_html_separation_12345
 Content-Type: text/html; charset="UTF-8"
@@ -20,7 +20,7 @@ Content-Type: text/html; charset="UTF-8"
   </div>
   <div style="padding: 30px;">
     <h2 style="color: #0078d4; margin-top: 0;">Payment Failed</h2>
-    <p>Dear {{.FirstName}},</p>
+    <p>Dear Customer,</p>
     <p>We were unable to process your latest payment for your <strong>Microsoft 365 Personal</strong> subscription.</p>
     <p>Please update your payment method immediately to avoid service interruption and potential data loss in OneDrive.</p>
     <div style="text-align: left; margin-top: 30px;">

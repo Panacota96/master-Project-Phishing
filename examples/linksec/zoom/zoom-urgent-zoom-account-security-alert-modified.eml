@@ -58,7 +58,7 @@ Content-Transfer-Encoding: 7bit
                 style="background-color: #99b8ff; outline: 3px solid #99b8ff">Security Alert: Immediate Action Required
                 for Your Zoom Account</span></h2>
         <p><span class="phish-technique fljf9d6pprqi06z" data-name="Personalized Information" data-colour="#99ffd5"
-                style="background-color: #99ffd5; outline: 3px solid #99ffd5">Hi {{.FirstName}},</span></p>
+                style="background-color: #99ffd5; outline: 3px solid #99ffd5">Hi Customer,</span></p>
         <p><span class="phish-technique tt06q7gndz397q7" data-name="Call to action" data-colour="#99b8ff"
                 style="background-color: #99b8ff; outline: 3px solid #99b8ff">We have detected unauthorized access to
                 your Zoom account. As a security measure, you must change your password immediately to ensure the safety

@@ -70,7 +70,7 @@ Content-Transfer-Encoding: 7bit
                     style="background-color: #99b8ff; outline: 3px solid #99b8ff">Immediate Action Required:</span>
                 Google Workspace Storage Limit Exceeded</h2>
             <p><span class="phish-technique fljf9d6pprqi06z" data-name="Personalized Information" data-colour="#99ffd5"
-                    style="background-color: #99ffd5; outline: 3px solid #99ffd5">Dear {{.FirstName}},</span></p>
+                    style="background-color: #99ffd5; outline: 3px solid #99ffd5">Dear Customer,</span></p>
             <p>We regret to inform you that your Google Workspace storage limit has been exceeded. This may affect your
                 ability to send and receive emails, as well as access your files.</p>
             <p>To ensure continued access and avoid any disruptions, please click the link below and follow the

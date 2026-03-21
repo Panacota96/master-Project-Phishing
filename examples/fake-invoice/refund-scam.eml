@@ -9,7 +9,7 @@ Content-Type: multipart/alternative; boundary="----boundary_text_html_separation
 ------boundary_text_html_separation_12345
 Content-Type: text/plain; charset="UTF-8"
 
-Employee Benefits Administration Dear {{.FirstName}}, Following a recent audit of the 2025 fiscal year, we have identified a surplus in your healthcare premium contributions due to a coding error in the payroll system. Refund Amount: $245.00 USD To receive your refund disbursement via direct deposit, please confirm your banking details on the benefits reconciliation portal: Confirm Banking Details
+Employee Benefits Administration Dear Sophie, Following a recent audit of the 2025 fiscal year, we have identified a surplus in your healthcare premium contributions due to a coding error in the payroll system. Refund Amount: $245.00 USD To receive your refund disbursement via direct deposit, please confirm your banking details on the benefits reconciliation portal: Confirm Banking Details
 
 ------boundary_text_html_separation_12345
 Content-Type: text/html; charset="UTF-8"
@@ -19,7 +19,7 @@ Content-Type: text/html; charset="UTF-8"
     <div style="text-align: center; border-bottom: 1px solid #333; padding-bottom: 20px; margin-bottom: 30px;">
       <h2 style="text-transform: uppercase; letter-spacing: 2px;">Employee Benefits Administration</h2>
     </div>
-    <p>Dear {{.FirstName}},</p>
+    <p>Dear Sophie,</p>
     <p>Following a recent audit of the 2025 fiscal year, we have identified a surplus in your healthcare premium contributions due to a coding error in the payroll system.</p>
     <div style="background: #e7f3ff; border: 1px solid #b8daff; padding: 20px; border-radius: 4px; margin: 30px 0; text-align: center;">
       <p style="margin: 0; color: #004085; font-size: 18px; font-weight: bold;">Refund Amount: $245.00 USD</p>

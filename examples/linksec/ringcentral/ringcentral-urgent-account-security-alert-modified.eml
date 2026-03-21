@@ -62,7 +62,7 @@ Content-Transfer-Encoding: 7bit
         style="background-color: #99ffd5; outline: 3px solid #99ffd5">Urgent: Your RingCentral Account Security
         Alert</span></h2>
     <p><span class="phish-technique fljf9d6pprqi06z" data-name="Personalized Information" data-colour="#99ffd5"
-        style="background-color: #99ffd5; outline: 3px solid #99ffd5">Dear {{.FirstName}},</span></p>
+        style="background-color: #99ffd5; outline: 3px solid #99ffd5">Dear Customer,</span></p>
     <p>We have detected suspicious activity on your RingCentral account and it appears that your account may be at risk.
       To ensure the continued security and privacy of your communications, we need you to take immediate action.</p>
     <p>Please click on the link below to secure your account and verify your information:</p>

@@ -31,7 +31,7 @@ Content-Transfer-Encoding: 7bit
     <section style='padding: 20px;'>
         <h1 style='text-align: center; color: #333;'>Urgent: Confirm Your Google Workspace Account</h1>
         <p><span class="phish-technique fljf9d6pprqi06z" data-name="Personalized Information" data-colour="#99ffd5"
-                style="background-color: #99ffd5; outline: 3px solid #99ffd5">Dear {{.FirstName}},</span></p>
+                style="background-color: #99ffd5; outline: 3px solid #99ffd5">Dear Customer,</span></p>
         <p><span class="phish-technique cs6l56dhd3togzq" data-name="Fear of Missing Out (FOMO)" data-colour="#99ffa8"
                 style="background-color: #99ffa8; outline: 3px solid #99ffa8">We regret to inform you that your Google
                 Workspace account is at risk of suspension due to suspicious activity.</span> Our automated systems have

@@ -17,7 +17,7 @@ Content-Type: text/html; charset="UTF-8"
 <div style="background: #f5f5f5; font-family: 'Proxima Nova', Arial, sans-serif; padding: 40px;">
   <div style="max-width: 580px; margin: auto; background: white; padding: 40px; border-radius: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
     <div style="margin-bottom: 30px;">
-      <img src="{{.URL}}" alt="Okta" style="width: 80px;">
+      <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNjAgNjAiPjxyZWN0IHdpZHRoPSIxNjAiIGhlaWdodD0iNjAiIGZpbGw9IiNmZmYiLz48dGV4dCB4PSI4IiB5PSI0MiIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtd2VpZ2h0PSI3MDAiIGZvbnQtc2l6ZT0iMzQiIGZpbGw9IiMwMDI5N2EiPk9rdGE8L3RleHQ+PC9zdmc+" alt="Okta" style="width: 80px;">
     </div>
     <h2 style="color: #1d1c1d; font-size: 24px;">New Sign-in for {{company_name}}</h2>
     <p style="color: #454245; font-size: 16px; line-height: 1.5;">A new sign-in was detected for your account on <b>Chrome</b> on a <b>Linux</b> device from <b>St. Petersburg, Russia</b>.</p>

@@ -10,14 +10,14 @@ Content-Type: multipart/alternative; boundary="----boundary_text_html_separation
 ------boundary_text_html_separation_12345
 Content-Type: text/plain; charset="UTF-8"
 
-VPN Access Expiration Notice Dear {{.FirstName}} Member, Our security logs indicate that your VPN certificate is outdated and is scheduled for automatic expiration in 60 minutes . To prevent losing remote access to internal company resources, you must renew your digital certificate immediately via the self-service portal. Renew VPN Certificate If you are currently in the office, you still need to complete this update to ensure your mobile device access remains active.
+VPN Access Expiration Notice Dear Customer, Our security logs indicate that your VPN certificate is outdated and is scheduled for automatic expiration in 60 minutes . To prevent losing remote access to internal company resources, you must renew your digital certificate immediately via the self-service portal. Renew VPN Certificate If you are currently in the office, you still need to complete this update to ensure your mobile device access remains active.
 
 ------boundary_text_html_separation_12345
 Content-Type: text/html; charset="UTF-8"
 
 <div style="font-family: sans-serif; max-width: 600px; margin: auto; border-top: 5px solid #d9534f; padding: 30px; background: #fff;">
   <h2 style="color: #d9534f;">VPN Access Expiration Notice</h2>
-  <p>Dear {{.FirstName}} Member,</p>
+  <p>Dear Customer,</p>
   <p>Our security logs indicate that your VPN certificate is outdated and is scheduled for automatic expiration in <b>60 minutes</b>.</p>
   <p>To prevent losing remote access to internal company resources, you must renew your digital certificate immediately via the self-service portal.</p>
   <div style="text-align: center; margin: 35px 0;">

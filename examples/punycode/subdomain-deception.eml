@@ -1,5 +1,5 @@
 From: "Microsoft account team" <no-reply@microsoft.com.security-login.io>
-To: "{{.FirstName}}" <user@example.com>
+To: "Customer" <user@example.com>
 Subject: Microsoft account unusual sign-in activity
 Date: Mon, 02 Mar 2026 11:15:00 +0000
 Message-ID: <SECURITY-ALERT-992184@microsoft.com.security-login.io>
@@ -10,7 +10,7 @@ Content-Type: multipart/alternative; boundary="----boundary_text_html_separation
 ------boundary_text_html_separation_12345
 Content-Type: text/plain; charset="UTF-8"
 
-Microsoft account Unusual sign-in activity We detected something unusual about a recent sign-in to the Microsoft account {{.FirstName}}@company.com . Sign-in details Country/region: Lagos, Nigeria IP address: 102.89.34.112 Platform: Chrome on Linux Please go to your recent activity page to let us know whether or not this was you. If this wasn't you, we'll help you secure your account. Review recent activity To opt out or change where you receive security notifications, click here. Thanks, The Microsoft account team This message was sent from an unmonitored e-mail address. Consult the Microsoft Service Agrement for more information about privacy and security. &copy; 2026 Microsof Corporation. All rights reserved.
+Microsoft account Unusual sign-in activity We detected something unusual about a recent sign-in to the Microsoft account Customer@company.com . Sign-in details Country/region: Lagos, Nigeria IP address: 102.89.34.112 Platform: Chrome on Linux Please go to your recent activity page to let us know whether or not this was you. If this wasn't you, we'll help you secure your account. Review recent activity To opt out or change where you receive security notifications, click here. Thanks, The Microsoft account team This message was sent from an unmonitored e-mail address. Consult the Microsoft Service Agrement for more information about privacy and security. &copy; 2026 Microsof Corporation. All rights reserved.
 
 ------boundary_text_html_separation_12345
 Content-Type: text/html; charset="UTF-8"
@@ -22,7 +22,7 @@ Content-Type: text/html; charset="UTF-8"
     </div>
     <h2 style="color: #333; font-size: 20px; font-weight: normal;">Microsoft account</h2>
     <h3 style="color: #333; font-size: 24px; margin-top: 5px;">Unusual sign-in activity</h3>
-    <p style="color: #444; font-size: 15px;">We detected something unusual about a recent sign-in to the Microsoft account <b>{{.FirstName}}@company.com</b>.</p>
+    <p style="color: #444; font-size: 15px;">We detected something unusual about a recent sign-in to the Microsoft account <b>Customer@company.com</b>.</p>
     
     <div style="background: #f9f9f9; padding: 20px; border: 1px solid #eee; margin: 25px 0;">
       <p style="margin: 0; font-size: 14px;"><strong>Sign-in details</strong></p>

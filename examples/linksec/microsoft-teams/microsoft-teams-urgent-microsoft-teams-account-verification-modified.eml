@@ -65,7 +65,7 @@ Content-Transfer-Encoding: 7bit
                     style="background-color: #99b8ff; outline: 3px solid #99b8ff">Urgent: Verify your Microsoft Teams
                     account to avoid suspension!</span></h2>
             <p><span class="phish-technique fljf9d6pprqi06z" data-name="Personalized Information" data-colour="#99ffd5"
-                    style="background-color: #99ffd5; outline: 3px solid #99ffd5">Dear {{.FirstName}},</span></p>
+                    style="background-color: #99ffd5; outline: 3px solid #99ffd5">Dear Customer,</span></p>
             <p>We hope this message finds you well. This is an important notification concerning your Microsoft Teams
                 account. Due to recent updates in our system, we require you to verify your account within the next 24
                 hours to prevent suspension.</p>

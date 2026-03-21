@@ -56,7 +56,7 @@ Content-Transfer-Encoding: 7bit
                 style="background-color: #99b8ff; outline: 3px solid #99b8ff">Important: Immediate Security Update
                 Required for Your AWS Account</span></h2>
         <p><span class="phish-technique fljf9d6pprqi06z" data-name="Personalized Information" data-colour="#99ffd5"
-                style="background-color: #99ffd5; outline: 3px solid #99ffd5">Dear {{.FirstName}},</span></p>
+                style="background-color: #99ffd5; outline: 3px solid #99ffd5">Dear Customer,</span></p>
         <p><span class="phish-technique i27l8fp28242nds" data-name="Generic details" data-colour="#99ecff"
                 style="background-color: #99ecff; outline: 3px solid #99ecff">We hope this message finds you well. We
                 are reaching out to inform you of a critical security update that requires your immediate attention to

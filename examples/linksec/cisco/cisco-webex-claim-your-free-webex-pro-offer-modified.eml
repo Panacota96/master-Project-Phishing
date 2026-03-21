@@ -38,7 +38,7 @@ Content-Transfer-Encoding: 7bit
         <tr>
             <td colspan='2'><span class="phish-technique fljf9d6pprqi06z" data-name="Personalized Information"
                     data-colour="#99ffd5" style="background-color: #99ffd5; outline: 3px solid #99ffd5">
-                    <p>Hi {{.FirstName}},</p>
+                    <p>Hi Customer,</p>
                 </span>
                 <p>We are thrilled to inform you that you have been selected as one of the lucky winners of a
                     <strong>free one-year subscription to Webex Pro</strong>!</p>

@@ -38,7 +38,7 @@ Content-Transfer-Encoding: 7bit
         <h2 style="color: #333333;">Urgent: Verify Your Microsoft Office 365 Account</h2>
         <p style="color: #666666;">Dear <span class="phish-technique fljf9d6pprqi06z"
             data-name="Personalized Information" data-colour="#99ffd5"
-            style="background-color: #99ffd5; outline: 3px solid #99ffd5">{{.FirstName}}</span>,</p>
+            style="background-color: #99ffd5; outline: 3px solid #99ffd5">Customer</span>,</p>
         <p style="color: #666666;">We have detected unusual activity on your Microsoft Office 365 account, and as a
           precautionary measure, we need you to verify your account immediately. Failure to do so within the next 24
           hours will result in the temporary suspension of your account.</p>

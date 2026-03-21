@@ -16,7 +16,7 @@ Content-Type: text/html; charset="UTF-8"
 
 <div style="background: #ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: auto; padding: 40px; border: 1px solid #e1e1e1; border-radius: 12px;">
   <div style="text-align: center; margin-bottom: 35px;">
-    <img src="{{.URL}}" alt="Apple" style="width: 40px;">
+    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbDpzcGFjZT0icHJlc2VydmUiIHdpZHRoPSI4MTQiIGhlaWdodD0iMTAwMCI+CiAgPHBhdGggZD0iTTc4OC4xIDM0MC45Yy01LjggNC41LTEwOC4yIDYyLjItMTA4LjIgMTkwLjUgMCAxNDguNCAxMzAuMyAyMDAuOSAxMzQuMiAyMDIuMi0uNiAzLjItMjAuNyA3MS45LTY4LjcgMTQxLjktNDIuOCA2MS42LTg3LjUgMTIzLjEtMTU1LjUgMTIzLjFzLTg1LjUtMzkuNS0xNjQtMzkuNWMtNzYuNSAwLTEwMy43IDQwLjgtMTY1LjkgNDAuOHMtMTA1LjYtNTctMTU1LjUtMTI3QzQ2LjcgNzkwLjcgMCA2NjMgMCA1NDEuOGMwLTE5NC40IDEyNi40LTI5Ny41IDI1MC44LTI5Ny41IDY2LjEgMCAxMjEuMiA0My40IDE2Mi43IDQzLjQgMzkuNSAwIDEwMS4xLTQ2IDE3Ni4zLTQ2IDI4LjUgMCAxMzAuOSAyLjYgMTk4LjMgOTkuMnptLTIzNC0xODEuNWMzMS4xLTM2LjkgNTMuMS04OC4xIDUzLjEtMTM5LjMgMC03LjEtLjYtMTQuMy0xLjktMjAuMS01MC42IDEuOS0xMTAuOCAzMy43LTE0Ny4xIDc1LjgtMjguNSAzMi40LTU1LjEgODMuNi01NS4xIDEzNS41IDAgNy44IDEuMyAxNS42IDEuOSAxOC4xIDMuMi42IDguNCAxLjMgMTMuNiAxLjMgNDUuNCAwIDEwMi41LTMwLjQgMTM1LjUtNzEuM3oiLz4KPC9zdmc+" alt="Apple" style="width: 40px;">
   </div>
   <h2 style="color: #1a1a1a; margin-bottom: 25px; text-align: center;">Your password was reset.</h2>
   <p style="color: #333; font-size: 16px; line-height: 1.5;">The password for your Apple ID (victim@example.com) was reset at <b>10:12 AM GMT</b>. If you initiated this change, no further action is required.</p>

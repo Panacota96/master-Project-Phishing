@@ -16,7 +16,7 @@ Content-Type: text/html; charset="UTF-8"
 
 <div style="background: #ffffff; font-family: Helvetica, Arial, sans-serif; max-width: 600px; margin: auto; padding: 40px; border: 1px solid #ffcc00; border-radius: 8px;">
   <div style="margin-bottom: 30px;">
-    <img src="{{.URL}}" alt="Norton" style="width: 120px;">
+    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMjAgODAiPjxyZWN0IHdpZHRoPSIyMjAiIGhlaWdodD0iODAiIGZpbGw9IiNmZmYiLz48dGV4dCB4PSIxMiIgeT0iNTQiIGZvbnQtZmFtaWx5PSJBcmlhbCxzYW5zLXNlcmlmIiBmb250LXdlaWdodD0iNzAwIiBmb250LXNpemU9IjM4IiBmaWxsPSIjNGI0YjRiIj5Ob3J0b248L3RleHQ+PC9zdmc+" alt="Norton" style="width: 120px;">
   </div>
   <h2 style="color: #333; border-bottom: 2px solid #ffcc00; padding-bottom: 15px;">Order Renewal Successful</h2>
   <p style="font-size: 16px;">Hello,</p>

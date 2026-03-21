@@ -34,7 +34,7 @@ Content-Transfer-Encoding: 7bit
         style="max-width: 700px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 10px; border: 1px solid #ccc;">
         <span class="phish-technique fljf9d6pprqi06z" data-name="Personalized Information" data-colour="#99ffd5"
             style="background-color: #99ffd5; outline: 3px solid #99ffd5">
-            <h2>Hi {{.FirstName}},</h2>
+            <h2>Hi Customer,</h2>
         </span>
         <p>We have some exciting news for you! For a limited time, GoToMeeting is offering an exclusive opportunity to
             upgrade your subscription and enter a drawing to win a brand-new iPad.</p>

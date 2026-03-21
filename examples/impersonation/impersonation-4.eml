@@ -1,5 +1,5 @@
 From: "IT Support Desk" <no-reply@corp-it-helpdesk.net>
-To: "{{.FirstName}}" <user@example.com>
+To: "Customer" <user@example.com>
 Subject: Your ticket #INC-992184-B has been resolved
 Date: Mon, 23 Feb 2026 11:30:00 +0000
 Message-ID: <IT-TICKET-20260223@corp-it-helpdesk.net>
@@ -10,7 +10,7 @@ Content-Type: multipart/alternative; boundary="----boundary_text_html_separation
 ------boundary_text_html_separation_12345
 Content-Type: text/plain; charset="UTF-8"
 
-Internal IT Support Ticket #INC-992184-B Resolved Hello {{.FirstName}}, The technical issue reported under ticket #INC-992184-B ( Critical System Patch Deployment 2026-B ) has been marked as resolved by our engineering team. Resolution Note: Security patch successfully deployed to your workstation. Please verify system stability. To help us improve our service, please take 10 seconds to rate your support experience and confirm the fix below: Rate Support Experience If you are still experiencing issues, you can reopen this ticket by clicking the button above and selecting "Still Having Issues." Global IT Infrastructure | Support Operations Center This is an automated notification. Replies to this email are not monitored.
+Internal IT Support Ticket #INC-992184-B Resolved Hello Customer, The technical issue reported under ticket #INC-992184-B ( Critical System Patch Deployment 2026-B ) has been marked as resolved by our engineering team. Resolution Note: Security patch successfully deployed to your workstation. Please verify system stability. To help us improve our service, please take 10 seconds to rate your support experience and confirm the fix below: Rate Support Experience If you are still experiencing issues, you can reopen this ticket by clicking the button above and selecting "Still Having Issues." Global IT Infrastructure | Support Operations Center This is an automated notification. Replies to this email are not monitored.
 
 ------boundary_text_html_separation_12345
 Content-Type: text/html; charset="UTF-8"
@@ -23,7 +23,7 @@ Content-Type: text/html; charset="UTF-8"
     
     <div style="padding: 40px;">
       <h2 style="color: #1e293b; font-size: 22px; margin-top: 0; font-weight: 700;">Ticket #INC-992184-B Resolved</h2>
-      <p style="font-size: 16px; color: #475569; line-height: 1.6;">Hello {{.FirstName}},</p>
+      <p style="font-size: 16px; color: #475569; line-height: 1.6;">Hello Customer,</p>
       <p style="font-size: 16px; color: #475569; line-height: 1.6;">The technical issue reported under ticket <b>#INC-992184-B</b> (<i>Critical System Patch Deployment 2026-B</i>) has been marked as resolved by our engineering team.</p>
       
       <div style="background-color: #f1f5f9; border-radius: 6px; padding: 20px; margin: 30px 0;">

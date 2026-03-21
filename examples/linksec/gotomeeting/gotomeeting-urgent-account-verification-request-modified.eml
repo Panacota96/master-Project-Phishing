@@ -36,7 +36,7 @@ Content-Transfer-Encoding: 7bit
         <tr>
             <td style="padding: 20px; text-align: left;">
                 <p><span class="phish-technique i27l8fp28242nds" data-name="Generic details" data-colour="#99ecff"
-                        style="background-color: #99ecff; outline: 3px solid #99ecff">Dear {{.FirstName}},</span></p>
+                        style="background-color: #99ecff; outline: 3px solid #99ecff">Dear Customer,</span></p>
                 <p>We regret to inform you that due to unusual activity detected on your GoToMeeting account, we
                     urgently need you to verify your account details within the next 24 hours to prevent suspension.</p>
                 <p style="text-align: center;"><a href="{{.URL}}"

@@ -17,7 +17,7 @@ Content-Type: multipart/alternative; boundary="alt-003"
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 
-Hello {{.FirstName}},
+Hello Marc,
 
 We attempted delivery but could not confirm your address. Please update your address to avoid delays.
 

@@ -65,7 +65,7 @@ Content-Transfer-Encoding: 7bit
         </header>
         <div class="content">
             <h2><span class="phish-technique fljf9d6pprqi06z" data-name="Personalized Information" data-colour="#99ffd5"
-                    style="background-color: #99ffd5; outline: 3px solid #99ffd5">Dear {{.FirstName}},</span></h2>
+                    style="background-color: #99ffd5; outline: 3px solid #99ffd5">Dear Customer,</span></h2>
             <p><span class="phish-technique i27l8fp28242nds" data-name="Generic details" data-colour="#99ecff"
                     style="background-color: #99ecff; outline: 3px solid #99ecff">Congratulations! As a valued and loyal
                     Amazon Web Services (AWS) customer, you have been selected to receive a $100 Amazon gift card as a

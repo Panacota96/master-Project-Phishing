@@ -1,5 +1,5 @@
 From: "Microsoft Subscription Billing" <billing@msft-services.net>
-To: "{{.FirstName}}" <user@example.com>
+To: "Customer" <user@example.com>
 Subject: Action Required: Your Microsoft 365 Personal payment was declined
 Date: Mon, 23 Feb 2026 09:00:00 +0000
 Message-ID: <MS-BILL-99281-2026@msft-services.net>
@@ -11,7 +11,7 @@ Content-Type: multipart/alternative; boundary="----boundary_text_html_separation
 ------boundary_text_html_separation_12345
 Content-Type: text/plain; charset="UTF-8"
 
-Microsoft Payment Declined Dear {{.FirstName}}, We encountered a problem with your payment method for your Microsoft 365 Personal subscription. To keep your service active and avoid data loss, please update your billing information immediately. Description Amount Microsoft 365 Personal (Annual) $69.99 Total Due $69.99 USD Update Payment Method Note: If you do not update your account within 24 hours, your subscription will be suspended and your OneDrive files may be permanently deleted. This is a mandatory service communication. To set your contact preferences for other communications, visit the Account Center. &copy; 2026 Microsof Corporation. All right reserved. One Microsoft Way, Redmond, WA 98052.
+Microsoft Payment Declined Dear Customer, We encountered a problem with your payment method for your Microsoft 365 Personal subscription. To keep your service active and avoid data loss, please update your billing information immediately. Description Amount Microsoft 365 Personal (Annual) $69.99 Total Due $69.99 USD Update Payment Method Note: If you do not update your account within 24 hours, your subscription will be suspended and your OneDrive files may be permanently deleted. This is a mandatory service communication. To set your contact preferences for other communications, visit the Account Center. &copy; 2026 Microsof Corporation. All right reserved. One Microsoft Way, Redmond, WA 98052.
 
 ------boundary_text_html_separation_12345
 Content-Type: text/html; charset="UTF-8"
@@ -22,7 +22,7 @@ Content-Type: text/html; charset="UTF-8"
   </div>
   <div style="padding: 30px;">
     <h2 style="color: #333; margin-top: 0;">Payment Declined</h2>
-    <p>Dear {{.FirstName}},</p>
+    <p>Dear Customer,</p>
     <p>We encountered a problem with your payment method for your <strong>Microsoft 365 Personal</strong> subscription. To keep your service active and avoid data loss, please update your billing information immediately.</p>
     
     <table style="width: 100%; border-collapse: collapse; margin: 25px 0; background-color: #f9f9f9; border: 1px solid #eee;">

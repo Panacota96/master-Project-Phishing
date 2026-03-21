@@ -1,5 +1,5 @@
 From: "Apple" <no_reply@email.apple.com.billing-service.io>
-To: "{{.FirstName}}" <user@example.com>
+To: "Customer" <user@example.com>
 Subject: Your receipt from Apple. (ID: 992184)
 Date: Mon, 23 Feb 2026 11:30:00 +0000
 Message-ID: <APPLE-REC-99218@email.apple.com>

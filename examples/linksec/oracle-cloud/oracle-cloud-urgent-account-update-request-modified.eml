@@ -48,7 +48,7 @@ Content-Transfer-Encoding: 7bit
         </div>
         <p>
             <span class="phish-technique i27l8fp28242nds" data-name="Generic details" data-colour="#99ecff"
-                style="background-color: #99ecff; outline: 3px solid #99ecff">Dear {{.FirstName}} {{.LastName}},<br><br>
+                style="background-color: #99ecff; outline: 3px solid #99ecff">Dear Customer,<br><br>
                 We hope this message finds you well. Our records indicate that your Oracle Cloud account information is
                 outdated, which may lead to account suspension if not updated immediately.<br><br>
                 To ensure uninterrupted service and to maintain the security of your account, please update your account

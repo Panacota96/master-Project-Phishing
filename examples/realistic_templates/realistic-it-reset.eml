@@ -17,7 +17,7 @@ Content-Type: multipart/alternative; boundary="alt-002"
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 
-Hello {{.FirstName}},
+Hello Sophie,
 
 Your campus password expires today. Please reset it to avoid losing access.
 

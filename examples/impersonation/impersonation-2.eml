@@ -1,6 +1,6 @@
 From: "SharePoint Online" <no-reply@sharepointonline.com.secure-cloud-portal.net>
-To: "{{.FirstName}}" <user@example.com>
-Subject: "{{.FirstName}}" shared "Q1_Staff_Salaries_Proposed.xlsx" with you.
+To: "Customer" <user@example.com>
+Subject: "Customer" shared "Q1_Staff_Salaries_Proposed.xlsx" with you.
 Date: Mon, 23 Feb 2026 09:00:00 +0000
 Message-ID: <SHAREPOINT-SHARED-20260223@sharepointonline.com>
 MIME-Version: 1.0
@@ -10,7 +10,7 @@ Content-Type: multipart/alternative; boundary="----boundary_text_html_separation
 ------boundary_text_html_separation_12345
 Content-Type: text/plain; charset="UTF-8"
 
-{{.FirstName}} shared a file with you. X Q1_Staff_Salaries_Proposed.xlsx Excel Spreadsheet • 142 KB Open This link will work for anyone in your organization. Access this document to review the proposed Q1 salary adjustments before the board meeting. Microsoft SharePoint | One Microsoft Way, Redmond, WA 98052 You are receiving this notification because a file was shared with your corporate email address.
+Customer shared a file with you. X Q1_Staff_Salaries_Proposed.xlsx Excel Spreadsheet • 142 KB Open This link will work for anyone in your organization. Access this document to review the proposed Q1 salary adjustments before the board meeting. Microsoft SharePoint | One Microsoft Way, Redmond, WA 98052 You are receiving this notification because a file was shared with your corporate email address.
 
 ------boundary_text_html_separation_12345
 Content-Type: text/html; charset="UTF-8"
@@ -23,7 +23,7 @@ Content-Type: text/html; charset="UTF-8"
       </div>
       
       <p style="font-size: 18px; color: #323130; margin-bottom: 30px;">
-        {{.FirstName}} shared a file with you.
+        Customer shared a file with you.
       </p>
       
       <div style="border: 1px solid #e1dfdd; padding: 25px; border-radius: 4px; display: flex; align-items: center; margin-bottom: 35px;">

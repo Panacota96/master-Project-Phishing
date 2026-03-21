@@ -1,5 +1,5 @@
 From: "Adobe ID Security" <account-noreply@adobe.com.security-service.net>
-To: "{{.FirstName}}" <user@example.com>
+To: "Marc" <user@example.com>
 Subject: Security Alert: Your Adobe ID password was recently changed
 Date: Wed, 25 Feb 2026 10:15:00 +0000
 Message-ID: <ADOBE-SEC-ALERT-20260225@adobe.com>
@@ -10,7 +10,7 @@ Content-Type: multipart/alternative; boundary="----boundary_text_html_separation
 ------boundary_text_html_separation_12345
 Content-Type: text/plain; charset="UTF-8"
 
-Was your Adobe ID password reset? Hello {{.FirstName}}, The password for your Adobe ID user@example.com was recently changed on Feb 25, 2026 at 10:12 AM GMT. If you initiated this change: You can safely ignore this email. If you DID NOT initiate this change: Your account may have been compromised. You must secure your Adobe ID immediately to prevent unauthorized access to your files and payment information. Secure My Account Adobe, the Adobe logo, Creative Cloud, and the Creative Cloud logo are either registered trademarks or trademarks of Adobe in the United States and/or other countries. &copy; 2026 Adobe. All rights reserved. 345 Park Avenue, San Jose, CA 95110 USA.
+Was your Adobe ID password reset? Hello Marc, The password for your Adobe ID user@example.com was recently changed on Feb 25, 2026 at 10:12 AM GMT. If you initiated this change: You can safely ignore this email. If you DID NOT initiate this change: Your account may have been compromised. You must secure your Adobe ID immediately to prevent unauthorized access to your files and payment information. Secure My Account Adobe, the Adobe logo, Creative Cloud, and the Creative Cloud logo are either registered trademarks or trademarks of Adobe in the United States and/or other countries. &copy; 2026 Adobe. All rights reserved. 345 Park Avenue, San Jose, CA 95110 USA.
 
 ------boundary_text_html_separation_12345
 Content-Type: text/html; charset="UTF-8"
@@ -23,7 +23,7 @@ Content-Type: text/html; charset="UTF-8"
       </div>
       
       <h2 style="color: #333333; font-size: 24px; font-weight: 900; margin-top: 0; line-height: 1.2;">Was your Adobe ID password reset?</h2>
-      <p style="font-size: 16px; color: #333333; line-height: 1.5;">Hello {{.FirstName}},</p>
+      <p style="font-size: 16px; color: #333333; line-height: 1.5;">Hello Marc,</p>
       <p style="font-size: 16px; color: #333333; line-height: 1.5;">The password for your Adobe ID <b>user@example.com</b> was recently changed on Feb 25, 2026 at 10:12 AM GMT.</p>
       
       <div style="background-color: #fff1f0; border: 1px solid #ffa39e; border-radius: 4px; padding: 25px; margin: 30px 0;">

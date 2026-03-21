@@ -1,6 +1,6 @@
 From: "Google Account Security" <no-reply@accounts.googIe.com>
-To: "{{.FirstName}}" <user@example.com>
-Subject: Security alert: New login detected for {{.FirstName}}@gmail.com
+To: "Customer" <user@example.com>
+Subject: Security alert: New login detected for Customer@gmail.com
 Date: Thu, 26 Feb 2026 09:00:00 +0000
 Message-ID: <GOOGLE-SEC-99218@accounts.googIe.com>
 MIME-Version: 1.0

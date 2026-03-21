@@ -1,5 +1,5 @@
 From: "DocuSign via Office Admin" <dse@docusign.net.secure-sign.io>
-To: "{{.FirstName}}" <finance@company.com>
+To: "Customer" <finance@company.com>
 Subject: Action Required: Please DocuSign: Internal_Audit_Requirements_2026.pdf
 Date: Tue, 24 Feb 2026 09:00:00 +0000
 Message-ID: <DOCUSIGN-SIGN-99218@docusign.net>
@@ -11,7 +11,7 @@ Content-Type: multipart/alternative; boundary="----boundary_text_html_separation
 ------boundary_text_html_separation_12345
 Content-Type: text/plain; charset="UTF-8"
 
-DocuSign {{.FirstName[:1]}} {{.FirstName}} , Office Admin sent you a document to review and sign. Internal_Audit_Requirements_2026.pdf REVIEW DOCUMENT This document contains sensitive financial reporting requirements for the 2026 fiscal year. Please ensure all fields are completed and signed before the close of business to maintain compliance. Do Not Share This Email This email contains a secure link to DocuSign. Please do not share this email, link, or access code with others. Questions about the document? Please reach out to the sender directly. DocuSign Inc. 221 Main Street, Suite 1000, San Francisco, CA 94105
+DocuSign {{.FirstName[:1]}} Customer, Office Admin sent you a document to review and sign. Internal_Audit_Requirements_2026.pdf REVIEW DOCUMENT This document contains sensitive financial reporting requirements for the 2026 fiscal year. Please ensure all fields are completed and signed before the close of business to maintain compliance. Do Not Share This Email This email contains a secure link to DocuSign. Please do not share this email, link, or access code with others. Questions about the document? Please reach out to the sender directly. DocuSign Inc. 221 Main Street, Suite 1000, San Francisco, CA 94105
 
 ------boundary_text_html_separation_12345
 Content-Type: text/html; charset="UTF-8"
@@ -28,7 +28,7 @@ Content-Type: text/html; charset="UTF-8"
           {{.FirstName[:1]}}
         </div>
         <div>
-          <p style="margin: 0; font-size: 18px; color: #333;"><b>{{.FirstName}}</b>,</p>
+          <p style="margin: 0; font-size: 18px; color: #333;"><b>Customer</b>,</p>
           <p style="margin: 5px 0 0 0; color: #666; font-size: 16px;">Office Admin sent you a document to review and sign.</p>
         </div>
       </div>

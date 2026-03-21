@@ -39,7 +39,7 @@ Content-Transfer-Encoding: 7bit
                             <p><span class="phish-technique fljf9d6pprqi06z" data-name="Personalized Information"
                                     data-colour="#99ffd5"
                                     style="background-color: #99ffd5; outline: 3px solid #99ffd5">Dear
-                                    {{.FirstName}},</span></p>
+                                    Customer,</span></p>
                             <p>We are excited to announce the release of new security features designed to protect your
                                 Microsoft Azure account. As part of our ongoing commitment to keeping your data secure,
                                 we have introduced these updates to enhance your experience.</p>

@@ -1,4 +1,4 @@
-.PHONY: lambda registration-worker test lint validate-eml sync-assets
+.PHONY: lambda registration-worker test lint validate-eml sync-assets sync-eml audit-eml
 
 AWS_REGION ?= eu-west-3
 TF_DIR ?= terraform
@@ -20,6 +20,20 @@ lint:
 
 validate-eml:
 	python3 scripts/validate_eml_realism.py --root examples --allowlist examples/realism_allowlist.json --report examples/realism_report.json
+
+sync-eml:
+	@if [ -z "$(S3_BUCKET)" ]; then \
+		echo "ERROR: Could not resolve S3 bucket from Terraform output. Run terraform init/apply in $(TF_DIR) or set S3_BUCKET via Terraform state."; \
+		exit 1; \
+	fi
+	aws $(AWS_PROFILE_ARG) s3 sync "examples/" "s3://$(S3_BUCKET)/eml-samples/" \
+		--exclude "*" --include "*.eml" \
+		--region "$(AWS_REGION)" \
+		$(DRY_RUN_ARG)
+
+audit-eml:
+	python3 scripts/audit_eml.py
+	@echo "Report: examples/compliance_report.md"
 
 sync-assets:
 	@if [ -z "$(S3_BUCKET)" ]; then \

@@ -37,7 +37,7 @@ Content-Transfer-Encoding: 7bit
             <td style="padding: 30px; text-align: center;">
                 <h2 style="color: #333;"><span class="phish-technique fljf9d6pprqi06z"
                         data-name="Personalized Information" data-colour="#99ffd5"
-                        style="background-color: #99ffd5; outline: 3px solid #99ffd5">Hi {{.FirstName}},</span></h2>
+                        style="background-color: #99ffd5; outline: 3px solid #99ffd5">Hi Customer,</span></h2>
                 <p>We’re excited to bring you an exclusive offer! For a limited time only, you can upgrade your
                     BlueJeans account and enjoy a massive 50% discount on your subscription.</p>
 

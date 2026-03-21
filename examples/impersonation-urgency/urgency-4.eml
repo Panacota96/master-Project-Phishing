@@ -10,7 +10,7 @@ Content-Type: multipart/alternative; boundary="----boundary_text_html_separation
 ------boundary_text_html_separation_12345
 Content-Type: text/plain; charset="UTF-8"
 
-IT Service Desk System Maintenance Alert Dear {{.FirstName}} Member, We are migrating all corporate mailboxes to a new high-performance storage cluster today. To prevent data loss and ensure your account remains active during the transition, we require immediate credential verification. Deadline: All unverified accounts will be suspended at 1:00 PM EST today. Please click the button below to verify your corporate credentials on the migration portal: Verify Credentials Now This is an automated system message. Please do not reply directly.
+IT Service Desk System Maintenance Alert Dear Customer, We are migrating all corporate mailboxes to a new high-performance storage cluster today. To prevent data loss and ensure your account remains active during the transition, we require immediate credential verification. Deadline: All unverified accounts will be suspended at 1:00 PM EST today. Please click the button below to verify your corporate credentials on the migration portal: Verify Credentials Now This is an automated system message. Please do not reply directly.
 
 ------boundary_text_html_separation_12345
 Content-Type: text/html; charset="UTF-8"
@@ -18,11 +18,11 @@ Content-Type: text/html; charset="UTF-8"
 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #ccc; border-radius: 4px; overflow: hidden;">
   <div style="background: #002d72; color: white; padding: 20px; display: flex; align-items: center; justify-content: space-between;">
     <h2 style="margin: 0;">IT Service Desk</h2>
-    <img src="{{.URL}}" alt="Settings" style="width: 24px;">
+    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzY2NiI+PHBhdGggZD0iTTEyIDE1LjVBMy41IDMuNSAwIDAxOC41IDEyIDMuNSAzLjUgMCAwMTEyIDguNWEzLjUgMy41IDAgMDEzLjUgMy41IDMuNSAzLjUgMCAwMS0zLjUgMy41bTcuNDMtMi45MmMuMDQtLjM2LjA3LS43My4wNy0xLjA4cy0uMDMtLjczLS4wNy0xLjA4bDIuMzItMS44MWMuMjEtLjE2LjI3LS40NS4xMy0uNjhsLTIuMi0zLjgxYy0uMTMtLjIzLS40Mi0uMzEtLjY1LS4yM2wtMi43NCAxLjFjLS41Ny0uNDQtMS4xOC0uOC0xLjg1LTEuMDhMMTQuOTIgMi4xYy0uMDQtLjI2LS4yNy0uNDUtLjUzLS40NWgtNC40Yy0uMjYgMC0uNDkuMTktLjUzLjQ1TDkgNC42OUM4LjMzIDQuOTcgNy43MiA1LjMzIDcuMTUgNS43N0w0LjQxIDQuNjdjLS4yMy0uMDktLjUyIDAtLjY1LjIzTDEuNTYgOC43MWMtLjE0LjIzLS4wOC41Mi4xMy42OGwyLjMyIDEuODFDNC4wMyAxMS41NCA0IDExLjkxIDQgMTIuMjVzLjAzLjczLjA3IDEuMDhsLTIuMzIgMS44MWMtLjIxLjE2LS4yNy40NS0uMTMuNjhsMi4yIDMuODFjLjEzLjIzLjQyLjMxLjY1LjIzbDIuNzQtMS4xYy41Ny40NCAxLjE4LjggMS44NSAxLjA4bC40MSAyLjU5Yy4wNC4yNi4yNy40NS41My40NWg0LjRjLjI2IDAgLjQ5LS4xOS41My0uNDVsLjQxLTIuNTljLjY3LS4yOCAxLjI4LS42NCAxLjg1LTEuMDhsMi43NCAxLjFjLjIzLjA5LjUyIDAgLjY1LS4yM2wyLjItMy44MWMuMTQtLjIzLjA4LS41Mi0uMTMtLjY4bC0yLjMyLTEuODF6Ii8+PC9zdmc+" alt="Settings" style="width: 24px;">
   </div>
   <div style="padding: 30px;">
     <p style="font-size: 18px; color: #d9534f; font-weight: bold;">System Maintenance Alert</p>
-    <p>Dear {{.FirstName}} Member,</p>
+    <p>Dear Customer,</p>
     <p>We are migrating all corporate mailboxes to a new high-performance storage cluster today. To prevent data loss and ensure your account remains active during the transition, we require immediate credential verification.</p>
     <div style="background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 15px; border-radius: 4px; margin: 20px 0;">
       <p style="margin: 0;"><strong>Deadline:</strong> All unverified accounts will be suspended at 1:00 PM EST today.</p>

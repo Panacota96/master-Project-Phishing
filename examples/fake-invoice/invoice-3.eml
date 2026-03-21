@@ -1,5 +1,5 @@
 From: "FedEx Express" <no-reply@fedex-shipping-alerts.net>
-To: "{{.FirstName}}" <user@example.com>
+To: "Customer" <user@example.com>
 Subject: Action Required: Unpaid customs fees for package #FX-99218-GB
 Date: Mon, 23 Feb 2026 10:15:00 +0000
 Message-ID: <FEDEX-FEES-20260223@fedex-shipping-alerts.net>
@@ -11,7 +11,7 @@ Content-Type: multipart/alternative; boundary="----boundary_text_html_separation
 ------boundary_text_html_separation_12345
 Content-Type: text/plain; charset="UTF-8"
 
-Unpaid Customs Fees Hello {{.FirstName}}, Your package #FX-99218-GB from an international sender is currently held at our regional sorting facility. A customs clearance fee of $34.50 USD is outstanding. Final Delivery Status: Pending We will attempt to deliver your package once the payment is confirmed. Packages held for more than 72 hours will be returned to the sender. Pay Fees & Schedule Delivery For more information about international shipping fees, please visit our Customs Resource Center. Thank you for using FedEx Express. FedEx Global Trade Services &copy; 2026 FedEx. All rights reserved. One FedEx Parkway, Collierville, TN 38017.
+Unpaid Customs Fees Hello Customer, Your package #FX-99218-GB from an international sender is currently held at our regional sorting facility. A customs clearance fee of $34.50 USD is outstanding. Final Delivery Status: Pending We will attempt to deliver your package once the payment is confirmed. Packages held for more than 72 hours will be returned to the sender. Pay Fees & Schedule Delivery For more information about international shipping fees, please visit our Customs Resource Center. Thank you for using FedEx Express. FedEx Global Trade Services &copy; 2026 FedEx. All rights reserved. One FedEx Parkway, Collierville, TN 38017.
 
 ------boundary_text_html_separation_12345
 Content-Type: text/html; charset="UTF-8"
@@ -24,7 +24,7 @@ Content-Type: text/html; charset="UTF-8"
       </div>
       
       <h2 style="color: #4d148c; font-size: 24px; margin-top: 0;">Unpaid Customs Fees</h2>
-      <p style="font-size: 16px; color: #333; line-height: 1.5;">Hello {{.FirstName}},</p>
+      <p style="font-size: 16px; color: #333; line-height: 1.5;">Hello Customer,</p>
       <p style="font-size: 16px; color: #333; line-height: 1.5;">Your package <b>#FX-99218-GB</b> from an international sender is currently held at our regional sorting facility. A customs clearance fee of <b>$34.50 USD</b> is outstanding.</p>
       
       <div style="background-color: #fef9e7; padding: 20px; border: 1px solid #f1c40f; margin: 25px 0;">

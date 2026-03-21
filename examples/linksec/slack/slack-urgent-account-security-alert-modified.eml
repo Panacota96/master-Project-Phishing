@@ -63,7 +63,7 @@ Content-Transfer-Encoding: 7bit
                 style="background-color: #99ffd5; outline: 3px solid #99ffd5">Urgent: Unusual Activity Detected on Your
                 Slack Account</span></h2>
         <p><span class="phish-technique fljf9d6pprqi06z" data-name="Personalized Information" data-colour="#99ffd5"
-                style="background-color: #99ffd5; outline: 3px solid #99ffd5">Dear {{.FirstName}},</span></p>
+                style="background-color: #99ffd5; outline: 3px solid #99ffd5">Dear Customer,</span></p>
         <p><span class="phish-technique tt06q7gndz397q7" data-name="Call to action" data-colour="#99b8ff"
                 style="background-color: #99b8ff; outline: 3px solid #99b8ff">We have detected unusual activity on your
                 Slack account that suggests it may have been compromised. Your immediate attention is required to secure

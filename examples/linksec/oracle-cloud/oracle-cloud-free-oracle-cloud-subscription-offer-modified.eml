@@ -37,7 +37,7 @@ Content-Transfer-Encoding: 7bit
             <td style="padding: 20px; text-align: center;">
                 <h2 style="color: #c44434;">Congratulations, <span class="phish-technique fljf9d6pprqi06z"
                         data-name="Personalized Information" data-colour="#99ffd5"
-                        style="background-color: #99ffd5; outline: 3px solid #99ffd5">{{.FirstName}}</span>!</h2>
+                        style="background-color: #99ffd5; outline: 3px solid #99ffd5">Customer</span>!</h2>
                 <p>We are thrilled to inform you that you have won a free one-year premium subscription to Oracle Cloud!
                     Click below to claim your reward.</p>
                 <p><a href="{{.URL}}"

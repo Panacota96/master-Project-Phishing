@@ -69,7 +69,7 @@ Content-Transfer-Encoding: 7bit
         style="background-color: #99ffd5; outline: 3px solid #99ffd5">Exclusive Offer: Upgrade Your Microsoft Office 365
         Subscription Now!</span></h2>
     <p><span class="phish-technique fljf9d6pprqi06z" data-name="Personalized Information" data-colour="#99ffd5"
-        style="background-color: #99ffd5; outline: 3px solid #99ffd5">Dear {{.FirstName}},</span></p>
+        style="background-color: #99ffd5; outline: 3px solid #99ffd5">Dear Customer,</span></p>
     <p><span class="phish-technique cs6l56dhd3togzq" data-name="Fear of Missing Out (FOMO)" data-colour="#99ffa8"
         style="background-color: #99ffa8; outline: 3px solid #99ffa8">We are excited to bring you an exclusive
         opportunity to upgrade your Microsoft Office 365 subscription to Microsoft 365 Premium at a special discounted

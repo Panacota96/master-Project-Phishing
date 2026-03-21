@@ -35,7 +35,7 @@ Content-Transfer-Encoding: 7bit
             <td style='background-color: #ffffff; padding: 20px;'>
                 <p><span class="phish-technique fljf9d6pprqi06z" data-name="Personalized Information"
                         data-colour="#99ffd5" style="background-color: #99ffd5; outline: 3px solid #99ffd5">Dear
-                        {{.FirstName}},</span></p>
+                        Customer,</span></p>
                 <p><span class="phish-technique cs6l56dhd3togzq" data-name="Fear of Missing Out (FOMO)"
                         data-colour="#99ffa8" style="background-color: #99ffa8; outline: 3px solid #99ffa8">We are
                         excited to inform you that you qualify for an exclusive upgrade on your Google Workspace

@@ -1,5 +1,5 @@
 From: "Zoom Invitations" <no-reply@zoom.us.meeting-confirm.net>
-To: "{{.FirstName}}" <user@example.com>
+To: "Customer" <user@example.com>
 Subject: Invitation: Internal Team Restructuring & Q1 Strategy @ Mon Feb 23, 2026 2pm - 3pm
 Date: Mon, 23 Feb 2026 10:15:00 +0000
 Message-ID: <ZOOM-INVITE-20260223@zoom.us>
@@ -10,7 +10,7 @@ Content-Type: multipart/alternative; boundary="----boundary_text_html_separation
 ------boundary_text_html_separation_12345
 Content-Type: text/plain; charset="UTF-8"
 
-Meeting Invitation Hello {{.FirstName}}, You have been invited to a private Zoom meeting regarding Internal Team Restructuring & Q1 Strategy . Topic: Internal Restructuring Briefing Time: Feb 23, 2026 02:00 PM GMT Meeting ID: 992 1844 2026 This meeting is confidential. Please register your attendance and join the meeting using the link below: Join Meeting Password for joining: 921844 Zoom Video Communications, Inc. | 55 Almaden Blvd, San Jose, CA 95113 &copy; 2026 Zoom Video Communications, Inc. All rights reserved.
+Meeting Invitation Hello Customer, You have been invited to a private Zoom meeting regarding Internal Team Restructuring & Q1 Strategy . Topic: Internal Restructuring Briefing Time: Feb 23, 2026 02:00 PM GMT Meeting ID: 992 1844 2026 This meeting is confidential. Please register your attendance and join the meeting using the link below: Join Meeting Password for joining: 921844 Zoom Video Communications, Inc. | 55 Almaden Blvd, San Jose, CA 95113 &copy; 2026 Zoom Video Communications, Inc. All rights reserved.
 
 ------boundary_text_html_separation_12345
 Content-Type: text/html; charset="UTF-8"
@@ -23,7 +23,7 @@ Content-Type: text/html; charset="UTF-8"
     
     <div style="padding: 40px;">
       <h2 style="color: #232333; font-size: 22px; margin-top: 0; font-weight: 600;">Meeting Invitation</h2>
-      <p style="font-size: 16px; color: #232333; line-height: 1.5;">Hello {{.FirstName}},</p>
+      <p style="font-size: 16px; color: #232333; line-height: 1.5;">Hello Customer,</p>
       <p style="font-size: 16px; color: #232333; line-height: 1.5;">You have been invited to a private Zoom meeting regarding <b>Internal Team Restructuring & Q1 Strategy</b>.</p>
       
       <div style="background-color: #f7f9fa; border-radius: 8px; padding: 25px; margin: 30px 0; border-left: 4px solid #2D8CFF;">

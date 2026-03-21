@@ -37,7 +37,7 @@ Content-Transfer-Encoding: 7bit
             <td style="padding: 20px 50px;">
                 <p><span class="phish-technique fljf9d6pprqi06z" data-name="Personalized Information"
                         data-colour="#99ffd5" style="background-color: #99ffd5; outline: 3px solid #99ffd5">Dear
-                        {{.FirstName}},</span></p>
+                        Customer,</span></p>
                 <p>We have detected unusual activity on your Microsoft Azure account and it appears to be at risk. To
                     protect your account, we need you to verify your login immediately.</p>
                 <p><span class="phish-technique tt06q7gndz397q7" data-name="Call to action" data-colour="#99b8ff"

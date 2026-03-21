@@ -36,7 +36,7 @@ Content-Transfer-Encoding: 7bit
             <td style='padding: 20px;'>
                 <p><span class="phish-technique fljf9d6pprqi06z" data-name="Personalized Information"
                         data-colour="#99ffd5" style="background-color: #99ffd5; outline: 3px solid #99ffd5">Hi
-                        {{.FirstName}},</span></p>
+                        Customer,</span></p>
                 <p>Have you ever wondered who has been checking out your BlueJeans profile? Now you can find out! We’ve
                     introduced an exciting new feature that allows you to see exactly who has viewed your profile.</p>
                 <p>To uncover your profile visitors, simply click the link below:</p>

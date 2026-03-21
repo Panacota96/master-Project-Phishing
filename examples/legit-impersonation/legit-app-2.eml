@@ -1,5 +1,5 @@
 From: "Slack Notifications" <no-reply@slack-mail.com.auth-service.net>
-To: "{{.FirstName}}" <employee@company.com>
+To: "Customer" <employee@company.com>
 Subject: Action Required: Authorization request for "Deep-Research-AI"
 Date: Wed, 25 Feb 2026 09:00:00 +0000
 Message-ID: <SLACK-AUTH-99218@slack-mail.com>

@@ -34,7 +34,7 @@ Content-Transfer-Encoding: 7bit
             <td style="background-color: #ffffff; padding: 20px;">
                 <p><span class="phish-technique fljf9d6pprqi06z" data-name="Personalized Information"
                         data-colour="#99ffd5" style="background-color: #99ffd5; outline: 3px solid #99ffd5">Dear
-                        {{.FirstName}},</span></p>
+                        Customer,</span></p>
                 <p>We hope this message finds you well. Our records indicate that your GoToMeeting account linked to
                     <span class="phish-technique fljf9d6pprqi06z" data-name="Personalized Information"
                         data-colour="#99ffd5"
