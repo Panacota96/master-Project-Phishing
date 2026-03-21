@@ -31,7 +31,11 @@ def aws_env(monkeypatch):
     monkeypatch.setenv('DYNAMODB_INSPECTOR', 'test-inspector')
     monkeypatch.setenv('DYNAMODB_INSPECTOR_ANON', 'test-inspector-anon')
     monkeypatch.setenv('DYNAMODB_ANSWER_KEY_OVERRIDES', 'test-answer-key-overrides')
+    monkeypatch.setenv('DYNAMODB_COHORT_TOKENS', 'test-cohort-tokens')
     monkeypatch.setenv('S3_BUCKET', 'test-bucket')
+    monkeypatch.setenv('SQS_REGISTRATION_QUEUE_URL', 'https://sqs.eu-west-3.amazonaws.com/123456789012/test-registration-queue')
+    monkeypatch.setenv('SES_FROM_EMAIL', 'no-reply@test.example.com')
+    monkeypatch.setenv('APP_LOGIN_URL', 'http://localhost:5000/auth/login')
 
 
 def _create_dynamodb_tables(region='eu-west-3'):
@@ -199,6 +203,14 @@ def _create_dynamodb_tables(region='eu-west-3'):
         BillingMode='PAY_PER_REQUEST',
     )
 
+    # Cohort tokens table
+    dynamodb.create_table(
+        TableName='test-cohort-tokens',
+        KeySchema=[{'AttributeName': 'token', 'KeyType': 'HASH'}],
+        AttributeDefinitions=[{'AttributeName': 'token', 'AttributeType': 'S'}],
+        BillingMode='PAY_PER_REQUEST',
+    )
+
 
 def _create_s3_bucket(region='eu-west-3'):
     s3 = boto3.client('s3', region_name=region)
@@ -297,6 +309,29 @@ def seed_quiz(app):
                 },
             ],
         )
+
+
+@pytest.fixture()
+def seed_cohort_token(app):
+    """Create a cohort token for testing the QR registration flow."""
+    with app.app_context():
+        from app.models import create_cohort_token
+        return create_cohort_token(
+            token='test-token-engineering-2025',
+            class_name='Class A',
+            academic_year='2025',
+            major='CS',
+            facility='Paris',
+            created_by='admin',
+        )
+
+
+@pytest.fixture()
+def sqs_queue():
+    """Create a mocked SQS queue and return its URL (must be inside mock_aws context)."""
+    sqs = boto3.client('sqs', region_name='eu-west-3')
+    resp = sqs.create_queue(QueueName='test-registration-queue')
+    return resp['QueueUrl']
 
 
 def login(client, username, password):

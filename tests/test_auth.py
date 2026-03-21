@@ -27,9 +27,10 @@ class TestLogin:
         resp = client.get('/auth/logout', follow_redirects=True)
         assert b'You have been logged out' in resp.data
 
-    def test_no_register_route(self, client):
+    def test_register_route_exists(self, client):
         resp = client.get('/auth/register')
-        assert resp.status_code == 404
+        assert resp.status_code == 200
+        assert b'Create Your Account' in resp.data
 
     def test_login_redirects_authenticated(self, client, seed_admin):
         login(client, 'admin', 'admin123')
