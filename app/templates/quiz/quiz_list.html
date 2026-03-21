@@ -1,25 +1,33 @@
 {% extends "base.html" %}
 {% block title %}Available Quizzes{% endblock %}
 {% block content %}
-<h2>Available Quizzes</h2>
+<div class="d-flex align-items-center mb-4">
+    <h2 class="mb-0">Training Modules</h2>
+    <span class="badge ms-3" style="background:rgba(6,182,212,0.15);color:#67e8f9;border:1px solid rgba(6,182,212,0.3);">
+        {{ quizzes | selectattr('user_completed') | list | length }} / {{ quizzes | length }} Complete
+    </span>
+</div>
 <div class="row">
     {% for quiz in quizzes %}
     <div class="col-md-6 mb-4">
-        <div class="card h-100">
-            <div class="card-body">
-                <h5 class="card-title">
+        <div class="card h-100 quiz-card {% if quiz.user_completed %}completed{% endif %}">
+            <div class="card-body d-flex flex-column">
+                <div class="quiz-card-number">Module {{ loop.index }}</div>
+                <h5 class="card-title mb-1">
                     {{ quiz.title }}
                     {% if quiz.user_completed %}
-                    <span class="badge bg-success ms-2">Completed</span>
+                    <span class="badge ms-2" style="background:rgba(52,211,153,0.15);color:#34d399;font-size:0.7rem;">&#10003; Done</span>
                     {% endif %}
                 </h5>
-                <p class="card-text">{{ quiz.description }}</p>
-                <p class="text-muted small">{{ quiz.questions | length }} questions</p>
-                {% if quiz.user_completed %}
-                <button class="btn btn-secondary" disabled>Already Completed</button>
-                {% else %}
-                <a href="{{ url_for('quiz.video_gate', quiz_id=quiz.quiz_id) }}" class="btn btn-primary">Start Quiz</a>
-                {% endif %}
+                <p class="card-text small mb-2">{{ quiz.description }}</p>
+                <p class="small mb-3" style="color:#6b7280;">{{ quiz.questions | length }} questions</p>
+                <div class="mt-auto">
+                    {% if quiz.user_completed %}
+                    <button class="btn btn-secondary btn-sm" disabled>Completed</button>
+                    {% else %}
+                    <a href="{{ url_for('quiz.video_gate', quiz_id=quiz.quiz_id) }}" class="btn btn-primary btn-sm">Start Module</a>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>

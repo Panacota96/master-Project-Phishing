@@ -1,18 +1,28 @@
 {% extends "base.html" %}
-{% block title %}{{ quiz.title }} Training Video{% endblock %}
+{% block title %}{{ quiz.title }}{% endblock %}
 
 {% block content %}
-<div class="card">
-    <div class="card-body">
-        <h3 class="card-title">{{ quiz.title }} Training Video</h3>
-        <p class="text-muted">Watch the full video to unlock this quiz.</p>
-        <video id="quiz-training-video" class="w-100 border rounded" controls preload="metadata">
-            <source src="{{ video_url }}" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
-        <div class="d-flex justify-content-between align-items-center mt-3">
-            <div id="video-status" class="text-muted small">Complete the video to continue.</div>
-            <a id="start-quiz-btn" class="btn btn-primary disabled" href="{{ url_for('quiz.start_quiz', quiz_id=quiz.quiz_id) }}" aria-disabled="true">Start Quiz</a>
+<div class="mb-3">
+    <a href="{{ url_for('quiz.quiz_list') }}" style="color:#6b7280;font-size:0.85rem;">&larr; Back to Training Modules</a>
+</div>
+<div class="row justify-content-center">
+    <div class="col-lg-9 video-gate-container">
+        <div class="card">
+            <div class="card-body p-4">
+                <h3 class="mb-1" style="color:#f3f4f6;">{{ quiz.title }}</h3>
+                <p style="color:#6b7280;font-size:0.9rem;" class="mb-4">
+                    Watch the full video to unlock this module &nbsp;&middot;&nbsp;
+                    <span style="color:#06b6d4;">{{ quiz.questions | length }} questions</span>
+                </p>
+                <video id="quiz-training-video" class="w-100" controls preload="metadata">
+                    <source src="{{ video_url }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div class="video-unlock-bar d-flex justify-content-between align-items-center mt-3">
+                    <div id="video-status" style="color:#6b7280;font-size:0.85rem;">Complete the video to continue.</div>
+                    <a id="start-quiz-btn" class="btn btn-primary disabled" href="{{ url_for('quiz.start_quiz', quiz_id=quiz.quiz_id) }}" aria-disabled="true">Start Quiz &rarr;</a>
+                </div>
+            </div>
         </div>
     </div>
 </div>

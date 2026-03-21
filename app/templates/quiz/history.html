@@ -8,7 +8,7 @@
         <div class="card shadow-sm h-100">
             <div class="card-body text-center">
                 <h6 class="text-muted text-uppercase small font-weight-bold">Current Rank</h6>
-                <span class="badge rounded-pill bg-{{ badge_color }} fs-4 px-4 py-2 mt-2">
+                <span class="rank-badge rank-{{ badge_color }} mt-2">
                     {{ rank }}
                 </span>
                 <p class="text-muted small mt-3 mb-0">Based on your average score of <strong>{{ avg_score }}%</strong></p>
@@ -21,11 +21,11 @@
                 <h6 class="text-muted text-uppercase small font-weight-bold mb-3">Training Progress</h6>
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <span class="small font-weight-bold">{{ completed_count }} / {{ total_quizzes }} Quizzes Completed</span>
-                    <span class="small font-weight-bold text-primary">{{ completion_pct }}%</span>
+                    <span class="small font-weight-bold" style="color:#67e8f9">{{ completion_pct }}%</span>
                 </div>
                 <div class="progress" style="height: 25px; border-radius: 12px;">
-                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" 
-                         role="progressbar" style="width: {{ completion_pct }}%" 
+                    <div class="progress-bar"
+                         role="progressbar" style="width: {{ completion_pct }}%"
                          aria-valuenow="{{ completion_pct }}" aria-valuemin="0" aria-valuemax="100">
                     </div>
                 </div>

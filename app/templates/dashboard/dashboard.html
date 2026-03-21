@@ -9,34 +9,34 @@
 <!-- Stat Cards -->
 <div class="row mb-4">
     <div class="col-md-3">
-        <div class="card text-center bg-primary text-white">
-            <div class="card-body">
-                <h5 class="card-title">Total Users</h5>
-                <p class="display-6" id="statUsers">{{ total_users }}</p>
+        <div class="card stat-card stat-users">
+            <div class="card-body py-3">
+                <div class="stat-label">Total Users</div>
+                <div class="stat-value" id="statUsers">{{ total_users }}</div>
             </div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card text-center bg-success text-white">
-            <div class="card-body">
-                <h5 class="card-title">Completed</h5>
-                <p class="display-6" id="statCompleted">{{ completed_count }}</p>
+        <div class="card stat-card stat-done">
+            <div class="card-body py-3">
+                <div class="stat-label">Completed</div>
+                <div class="stat-value" id="statCompleted">{{ completed_count }}</div>
             </div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card text-center bg-warning text-dark">
-            <div class="card-body">
-                <h5 class="card-title">Pending</h5>
-                <p class="display-6" id="statPending">{{ pending_count }}</p>
+        <div class="card stat-card stat-pending">
+            <div class="card-body py-3">
+                <div class="stat-label">Pending</div>
+                <div class="stat-value" id="statPending">{{ pending_count }}</div>
             </div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card text-center bg-info text-white">
-            <div class="card-body">
-                <h5 class="card-title">Average Score</h5>
-                <p class="display-6" id="statAvg">{{ avg_score }}%</p>
+        <div class="card stat-card stat-avg">
+            <div class="card-body py-3">
+                <div class="stat-label">Average Score</div>
+                <div class="stat-value" id="statAvg">{{ avg_score }}%</div>
             </div>
         </div>
     </div>
@@ -198,7 +198,7 @@ new Chart(scoreCtx, {
     },
     options: {
         responsive: true,
-        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
+        scales: { y: { beginAtZero: true, ticks: { stepSize: 1, color: '#e5e7eb' } } },
         plugins: { legend: { display: false } }
     }
 });
@@ -214,18 +214,19 @@ new Chart(signalCtx, {
             label: 'Accuracy %',
             data: {{ signal_accuracy | map(attribute='rate') | list | tojson }},
             backgroundColor: [
-                'rgba(255, 99, 132, 0.5)',
-                'rgba(54, 162, 235, 0.5)',
-                'rgba(255, 206, 86, 0.5)',
-                'rgba(75, 192, 192, 0.5)',
-                'rgba(153, 102, 255, 0.5)',
-                'rgba(255, 159, 64, 0.5)'
+                'rgba(255, 99, 132, 0.75)',
+                'rgba(54, 162, 235, 0.75)',
+                'rgba(255, 206, 86, 0.75)',
+                'rgba(75, 192, 192, 0.75)',
+                'rgba(153, 102, 255, 0.75)',
+                'rgba(255, 159, 64, 0.75)'
             ]
         }]
     },
     options: {
         responsive: true,
-        scales: { r: { beginAtZero: true, max: 100 } }
+        scales: { r: { beginAtZero: true, max: 100, ticks: { color: '#e5e7eb' } } },
+        plugins: { legend: { labels: { color: '#e5e7eb' } } }
     }
 });
 {% endif %}
@@ -240,12 +241,12 @@ new Chart(groupCtx, {
         datasets: [{
             label: 'Average Score (%)',
             data: {{ group_stats | map(attribute='avg') | list | tojson }},
-            backgroundColor: '#0d6efd'
+            backgroundColor: 'rgba(6, 182, 212, 0.7)'
         }]
     },
     options: {
         responsive: true,
-        scales: { y: { beginAtZero: true, max: 100 } },
+        scales: { y: { beginAtZero: true, max: 100, ticks: { color: '#e5e7eb' } }, x: { ticks: { color: '#e5e7eb' } } },
         plugins: { legend: { display: false } }
     }
 });

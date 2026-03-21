@@ -24,11 +24,10 @@
                     {{ form.hidden_tag() }}
                     <div class="mb-3">
                         {% for value, label in form.answer.choices %}
-                        <div class="form-check mb-2">
-                            <input class="form-check-input" type="radio" name="answer"
-                                   id="answer_{{ value }}" value="{{ value }}">
-                            <label class="form-check-label" for="answer_{{ value }}">{{ label }}</label>
-                        </div>
+                        <label class="quiz-option" for="answer_{{ value }}">
+                            <input type="radio" name="answer" id="answer_{{ value }}" value="{{ value }}">
+                            {{ label }}
+                        </label>
                         {% endfor %}
                         {% for error in form.answer.errors %}
                         <div class="text-danger small">{{ error }}</div>
@@ -55,4 +54,15 @@
         </div>
     </div>
 </div>
+{% endblock %}
+{% block scripts %}
+<script>
+document.querySelectorAll('.quiz-option').forEach(opt => {
+    opt.addEventListener('click', () => {
+        document.querySelectorAll('.quiz-option').forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        opt.querySelector('input[type=radio]').checked = true;
+    });
+});
+</script>
 {% endblock %}

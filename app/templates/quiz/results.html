@@ -7,11 +7,13 @@
             <div class="card-body">
                 <h3>Quiz Complete!</h3>
                 {% set pct = (score / total * 100) | round(0) | int if total > 0 else 0 %}
-                <div class="display-4 my-4
-                    {% if pct >= 80 %}text-success{% elif pct >= 50 %}text-warning{% else %}text-danger{% endif %}">
-                    {{ score }} / {{ total }}
+                {% set ring_class = 'ring-success' if pct >= 80 else ('ring-warning' if pct >= 50 else 'ring-danger') %}
+                <div class="score-ring-wrapper">
+                    <div class="score-ring {{ ring_class }}">
+                        <span class="score-pct">{{ pct }}%</span>
+                        <span class="score-label">{{ score }} / {{ total }}</span>
+                    </div>
                 </div>
-                <p class="lead">You scored {{ pct }}%</p>
                 {% if pct >= 80 %}
                 <p class="text-success">Excellent! You have strong phishing awareness.</p>
                 {% elif pct >= 50 %}
