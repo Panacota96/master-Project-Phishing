@@ -128,8 +128,8 @@ Access at **http://localhost** (port 80).
 - **`lambda.zip` missing**: run `./scripts/build_lambda.sh`.
 - **AWS profile issues**: set `AWS_PROFILE=terraform-deployer` before Terraform.
 - **Videos not loading on Lambda**: set `VIDEO_BASE_URL` to an S3/CloudFront base URL and re-run `seed_dynamodb.py`.
-  - Example: `VIDEO_BASE_URL=https://en-garde-dev-eu-west-3.s3.eu-west-3.amazonaws.com/videos`
-  - Upload: `aws s3 sync app/static/videos/ s3://en-garde-dev-eu-west-3/videos/`
+  - Example: `VIDEO_BASE_URL=https://phishing-app-dev-eu-west-3.s3.eu-west-3.amazonaws.com/videos`
+  - Upload: `make sync-assets` (requires Terraform state) or directly: `aws s3 sync app/static/videos/ s3://phishing-app-dev-eu-west-3/videos/ --exclude "*" --include "*.mp4" --region eu-west-3`
   - Ensure the bucket policy allows public read for `videos/*`.
 
 ## Make Targets
@@ -140,8 +140,15 @@ make test                  # pytest + moto
 make lambda                # build lambda.zip
 make registration-worker   # build registration_worker.zip
 make validate-eml          # validate EML realism
-make sync-assets           # sync EML + video assets to S3
+make sync-assets           # upload app/static/videos/*.mp4 → S3 /videos/ (bucket from terraform output)
 ```
+
+> **Syncing videos manually** (without Terraform state):
+> ```bash
+> aws s3 sync app/static/videos/ s3://phishing-app-dev-eu-west-3/videos/ \
+>   --exclude "*" --include "*.mp4" --region eu-west-3
+> ```
+> Videos are gitignored — they live in S3 only. Re-run this command whenever you add a new `.mp4` file.
 
 ## CI/CD Overview
 
@@ -197,7 +204,7 @@ asmith,asmith@school.edu,TempPass456,Class B,2025,Marketing,Lyon,marketing
 ### Upload Email Samples (.eml)
 Use S3 and keep files under the `eml-samples/` prefix:
 ```bash
-aws s3 sync examples/ s3://en-garde-<env>-eu-west-3/eml-samples/ --exclude "*" --include "*.eml"
+aws s3 sync examples/ s3://phishing-app-<env>-eu-west-3/eml-samples/ --exclude "*" --include "*.eml"
 ```
 After uploading, add corresponding entries to `app/inspector/answer_key.py`.
 
