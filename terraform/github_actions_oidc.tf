@@ -57,6 +57,7 @@ resource "aws_iam_role_policy" "github_actions_deploy" {
           "lambda:UpdateEventSourceMapping",
           "lambda:ListEventSourceMappings",
           "lambda:GetFunctionCodeSigningConfig",
+          "lambda:TagResource",
         ]
         Resource = "*"
       },
