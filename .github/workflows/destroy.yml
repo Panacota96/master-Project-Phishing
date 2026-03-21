@@ -60,7 +60,7 @@ jobs:
           terraform state rm aws_iam_openid_connect_provider.github_actions || true
 
       - name: Clean S3 versions
-        if: inputs.clean_s3 == 'true'
+        if: inputs.clean_s3
         working-directory: terraform
         run: |
           S3_BUCKET=$(terraform output -raw s3_bucket_name)
