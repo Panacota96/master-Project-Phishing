@@ -79,7 +79,7 @@ jobs:
           cat > env/prod.tfvars <<EOF
           aws_region = "eu-west-3"
           environment = "prod"
-          app_name   = "en-garde"
+          app_name   = "phishing-app"
           secret_key = "${{ secrets.TF_VAR_SECRET_KEY }}"
           EOF
 

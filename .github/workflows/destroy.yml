@@ -48,7 +48,7 @@ jobs:
           cat > env/${{ inputs.environment }}.tfvars <<EOF
           aws_region = "eu-west-3"
           environment = "${{ inputs.environment }}"
-          app_name   = "en-garde"
+          app_name   = "phishing-app"
           secret_key = "${{ secrets.TF_VAR_SECRET_KEY }}"
           EOF
 
@@ -62,7 +62,7 @@ jobs:
       - name: Clean S3 versions
         if: inputs.clean_s3
         run: |
-          S3_BUCKET="en-garde-${{ inputs.environment }}-eu-west-3"
+          S3_BUCKET="phishing-app-${{ inputs.environment }}-eu-west-3"
           export S3_BUCKET
 
           aws s3api list-object-versions --bucket "$S3_BUCKET" \
