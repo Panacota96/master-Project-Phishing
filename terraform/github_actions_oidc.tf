@@ -21,7 +21,7 @@ resource "aws_iam_role" "github_actions_deploy" {
             "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
           }
           StringLike = {
-            "token.actions.githubusercontent.com:sub" = "repo:Panacota96/master-Project-Phishing:ref:refs/heads/main"
+            "token.actions.githubusercontent.com:sub" = "repo:Panacota96/master-Project-Phishing:*"
           }
         }
       }
@@ -97,6 +97,7 @@ resource "aws_iam_role_policy" "github_actions_deploy" {
           "dynamodb:UpdateTimeToLive",
           "dynamodb:ListTagsOfResource",
           "dynamodb:TagResource",
+          "dynamodb:DescribeContinuousBackups",
         ]
         Resource = [
           "arn:aws:dynamodb:*:*:table/${local.prefix}-*",
@@ -142,12 +143,17 @@ resource "aws_iam_role_policy" "github_actions_deploy" {
         Action = [
           "logs:CreateLogGroup",
           "logs:DeleteLogGroup",
-          "logs:DescribeLogGroups",
           "logs:PutRetentionPolicy",
           "logs:TagLogGroup",
           "logs:ListTagsLogGroup",
         ]
         Resource = "arn:aws:logs:*:*:log-group:/aws/*"
+      },
+      {
+        Sid      = "CloudWatchLogsDescribe"
+        Effect   = "Allow"
+        Action   = ["logs:DescribeLogGroups", "logs:ListTagsForResource"]
+        Resource = "*"
       },
       {
         Sid    = "ACMAndRoute53"
