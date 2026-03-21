@@ -58,6 +58,16 @@ jobs:
           app_name   = "en-garde"
           secret_key = "${{ secrets.TF_VAR_SECRET_KEY }}"
           EOF
+
+          # Import orphaned IAM resources if they exist in AWS but not in state
+          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          terraform import -var-file="env/dev.tfvars" \
+            aws_iam_openid_connect_provider.github_actions \
+            "arn:aws:iam::${ACCOUNT_ID}:oidc-provider/token.actions.githubusercontent.com" || true
+          terraform import -var-file="env/dev.tfvars" \
+            aws_iam_role.github_actions_deploy \
+            "en-garde-dev-github-actions-deploy" || true
+
           terraform apply -auto-approve \
             -var-file="env/dev.tfvars" \
             -target=aws_iam_role_policy.github_actions_deploy
