@@ -44,6 +44,9 @@ jobs:
           role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
           aws-region: eu-west-3
 
+      - name: Make scripts executable
+        run: chmod +x scripts/*.sh
+
       - name: Build Lambda artifact
         run: make lambda
 

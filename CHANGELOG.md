@@ -6,6 +6,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [1.2.2] - 2026-03-21
+
+### Added
+
+- **Architecture documentation** (`documentation/ARCHITECTURE.md`) — 10 Mermaid diagrams rendered natively on GitHub covering:
+  - System Overview (C4-style context: actors + all AWS services)
+  - AWS Infrastructure (all resources grouped by service)
+  - Flask Software Architecture (app factory, blueprints, models, config)
+  - DynamoDB Schema (all 9 tables, PKs, SKs, GSIs, and relationships)
+  - CI/CD Pipeline (push → CI → Terraform → seed full flow)
+  - Login Flow (sequence diagram with auth paths)
+  - Quiz Flow (flowchart including video gate and one-attempt enforcement)
+  - Email Inspector Flow (sequence diagram with S3/DDB interactions per email)
+  - QR Self-Registration Flow (async SQS/Lambda/SES registration sequence)
+  - Local Development Architecture (Docker Compose vs standalone dev server)
+- `README.md`: added link to `documentation/ARCHITECTURE.md` under the Requirements section
+
+### Fixed
+
+- **Makefile** (`S3_BUCKET := …` → `S3_BUCKET = …`): `S3_BUCKET` was a simply-expanded variable (`:=`), causing `terraform output` to run at **Makefile parse time** — before `terraform init` is called. This leaked a "Backend initialization required" Terraform error into the stderr of the `make lambda` CI step. Changed to a recursively-expanded variable (`=`) so the `terraform output` call only runs when `sync-assets` is actually invoked.
+- **`deploy-dev.yml`**: Added `chmod +x scripts/*.sh` step before `make lambda`. Global `core.filemode=false` (set by Windows/WSL2 git config) can silently drop the execute bit when shell scripts are committed from a Windows filesystem, causing `Permission denied` on the runner despite the git tree recording `100755`. The explicit `chmod` makes the workflow resilient to this regardless of the committed file mode.
+
+---
+
 ## [1.2.1] - 2026-02-27
 
 ### Added
