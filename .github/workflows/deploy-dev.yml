@@ -175,7 +175,7 @@ jobs:
           DYNAMODB_ANSWER_KEY_OVERRIDES: ${{ steps.tf_outputs.outputs.dynamodb_answer_key_overrides }}
           S3_BUCKET: ${{ steps.tf_outputs.outputs.s3_bucket }}
           SECRET_KEY: ${{ secrets.TF_VAR_SECRET_KEY }}
-          VIDEO_BASE_URL: "${{ steps.tf_outputs.outputs.cloudfront_url }}/videos"
+          VIDEO_BASE_URL: "https://${{ steps.tf_outputs.outputs.s3_bucket }}.s3.eu-west-3.amazonaws.com/videos"
         run: |
           python3 -m venv .venv
           .venv/bin/pip install -r requirements.txt
