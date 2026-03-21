@@ -1,4 +1,4 @@
-.PHONY: lambda test lint validate-eml sync-assets
+.PHONY: lambda registration-worker test lint validate-eml sync-assets
 
 AWS_REGION ?= eu-west-3
 TF_DIR ?= terraform
@@ -8,6 +8,9 @@ DRY_RUN_ARG := $(if $(DRY_RUN),--dryrun,)
 
 lambda:
 	./scripts/build_lambda.sh
+
+registration-worker:
+	./scripts/build_registration_worker.sh
 
 test:
 	pytest tests/ -v --junitxml=report.xml

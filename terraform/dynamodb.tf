@@ -214,3 +214,20 @@ resource "aws_dynamodb_table" "answer_key_overrides" {
   }
 }
 
+# ─── Cohort Tokens Table ───────────────────────────────────────────────────────
+
+resource "aws_dynamodb_table" "cohort_tokens" {
+  name         = "${local.prefix}-cohort-tokens"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "token"
+
+  attribute {
+    name = "token"
+    type = "S"
+  }
+
+  ttl {
+    attribute_name = "expires_at"
+    enabled        = true
+  }
+}

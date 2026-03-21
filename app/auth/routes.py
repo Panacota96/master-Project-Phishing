@@ -1,12 +1,19 @@
 import csv
 import io
 
-from flask import abort, flash, redirect, render_template, request, session, url_for
+from flask import abort, current_app, flash, redirect, render_template, request, session, url_for
 from flask_login import current_user, login_required, login_user, logout_user
+from werkzeug.security import generate_password_hash
 
 from app.auth import bp
-from app.auth.forms import CSVUploadForm, ChangePasswordForm, LoginForm
-from app.models import batch_create_users, get_user, update_user_password
+from app.auth.forms import CSVUploadForm, ChangePasswordForm, CohortQRForm, LoginForm, RegistrationForm
+from app.models import (
+    batch_create_users,
+    enqueue_registration,
+    get_user,
+    get_user_by_email,
+    update_user_password,
+)
 
 
 @bp.route('/login', methods=['GET', 'POST'])
@@ -85,6 +92,66 @@ def import_users():
             flash(f'Imported {created} users. {len(skipped)} skipped (already exist).', 'success')
 
     return render_template('admin/import_users.html', form=form, results=results)
+
+
+@bp.route('/register', methods=['GET', 'POST'])
+def register():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        username = form.username.data.strip()
+        email = form.email.data.strip().lower()
+
+        if get_user(username):
+            form.username.errors.append('Username already taken.')
+        elif get_user_by_email(email):
+            form.email.errors.append('An account with this email already exists.')
+        else:
+            queue_url = current_app.config.get('SQS_REGISTRATION_QUEUE_URL', '')
+            if not queue_url:
+                flash('Registration is temporarily unavailable. Please contact your administrator.', 'danger')
+                return render_template('auth/register.html', form=form)
+
+            payload = {
+                'username': username,
+                'email': email,
+                'password_hash': generate_password_hash(form.password.data),
+                'class_name': form.class_name.data.strip(),
+                'academic_year': form.academic_year.data.strip(),
+                'major': form.major.data.strip(),
+                'facility': form.facility.data.strip(),
+                'group': 'default',
+            }
+            enqueue_registration(current_app.sqs_client, queue_url, payload)
+            return render_template('auth/register_pending.html', email=email)
+
+    return render_template('auth/register.html', form=form)
+
+
+@bp.route('/admin/generate-qr', methods=['GET', 'POST'])
+@login_required
+def generate_qr():
+    """Generate a generic QR code pointing to the self-registration page."""
+    if not current_user.is_admin:
+        abort(403)
+
+    import base64
+    from io import BytesIO
+
+    import qrcode
+
+    form = CohortQRForm()
+    qr_png = None
+
+    if form.validate_on_submit():
+        app_base = current_app.config.get('APP_LOGIN_URL', request.host_url.rstrip('/') + '/auth/login')
+        register_url = app_base.replace('/auth/login', '') + url_for('auth.register')
+
+        img = qrcode.make(register_url)
+        buf = BytesIO()
+        img.save(buf, format='PNG')
+        qr_png = base64.b64encode(buf.getvalue()).decode()
+
+    return render_template('auth/generate_qr.html', form=form, qr_png=qr_png)
 
 
 @bp.route('/change-password', methods=['GET', 'POST'])

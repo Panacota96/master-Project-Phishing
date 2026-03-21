@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Account Pending{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow-sm text-center">
+            <div class="card-body py-5">
+                <div class="mb-3 fs-1">&#10003;</div>
+                <h3 class="card-title">Account being created</h3>
+                <p class="text-muted">
+                    Your account is being set up. You will receive a confirmation email at
+                    <strong>{{ email }}</strong> shortly with your login details.
+                </p>
+                <a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary mt-2">Go to Login</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

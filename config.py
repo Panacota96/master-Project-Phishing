@@ -30,6 +30,13 @@ class Config:
     # S3
     S3_BUCKET = os.environ.get('S3_BUCKET', 'en-garde-prod-eu-west-3')
 
+    DYNAMODB_COHORT_TOKENS = os.environ.get('DYNAMODB_COHORT_TOKENS', 'en-garde-prod-cohort-tokens')
+
+    # SQS / SES (QR self-registration)
+    SQS_REGISTRATION_QUEUE_URL = os.environ.get('SQS_REGISTRATION_QUEUE_URL', '')
+    SES_FROM_EMAIL = os.environ.get('SES_FROM_EMAIL', '')
+    APP_LOGIN_URL = os.environ.get('APP_LOGIN_URL', 'http://localhost:5000/auth/login')
+
     # DynamoDB Local (for local development)
     DYNAMODB_ENDPOINT = os.environ.get('DYNAMODB_ENDPOINT', None)
     S3_ENDPOINT = os.environ.get('S3_ENDPOINT', None)

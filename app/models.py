@@ -599,6 +599,56 @@ def delete_answer_key_override(email_file):
     table.delete_item(Key={'email_file': email_file})
 
 
+# ─── Cohort Token CRUD ────────────────────────────────────────────────────────
+
+def create_cohort_token(token, class_name, academic_year, major, facility, created_by):
+    """Write a new cohort token. Expires after 90 days (TTL via DynamoDB)."""
+    import time
+    table = _get_table('DYNAMODB_COHORT_TOKENS')
+    item = {
+        'token': token,
+        'class_name': class_name,
+        'academic_year': academic_year,
+        'major': major,
+        'facility': facility,
+        'created_by': created_by,
+        'created_at': _now_iso(),
+        'expires_at': int(time.time()) + 90 * 24 * 3600,
+    }
+    table.put_item(Item=item)
+    return item
+
+
+def get_cohort_token(token):
+    """Return the cohort token item or None if not found / expired."""
+    import time
+    table = _get_table('DYNAMODB_COHORT_TOKENS')
+    resp = table.get_item(Key={'token': token})
+    item = resp.get('Item')
+    if not item:
+        return None
+    # Guard against DynamoDB TTL not having deleted the item yet
+    if int(item.get('expires_at', 0)) < int(time.time()):
+        return None
+    return item
+
+
+# ─── SQS Registration Enqueue ─────────────────────────────────────────────────
+
+def enqueue_registration(sqs_client, queue_url, data):
+    """Send a registration message to the SQS queue.
+
+    data: dict with username, email, password_hash, class_name, academic_year,
+          major, facility, group.
+    Returns the SQS SendMessage response.
+    """
+    import json
+    return sqs_client.send_message(
+        QueueUrl=queue_url,
+        MessageBody=json.dumps(data),
+    )
+
+
 # ─── Bug Report CRUD ─────────────────────────────────────────────────────────
 
 def create_bug_report(username, description, page_url):

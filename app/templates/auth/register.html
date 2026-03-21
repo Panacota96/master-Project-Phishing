@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Create Account{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-7 col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h3 class="card-title mb-3">Create Your Account</h3>
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        {{ form.username.label(class="form-label") }}
+                        {{ form.username(class="form-control") }}
+                        {% for error in form.username.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.email.label(class="form-label") }}
+                        {{ form.email(class="form-control") }}
+                        {% for error in form.email.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            {{ form.class_name.label(class="form-label") }}
+                            {{ form.class_name(class="form-control", placeholder="e.g. Class A") }}
+                            {% for error in form.class_name.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form.academic_year.label(class="form-label") }}
+                            {{ form.academic_year(class="form-control", placeholder="e.g. 2025") }}
+                            {% for error in form.academic_year.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form.major.label(class="form-label") }}
+                            {{ form.major(class="form-control", placeholder="e.g. Computer Science") }}
+                            {% for error in form.major.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form.facility.label(class="form-label") }}
+                            {{ form.facility(class="form-control", placeholder="e.g. Paris") }}
+                            {% for error in form.facility.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        {{ form.password.label(class="form-label") }}
+                        {{ form.password(class="form-control") }}
+                        <div class="form-text">Minimum 8 characters, with uppercase, lowercase, number, and symbol.</div>
+                        {% for error in form.password.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.confirm_password.label(class="form-label") }}
+                        {{ form.confirm_password(class="form-control") }}
+                        {% for error in form.confirm_password.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="d-grid">
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

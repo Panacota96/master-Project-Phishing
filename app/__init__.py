@@ -34,6 +34,9 @@ def create_app():
 
     app.s3_client = boto3.client('s3', **s3_kwargs)
 
+    # Initialize SQS client (used by QR self-registration flow)
+    app.sqs_client = boto3.client('sqs', region_name=app.config['AWS_REGION'])
+
     # Initialize Flask-Login
     login_manager.init_app(app)
 
