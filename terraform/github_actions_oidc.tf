@@ -72,6 +72,7 @@ resource "aws_iam_role_policy" "github_actions_deploy" {
           "iam:GetRole",
           "iam:TagRole",
           "iam:PassRole",
+          "iam:ListInstanceProfilesForRole",
           "iam:AttachRolePolicy",
           "iam:DetachRolePolicy",
           "iam:PutRolePolicy",
@@ -156,6 +157,7 @@ resource "aws_iam_role_policy" "github_actions_deploy" {
           "logs:PutRetentionPolicy",
           "logs:TagLogGroup",
           "logs:ListTagsLogGroup",
+          "logs:ListLogDeliveries",
         ]
         Resource = "arn:aws:logs:*:*:log-group:/aws/*"
       },

@@ -52,6 +52,13 @@ jobs:
           secret_key = "${{ secrets.TF_VAR_SECRET_KEY }}"
           EOF
 
+      - name: Remove deployment IAM from state
+        working-directory: terraform
+        run: |
+          terraform state rm aws_iam_role_policy.github_actions_deploy || true
+          terraform state rm aws_iam_role.github_actions_deploy || true
+          terraform state rm aws_iam_openid_connect_provider.github_actions || true
+
       - name: Clean S3 versions
         if: inputs.clean_s3 == 'true'
         working-directory: terraform
