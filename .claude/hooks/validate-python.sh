@@ -15,10 +15,13 @@ if [[ ! -f "$FILE_PATH" ]]; then
   exit 0
 fi
 
-if python3 -m py_compile "$FILE_PATH" 2>/tmp/py_compile_err; then
+TMPFILE=$(mktemp)
+if python3 -m py_compile "$FILE_PATH" 2>"$TMPFILE"; then
+  rm -f "$TMPFILE"
   exit 0
 else
-  ERR=$(cat /tmp/py_compile_err)
+  ERR=$(cat "$TMPFILE")
+  rm -f "$TMPFILE"
   echo "Python syntax error in $FILE_PATH:" >&2
   echo "$ERR" >&2
   # Exit 2 signals Claude to treat this as a blocking error and fix it
