@@ -61,9 +61,8 @@ jobs:
 
       - name: Clean S3 versions
         if: inputs.clean_s3
-        working-directory: terraform
         run: |
-          S3_BUCKET=$(terraform output -raw s3_bucket_name)
+          S3_BUCKET="en-garde-${{ inputs.environment }}-eu-west-3"
           export S3_BUCKET
 
           aws s3api list-object-versions --bucket "$S3_BUCKET" \
