@@ -8,7 +8,29 @@ on:
   workflow_call:
 
 jobs:
-  ci:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install flake8
+        run: pip install flake8
+
+      - name: Lint
+        run: make lint
+
+      - name: Install dependencies for validate-eml
+        run: pip install -r requirements.txt
+
+      - name: Validate EML realism
+        run: make validate-eml
+
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,12 +41,10 @@ jobs:
           cache: pip
 
       - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
-          pip install flake8 pytest moto
+        run: pip install -r requirements.txt
 
-      - name: Lint
-        run: make lint
+      - name: Install test tools
+        run: pip install pytest moto
 
       - name: Test
         run: make test
@@ -35,3 +55,34 @@ jobs:
         with:
           name: test-report
           path: report.xml
+
+  build:
+    runs-on: ubuntu-latest
+    needs: [lint, test]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install zip
+        run: sudo apt-get install -y zip
+
+      - name: Make scripts executable
+        run: chmod +x scripts/*.sh
+
+      - name: Build Lambda artifact
+        run: make lambda
+
+      - name: Build Registration Worker artifact
+        run: make registration-worker
+
+      - name: Upload Lambda artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: lambda-artifacts
+          path: |
+            lambda.zip
+            registration_worker.zip

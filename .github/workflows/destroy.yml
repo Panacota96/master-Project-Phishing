@@ -1,0 +1,94 @@
+name: Destroy
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment to destroy"
+        type: choice
+        options: [dev, prod]
+        required: true
+      clean_s3:
+        description: "Empty versioned S3 bucket before destroy"
+        type: boolean
+        default: false
+
+jobs:
+  destroy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "~1.9"
+          terraform_wrapper: true
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: eu-west-3
+
+      - name: Make scripts executable
+        run: chmod +x scripts/*.sh
+
+      - name: Terraform init
+        working-directory: terraform
+        run: terraform init -reconfigure -backend-config="backend/${{ inputs.environment }}.hcl"
+
+      - name: Write tfvars
+        working-directory: terraform
+        run: |
+          mkdir -p env
+          cat > env/${{ inputs.environment }}.tfvars <<EOF
+          aws_region = "eu-west-3"
+          environment = "${{ inputs.environment }}"
+          app_name   = "en-garde"
+          secret_key = "${{ secrets.TF_VAR_SECRET_KEY }}"
+          EOF
+
+      - name: Clean S3 versions
+        if: inputs.clean_s3 == 'true'
+        working-directory: terraform
+        run: |
+          S3_BUCKET=$(terraform output -raw s3_bucket_name)
+          export S3_BUCKET
+
+          aws s3api list-object-versions --bucket "$S3_BUCKET" \
+            --query 'Versions[].{Key:Key,VersionId:VersionId}' \
+            --output json > /tmp/versions.json
+
+          aws s3api list-object-versions --bucket "$S3_BUCKET" \
+            --query 'DeleteMarkers[].{Key:Key,VersionId:VersionId}' \
+            --output json > /tmp/markers.json
+
+          python3 - <<'PYEOF'
+          import json, subprocess, os
+
+          objects = []
+          for path in ['/tmp/versions.json', '/tmp/markers.json']:
+              with open(path) as f:
+                  data = json.load(f)
+              if data:
+                  objects.extend(data)
+
+          if objects:
+              bucket = os.environ['S3_BUCKET']
+              payload = json.dumps({'Objects': objects, 'Quiet': True})
+              subprocess.run(
+                  ['aws', 's3api', 'delete-objects', '--bucket', bucket, '--delete', payload],
+                  check=True,
+              )
+              print(f"Deleted {len(objects)} object versions/markers from {bucket}")
+          else:
+              print("No object versions or delete markers found")
+          PYEOF
+
+      - name: Terraform destroy
+        working-directory: terraform
+        run: terraform destroy -auto-approve -var-file="env/${{ inputs.environment }}.tfvars"

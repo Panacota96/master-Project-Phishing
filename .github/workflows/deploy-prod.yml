@@ -1,8 +1,6 @@
-name: Deploy Dev
+name: Deploy Prod
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
     inputs:
       skip_seed:
@@ -11,13 +9,39 @@ on:
         default: false
 
 jobs:
-  ci:
-    uses: ./.github/workflows/ci.yml
-
-  plan_dev:
-    needs: ci
+  build_prod:
     runs-on: ubuntu-latest
-    environment: dev
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install zip
+        run: sudo apt-get install -y zip
+
+      - name: Make scripts executable
+        run: chmod +x scripts/*.sh
+
+      - name: Build Lambda artifact
+        run: make lambda
+
+      - name: Build Registration Worker artifact
+        run: make registration-worker
+
+      - name: Upload Lambda artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: lambda-artifacts-prod
+          path: |
+            lambda.zip
+            registration_worker.zip
+
+  plan_prod:
+    needs: build_prod
+    runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
@@ -38,43 +62,43 @@ jobs:
       - name: Download Lambda artifacts
         uses: actions/download-artifact@v4
         with:
-          name: lambda-artifacts
+          name: lambda-artifacts-prod
 
       - name: Terraform init
         working-directory: terraform
-        run: terraform init -reconfigure -backend-config="backend/dev.hcl"
+        run: terraform init -reconfigure -backend-config="backend/prod.hcl"
 
       - name: Terraform validate
         working-directory: terraform
         run: terraform validate
 
-      - name: Write dev tfvars
+      - name: Write prod tfvars
         working-directory: terraform
         run: |
           mkdir -p env
-          cat > env/dev.tfvars <<EOF
+          cat > env/prod.tfvars <<EOF
           aws_region = "eu-west-3"
-          environment = "dev"
+          environment = "prod"
           app_name   = "en-garde"
           secret_key = "${{ secrets.TF_VAR_SECRET_KEY }}"
           EOF
 
       - name: Terraform plan
         working-directory: terraform
-        run: terraform plan -var-file="env/dev.tfvars" -out=tfplan
+        run: terraform plan -var-file="env/prod.tfvars" -out=tfplan
 
       - name: Upload Terraform plan
         uses: actions/upload-artifact@v4
         with:
-          name: tfplan-dev
+          name: tfplan-prod
           path: |
             terraform/tfplan
             terraform/.terraform.lock.hcl
 
-  deploy_dev:
-    needs: plan_dev
+  deploy_prod:
+    needs: plan_prod
     runs-on: ubuntu-latest
-    environment: dev
+    environment: prod
     permissions:
       id-token: write
       contents: read
@@ -95,16 +119,16 @@ jobs:
       - name: Download Lambda artifacts
         uses: actions/download-artifact@v4
         with:
-          name: lambda-artifacts
+          name: lambda-artifacts-prod
 
       - name: Download Terraform plan
         uses: actions/download-artifact@v4
         with:
-          name: tfplan-dev
+          name: tfplan-prod
 
       - name: Terraform init
         working-directory: terraform
-        run: terraform init -reconfigure -backend-config="backend/dev.hcl"
+        run: terraform init -reconfigure -backend-config="backend/prod.hcl"
 
       - name: Terraform apply
         working-directory: terraform
@@ -156,7 +180,7 @@ jobs:
 
       - name: Job summary
         run: |
-          echo "## Deploy Dev" >> $GITHUB_STEP_SUMMARY
+          echo "## Deploy Prod" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**App URL:** ${{ steps.tf_outputs.outputs.app_url }}" >> $GITHUB_STEP_SUMMARY
           echo "**CloudFront URL:** ${{ steps.tf_outputs.outputs.cloudfront_url }}" >> $GITHUB_STEP_SUMMARY
