@@ -41,6 +41,14 @@ terraform/env/*.tfvars
 # Build artifacts
 lambda.zip
 package/
+registration_worker.zip
+registration_worker_package/
+
+# Video assets — large binaries served from S3, not stored in git (make sync-assets)
+app/static/videos/*.mp4
+
+# Local MCP server configuration
+.mcp.json
 
 # Reports
 examples/realism_report.json
