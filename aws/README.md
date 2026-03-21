@@ -1,5 +1,8 @@
 # AWS Deployment Guide — Phishing Awareness App
 
+> **Deprecated:** This guide describes a legacy EC2 deployment. Current production uses AWS Lambda + API Gateway + Terraform.
+> See [documentation/operator/DEPLOYMENT.md](../documentation/operator/DEPLOYMENT.md).
+
 Deploy the Flask phishing awareness app on **AWS Free Tier** using EC2, Docker, and Nginx.
 
 ## Architecture

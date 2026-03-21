@@ -6,6 +6,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [1.2.4] - 2026-03-21
+
+### Added
+
+- **Full documentation overhaul** — accuracy and completeness pass across all 13 documentation files:
+  - `documentation/operator/CICD.md` — full rewrite replacing GitLab CI content with accurate GitHub Actions coverage (4 workflows, OIDC auth flow, Mermaid pipeline diagram, required secrets/environments)
+  - `documentation/dev/SETUP.md` — fixed all `en-garde-dev-*` table names to `phishing-app-dev-*`; added missing env vars (`DYNAMODB_COHORT_TOKENS`, `SQS_REGISTRATION_QUEUE_URL`, `SES_FROM_EMAIL`); added Docker Compose Option A section with `setup_local_db.py` step
+  - `CLAUDE.md` — fixed `en-garde-dev-*` env var examples; added missing env vars; updated CI/CD deployment note to mention OIDC and all 4 workflows
+  - `README.md` — fixed `en-garde-dev-*` table names and S3 bucket in Quick Start block
+  - `documentation/ARCHITECTURE.md` — updated "En Garde" title to project name; fixed Lambda/IAM/S3/CloudWatch naming (`en-garde-*` → `phishing-app-*`); added new quizzes to quiz catalog; added AWS service badges; fixed local dev `.env` S3_BUCKET reference
+  - `documentation/REQUIREMENTS.md` — updated title; added GDPR anonymous inspector requirement and QR+SQS registration requirement
+  - `documentation/operator/DEPLOYMENT.md` — removed GitLab CI references; added GitHub Environment Setup section; fixed S3 bucket name examples
+  - `documentation/operator/INFRASTRUCTURE.md` — added cohort-tokens table; fixed `en-garde` naming; added SQS DLQ; added AWS service badges
+  - `documentation/operator/README.md` — replaced GitLab CI reference with GitHub Actions
+  - `documentation/user/STUDENT_GUIDE.md` — replaced Obsidian image tags with descriptive text; added Quiz Completion and Inspector Completion sections
+  - `documentation/user/ADMIN_GUIDE.md` — replaced Obsidian image tags with descriptive text; added QR Code Generation, Inspector Reset, and Answer Key Editor sections
+  - `aws/README.md` — added deprecation banner (legacy EC2 guide)
+- New developer guides: `documentation/dev/ADDING_QUIZZES.md` and `documentation/dev/ADDING_EML_FILES.md`
+
+### Changed
+
+- No application code changes in this release — documentation only.
+
+---
+
 ## [1.2.3] - 2026-03-21
 
 ### Added
@@ -47,7 +72,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
-## [1.2.1] - 2026-02-27
+## [1.2.1] - 2026-03-21
+
+### Added
+
+- **UI overhaul** — quiz cards, score ring, stat cards, rank badges, and video gate redesign for improved student experience
+
+### Fixed
+
+- `fix: use direct S3 URL for videos` — CloudFront has no S3 origin configured; video assets must be served directly from S3
+- `fix: update VIDEO_BASE_URL to use CloudFront URL for video assets` — seeder and README updated to reflect correct base URL
+- `fix: app_name en-garde → phishing-app` — updated in all three workflow files (`deploy-dev.yml`, `deploy-prod.yml`, `destroy.yml`) so Terraform resource prefixes match the deployed infrastructure
+- `fix: add CloudWatchLogDelivery IAM permission` — added `logs:CreateLogDelivery` and related permissions to `github_actions_oidc.tf` so API Gateway structured access logs can be configured by CI
+
+---
+
+## [1.2.0] - 2026-02-27
 
 ### Added
 

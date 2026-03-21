@@ -24,12 +24,12 @@ All new features and bug fixes must be accompanied by relevant tests:
 ## Branching Strategy
 - **`main`**: The production branch (protected).
 - **`dev`**: The default development branch.
-- **Feature Branches**: Create feature-specific branches (e.g., `feature/new-quiz-type`) and submit a Merge Request (MR) in GitLab for review.
+- **Feature Branches**: Create feature-specific branches (e.g., `feature/new-quiz-type`) and open a Pull Request (PR) on GitHub for review.
 
 ## Pull Request (Merge Request) Process
 1. Ensure your branch is up-to-date with `dev`.
 2. Run all tests (`make test`) and linting (`make lint`).
-3. Describe the changes in the MR description, including any new environment variables or infrastructure updates.
+3. Describe the changes in the PR description, including any new environment variables or infrastructure updates.
 4. Request a review from the maintainers.
 
 ## Documentation Standards

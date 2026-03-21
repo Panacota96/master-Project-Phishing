@@ -1,6 +1,6 @@
 # Architecture Diagrams
 
-> Phishing awareness training application — En Garde
+> Phishing awareness training application
 > See also: [REQUIREMENTS.md](REQUIREMENTS.md) | [README](../README.md)
 
 ## Table of Contents
@@ -65,6 +65,15 @@ graph TB
 
 ## 2. AWS Infrastructure
 
+![AWS Lambda](https://img.shields.io/badge/AWS_Lambda-FF9900?logo=awslambda&logoColor=white)
+![DynamoDB](https://img.shields.io/badge/DynamoDB-4053D6?logo=amazondynamodb&logoColor=white)
+![Amazon S3](https://img.shields.io/badge/Amazon_S3-569A31?logo=amazons3&logoColor=white)
+![Amazon SQS](https://img.shields.io/badge/Amazon_SQS-FF4F8B?logo=amazonsqs&logoColor=white)
+![Amazon SES](https://img.shields.io/badge/Amazon_SES-232F3E?logo=amazonaws&logoColor=white)
+![CloudFront](https://img.shields.io/badge/CloudFront-232F3E?logo=amazonaws&logoColor=white)
+![API Gateway](https://img.shields.io/badge/API_Gateway-FF4F8B?logo=amazonaws&logoColor=white)
+![CloudWatch](https://img.shields.io/badge/CloudWatch-FF4F8B?logo=amazonaws&logoColor=white)
+
 All resources grouped by AWS service with connection direction.
 
 ```mermaid
@@ -83,12 +92,12 @@ graph LR
     end
 
     subgraph Compute["Lambda"]
-        LApp["en-garde-{env}-app\n512 MB · 30 s · X-Ray Active"]
-        LWorker["en-garde-{env}-registration-worker\n256 MB · 60 s"]
+        LApp["phishing-app-{env}-app\n512 MB · 30 s · X-Ray Active"]
+        LWorker["phishing-app-{env}-registration-worker\n256 MB · 60 s"]
     end
 
     subgraph Storage["S3"]
-        S3["en-garde-{env}-eu-west-3\nVersioned · AES256\nPublic read: videos/* (dev only)\nPrivate: eml-samples/ reports/"]
+        S3["phishing-app-{env}-eu-west-3\nVersioned · AES256\nPublic read: videos/* (dev only)\nPrivate: eml-samples/ reports/"]
     end
 
     subgraph DB["DynamoDB — 9 tables (PAY_PER_REQUEST)"]
@@ -114,13 +123,13 @@ graph LR
     subgraph Observe["CloudWatch"]
         CWLogs["Log Groups\n/aws/lambda/{app,worker} · /aws/apigateway/*\n14-day retention"]
         CWAlarms["6 Alarms\nLambda errors(>=5)/duration-p95(>=25s)/throttles(>=1)\nAPI GW 4xx(>=50)/5xx(>=3) · DynamoDB SystemErrors(>=1)"]
-        CWDash["Dashboard\nen-garde-{env}-overview\n3 rows: Lambda · API GW · DynamoDB"]
+        CWDash["Dashboard\nphishing-app-{env}-overview\n3 rows: Lambda · API GW · DynamoDB"]
     end
 
     subgraph IAM_["IAM"]
-        RoleLambda["en-garde-{env}-lambda-role\nDynamoDB (9 tables+GSIs) · S3 · SQS:SendMessage · X-Ray"]
-        RoleWorker["en-garde-{env}-registration-worker-role\nDynamoDB:users · SES:SendEmail · SQS:Receive+Delete · SNS:Publish"]
-        RoleGHA["en-garde-{env}-github-actions-deploy\nOIDC · Lambda · IAM · DynamoDB · S3 · API GW\nCloudFront · CloudWatch · SNS · SQS · SES · X-Ray · ACM · Route53"]
+        RoleLambda["phishing-app-{env}-lambda-role\nDynamoDB (9 tables+GSIs) · S3 · SQS:SendMessage · X-Ray"]
+        RoleWorker["phishing-app-{env}-registration-worker-role\nDynamoDB:users · SES:SendEmail · SQS:Receive+Delete · SNS:Publish"]
+        RoleGHA["phishing-app-{env}-github-actions-deploy\nOIDC · Lambda · IAM · DynamoDB · S3 · API GW\nCloudFront · CloudWatch · SNS · SQS · SES · X-Ray · ACM · Route53"]
         OIDC["OIDC Provider\ntoken.actions.githubusercontent.com\nrepo: Panacota96/master-Project-Phishing:*"]
     end
 
@@ -329,6 +338,9 @@ erDiagram
 ---
 
 ## 5. CI/CD Pipeline
+
+![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?logo=github-actions&logoColor=white)
+![Terraform](https://img.shields.io/badge/Terraform-7B42BC?logo=terraform&logoColor=white)
 
 Full GitHub Actions pipeline across all workflow files.
 
@@ -548,7 +560,7 @@ sequenceDiagram
 graph TD
     subgraph Host["Developer Machine"]
         Browser["Browser\nlocalhost:80 (Docker) or\nlocalhost:5000 (run.py)"]
-        DotEnv[".env file\nDYNAMODB_ENDPOINT=http://localhost:8766\nAWS_REGION_NAME=eu-west-3\nSECRET_KEY=dev-secret\nDYNAMODB_* table names\nS3_BUCKET=en-garde-dev"]
+        DotEnv[".env file\nDYNAMODB_ENDPOINT=http://localhost:8766\nAWS_REGION_NAME=eu-west-3\nSECRET_KEY=dev-secret\nDYNAMODB_* table names\nS3_BUCKET=phishing-app-dev-eu-west-3"]
     end
 
     subgraph DockerCompose["docker-compose.yml (recommended)"]

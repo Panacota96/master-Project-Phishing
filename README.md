@@ -80,16 +80,16 @@ export DYNAMODB_ENDPOINT=http://localhost:8766
 export AWS_REGION_NAME=eu-west-3
 export AWS_ACCESS_KEY_ID=fake
 export AWS_SECRET_ACCESS_KEY=fake
-export DYNAMODB_USERS=en-garde-dev-users
-export DYNAMODB_QUIZZES=en-garde-dev-quizzes
-export DYNAMODB_ATTEMPTS=en-garde-dev-attempts
-export DYNAMODB_RESPONSES=en-garde-dev-responses
-export DYNAMODB_INSPECTOR=en-garde-dev-inspector-attempts
-export DYNAMODB_INSPECTOR_ANON=en-garde-dev-inspector-attempts-anon
-export DYNAMODB_BUGS=en-garde-dev-bugs
-export DYNAMODB_ANSWER_KEY_OVERRIDES=en-garde-dev-answer-key-overrides
-export DYNAMODB_COHORT_TOKENS=en-garde-dev-cohort-tokens
-export S3_BUCKET=en-garde-dev
+export DYNAMODB_USERS=phishing-app-dev-users
+export DYNAMODB_QUIZZES=phishing-app-dev-quizzes
+export DYNAMODB_ATTEMPTS=phishing-app-dev-attempts
+export DYNAMODB_RESPONSES=phishing-app-dev-responses
+export DYNAMODB_INSPECTOR=phishing-app-dev-inspector-attempts
+export DYNAMODB_INSPECTOR_ANON=phishing-app-dev-inspector-attempts-anon
+export DYNAMODB_BUGS=phishing-app-dev-bugs
+export DYNAMODB_ANSWER_KEY_OVERRIDES=phishing-app-dev-answer-key-overrides
+export DYNAMODB_COHORT_TOKENS=phishing-app-dev-cohort-tokens
+export S3_BUCKET=phishing-app-dev-eu-west-3
 export SECRET_KEY=dev-secret
 python seed_dynamodb.py
 
@@ -149,6 +149,13 @@ make sync-assets           # upload app/static/videos/*.mp4 → S3 /videos/ (buc
 >   --exclude "*" --include "*.mp4" --region eu-west-3
 > ```
 > Videos are gitignored — they live in S3 only. Re-run this command whenever you add a new `.mp4` file.
+
+> **Uploading EML samples:**
+> ```bash
+> aws s3 sync examples/ s3://phishing-app-dev-eu-west-3/eml-samples/ \
+>   --exclude "*" --include "*.eml" --region eu-west-3
+> ```
+> After uploading, add a corresponding entry to `app/inspector/answer_key.py` — files without an entry are excluded from the inspector pool.
 
 ## CI/CD Overview
 

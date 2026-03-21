@@ -76,7 +76,7 @@
 - 🔴 **Create `aws_secretsmanager_secret` for `SECRET_KEY`** and store the value as a Secrets Manager secret. Update the Lambda execution role `aws_iam_role.lambda` to include `secretsmanager:GetSecretValue` on that specific secret ARN. Update the Flask `config.py` to call `boto3.client('secretsmanager').get_secret_value()` at startup and cache the result.
 - 🟠 **Remove `SECRET_KEY` from Lambda environment variables** in `lambda.tf`. The `sensitive = true` marker on `var.secret_key` in `variables.tf` prevents Terraform from printing it in plan output, but it does not prevent it from appearing in the AWS console or API.
 - 🟠 **Also consider Secrets Manager for `SES_FROM_EMAIL`** — while not a secret in the cryptographic sense, centralizing config in Secrets Manager simplifies rotation and audit.
-- 🟡 **Update the GitHub Actions OIDC role** (`aws_iam_role_policy.github_actions_deploy`) to add `secretsmanager:CreateSecret`, `secretsmanager:PutSecretValue`, `secretsmanager:DeleteSecret`, `secretsmanager:DescribeSecret`, `secretsmanager:TagResource` scoped to ARNs matching `arn:aws:secretsmanager:eu-west-3:*:secret:en-garde-*`.
+- 🟡 **Update the GitHub Actions OIDC role** (`aws_iam_role_policy.github_actions_deploy`) to add `secretsmanager:CreateSecret`, `secretsmanager:PutSecretValue`, `secretsmanager:DeleteSecret`, `secretsmanager:DescribeSecret`, `secretsmanager:TagResource` scoped to ARNs matching `arn:aws:secretsmanager:eu-west-3:*:secret:phishing-app-*`.
 
 ### 1.5 S3 Bucket Policy Tightening — Video Access
 
@@ -110,15 +110,15 @@
 
 **Specific findings:**
 
-- 🔴 **`S3Full` Sid grants `s3:*`** on `arn:aws:s3:::en-garde-dev-*` and the Terraform state bucket. This includes `s3:DeleteBucket`, `s3:PutBucketPolicy` (which could make the bucket public), and `s3:PutBucketVersioning` (could disable versioning). The GitHub Actions role only needs `s3:GetObject`, `s3:PutObject`, `s3:DeleteObject`, `s3:ListBucket`, `s3:GetBucketVersioning`, `s3:PutBucketVersioning`, `s3:GetEncryptionConfiguration`, `s3:PutEncryptionConfiguration`, `s3:GetBucketPublicAccessBlock`, `s3:PutPublicAccessBlock`, `s3:GetBucketTagging`, `s3:PutBucketTagging`, `s3:GetBucketPolicy`, `s3:PutBucketPolicy`, and `s3:GetBucketAcl` for Terraform to manage the bucket. `s3:DeleteBucket` is only needed during `terraform destroy`.
+- 🔴 **`S3Full` Sid grants `s3:*`** on `arn:aws:s3:::phishing-app-*` and the Terraform state bucket. This includes `s3:DeleteBucket`, `s3:PutBucketPolicy` (which could make the bucket public), and `s3:PutBucketVersioning` (could disable versioning). The GitHub Actions role only needs `s3:GetObject`, `s3:PutObject`, `s3:DeleteObject`, `s3:ListBucket`, `s3:GetBucketVersioning`, `s3:PutBucketVersioning`, `s3:GetEncryptionConfiguration`, `s3:PutEncryptionConfiguration`, `s3:GetBucketPublicAccessBlock`, `s3:PutPublicAccessBlock`, `s3:GetBucketTagging`, `s3:PutBucketTagging`, `s3:GetBucketPolicy`, `s3:PutBucketPolicy`, and `s3:GetBucketAcl` for Terraform to manage the bucket. `s3:DeleteBucket` is only needed during `terraform destroy`.
 
 - 🔴 **`APIGateway` Sid grants `apigateway:*` on `Resource: "*"`** — this includes creating, modifying, and deleting API Gateways in any region, not scoped to the `${local.prefix}` resources. Restrict to ARN patterns for the specific API Gateway resources.
 
-- 🟠 **`LambdaCRUD` Sid scopes `Resource: "*"`** — Lambda function ARNs are predictable (`arn:aws:lambda:eu-west-3:*:function:en-garde-*`). Restricting the resource prevents the deploy role from accidentally modifying unrelated Lambda functions in the same account.
+- 🟠 **`LambdaCRUD` Sid scopes `Resource: "*"`** — Lambda function ARNs are predictable (`arn:aws:lambda:eu-west-3:*:function:phishing-app-*`). Restricting the resource prevents the deploy role from accidentally modifying unrelated Lambda functions in the same account.
 
-- 🟠 **`IAMRoleManagement` Sid scopes `Resource: "*"`** — the role already only manages `en-garde-*` prefixed resources in practice. Scope this to `arn:aws:iam::*:role/en-garde-*` and `arn:aws:iam::*:policy/en-garde-*`.
+- 🟠 **`IAMRoleManagement` Sid scopes `Resource: "*"`** — the role already only manages `phishing-app-*` prefixed resources in practice. Scope this to `arn:aws:iam::*:role/phishing-app-*` and `arn:aws:iam::*:policy/phishing-app-*`.
 
-- 🟠 **`SQS`, `SNS`, `SES`, `CloudWatchAlarmsDashboards` Sids all use `Resource: "*"`** — all of these can be scoped to ARN patterns matching `en-garde-*` prefix or the specific known ARNs.
+- 🟠 **`SQS`, `SNS`, `SES`, `CloudWatchAlarmsDashboards` Sids all use `Resource: "*"`** — all of these can be scoped to ARN patterns matching `phishing-app-*` prefix or the specific known ARNs.
 
 - 🟡 **`StringLike` condition on the OIDC trust policy** uses `repo:Panacota96/master-Project-Phishing:*` — the trailing `:*` allows any branch and any workflow to assume this role. For production deploys, tighten to `repo:Panacota96/master-Project-Phishing:ref:refs/heads/main` to prevent feature branches from deploying to production infrastructure.
 
@@ -496,7 +496,7 @@ The AWS Well-Architected Framework has six pillars. Here is an honest mapping of
 
 - 🟡 **Add `CostCenter` tag** — even if fictional for an academic project (e.g., `"ESME-Engineering"`), this demonstrates FinOps awareness.
 - 🟡 **Add `Owner` or `Team` tag** — the responsible person or team (e.g., `"CyberSec-Lab"`).
-- 🟡 **Add `Application` tag** — the specific service name within the project (e.g., `"en-garde-web"`, `"en-garde-worker"`). Useful when multiple apps share the same AWS account.
+- 🟡 **Add `Application` tag** — the specific service name within the project (e.g., `"phishing-app-web"`, `"phishing-app-worker"`). Useful when multiple apps share the same AWS account.
 - 🟡 **Add `Version` tag** to Lambda functions** — set to the current git commit SHA using `var.app_version` populated from `${GITHUB_SHA}` in the CI workflow. This allows tracing which code version a Lambda is running at a glance.
 - 🟢 **Add `DataClassification` tag** to DynamoDB tables and S3 bucket** — e.g., `"Internal"` for user data tables, `"Public"` for EML samples. This is required by many data governance frameworks.
 

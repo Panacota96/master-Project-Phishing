@@ -51,16 +51,19 @@ export DYNAMODB_ENDPOINT=http://localhost:8766
 export AWS_REGION_NAME=eu-west-3
 export AWS_ACCESS_KEY_ID=fake
 export AWS_SECRET_ACCESS_KEY=fake
-export DYNAMODB_USERS=en-garde-dev-users
-export DYNAMODB_QUIZZES=en-garde-dev-quizzes
-export DYNAMODB_ATTEMPTS=en-garde-dev-attempts
-export DYNAMODB_RESPONSES=en-garde-dev-responses
-export DYNAMODB_INSPECTOR=en-garde-dev-inspector-attempts
-export DYNAMODB_INSPECTOR_ANON=en-garde-dev-inspector-attempts-anon
-export DYNAMODB_BUGS=en-garde-dev-bugs
-export DYNAMODB_ANSWER_KEY_OVERRIDES=en-garde-dev-answer-key-overrides
-export S3_BUCKET=en-garde-dev
+export DYNAMODB_USERS=phishing-app-dev-users
+export DYNAMODB_QUIZZES=phishing-app-dev-quizzes
+export DYNAMODB_ATTEMPTS=phishing-app-dev-attempts
+export DYNAMODB_RESPONSES=phishing-app-dev-responses
+export DYNAMODB_INSPECTOR=phishing-app-dev-inspector-attempts
+export DYNAMODB_INSPECTOR_ANON=phishing-app-dev-inspector-attempts-anon
+export DYNAMODB_BUGS=phishing-app-dev-bugs
+export DYNAMODB_ANSWER_KEY_OVERRIDES=phishing-app-dev-answer-key-overrides
+export DYNAMODB_COHORT_TOKENS=phishing-app-dev-cohort-tokens
+export S3_BUCKET=phishing-app-dev-eu-west-3
 export SECRET_KEY=dev-secret
+export SQS_REGISTRATION_QUEUE_URL=
+export SES_FROM_EMAIL=no-reply@example.com
 python seed_dynamodb.py
 ```
 
@@ -114,7 +117,7 @@ Tests use `moto` to mock all AWS services. The `conftest.py` fixture `app()` wra
 
 - **Lambda**: Flask is wrapped with `mangum` for AWS Lambda + API Gateway
 - **Terraform**: `terraform/` manages all AWS infrastructure; `terraform/bootstrap/` creates the Terraform state bucket
-- **CI/CD**: GitHub Actions — two workflows: `claude.yml` (responds to `@claude` mentions in issues/PRs) and `claude-code-review.yml` (auto-reviews every PR); `TF_ENV` selects `dev` or `prod` for Terraform
+- **CI/CD**: GitHub Actions — four workflows: `ci.yml` (lint/test/build), `deploy-dev.yml` (auto-deploy on push to main), `deploy-prod.yml` (manual), `destroy.yml` (manual teardown); plus `claude.yml` and `claude-code-review.yml`. Uses OIDC to assume the deploy role — no static AWS keys stored in GitHub secrets.
 - **Docker**: `docker compose up -d --build` starts three services: `dynamodb-local` (port 8766), `web` (Gunicorn/Flask, reads `.env`), and `nginx` (port 80). Static assets are served directly by Nginx; app routes go through the reverse proxy to Gunicorn.
 
 ## Code Conventions

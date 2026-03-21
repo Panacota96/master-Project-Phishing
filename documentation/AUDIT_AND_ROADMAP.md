@@ -28,7 +28,7 @@ This document provides a comprehensive overview of the current feature set of th
 - **GDPR by Design**: Anonymous data tables for threat analysis and aggregated cohort-level reporting.
 - **Automated Privacy Cleaning**: Regex-based "Placeholder Cleaning" that scrubs PII from training emails.
 - **Serverless Architecture**: AWS Lambda + API Gateway + encrypted DynamoDB/S3.
-- **SecDevOps Pipeline**: GitLab CI/CD with mandatory linting, unit tests, and infrastructure-as-code (Terraform).
+- **SecDevOps Pipeline**: GitHub Actions CI/CD with mandatory linting, unit tests, and infrastructure-as-code (Terraform).
 
 ---
 
@@ -41,7 +41,7 @@ This document provides a comprehensive overview of the current feature set of th
 
 ### 🛡️ Phase 2: Security & Governance (Mid-Term)
 - **Admin MFA**: Implement TOTP (Time-based One-Time Password) for all accounts with administrative privileges.
-- **Automated Dependency Audits**: Integrate `pip-audit` or `safety` into the GitLab CI pipeline to detect vulnerable libraries.
+- **Automated Dependency Audits**: Integrate `pip-audit` or `safety` into the GitHub Actions CI pipeline to detect vulnerable libraries.
 - **Penetration Testing**: Conduct a "Grey Box" security audit and document findings in a formal security report.
 
 ### 🚀 Phase 3: Advanced Intelligence (Completed & Ongoing)

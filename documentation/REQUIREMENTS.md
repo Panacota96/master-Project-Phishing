@@ -1,23 +1,23 @@
-# En Garde — Requirements
+# Phishing Awareness Training — Requirements
 
 ## Infrastructure Requirements
 
 | Resource | Purpose | Notes |
 |---|---|---|
-| AWS Lambda `en-garde-{env}-app` (Python 3.12, 512 MB, 30 s) | App runtime | Via mangum + asgiref |
-| AWS Lambda `en-garde-{env}-registration-worker` (Python 3.12, 256 MB, 60 s) | Async user registration + SES email | Triggered by SQS |
+| AWS Lambda `phishing-app-{env}-app` (Python 3.12, 512 MB, 30 s) | App runtime | Via mangum + asgiref |
+| AWS Lambda `phishing-app-{env}-registration-worker` (Python 3.12, 256 MB, 60 s) | Async user registration + SES email | Triggered by SQS |
 | API Gateway v2 (HTTP API) | Public HTTPS entry | `$default` stage, auto-deploy, structured JSON access logs |
 | CloudFront Distribution | CDN + HTTPS termination, stable URL | TTL=0 (all requests forwarded), redirect-to-https; custom domain + ACM optional |
-| S3 Bucket (`en-garde-{env}-{region}`) | EML samples, video assets, generated reports | AES256 encryption, versioning enabled; `videos/*` public-read in dev |
+| S3 Bucket (`phishing-app-{env}-{region}`) | EML samples, video assets, generated reports | AES256 encryption, versioning enabled; `videos/*` public-read in dev |
 | DynamoDB (9 tables, PAY_PER_REQUEST) | All app data | On-demand billing, see schema below |
 | Route 53 + ACM | Custom domain (optional) | ACM cert provisioned in us-east-1 for CloudFront |
 | CloudWatch Log Groups (3) | Lambda app, Lambda worker, API GW logs | 14-day retention |
 | CloudWatch Alarms (6) | Lambda/API GW/DynamoDB monitoring | SNS email alerts; see alarm list below |
-| CloudWatch Dashboard | Ops overview — 3 rows: Lambda, API GW, DynamoDB | `en-garde-{env}-overview` |
-| SNS Topic `en-garde-{env}-alerts` | CloudWatch alarm delivery | Email subscription (optional, via `alert_email` variable) |
-| SNS Topic `en-garde-{env}-registration` | Registration event fan-out | Available for future extensions |
-| SQS Queue `en-garde-{env}-registration` | Async user registration queue | Standard queue, SSE, 60 s visibility, 1-day retention |
-| SQS DLQ `en-garde-{env}-registration-dlq` | Dead-letter queue for failed registrations | 14-day retention, maxReceiveCount=4 |
+| CloudWatch Dashboard | Ops overview — 3 rows: Lambda, API GW, DynamoDB | `phishing-app-{env}-overview` |
+| SNS Topic `phishing-app-{env}-alerts` | CloudWatch alarm delivery | Email subscription (optional, via `alert_email` variable) |
+| SNS Topic `phishing-app-{env}-registration` | Registration event fan-out | Available for future extensions |
+| SQS Queue `phishing-app-{env}-registration` | Async user registration queue | Standard queue, SSE, 60 s visibility, 1-day retention |
+| SQS DLQ `phishing-app-{env}-registration-dlq` | Dead-letter queue for failed registrations | 14-day retention, maxReceiveCount=4 |
 | SES Email Identity | Confirmation emails to new students | `no-reply@engarde.esme.fr`; set `ses_from_email` var |
 | Terraform State S3 + DynamoDB | IaC state management | `phishing-terraform-state` bucket + `phishing-terraform-locks` table |
 | GitHub Actions OIDC Provider | Keyless CI/CD authentication | `token.actions.githubusercontent.com` |
@@ -174,7 +174,7 @@ For production deployments, a separate **`prod`** GitHub environment is required
 
 ## AWS IAM Permissions Required
 
-### Lambda Execution Role — `en-garde-{env}-lambda-role`
+### Lambda Execution Role — `phishing-app-{env}-lambda-role`
 
 - `AWSLambdaBasicExecutionRole` (managed policy) — CloudWatch Logs write
 - **DynamoDB**: `GetItem`, `PutItem`, `UpdateItem`, `DeleteItem`, `Query`, `Scan`, `BatchWriteItem`, `BatchGetItem`, `ConditionCheckItem` on all 9 app tables and their GSIs
@@ -182,7 +182,7 @@ For production deployments, a separate **`prod`** GitHub environment is required
 - **SQS**: `SendMessage` on the registration queue (Flask app enqueues registrations)
 - **X-Ray**: `PutTraceSegments`, `PutTelemetryRecords`, `GetSamplingRules`, `GetSamplingTargets`
 
-### Registration Worker Lambda Role — `en-garde-{env}-registration-worker-role`
+### Registration Worker Lambda Role — `phishing-app-{env}-registration-worker-role`
 
 - `AWSLambdaBasicExecutionRole` — CloudWatch Logs write
 - **DynamoDB**: `PutItem`, `GetItem`, `Query` on the users table and its GSIs
@@ -190,14 +190,14 @@ For production deployments, a separate **`prod`** GitHub environment is required
 - **SQS**: `ReceiveMessage`, `DeleteMessage`, `GetQueueAttributes` on the registration queue
 - **SNS**: `Publish` on the registration topic
 
-### GitHub Actions OIDC Deploy Role — `en-garde-{env}-github-actions-deploy`
+### GitHub Actions OIDC Deploy Role — `phishing-app-{env}-github-actions-deploy`
 
 | Sid | Actions | Resource scope |
 |---|---|---|
 | `LambdaCRUD` | CreateFunction, DeleteFunction, GetFunction, GetFunctionConfiguration, UpdateFunctionCode, UpdateFunctionConfiguration, AddPermission, RemovePermission, GetPolicy, ListVersionsByFunction, PublishVersion, CreateEventSourceMapping, DeleteEventSourceMapping, GetEventSourceMapping, UpdateEventSourceMapping, ListEventSourceMappings, GetFunctionCodeSigningConfig, TagResource, UntagResource, ListTags | `*` |
 | `IAMRoleManagement` | CreateRole, DeleteRole, GetRole, TagRole, PassRole, ListInstanceProfilesForRole, Attach/DetachRolePolicy, Put/Delete/GetRolePolicy, ListRolePolicies, ListAttachedRolePolicies, OIDC provider management (Create/Delete/Get/Update/Tag) | `*` |
-| `DynamoDB` | CreateTable, DescribeTable, DeleteTable, UpdateTable, CRUD operations, DescribeTimeToLive, UpdateTimeToLive, ListTagsOfResource, TagResource, DescribeContinuousBackups | `arn:aws:dynamodb:*:*:table/en-garde-*`, `phishing-terraform-locks` |
-| `S3Full` | `s3:*` | `en-garde-dev-*` and `phishing-terraform-state` buckets |
+| `DynamoDB` | CreateTable, DescribeTable, DeleteTable, UpdateTable, CRUD operations, DescribeTimeToLive, UpdateTimeToLive, ListTagsOfResource, TagResource, DescribeContinuousBackups | `arn:aws:dynamodb:*:*:table/phishing-app-*`, `phishing-terraform-locks` |
+| `S3Full` | `s3:*` | `phishing-app-*` and `phishing-terraform-state` buckets |
 | `APIGateway` | `apigateway:*` | `*` |
 | `CloudFront` | CreateDistribution, DeleteDistribution, Get/Update/ListDistributions, TagResource, UntagResource, ListTagsForResource | `*` |
 | `CloudWatchLogs` | CreateLogGroup, DeleteLogGroup, PutRetentionPolicy, TagLogGroup, ListTagsLogGroup, ListLogDeliveries | `arn:aws:logs:*:*:log-group:/aws/*` |

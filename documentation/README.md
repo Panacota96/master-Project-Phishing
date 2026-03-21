@@ -34,7 +34,7 @@ For software engineers contributing to the codebase.
 ### 🚀 [Operator Guides](operator/README.md)
 For DevOps engineers and system administrators managing the infrastructure.
 - **Infrastructure**: AWS resource mapping and Terraform.
-- **CI/CD**: GitLab CI pipeline and environment management.
+- **CI/CD**: GitHub Actions pipeline and environment management.
 - **Deployment**: Lambda packaging and Terraform deployment.
 - **Maintenance**: Backups, migrations, and troubleshooting.
 

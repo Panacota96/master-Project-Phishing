@@ -110,6 +110,39 @@ def _try_parse_json_eml(body):
         return None
 
 
+def _fix_duplicate_content_type(body: bytes) -> bytes:
+    """Remove all but the last top-level Content-Type header.
+
+    Fixes EML files that have a spurious 'Content-Type: text/html' header
+    followed by the correct 'Content-Type: multipart/alternative' header.
+    Without this, Python's email module picks the first Content-Type and treats
+    the whole message as text/html, returning raw MIME boundary text as the body.
+    """
+    try:
+        text = body.decode('utf-8', errors='replace')
+    except Exception:
+        return body
+
+    lines = text.splitlines(keepends=True)
+    sep_idx = next(
+        (i for i, l in enumerate(lines) if l in ('\r\n', '\n', '\r')), None
+    )
+    if sep_idx is None:
+        return body
+
+    header_lines = lines[:sep_idx]
+    ct_indices = [i for i, l in enumerate(header_lines)
+                  if l.lower().startswith('content-type:')]
+
+    if len(ct_indices) <= 1:
+        return body
+
+    to_remove = set(ct_indices[:-1])
+    fixed = ''.join(l for i, l in enumerate(header_lines) if i not in to_remove)
+    fixed += ''.join(lines[sep_idx:])
+    return fixed.encode('utf-8', errors='replace')
+
+
 def _clean_placeholders(text):
     """Replace common phishing template placeholders with generic values."""
     if not text:
@@ -187,6 +220,7 @@ def _parse_eml_detail(key):
         links = [_clean_placeholders(link) for link in links]
         warnings = list(json_data.get('warnings', []) or [])
     else:
+        body = _fix_duplicate_content_type(body)
         msg = email.message_from_bytes(body, policy=email.policy.default)
         summary_payload = {
             'fileName': filename,

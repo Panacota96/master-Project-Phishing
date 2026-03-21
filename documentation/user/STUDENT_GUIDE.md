@@ -8,7 +8,7 @@ The Phishing Awareness Training Application helps you recognise and defend again
 
 ---
 
-## 🎓 Student Learning Path
+## Student Learning Path
 
 ```mermaid
 flowchart TD
@@ -26,7 +26,7 @@ flowchart TD
 
 ---
 
-## 🔑 1. Getting Started
+## 1. Getting Started
 
 ### 1.1 Login
 
@@ -34,11 +34,7 @@ flowchart TD
 2. Enter the **username** and **password** provided by your instructor.
 3. Click **Login**.
 
----
-
-![[Pasted image 20260227175254.png]]
-
----
+You are taken to your personal dashboard showing available quizzes and your progress.
 
 ### 1.2 Change Your Password (Recommended on First Login)
 
@@ -49,11 +45,6 @@ Your instructor created your account with a temporary password. You should chang
 3. Enter and confirm your new password.
 4. Click **Save**.
 
----
-![[Pasted image 20260227175356.png]]
-
----
-
 ### 1.3 Dashboard
 
 After logging in you land on your personal dashboard, which shows:
@@ -62,62 +53,44 @@ After logging in you land on your personal dashboard, which shows:
 - A link to the Email Threat Inspector
 
 ---
-![[Pasted image 20260227175448.png]]
 
----
-
-## 📝 2. Phishing Quizzes
+## 2. Phishing Quizzes
 
 Quizzes test your knowledge of phishing techniques such as URL analysis, spoofing, and urgency tactics.
 
 ### 2.1 Select a Quiz
 
 1. From the dashboard (or **My Quizzes** in the sidebar), browse the list of available quizzes.
-2. Click the quiz you want to take.
-
----
-![[Pasted image 20260227175510.png]]
-
----
+2. Each quiz card shows its title, description, and whether you have already completed it.
+3. Click the quiz you want to take.
 
 ### 2.2 Watch the Training Video
 
 Each quiz is gated behind a short training video that introduces the topic. You must watch it before the quiz unlocks.
 
 1. Click **Watch Video**.
-2. Watch the full video — the quiz button activates once you reach the end.
-
----
-![[Pasted image 20260227175531.png]]
-
----
+2. Watch the full video — the **Start Quiz** button activates once you reach the end.
 
 ### 2.3 Take the Quiz
 
 1. Click **Start Quiz** after the video.
 2. Answer each multiple-choice question and confirm your choice.
-3. You receive immediate per-question feedback.
+3. You receive immediate per-question feedback with an explanation of the correct answer.
 
----
-> **📸 Screenshot placeholder**
-> *Insert screenshot of a Quiz question in progress here*
+### 2.4 Quiz Completion and Results
 
----
+After the last question you see your results page showing:
+- Your **score** and **percentage**
+- A **rank badge** based on your performance (see §5 for rank criteria)
+- A breakdown of which questions you answered correctly
 
-### 2.4 Review Results
+Your progress is saved permanently — the quiz shows as completed in your quiz list. Visit **My Quizzes** to see your full history and scores.
 
-After the last question you see your score, a breakdown per question, and the correct answers.
-
-- You may only attempt each quiz **once**.
-- Visit **My Quizzes** to see your full history and scores.
-
----
-> **📸 Screenshot placeholder**
-> *Insert screenshot of the Quiz results / score summary page here*
+> You may only attempt each quiz **once**.
 
 ---
 
-## 🔍 3. Email Threat Inspector
+## 3. Email Threat Inspector
 
 The Email Threat Inspector lets you analyse real-world phishing and spam emails in a safe, sandboxed environment.
 
@@ -125,12 +98,7 @@ The Email Threat Inspector lets you analyse real-world phishing and spam emails 
 
 Click **Email Threat Inspector** in the sidebar.
 
-You are assigned a personal pool of up to **8 emails** (a mix of spam and phishing samples).
-
----
-![[Pasted image 20260227175602.png]]
-
----
+You are assigned a personal pool of up to **8 emails** (a mix of spam and phishing samples). The sidebar lists your assigned emails with their subject, sender, and date.
 
 ### 3.2 Analyse an Email
 
@@ -144,35 +112,23 @@ Click on an email in your list to open the analysis view. Use the tabs to examin
 | **Links** | Extracted URLs — look for look-alike or punycode domains |
 | **Attachments** | Filename, size, MIME type — flag dangerous types (`.exe`, `.zip`, `.html`) or double extensions (`.pdf.exe`) |
 
----
-![[Pasted image 20260227175719.png]]
-
----
-
 ### 3.3 Classify the Threat and Identify Signals
 
-1. At the bottom of the analysis view, select the **classification**: **Phishing**, **Spam**, or **Legit**.
-2. If you selected **Phishing**, tick all the **signals** you identified (see §4 for the full list).
+1. At the bottom of the analysis view, select the **classification**: **Phishing** or **Spam**.
+2. If you selected **Phishing**, tick all the **signals** you identified (see §4 for the full list). The number of required signals varies per email.
 3. Click **Submit**.
 
 > Each email can only be submitted **once** — your answer is final.
 
----
-![[Pasted image 20260227175645.png]]
+### 3.4 Inspector Completion
+
+Once you have submitted all 8 emails, the Inspector session is locked and you see a completion screen confirming all your submissions are recorded. Your results are saved anonymously for analysis by your instructor.
+
+If you need to redo your session, contact your instructor — admins can reset inspector access for individual students.
 
 ---
 
-### 3.4 Completion
-
-Once you have submitted all 8 emails your Inspector access is locked. You will see a completion page confirming that all submissions are recorded.
-
----
-> **📸 Screenshot placeholder**
-> *Insert screenshot of the Completion / locked page after all 8 emails are submitted here*
-
----
-
-## 💡 4. Phishing Signals to Watch For
+## 4. Phishing Signals to Watch For
 
 | Signal | Description |
 |--------|-------------|
@@ -188,7 +144,7 @@ Once you have submitted all 8 emails your Inspector access is locked. You will s
 
 ---
 
-## 🏆 5. Training Journey & Ranks
+## 5. Training Journey & Ranks
 
 Track your progress and earn ranks as you complete quizzes:
 
@@ -199,20 +155,14 @@ Track your progress and earn ranks as you complete quizzes:
 | **Defender** | Consistently identifying threats |
 | **Cyber Sentinel** | 90%+ average score — mastery of phishing awareness |
 
-The progress bar on your dashboard shows how many of the available quizzes you have completed.
+The progress bar on your dashboard shows how many of the available quizzes you have completed. Your rank badge updates automatically as you improve.
 
 ---
 
-## 🐛 6. Reporting Bugs
+## 6. Reporting Bugs
 
 If you encounter a technical issue:
 
 1. Click **Report Bug** in the top navigation bar (next to Logout).
 2. Describe what went wrong.
 3. Click **Submit** — your username and the current page URL are attached automatically to help the admin troubleshoot.
-
----
-> **📸 Screenshot placeholder**
-> *Insert screenshot of the Bug report form here*
-
----
