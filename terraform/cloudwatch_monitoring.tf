@@ -127,6 +127,7 @@ resource "aws_cloudwatch_dashboard" "overview" {
         width  = 8
         height = 6
         properties = {
+          region  = var.aws_region
           title   = "Lambda Invocations"
           metrics = [["AWS/Lambda", "Invocations", "FunctionName", aws_lambda_function.app.function_name]]
           period  = 300
@@ -141,6 +142,7 @@ resource "aws_cloudwatch_dashboard" "overview" {
         width  = 8
         height = 6
         properties = {
+          region  = var.aws_region
           title   = "Lambda Errors"
           metrics = [["AWS/Lambda", "Errors", "FunctionName", aws_lambda_function.app.function_name]]
           period  = 300
@@ -155,7 +157,8 @@ resource "aws_cloudwatch_dashboard" "overview" {
         width  = 8
         height = 6
         properties = {
-          title = "Lambda Duration (p50 / p95 / p99)"
+          region = var.aws_region
+          title  = "Lambda Duration (p50 / p95 / p99)"
           metrics = [
             ["AWS/Lambda", "Duration", "FunctionName", aws_lambda_function.app.function_name, { stat = "p50", label = "p50" }],
             ["...", { stat = "p95", label = "p95" }],
@@ -173,6 +176,7 @@ resource "aws_cloudwatch_dashboard" "overview" {
         width  = 6
         height = 6
         properties = {
+          region  = var.aws_region
           title   = "API Gateway Request Count"
           metrics = [["AWS/ApiGateway", "Count", "ApiId", aws_apigatewayv2_api.app.id]]
           period  = 300
@@ -187,6 +191,7 @@ resource "aws_cloudwatch_dashboard" "overview" {
         width  = 6
         height = 6
         properties = {
+          region  = var.aws_region
           title   = "API Gateway 4xx Errors"
           metrics = [["AWS/ApiGateway", "4XXError", "ApiId", aws_apigatewayv2_api.app.id]]
           period  = 300
@@ -201,6 +206,7 @@ resource "aws_cloudwatch_dashboard" "overview" {
         width  = 6
         height = 6
         properties = {
+          region  = var.aws_region
           title   = "API Gateway 5xx Errors"
           metrics = [["AWS/ApiGateway", "5XXError", "ApiId", aws_apigatewayv2_api.app.id]]
           period  = 300
@@ -215,6 +221,7 @@ resource "aws_cloudwatch_dashboard" "overview" {
         width  = 6
         height = 6
         properties = {
+          region  = var.aws_region
           title   = "API Gateway Latency (p99)"
           metrics = [["AWS/ApiGateway", "Latency", "ApiId", aws_apigatewayv2_api.app.id, { stat = "p99" }]]
           period  = 300
@@ -229,7 +236,8 @@ resource "aws_cloudwatch_dashboard" "overview" {
         width  = 12
         height = 6
         properties = {
-          title = "DynamoDB Consumed Read Capacity"
+          region = var.aws_region
+          title  = "DynamoDB Consumed Read Capacity"
           metrics = [
             for table in [
               aws_dynamodb_table.users.name,
@@ -255,7 +263,8 @@ resource "aws_cloudwatch_dashboard" "overview" {
         width  = 12
         height = 6
         properties = {
-          title = "DynamoDB Consumed Write Capacity"
+          region = var.aws_region
+          title  = "DynamoDB Consumed Write Capacity"
           metrics = [
             for table in [
               aws_dynamodb_table.users.name,
