@@ -1604,5 +1604,161 @@
         ]
       }
     ]
+  },
+  {
+    "quiz_id": "quiz-what-is-phishing",
+    "title": "What is Phishing?",
+    "description": "Understand the fundamentals of phishing attacks and why they are so effective.",
+    "video_url": "/static/videos/What_is_Phishing_.mp4",
+    "questions": [
+      {
+        "question_id": "quiz-wip-q1",
+        "question_text": "What is the primary goal of a phishing attack?",
+        "explanation": "Phishing aims to trick victims into revealing sensitive information such as credentials or financial data.",
+        "answers": [
+          { "answer_id": "quiz-wip-q1a1", "answer_text": "To slow down your computer", "is_correct": false },
+          { "answer_id": "quiz-wip-q1a2", "answer_text": "To trick you into revealing sensitive information", "is_correct": true },
+          { "answer_id": "quiz-wip-q1a3", "answer_text": "To send spam to your contacts", "is_correct": false },
+          { "answer_id": "quiz-wip-q1a4", "answer_text": "To delete your files", "is_correct": false }
+        ]
+      },
+      {
+        "question_id": "quiz-wip-q2",
+        "question_text": "Which channel is most commonly used to deliver phishing attacks?",
+        "explanation": "Email remains the most common vector for phishing, though SMS and voice calls are also used.",
+        "answers": [
+          { "answer_id": "quiz-wip-q2a1", "answer_text": "Physical mail", "is_correct": false },
+          { "answer_id": "quiz-wip-q2a2", "answer_text": "Email", "is_correct": true },
+          { "answer_id": "quiz-wip-q2a3", "answer_text": "Television advertisements", "is_correct": false },
+          { "answer_id": "quiz-wip-q2a4", "answer_text": "USB drives left in parking lots only", "is_correct": false }
+        ]
+      },
+      {
+        "question_id": "quiz-wip-q3",
+        "question_text": "Why do phishing attacks succeed even against technically aware users?",
+        "explanation": "Phishing exploits human psychology — urgency, fear, and trust — rather than technical vulnerabilities.",
+        "answers": [
+          { "answer_id": "quiz-wip-q3a1", "answer_text": "Antivirus software is always disabled", "is_correct": false },
+          { "answer_id": "quiz-wip-q3a2", "answer_text": "They exploit human psychology such as urgency and trust", "is_correct": true },
+          { "answer_id": "quiz-wip-q3a3", "answer_text": "Users never read emails carefully", "is_correct": false },
+          { "answer_id": "quiz-wip-q3a4", "answer_text": "Technical users click links faster", "is_correct": false }
+        ]
+      },
+      {
+        "question_id": "quiz-wip-q4",
+        "question_text": "What distinguishes spear phishing from regular phishing?",
+        "explanation": "Spear phishing is highly targeted, using personal details about the victim to appear more convincing.",
+        "answers": [
+          { "answer_id": "quiz-wip-q4a1", "answer_text": "Spear phishing only targets mobile devices", "is_correct": false },
+          { "answer_id": "quiz-wip-q4a2", "answer_text": "Spear phishing is targeted at a specific individual using personal details", "is_correct": true },
+          { "answer_id": "quiz-wip-q4a3", "answer_text": "Spear phishing always contains malware attachments", "is_correct": false },
+          { "answer_id": "quiz-wip-q4a4", "answer_text": "Spear phishing is less dangerous than regular phishing", "is_correct": false }
+        ]
+      }
+    ]
+  },
+  {
+    "quiz_id": "quiz-spot-fake-link",
+    "title": "Spot the Fake Link",
+    "description": "Learn to identify malicious URLs and deceptive hyperlinks before you click.",
+    "video_url": "/static/videos/Spot_the_Fake_Link.mp4",
+    "questions": [
+      {
+        "question_id": "quiz-sfl-q1",
+        "question_text": "You receive an email with a link displayed as 'www.paypal.com' but hovering over it shows 'paypa1.com'. What should you do?",
+        "explanation": "The visible link text can differ from the actual URL. Always hover to verify the real destination before clicking.",
+        "answers": [
+          { "answer_id": "quiz-sfl-q1a1", "answer_text": "Click it — the displayed text is what matters", "is_correct": false },
+          { "answer_id": "quiz-sfl-q1a2", "answer_text": "Do not click — the real URL is a typosquatted domain", "is_correct": true },
+          { "answer_id": "quiz-sfl-q1a3", "answer_text": "Copy and paste it into your browser", "is_correct": false },
+          { "answer_id": "quiz-sfl-q1a4", "answer_text": "Forward it to a colleague to verify", "is_correct": false }
+        ]
+      },
+      {
+        "question_id": "quiz-sfl-q2",
+        "question_text": "Which of these URLs is most likely malicious?",
+        "explanation": "Attackers place the trusted brand name as a subdomain of their own malicious domain to mislead victims.",
+        "answers": [
+          { "answer_id": "quiz-sfl-q2a1", "answer_text": "https://microsoft.com/support", "is_correct": false },
+          { "answer_id": "quiz-sfl-q2a2", "answer_text": "https://microsoft.com.account-verify.net/login", "is_correct": true },
+          { "answer_id": "quiz-sfl-q2a3", "answer_text": "https://support.microsoft.com", "is_correct": false },
+          { "answer_id": "quiz-sfl-q2a4", "answer_text": "https://login.microsoftonline.com", "is_correct": false }
+        ]
+      },
+      {
+        "question_id": "quiz-sfl-q3",
+        "question_text": "A URL shortener link (e.g. bit.ly/xR2k9) arrives in an unexpected email. What is the risk?",
+        "explanation": "URL shorteners hide the real destination. You cannot verify legitimacy without expanding the link first.",
+        "answers": [
+          { "answer_id": "quiz-sfl-q3a1", "answer_text": "Short links are always safe because they are compressed", "is_correct": false },
+          { "answer_id": "quiz-sfl-q3a2", "answer_text": "The real destination is hidden, making it impossible to verify before clicking", "is_correct": true },
+          { "answer_id": "quiz-sfl-q3a3", "answer_text": "Short links cannot redirect to phishing pages", "is_correct": false },
+          { "answer_id": "quiz-sfl-q3a4", "answer_text": "Only links in attachments are dangerous", "is_correct": false }
+        ]
+      },
+      {
+        "question_id": "quiz-sfl-q4",
+        "question_text": "What does HTTPS in a URL guarantee?",
+        "explanation": "HTTPS only encrypts the connection — it does not mean the site is trustworthy or legitimate.",
+        "answers": [
+          { "answer_id": "quiz-sfl-q4a1", "answer_text": "The website is owned by a legitimate company", "is_correct": false },
+          { "answer_id": "quiz-sfl-q4a2", "answer_text": "The connection is encrypted, but the site can still be malicious", "is_correct": true },
+          { "answer_id": "quiz-sfl-q4a3", "answer_text": "No phishing site can use HTTPS", "is_correct": false },
+          { "answer_id": "quiz-sfl-q4a4", "answer_text": "Your passwords are automatically protected from theft", "is_correct": false }
+        ]
+      }
+    ]
+  },
+  {
+    "quiz_id": "quiz-imposter-email",
+    "title": "Anatomy of an Imposter Email",
+    "description": "Dissect the components of a fraudulent email and learn what to look for.",
+    "video_url": "/static/videos/Anatomy_of_an_Imposter_Email.mp4",
+    "questions": [
+      {
+        "question_id": "quiz-aie-q1",
+        "question_text": "An email claims to be from your bank but the sender address is 'support@secure-bank-alerts.com'. What is wrong?",
+        "explanation": "Legitimate banks send from their own domain. A third-party domain in the sender address is a strong impersonation indicator.",
+        "answers": [
+          { "answer_id": "quiz-aie-q1a1", "answer_text": "Nothing — banks often use third-party email providers", "is_correct": false },
+          { "answer_id": "quiz-aie-q1a2", "answer_text": "The sender domain does not belong to the bank — likely impersonation", "is_correct": true },
+          { "answer_id": "quiz-aie-q1a3", "answer_text": "The email is safe if it has a logo", "is_correct": false },
+          { "answer_id": "quiz-aie-q1a4", "answer_text": "Only the subject line matters for verification", "is_correct": false }
+        ]
+      },
+      {
+        "question_id": "quiz-aie-q2",
+        "question_text": "Which part of an imposter email is most commonly crafted to create a sense of urgency?",
+        "explanation": "Subject lines are designed to provoke immediate action before the recipient thinks critically.",
+        "answers": [
+          { "answer_id": "quiz-aie-q2a1", "answer_text": "The email footer", "is_correct": false },
+          { "answer_id": "quiz-aie-q2a2", "answer_text": "The subject line and opening sentence", "is_correct": true },
+          { "answer_id": "quiz-aie-q2a3", "answer_text": "The unsubscribe link", "is_correct": false },
+          { "answer_id": "quiz-aie-q2a4", "answer_text": "The CC field", "is_correct": false }
+        ]
+      },
+      {
+        "question_id": "quiz-aie-q3",
+        "question_text": "A fraudulent email includes your real name and job title. How did the attacker likely obtain this?",
+        "explanation": "Attackers harvest personal data from LinkedIn, company websites, and previous data breaches to make emails more convincing.",
+        "answers": [
+          { "answer_id": "quiz-aie-q3a1", "answer_text": "They guessed it randomly", "is_correct": false },
+          { "answer_id": "quiz-aie-q3a2", "answer_text": "From public sources like LinkedIn or data breaches", "is_correct": true },
+          { "answer_id": "quiz-aie-q3a3", "answer_text": "Your email client shared it automatically", "is_correct": false },
+          { "answer_id": "quiz-aie-q3a4", "answer_text": "Only insiders can know this information", "is_correct": false }
+        ]
+      },
+      {
+        "question_id": "quiz-aie-q4",
+        "question_text": "You find a legitimate-looking email with a correct logo, proper grammar, and your name. What should still make you cautious?",
+        "explanation": "Visual authenticity can be replicated. Always verify the sender domain and the destination of any links independently.",
+        "answers": [
+          { "answer_id": "quiz-aie-q4a1", "answer_text": "Nothing — a professional-looking email is always safe", "is_correct": false },
+          { "answer_id": "quiz-aie-q4a2", "answer_text": "The sender domain and link destinations still need independent verification", "is_correct": true },
+          { "answer_id": "quiz-aie-q4a3", "answer_text": "Correct grammar guarantees the sender is legitimate", "is_correct": false },
+          { "answer_id": "quiz-aie-q4a4", "answer_text": "Logos cannot be copied by attackers", "is_correct": false }
+        ]
+      }
+    ]
   }
 ]
