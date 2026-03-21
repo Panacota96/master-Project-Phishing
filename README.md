@@ -4,6 +4,14 @@ A **phishing awareness training web application** built with Flask, created as p
 
 Users take interactive quizzes to learn how to identify phishing emails, and can inspect real-world phishing samples using the built-in Email Threat Inspector.
 
+## Requirements
+
+**Runtime:** Python 3.12, Terraform ≥ 1.5, AWS CLI v2, Docker + Compose.
+**Python deps:** Flask 3.1, Flask-Login, Flask-WTF, Werkzeug, boto3 1.35, mangum, gunicorn, qrcode[pil], aws-xray-sdk (see `requirements.txt`).
+**AWS:** Lambda (512 MB), API Gateway v2, CloudFront, S3, DynamoDB (9 tables), SQS, SES, SNS, CloudWatch, X-Ray, Route 53 (optional).
+**IAM:** Lambda execution role + GitHub Actions OIDC deploy role — see [`documentation/REQUIREMENTS.md`](documentation/REQUIREMENTS.md) for the full permissions list.
+**Tests:** `make test` (pytest + moto, no real AWS needed) · `make lint` (flake8, max-line-length=120).
+
 ## Features
 
 ### Phishing Quiz
