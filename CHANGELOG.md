@@ -6,6 +6,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [1.2.3] - 2026-03-21
+
+### Added
+
+- **Documentation overhaul** — comprehensive update to all four documentation files based on a full codebase scan:
+  - `documentation/ARCHITECTURE.md` — updated CI/CD pipeline diagram to reflect the actual three-job structure (`ci` → `plan_dev` → `deploy_dev`), IAM bootstrap step, `deploy-prod.yml` and `destroy.yml` workflows, and refined blueprint routing table with all current routes
+  - `documentation/REQUIREMENTS.md` — added full functional requirements section (AUTH, QUIZ, INSP, DASH, WORK), expanded non-functional requirements, updated IAM permission tables to match current `github_actions_oidc.tf` (added `TagResource`, `UntagResource`, `ListTags` for Lambda; `GetFunctionCodeSigningConfig`; `ListIdentities` for SES; `GetSubscriptionAttributes`, `ListSubscriptionsByTopic` for SNS; `ListQueueTags` for SQS; `ListTagsForResource` for CloudWatch; `ListInstanceProfilesForRole`, `TagRole` for IAM), expanded DynamoDB and CloudWatch alarm reference tables
+  - `CHANGELOG.md` — this entry
+
+- **`VERSION` file** — added `VERSION` file at project root, set to `1.2.3`
+
+### Changed
+
+- No application code changes in this release — documentation only.
+
+---
+
 ## [1.2.2] - 2026-03-21
 
 ### Added
