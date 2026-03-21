@@ -17,3 +17,74 @@ body {
 .display-4 {
     font-weight: bold;
 }
+
+/* ── En Garde Navbar ──────────────────────────────────── */
+.en-garde-navbar {
+    background: linear-gradient(135deg, #0f1f3d 0%, #1a2f54 100%);
+    border-bottom: 2px solid rgba(96, 165, 250, 0.45);
+    box-shadow: 0 2px 20px rgba(15, 23, 42, 0.55);
+}
+
+/* ── ESME Logo ───────────────────────────────────────── */
+.esme-logo-img {
+    filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.12));
+    transition: filter 0.2s ease;
+}
+.en-garde-navbar .navbar-brand:hover .esme-logo-img {
+    filter: drop-shadow(0 0 10px rgba(96, 165, 250, 0.35));
+}
+
+/* ── Brand Divider ───────────────────────────────────── */
+.navbar-brand-divider {
+    display: inline-block;
+    width: 1px;
+    height: 26px;
+    background: rgba(255, 255, 255, 0.22);
+    flex-shrink: 0;
+}
+
+/* ── En Garde Wordmark ───────────────────────────────── */
+.en-garde-wordmark {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: 'Exo 2', 'Segoe UI', system-ui, sans-serif;
+    font-weight: 800;
+    font-size: 1.2rem;
+    letter-spacing: 0.05em;
+    background: linear-gradient(135deg, #93c5fd 0%, #34d399 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    transition: opacity 0.2s ease;
+}
+.en-garde-navbar .navbar-brand:hover .en-garde-wordmark {
+    opacity: 0.85;
+}
+
+/* ── Shield Icon ─────────────────────────────────────── */
+.en-garde-icon {
+    fill: #60a5fa;
+    flex-shrink: 0;
+}
+
+/* ── Login Hero ──────────────────────────────────────── */
+.en-garde-login-hero {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+.en-garde-hero-icon {
+    fill: #2563eb;
+}
+.en-garde-hero-wordmark {
+    font-family: 'Exo 2', 'Segoe UI', system-ui, sans-serif;
+    font-weight: 800;
+    font-size: 2rem;
+    letter-spacing: 0.06em;
+    background: linear-gradient(135deg, #2563eb 0%, #059669 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
