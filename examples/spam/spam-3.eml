@@ -17,7 +17,7 @@ Content-Type: text/html; charset="UTF-8"
 <div style="background: #f8fafc; font-family: 'Segoe UI', Arial, sans-serif; padding: 40px;">
   <div style="max-width: 600px; margin: auto; background: white; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
     <div style="background: #3b82f6; padding: 30px; text-align: center;">
-      <img src="{{.URL}}" alt="SEO" style="width: 64px; margin-bottom: 15px;">
+      <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0id2hpdGUiPjxwYXRoIGQ9Ik0xNS41IDE0aC0uNzlsLS4yOC0uMjdBNi40NzEgNi40NzEgMCAwIDAgMTYgOS41IDYuNSA2LjUgMCAxIDAgOS41IDE2YzEuNjEgMCAzLjA5LS41OSA0LjIzLTEuNTdsLjI3LjI4di43OWw1IDQuOTlMMjAuNDkgMTlsLTQuOTktNXptLTYgMEM3LjAxIDE0IDUgMTEuOTkgNSA5LjVTNy4wMSA1IDkuNSA1IDE0IDcuMDEgMTQgOS41IDExLjk5IDE0IDkuNSAxNHoiLz48L3N2Zz4=" alt="SEO" style="width: 64px; margin-bottom: 15px;">
       <h2 style="color: white; margin: 0;">SEO Performance Audit</h2>
     </div>
     <div style="padding: 40px;">

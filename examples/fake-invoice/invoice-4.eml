@@ -18,7 +18,7 @@ Content-Type: text/html; charset="UTF-8"
 <div style="background-color: #f5f5f7; padding: 40px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
   <div style="max-width: 660px; margin: auto; background-color: #ffffff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05);">
     <div style="text-align: right; margin-bottom: 40px;">
-      <img src="https://www.apple.com/v/library/uikit/1.0.1/build/assets/apple-logo.png" alt="Apple" style="width: 22px;">
+      <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzAwMDAwMCI+PHBhdGggZD0iTTE4LjcxIDE5LjVjLS44MyAxLjI0LTEuNzEgMi40NS0zLjA1IDIuNDctMS4zNC4wMy0xLjc3LS43OS0zLjI5LS43OS0xLjUzIDAtMiAuNzctMy4yNy44Mi0xLjMuMDUtMi4zLTEuMzItMy4xNC0yLjUzQzQuMjUgMTcgMi45NCAxMi40NSA0LjcgOS4zOWMuODctMS41MiAyLjQzLTIuNDggNC4xMi0yLjUxIDEuMjgtLjAyIDIuNS44NyAzLjI5Ljg3Ljc4IDAgMi4yNi0xLjA3IDMuOC0uOTEuNjUuMDMgMi40Ny4yNiAzLjY0IDEuOTgtLjA5LjA2LTIuMTcgMS4yOC0yLjE1IDMuODEuMDMgMy4wMiAyLjY1IDQuMDMgMi42OCA0LjA0LS4wMy4wNy0uNDIgMS40NC0xLjM4IDIuODNNMTMgMy41Yy43My0uODMgMS45NC0xLjQ2IDIuOTQtMS41LjEzIDEuMTctLjM0IDIuMzUtMS4wNCAzLjE5LS42OS44NS0xLjgzIDEuNTEtMi45NSAxLjQyLS4xNS0xLjE1LjQxLTIuMzUgMS4wNS0zLjExeiIvPjwvc3ZnPg==" alt="Apple" style="width: 22px;">
     </div>
     
     <h1 style="font-size: 32px; font-weight: 600; margin-bottom: 10px; color: #1d1d1f;">Your receipt from Apple</h1>
