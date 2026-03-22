@@ -149,7 +149,9 @@ def _clean_placeholders(text):
         return text
 
     replacements = {
-        # GoPhish / Template style
+        # GoPhish / Template style — sliced variants first (e.g. {{.FirstName[:1]}})
+        r'\{\{\.FirstName\[.*?\]\}\}': 'C',
+        r'\{\{\.LastName\[.*?\]\}\}': 'M',
         r'\{\{\.FirstName\}\}': 'Valued',
         r'\{\{\.LastName\}\}': 'Customer',
         r'\{\{\.Email\}\}': 'user@example.com',

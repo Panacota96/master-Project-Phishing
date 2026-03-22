@@ -16,7 +16,7 @@ Content-Type: text/html; charset="UTF-8"
 
 <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e1e1e1; padding: 0;">
   <div style="padding: 20px; border-bottom: 1px solid #eee;">
-    <img src="https://www.microsoft.com/content/dam/dotcom/en-us/common/glow/Microsoft-logo_rgb_c-gray.png" alt="Microsoft" style="height: 24px;">
+    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMyAyMyI+PHBhdGggZmlsbD0iI2YzZjNmMyIgZD0iTTAgMGgyM3YyM0gweiIvPjxwYXRoIGZpbGw9IiNmMzUzMjUiIGQ9Ik0xIDFoMTB2MTBIMXoiLz48cGF0aCBmaWxsPSIjODFiYzA2IiBkPSJNMTIgMWgxMHYxMEgxMnoiLz48cGF0aCBmaWxsPSIjMDVhNmYwIiBkPSJNMSAxMmgxMHYxMEgxeiIvPjxwYXRoIGZpbGw9IiNmZmJhMDgiIGQ9Ik0xMiAxMmgxMHYxMEgxMnoiLz48L3N2Zz4=" alt="Microsoft" style="height: 24px;">
   </div>
   <div style="padding: 30px;">
     <h2 style="color: #0078d4; margin-top: 0;">Payment Failed</h2>
