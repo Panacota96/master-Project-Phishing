@@ -18,7 +18,7 @@ Content-Type: text/html; charset="UTF-8"
   <div style="background: white; max-width: 600px; margin: auto; padding: 40px; box-shadow: 10px 10px 0px rgba(0,0,0,0.1);">
     <h1 style="color: #ff0000; font-size: 48px; margin: 0;">FLASH SALE</h1>
     <h2 style="color: #333; font-size: 32px; margin: 10px 0 30px;">70% OFF EVERYTHING</h2>
-    <img src="{{.URL}}" alt="Electronics" style="width: 100%; border-radius: 8px; margin-bottom: 30px;">
+    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzFhNzNlOCI+PHBhdGggZD0iTTIwIDRINGMtMS4xIDAtMiAuOS0yIDJ2MTJjMCAxLjEuOSAyIDIgMmgxNmMxLjEgMCAyLS45IDItMlY2YzAtMS4xLS45LTItMi0yem0wIDE0SDRWNmgxNnYxMnpNNiAxMGgydjJINnptMCA0aDh2Mkg2em0xMCAwaDJ2MmgtMnptLTYtNGg4djJoLTh6Ii8+PC9zdmc+" alt="Electronics" style="width: 100%; border-radius: 8px; margin-bottom: 30px;">
     <p style="font-family: Arial, sans-serif; font-size: 18px; color: #333; line-height: 1.6;">Don't miss our biggest sale of the year. Laptops, smartphones, and accessories all at unbeatable prices. Shop our official catalog today!</p>
     <div style="margin-top: 35px;">
       <a href="{{.URL}}" style="background: #333; color: white; padding: 15px 40px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 20px;">SHOP THE SALE</a>

@@ -20,7 +20,7 @@ Content-Type: text/html; charset="UTF-8"
   <div style="max-width: 600px; margin: auto; background-color: #ffffff; border: 1px solid #dddddd; border-top: 6px solid #4d148c;">
     <div style="padding: 30px;">
       <div style="margin-bottom: 30px;">
-        <img src="https://www.fedex.com/content/dam/fedex-static/global/images/logos/logo.png" alt="FedEx" style="width: 100px;">
+        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAgNDAiPjxyZWN0IHdpZHRoPSIxMjAiIGhlaWdodD0iNDAiIGZpbGw9IndoaXRlIi8+PHRleHQgeD0iNSIgeT0iMzAiIGZvbnQtZmFtaWx5PSJBcmlhbCBCbGFjayxBcmlhbCIgZm9udC1zaXplPSIzMCIgZm9udC13ZWlnaHQ9IjkwMCIgZmlsbD0iIzREMTQ4QyI+RmVkPC90ZXh0Pjx0ZXh0IHg9IjYyIiB5PSIzMCIgZm9udC1mYW1pbHk9IkFyaWFsIEJsYWNrLEFyaWFsIiBmb250LXNpemU9IjMwIiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjRkY2MjAwIj5FeDwvdGV4dD48L3N2Zz4=" alt="FedEx" style="width: 100px;">
       </div>
       
       <h2 style="color: #4d148c; font-size: 24px; margin-top: 0;">Unpaid Customs Fees</h2>

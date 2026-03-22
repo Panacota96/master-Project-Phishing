@@ -19,7 +19,7 @@ Content-Type: text/html; charset="UTF-8"
     <div style="padding: 40px;">
       <h1 style="color: #2c3e50; font-size: 32px; margin-top: 0;">PureHealth Labs</h1>
       <p style="color: #7f8c8d; font-size: 18px; font-style: italic; margin-bottom: 35px;">The science of better living.</p>
-      <img src="{{.URL}}" alt="Sleep" style="width: 100%; border-radius: 10px; margin-bottom: 35px;">
+      <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzVjNmJjMCI+PHBhdGggZD0iTTEyIDNjLTQuOTcgMC05IDQuMDMtOSA5czQuMDMgOSA5IDkgOS00LjAzIDktOWMwLS40Ni0uMDQtLjkyLS4xLTEuMzYtLjk4IDEuMzctMi41OCAyLjI2LTQuNCAyLjI2LTIuOTggMC01LjQtMi40Mi01LjQtNS40IDAtMS44MS44OS0zLjQyIDIuMjYtNC40LS40NC0uMDYtLjktLjEtMS4zNi0uMXoiLz48L3N2Zz4=" alt="Sleep" style="width: 100%; border-radius: 10px; margin-bottom: 35px;">
       <p style="color: #34495e; font-size: 16px; line-height: 1.8;">Tired of tossing and turning? Our new all-natural sleep aid is clinically proven to help you fall asleep faster and stay asleep longer. 100% money-back guarantee.</p>
       <div style="background: #e7f3ff; padding: 20px; border-radius: 10px; margin: 30px 0;">
         <p style="color: #2980b9; margin: 0; font-weight: bold; font-size: 20px;">LIMITED OFFER: BUY 1 GET 1 FREE</p>

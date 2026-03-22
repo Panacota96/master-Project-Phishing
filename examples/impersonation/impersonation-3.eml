@@ -18,7 +18,7 @@ Content-Type: text/html; charset="UTF-8"
 <div style="background-color: #f4f5f9; padding: 40px; font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;">
   <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; border: 1px solid #e1e4e8;">
     <div style="background-color: #2D8CFF; padding: 20px 40px; color: #ffffff;">
-      <img src="https://st1.zoom.us/static/6.3.25373/image/new/ZoomLogo.png" alt="Zoom" style="width: 80px;">
+      <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiByeD0iNCIgZmlsbD0iIzJEOENGRiIvPjxwYXRoIGZpbGw9IndoaXRlIiBkPSJNMTQuNSA4LjVINWExLjUgMS41IDAgMCAwLTEuNSAxLjV2NEExLjUgMS41IDAgMCAwIDUgMTUuNWg5LjVhMS41IDEuNSAwIDAgMCAxLjUtMS41di00YTEuNSAxLjUgMCAwIDAtMS41LTEuNXptNS41IDEuMzFsLTQgMi4yNVYxMmw0IDIuMjVWOS44MXoiLz48L3N2Zz4=" alt="Zoom" style="width: 80px;">
     </div>
     
     <div style="padding: 40px;">

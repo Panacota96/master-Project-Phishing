@@ -19,7 +19,7 @@ Content-Type: text/html; charset="UTF-8"
   <div style="max-width: 500px; margin: auto; background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
     <div style="padding: 40px; text-align: left;">
       <div style="margin-bottom: 30px;">
-        <img src="https://www.gstatic.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" alt="Google" style="width: 74px;">
+        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iIzQyODVGNCIgZD0iTTIyLjU2IDEyLjI1YzAtLjc4LS4wNy0xLjUzLS4yLTIuMjVIMTJ2NC4yNmg1LjkyYy0uMjYgMS4zNy0xLjA0IDIuNTMtMi4yMSAzLjMxdjIuNzdoMy41N2MyLjA4LTEuOTIgMy4yOC00Ljc0IDMuMjgtOC4wOXoiLz48cGF0aCBmaWxsPSIjMzRBODUzIiBkPSJNMTIgMjNjMi45NyAwIDUuNDYtLjk4IDcuMjgtMi42NmwtMy41Ny0yLjc3Yy0uOTguNjYtMi4yMyAxLjA2LTMuNzEgMS4wNi0yLjg2IDAtNS4yOS0xLjkzLTYuMTYtNC41M0gyLjE4djIuODRDMy45OSAyMC41MyA3LjcgMjMgMTIgMjN6Ii8+PHBhdGggZmlsbD0iI0ZCQkMwNSIgZD0iTTUuODQgMTQuMDljLS4yMi0uNjYtLjM1LTEuMzYtLjM1LTIuMDlzLjEzLTEuNDMuMzUtMi4wOVY3LjA3SDIuMThDMS40MyA4LjU1IDEgMTAuMjIgMSAxMnMuNDMgMy40NSAxLjE4IDQuOTNsMy42Ni0yLjg0eiIvPjxwYXRoIGZpbGw9IiNFQTQzMzUiIGQ9Ik0xMiA1LjM4YzEuNjIgMCAzLjA2LjU2IDQuMjEgMS42NGwzLjE1LTMuMTVDMTcuNDUgMi4wOSAxNC45NyAxIDEyIDEgNy43IDEgMy45OSAzLjQ3IDIuMTggNy4wN2wzLjY2IDIuODRjLjg3LTIuNiAzLjMtNC41MyA2LjE2LTQuNTN6Ii8+PC9zdmc+" alt="Google" style="width: 74px;">
       </div>
       
       <h2 style="color: #3c4043; font-size: 24px; margin-top: 0; font-weight: 400;">Security alert</h2>
@@ -28,7 +28,7 @@ Content-Type: text/html; charset="UTF-8"
       <div style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px; margin: 25px 0;">
         <div style="display: flex; align-items: center; margin-bottom: 10px;">
           <div style="width: 40px; height: 40px; background-color: #f1f3f4; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
-            <img src="https://www.gstatic.com/images/icons/material/system/2x/devices_black_24dp.png" style="width: 20px;">
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzVGNjM2OCI+PHBhdGggZD0iTTIwIDE4YzEuMSAwIDEuOTktLjkgMS45OS0yTDIyIDZjMC0xLjEtLjktMi0yLTJINGMtMS4xIDAtMiAuOS0yIDJ2MTBjMCAxLjEuOSAyIDIgMkgwdjJoMjR2LTJoLTR6bS04LTFjLS41NSAwLTEtLjQ1LTEtMXMuNDUtMSAxLTEgMSAuNDUgMSAxLS40NSAxLTEgMXptOC0zSDRWNmgxNnY4eiIvPjwvc3ZnPg==" style="width: 20px;">
           </div>
           <div>
             <p style="margin: 0; font-size: 14px; color: #3c4043;"><b>Linux</b></p>
