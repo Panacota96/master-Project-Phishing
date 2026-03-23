@@ -101,11 +101,14 @@ def register():
         username = form.username.data.strip()
         email = form.email.data.strip().lower()
 
+        errors = False
         if get_user(username):
             form.username.errors.append('Username already taken.')
-        elif get_user_by_email(email):
+            errors = True
+        if get_user_by_email(email):
             form.email.errors.append('An account with this email already exists.')
-        else:
+            errors = True
+        if not errors:
             queue_url = current_app.config.get('SQS_REGISTRATION_QUEUE_URL', '')
             if not queue_url:
                 flash('Registration is temporarily unavailable. Please contact your administrator.', 'danger')

@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from decimal import Decimal
 from uuid import uuid4
 
-from boto3.dynamodb.conditions import Key
+from boto3.dynamodb.conditions import Attr, Key
 from flask import current_app
 from flask_login import UserMixin
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -159,7 +159,16 @@ def create_user(
         major=major,
         facility=facility,
     )
-    table.put_item(Item=user.to_dynamo())
+    from botocore.exceptions import ClientError
+    try:
+        table.put_item(
+            Item=user.to_dynamo(),
+            ConditionExpression=Attr('username').not_exists(),
+        )
+    except ClientError as e:
+        if e.response['Error']['Code'] == 'ConditionalCheckFailedException':
+            raise ValueError(f"Username '{username}' already exists.")
+        raise
     return user
 
 
