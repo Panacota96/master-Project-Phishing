@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EnGarde &mdash; Architecture Animation</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080c14;
+  --bg2: #0c1018;
+  --surface: #111827;
+  --surface2: #1a2236;
+  --border: #1e2a42;
+  --border-dim: rgba(30,42,66,0.5);
+  --text: #e2e8f0;
+  --text-dim: #4a5568;
+  --text-mid: #718096;
+  --accent: #38bdf8;
+  --accent2: #818cf8;
+  --green: #34d399;
+  --orange: #fb923c;
+  --yellow: #fbbf24;
+  --cyan: #22d3ee;
+  --terraform: #7B42BC;
+  --aws: #FF9900;
+  --lambda: #FF9900;
+  --dynamo: #4053D6;
+  --s3: #569A31;
+  --sqs: #FF4F8B;
+  --cloudfront: #8B5CF6;
+  --apigateway: #E11D48;
+  --cloudwatch: #06B6D4;
+  --iam: #F59E0B;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:'Outfit',sans-serif; overflow-x:hidden; }
+
+.back-btn {
+  position:fixed; top:16px; right:16px; z-index:9999;
+  font-family:'JetBrains Mono',monospace; font-size:11px;
+  padding:7px 14px; border-radius:7px;
+  border:1px solid rgba(56,189,248,0.4);
+  background:rgba(8,12,20,0.85); color:#38bdf8;
+  text-decoration:none; backdrop-filter:blur(8px);
+  transition:all 0.2s;
+}
+.back-btn:hover { border-color:#38bdf8; background:rgba(56,189,248,0.08); color:#38bdf8; }
+
+.grid-bg {
+  position:fixed; inset:0;
+  background-image:
+    radial-gradient(circle at 50% 50%, rgba(56,189,248,0.015) 0%, transparent 70%),
+    linear-gradient(rgba(56,189,248,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56,189,248,0.02) 1px, transparent 1px);
+  background-size:100% 100%, 80px 80px, 80px 80px;
+  z-index:0;
+}
+
+.header {
+  position:relative; z-index:10;
+  padding:28px 40px 12px;
+  display:flex; align-items:center; gap:18px;
+}
+.logo-mark {
+  width:48px; height:48px;
+  background:linear-gradient(135deg, var(--terraform), var(--accent));
+  border-radius:13px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:22px; color:#fff;
+  box-shadow:0 0 30px rgba(123,66,188,0.3);
+}
+.header-text h1 {
+  font-size:24px; font-weight:800; letter-spacing:-0.5px;
+  background:linear-gradient(135deg, #fff 30%, var(--accent) 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+}
+.header-text p {
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px; color:var(--text-dim);
+}
+
+.controls {
+  position:relative; z-index:10;
+  padding:8px 40px 8px;
+  display:flex; gap:8px; flex-wrap:wrap; align-items:center;
+}
+.ctrl-group { display:flex; gap:8px; align-items:center; }
+.ctrl-sep { width:1px; height:28px; background:var(--border); margin:0 8px; }
+.ctrl-label {
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px; text-transform:uppercase;
+  letter-spacing:1.5px; color:var(--text-dim); margin-right:4px;
+}
+.btn {
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px; font-weight:500;
+  padding:8px 16px;
+  border:1px solid var(--border);
+  border-radius:7px;
+  background:var(--surface);
+  color:var(--text-dim);
+  cursor:pointer;
+  transition:all 0.25s;
+  white-space:nowrap;
+}
+.btn:hover { border-color:var(--accent); color:var(--text-mid); }
+.btn.active {
+  border-color:var(--accent); color:var(--accent);
+  background:rgba(56,189,248,0.08);
+  box-shadow:0 0 16px rgba(56,189,248,0.1);
+}
+.btn.toggle-tf.active {
+  border-color:var(--terraform); color:var(--terraform);
+  background:rgba(123,66,188,0.1);
+}
+.btn.toggle-rt.active {
+  border-color:var(--green); color:var(--green);
+  background:rgba(52,211,153,0.08);
+}
+
+.canvas-wrap { position:relative; z-index:5; width:100%; padding:12px 20px 40px; }
+.canvas-inner {
+  position:relative; width:100%; height:820px;
+  border-radius:14px; border:1px solid var(--border-dim);
+  background:var(--bg2); overflow:hidden;
+}
+
+.zone {
+  position:absolute;
+  border:1.5px dashed;
+  border-radius:16px;
+  z-index:2; pointer-events:none;
+  opacity:0; transition:opacity 0.8s ease;
+}
+.zone.visible { opacity:1; }
+.zone-label {
+  position:absolute; top:10px; left:16px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px; text-transform:uppercase;
+  letter-spacing:2px; padding:2px 8px; border-radius:4px;
+}
+.zone.actors  { border-color:rgba(56,189,248,0.2); background:rgba(56,189,248,0.02); }
+.zone.actors .zone-label { color:rgba(56,189,248,0.5); background:rgba(56,189,248,0.06); }
+.zone.cicd    { border-color:rgba(129,140,248,0.2); background:rgba(129,140,248,0.02); }
+.zone.cicd .zone-label { color:rgba(129,140,248,0.5); background:rgba(129,140,248,0.06); }
+.zone.edge    { border-color:rgba(139,92,246,0.2); background:rgba(139,92,246,0.02); }
+.zone.edge .zone-label { color:rgba(139,92,246,0.5); background:rgba(139,92,246,0.06); }
+.zone.compute { border-color:rgba(255,153,0,0.2); background:rgba(255,153,0,0.015); }
+.zone.compute .zone-label { color:rgba(255,153,0,0.5); background:rgba(255,153,0,0.06); }
+.zone.data    { border-color:rgba(64,83,214,0.2); background:rgba(64,83,214,0.02); }
+.zone.data .zone-label { color:rgba(64,83,214,0.5); background:rgba(64,83,214,0.06); }
+.zone.async   { border-color:rgba(255,79,139,0.2); background:rgba(255,79,139,0.015); }
+.zone.async .zone-label { color:rgba(255,79,139,0.5); background:rgba(255,79,139,0.06); }
+.zone.observe { border-color:rgba(6,182,212,0.2); background:rgba(6,182,212,0.02); }
+.zone.observe .zone-label { color:rgba(6,182,212,0.5); background:rgba(6,182,212,0.06); }
+.zone.security{ border-color:rgba(245,158,11,0.2); background:rgba(245,158,11,0.015); }
+.zone.security .zone-label { color:rgba(245,158,11,0.5); background:rgba(245,158,11,0.06); }
+
+.phase-label {
+  position:absolute; top:16px; left:20px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px; text-transform:uppercase;
+  letter-spacing:1.5px; color:var(--text-dim);
+  opacity:0; transition:opacity 0.5s; z-index:30;
+}
+.phase-label.visible { opacity:1; }
+.phase-label .pn { color:var(--terraform); font-weight:700; }
+
+.node {
+  position:absolute; border-radius:11px;
+  border:1.5px solid var(--border);
+  background:var(--surface);
+  padding:10px 14px;
+  display:flex; align-items:center; gap:10px;
+  opacity:0; transform:scale(0.6);
+  transition:all 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  cursor:default; z-index:10; min-width:140px;
+}
+.node.visible { opacity:1; transform:scale(1); }
+.node:hover {
+  border-color:var(--accent);
+  box-shadow:0 0 24px rgba(56,189,248,0.1);
+  z-index:25;
+}
+.node-icon {
+  width:34px; height:34px; border-radius:9px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px; font-weight:800; color:#fff; flex-shrink:0;
+}
+.node-info { flex:1; min-width:0; }
+.node-name { font-size:11px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.node-desc { font-family:'JetBrains Mono',monospace; font-size:8.5px; color:var(--text-dim); margin-top:1px; white-space:nowrap; }
+.node-badge {
+  position:absolute; top:-7px; right:-7px;
+  width:18px; height:18px; border-radius:50%;
+  background:var(--green);
+  display:flex; align-items:center; justify-content:center;
+  font-size:9px; color:#fff;
+  opacity:0; transform:scale(0);
+  transition:all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  box-shadow:0 0 8px rgba(52,211,153,0.5);
+}
+.node.deployed .node-badge { opacity:1; transform:scale(1); }
+
+.node.hub {
+  box-shadow:0 0 0 1px rgba(255,153,0,0.15), 0 0 40px rgba(255,153,0,0.08);
+  border-color:rgba(255,153,0,0.3);
+}
+.node.hub::before {
+  content:''; position:absolute; inset:-8px;
+  border-radius:17px;
+  border:1.5px solid rgba(255,153,0,0.1);
+  animation:hubPulse 3s ease-in-out infinite;
+  pointer-events:none;
+}
+@keyframes hubPulse {
+  0%,100% { opacity:0.2; transform:scale(1); }
+  50% { opacity:0.6; transform:scale(1.03); }
+}
+
+.node.terraform .node-icon { background:var(--terraform); }
+.node.lambda .node-icon { background:var(--lambda); }
+.node.dynamo .node-icon { background:var(--dynamo); }
+.node.s3 .node-icon { background:var(--s3); }
+.node.sqs .node-icon { background:var(--sqs); }
+.node.ses .node-icon { background:#E27152; }
+.node.cf .node-icon { background:var(--cloudfront); }
+.node.apigw .node-icon { background:var(--apigateway); }
+.node.cw .node-icon { background:var(--cloudwatch); }
+.node.iam .node-icon { background:var(--iam); }
+.node.actor .node-icon { background:var(--accent); }
+.node.gha .node-icon { background:var(--accent2); }
+
+svg.connections {
+  position:absolute; inset:0; width:100%; height:100%;
+  pointer-events:none; z-index:5;
+}
+.conn-line {
+  fill:none; stroke-width:1.4;
+  opacity:0; transition:opacity 0.6s;
+}
+.conn-line.visible { opacity:0.35; }
+.conn-line.active { opacity:0.7; stroke-width:2; }
+.conn-line.flowing { stroke-dasharray:8 6; animation:dashFlow 1s linear infinite; }
+.conn-line.tf-line { stroke-dasharray:4 4; }
+@keyframes dashFlow { to { stroke-dashoffset:-14; } }
+
+.packet {
+  position:absolute; z-index:20; pointer-events:none;
+  display:flex; align-items:center; gap:4px;
+}
+.packet-dot {
+  width:7px; height:7px; border-radius:50%;
+  box-shadow:0 0 10px currentColor;
+}
+.packet-label {
+  font-family:'JetBrains Mono',monospace;
+  font-size:8px; font-weight:600;
+  padding:1px 5px; border-radius:3px;
+  background:rgba(10,14,20,0.85);
+  border:1px solid currentColor;
+  white-space:nowrap; opacity:0.9;
+}
+
+.terminal-overlay {
+  position:absolute; bottom:16px; left:16px;
+  width:380px;
+  background:rgba(8,12,20,0.92);
+  border:1px solid var(--border);
+  border-radius:10px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px; z-index:50; overflow:hidden;
+  backdrop-filter:blur(16px);
+}
+.terminal-bar {
+  display:flex; align-items:center; gap:5px;
+  padding:7px 10px;
+  background:rgba(17,24,39,0.8);
+  border-bottom:1px solid var(--border);
+}
+.td { width:7px; height:7px; border-radius:50%; }
+.td.r { background:#ef4444; } .td.y { background:#eab308; } .td.g { background:#22c55e; }
+.terminal-title { margin-left:6px; color:var(--text-dim); font-size:9px; }
+.terminal-body {
+  padding:10px; max-height:180px; overflow-y:auto; line-height:1.65;
+}
+.terminal-body::-webkit-scrollbar { width:3px; }
+.terminal-body::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+.t-line { opacity:0; animation:fadeIn 0.25s forwards; }
+@keyframes fadeIn { to { opacity:1; } }
+.t-prompt { color:var(--green); } .t-cmd { color:#fff; }
+.t-res { color:var(--terraform); } .t-ok { color:var(--green); }
+.t-info { color:var(--text-dim); } .t-aws { color:var(--aws); }
+.t-warn { color:var(--yellow); }
+
+.legend {
+  position:absolute; top:14px; right:16px;
+  display:flex; flex-direction:column; gap:4px;
+  z-index:30; opacity:0; transition:opacity 0.5s;
+}
+.legend.visible { opacity:1; }
+.legend-item {
+  display:flex; align-items:center; gap:6px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px; color:var(--text-dim);
+}
+.legend-dot { width:8px; height:8px; border-radius:3px; }
+
+.progress-wrap {
+  position:absolute; bottom:16px; right:16px; z-index:50;
+  display:flex; align-items:center; gap:10px;
+}
+.progress-text { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--text-dim); }
+.progress-bar { width:140px; height:3px; background:var(--surface2); border-radius:2px; overflow:hidden; }
+.progress-fill {
+  height:100%; background:linear-gradient(90deg, var(--terraform), var(--green));
+  border-radius:2px; width:0%; transition:width 0.4s;
+}
+
+.tooltip {
+  position:absolute; background:rgba(8,12,20,0.95);
+  border:1px solid var(--border); border-radius:8px;
+  padding:10px 14px; font-size:11px; max-width:240px;
+  z-index:100; opacity:0; pointer-events:none;
+  transition:opacity 0.2s; backdrop-filter:blur(10px);
+}
+.tooltip.show { opacity:1; }
+.tooltip-title { font-weight:700; margin-bottom:3px; font-size:12px; }
+.tooltip-body { font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--text-dim); line-height:1.5; }
+</style>
+</head>
+<body>
+<a href="{{ url_for('dashboard.index') }}" class="back-btn">&larr; Dashboard</a>
+<div class="grid-bg"></div>
+
+<div class="header">
+  <div class="logo-mark">&#9876;</div>
+  <div class="header-text">
+    <h1>EnGarde &mdash; Infrastructure Animation</h1>
+    <p>terraform apply &rarr; AWS architecture &rarr; data flow</p>
+  </div>
+</div>
+
+<div class="controls">
+  <span class="ctrl-label">Flow</span>
+  <div class="ctrl-group" id="flowBtns">
+    <button class="btn active" onclick="startPhase('deploy')">&#9654; Deploy</button>
+    <button class="btn" onclick="startPhase('flow')">&#8652; Live</button>
+    <button class="btn" onclick="startPhase('quiz')">Quiz</button>
+    <button class="btn" onclick="startPhase('inspector')">Inspector</button>
+    <button class="btn" onclick="startPhase('registration')">QR Reg</button>
+  </div>
+  <div class="ctrl-sep"></div>
+  <span class="ctrl-label">Layers</span>
+  <div class="ctrl-group">
+    <button class="btn toggle-tf active" id="btnTf" onclick="toggleLayer('tf')">&#11045; Terraform</button>
+    <button class="btn toggle-rt active" id="btnRt" onclick="toggleLayer('rt')">&#9670; Runtime</button>
+  </div>
+  <div class="ctrl-sep"></div>
+  <button class="btn" onclick="resetAll()">&#8634; Reset</button>
+</div>
+
+<div class="canvas-wrap">
+  <div class="canvas-inner" id="canvas">
+    <div class="phase-label" id="phaseLabel"><span class="pn">01</span> &mdash; TERRAFORM APPLY</div>
+
+    <div class="legend" id="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--terraform)"></div>Terraform</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--lambda)"></div>Compute</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--dynamo)"></div>Database</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--s3)"></div>Storage</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--sqs)"></div>Messaging</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--cloudfront)"></div>Edge / CDN</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--cloudwatch)"></div>Observability</div>
+    </div>
+
+    <!-- Zones -->
+    <div class="zone actors" id="zActors" style="left:16px;top:175px;width:200px;height:285px"><div class="zone-label">Actors</div></div>
+    <div class="zone cicd" id="zCicd" style="left:16px;top:20px;width:410px;height:140px"><div class="zone-label">CI / CD</div></div>
+    <div class="zone security" id="zSecurity" style="left:235px;top:175px;width:200px;height:115px"><div class="zone-label">Security</div></div>
+    <div class="zone edge" id="zEdge" style="left:235px;top:305px;width:265px;height:175px"><div class="zone-label">Edge &mdash; eu-west-3</div></div>
+    <div class="zone compute" id="zCompute" style="left:525px;top:215px;width:265px;height:370px"><div class="zone-label">Compute</div></div>
+    <div class="zone data" id="zData" style="left:815px;top:130px;width:220px;height:250px"><div class="zone-label">Data &amp; Storage</div></div>
+    <div class="zone async" id="zAsync" style="left:815px;top:395px;width:220px;height:210px"><div class="zone-label">Async Messaging</div></div>
+    <div class="zone observe" id="zObserve" style="left:525px;top:605px;width:265px;height:125px"><div class="zone-label">Observability</div></div>
+
+    <svg class="connections" id="svgLayer"></svg>
+
+    <!-- Nodes -->
+    <div class="node gha" id="gha" data-tip="GitHub Actions CI/CD with OIDC auth. Zero static AWS keys. Runs lint, test, terraform apply, S3 sync, DynamoDB seed."><div class="node-icon">GH</div><div class="node-info"><div class="node-name">GitHub Actions</div><div class="node-desc">CI/CD &middot; OIDC</div></div><div class="node-badge">&#10003;</div></div>
+    <div class="node terraform" id="terraform" data-tip="Terraform &ge;1.5 managing 15 .tf files. Remote state in S3 + DynamoDB lock. Dev &amp; prod environments via OIDC."><div class="node-icon">TF</div><div class="node-info"><div class="node-name">Terraform</div><div class="node-desc">IaC &middot; eu-west-3</div></div><div class="node-badge">&#10003;</div></div>
+    <div class="node actor" id="student" data-tip="ESME engineering students access quizzes and the Email Threat Inspector via HTTPS through CloudFront."><div class="node-icon">&#x1F9D1;&#x200D;&#x1F393;</div><div class="node-info"><div class="node-name">Student</div><div class="node-desc">ESME Engineering</div></div></div>
+    <div class="node actor" id="admin" data-tip="Admins manage users, quizzes, email samples, view analytics dashboards, risk scoring, and generate CSV reports."><div class="node-icon">&#x1F6E1;</div><div class="node-info"><div class="node-name">Admin</div><div class="node-desc">Platform Manager</div></div></div>
+    <div class="node iam" id="iam" data-tip="3 IAM roles: Lambda App, Registration Worker, GitHub Actions OIDC deploy. Zero static credentials anywhere."><div class="node-icon">&#x1F510;</div><div class="node-info"><div class="node-name">IAM + OIDC</div><div class="node-desc">3 roles &middot; 0 static keys</div></div><div class="node-badge">&#10003;</div></div>
+    <div class="node cf" id="cloudfront" data-tip="CloudFront CDN: HTTPS termination, redirect-to-https, TTL=0, stable URL wrapping API Gateway v2."><div class="node-icon">CF</div><div class="node-info"><div class="node-name">CloudFront</div><div class="node-desc">CDN &middot; HTTPS</div></div><div class="node-badge">&#10003;</div></div>
+    <div class="node apigw" id="apigw" data-tip="API Gateway v2 HTTP API: catch-all $default route, auto-deploy stage, structured CloudWatch access logs."><div class="node-icon">AG</div><div class="node-info"><div class="node-name">API Gateway v2</div><div class="node-desc">HTTP &middot; $default</div></div><div class="node-badge">&#10003;</div></div>
+    <div class="node lambda hub" id="lambdaApp" data-tip="Flask 3.1 via Mangum ASGI. Python 3.12, 512MB, 30s timeout, X-Ray. 4 blueprints: auth, quiz, dashboard, inspector."><div class="node-icon">&lambda;</div><div class="node-info"><div class="node-name">Lambda Flask App</div><div class="node-desc">512MB &middot; 30s &middot; X-Ray</div></div><div class="node-badge">&#10003;</div></div>
+    <div class="node lambda" id="lambdaWorker" data-tip="Async registration worker: SQS trigger, creates user in DynamoDB (conditional), sends SES confirmation email."><div class="node-icon">&lambda;</div><div class="node-info"><div class="node-name">Lambda Worker</div><div class="node-desc">256MB &middot; SQS trigger</div></div><div class="node-badge">&#10003;</div></div>
+    <div class="node dynamo" id="dynamodb" data-tip="9 on-demand tables: users, quizzes, attempts, responses, inspector_attempts (auth+anon), bugs, answer_key_overrides, cohort_tokens."><div class="node-icon">DB</div><div class="node-info"><div class="node-name">DynamoDB</div><div class="node-desc">9 tables &middot; on-demand</div></div><div class="node-badge">&#10003;</div></div>
+    <div class="node s3" id="s3" data-tip="S3 bucket: eml-samples/ (98 .eml), videos/ (training MP4), reports/ (CSV). Versioned, AES256, public read dev only."><div class="node-icon">S3</div><div class="node-info"><div class="node-name">S3 Bucket</div><div class="node-desc">EML &middot; Videos &middot; Reports</div></div><div class="node-badge">&#10003;</div></div>
+    <div class="node sqs" id="sqs" data-tip="SQS registration queue with DLQ (maxReceiveCount=4). Server-side encryption, 60s visibility, 1-day retention."><div class="node-icon">SQ</div><div class="node-info"><div class="node-name">SQS Queue</div><div class="node-desc">Registration + DLQ</div></div><div class="node-badge">&#10003;</div></div>
+    <div class="node ses" id="ses" data-tip="SES email identity: no-reply@ sends confirmation emails after QR self-registration completes asynchronously."><div class="node-icon">&#9993;</div><div class="node-info"><div class="node-name">SES</div><div class="node-desc">Email &middot; Confirmation</div></div><div class="node-badge">&#10003;</div></div>
+    <div class="node cw" id="cloudwatch" data-tip="CloudWatch: 6 alarms (Lambda errors/duration/throttles, APIGW 4xx/5xx, DDB errors), dashboard, X-Ray tracing, 14-day logs."><div class="node-icon">CW</div><div class="node-info"><div class="node-name">CloudWatch</div><div class="node-desc">6 alarms &middot; X-Ray</div></div><div class="node-badge">&#10003;</div></div>
+
+    <div class="terminal-overlay" id="terminal">
+      <div class="terminal-bar"><div class="td r"></div><div class="td y"></div><div class="td g"></div><span class="terminal-title">engarde-dev</span></div>
+      <div class="terminal-body" id="termBody"></div>
+    </div>
+
+    <div class="progress-wrap">
+      <span class="progress-text" id="progressText">0 / 13</span>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+
+    <div class="tooltip" id="tooltip">
+      <div class="tooltip-title" id="tipTitle"></div>
+      <div class="tooltip-body" id="tipBody"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const L = {
+  gha:          {x:40,  y:48},
+  terraform:    {x:235, y:48},
+  student:      {x:35,  y:215},
+  admin:        {x:35,  y:360},
+  iam:          {x:260, y:210},
+  cloudfront:   {x:260, y:340},
+  apigw:        {x:310, y:425},
+  lambdaApp:    {x:565, y:310},
+  lambdaWorker: {x:565, y:475},
+  dynamodb:     {x:845, y:170},
+  s3:           {x:845, y:305},
+  sqs:          {x:845, y:430},
+  ses:          {x:845, y:545},
+  cloudwatch:   {x:565, y:640},
+};
+
+const CONNS = [
+  {f:'gha',        t:'terraform',    c:'var(--accent2)',    tp:'tf', lb:'OIDC'},
+  {f:'terraform',  t:'iam',          c:'var(--terraform)',  tp:'tf', lb:'create'},
+  {f:'terraform',  t:'cloudfront',   c:'var(--terraform)',  tp:'tf', lb:'create'},
+  {f:'terraform',  t:'apigw',        c:'var(--terraform)',  tp:'tf', lb:'create'},
+  {f:'terraform',  t:'lambdaApp',    c:'var(--terraform)',  tp:'tf', lb:'create'},
+  {f:'terraform',  t:'lambdaWorker', c:'var(--terraform)',  tp:'tf', lb:'create'},
+  {f:'terraform',  t:'dynamodb',     c:'var(--terraform)',  tp:'tf', lb:'create'},
+  {f:'terraform',  t:'s3',           c:'var(--terraform)',  tp:'tf', lb:'create'},
+  {f:'terraform',  t:'sqs',          c:'var(--terraform)',  tp:'tf', lb:'create'},
+  {f:'terraform',  t:'ses',          c:'var(--terraform)',  tp:'tf', lb:'create'},
+  {f:'terraform',  t:'cloudwatch',   c:'var(--terraform)',  tp:'tf', lb:'create'},
+  {f:'gha',        t:'s3',           c:'var(--accent2)',    tp:'tf', lb:'s3 sync'},
+  {f:'student',    t:'cloudfront',   c:'var(--accent)',     tp:'rt', lb:'HTTPS'},
+  {f:'admin',      t:'cloudfront',   c:'var(--accent)',     tp:'rt', lb:'HTTPS'},
+  {f:'cloudfront', t:'apigw',        c:'var(--cloudfront)', tp:'rt', lb:'proxy'},
+  {f:'apigw',      t:'lambdaApp',    c:'var(--apigateway)', tp:'rt', lb:'$default'},
+  {f:'lambdaApp',  t:'dynamodb',     c:'var(--lambda)',     tp:'rt', lb:'CRUD'},
+  {f:'lambdaApp',  t:'s3',           c:'var(--s3)',         tp:'rt', lb:'GetObject'},
+  {f:'lambdaApp',  t:'sqs',          c:'var(--sqs)',        tp:'rt', lb:'enqueue'},
+  {f:'sqs',        t:'lambdaWorker', c:'var(--sqs)',        tp:'rt', lb:'trigger'},
+  {f:'lambdaWorker',t:'dynamodb',    c:'var(--lambda)',     tp:'rt', lb:'put_item'},
+  {f:'lambdaWorker',t:'ses',         c:'#E27152',          tp:'rt', lb:'send_email'},
+  {f:'lambdaApp',  t:'cloudwatch',   c:'var(--cloudwatch)', tp:'rt', lb:'X-Ray'},
+  {f:'lambdaWorker',t:'cloudwatch',  c:'var(--cloudwatch)', tp:'rt', lb:'logs'},
+];
+
+let nodes={}, svgLines=[], animTimers=[], showTf=true, showRt=true;
+
+function init(){
+  Object.entries(L).forEach(([id,p])=>{
+    const el=document.getElementById(id);
+    if(el){el.style.left=p.x+'px';el.style.top=p.y+'px';nodes[id]=el;}
+  });
+  drawConns();
+  document.querySelectorAll('.node').forEach(n=>{
+    n.addEventListener('mouseenter',showTip);
+    n.addEventListener('mouseleave',hideTip);
+  });
+  startPhase('deploy');
+}
+
+function nc(id){
+  const e=nodes[id]; if(!e) return {x:0,y:0};
+  return {x:parseInt(e.style.left)+e.offsetWidth/2, y:parseInt(e.style.top)+e.offsetHeight/2};
+}
+
+function ne(fId,tId){
+  const fc=nc(fId),tc=nc(tId),fe=nodes[fId],te=nodes[tId];
+  if(!fe||!te) return {fx:0,fy:0,tx:0,ty:0};
+  const dx=tc.x-fc.x, dy=tc.y-fc.y;
+  let fx,fy,tx,ty;
+  if(Math.abs(dx)>Math.abs(dy)){
+    fx=dx>0?parseInt(fe.style.left)+fe.offsetWidth:parseInt(fe.style.left);
+    fy=fc.y;
+    tx=dx>0?parseInt(te.style.left):parseInt(te.style.left)+te.offsetWidth;
+    ty=tc.y;
+  } else {
+    fx=fc.x; fy=dy>0?parseInt(fe.style.top)+fe.offsetHeight:parseInt(fe.style.top);
+    tx=tc.x; ty=dy>0?parseInt(te.style.top):parseInt(te.style.top)+te.offsetHeight;
+  }
+  return {fx,fy,tx,ty};
+}
+
+function drawConns(){
+  const svg=document.getElementById('svgLayer');
+  svg.innerHTML=''; svgLines=[];
+  CONNS.forEach((cn,i)=>{
+    const {fx,fy,tx,ty}=ne(cn.f,cn.t);
+    const dx=tx-fx, dy=ty-fy;
+    const cx1=fx+dx*0.4, cy1=fy;
+    const cx2=fx+dx*0.6, cy2=ty;
+    const p=document.createElementNS('http://www.w3.org/2000/svg','path');
+    p.setAttribute('d',`M${fx} ${fy} C${cx1} ${cy1},${cx2} ${cy2},${tx} ${ty}`);
+    p.setAttribute('stroke',cn.c);
+    p.classList.add('conn-line');
+    if(cn.tp==='tf') p.classList.add('tf-line');
+    else p.classList.add('rt-line');
+    p.dataset.f=cn.f; p.dataset.t=cn.t;
+    svg.appendChild(p);
+    svgLines.push({p,cn});
+  });
+}
+
+function toggleLayer(l){
+  if(l==='tf'){showTf=!showTf;document.getElementById('btnTf').classList.toggle('active',showTf);}
+  else{showRt=!showRt;document.getElementById('btnRt').classList.toggle('active',showRt);}
+  svgLines.forEach(({p,cn})=>{
+    if(cn.tp==='tf'&&!showTf) p.classList.remove('visible','flowing');
+    if(cn.tp==='rt'&&!showRt) p.classList.remove('visible','flowing');
+  });
+}
+
+function tl(html,delay){
+  return new Promise(r=>{
+    const t=setTimeout(()=>{
+      const d=document.createElement('div');d.classList.add('t-line');d.innerHTML=html;
+      const b=document.getElementById('termBody');b.appendChild(d);b.scrollTop=b.scrollHeight;r();
+    },delay);animTimers.push(t);
+  });
+}
+
+function sc(fId,tId,fl=false){
+  svgLines.forEach(({p,cn})=>{
+    if(cn.f===fId&&cn.t===tId){
+      if(cn.tp==='tf'&&!showTf) return;
+      if(cn.tp==='rt'&&!showRt) return;
+      p.classList.add('visible');
+      if(fl) p.classList.add('flowing');
+    }
+  });
+}
+function saType(tp,fl=false){svgLines.forEach(({p,cn})=>{if(cn.tp===tp){p.classList.add('visible');if(fl)p.classList.add('flowing');}});}
+function hac(){svgLines.forEach(({p})=>p.classList.remove('visible','flowing','active'));}
+function han(){Object.values(nodes).forEach(n=>n.classList.remove('visible','deployed'));}
+function san(){Object.values(nodes).forEach(n=>n.classList.add('visible','deployed'));}
+function sz(){document.querySelectorAll('.zone').forEach(z=>z.classList.add('visible'));}
+function hz(){document.querySelectorAll('.zone').forEach(z=>z.classList.remove('visible'));}
+
+function ap(fId,tId,color,label='',dur=1000){
+  const cv=document.getElementById('canvas');
+  const {fx,fy,tx,ty}=ne(fId,tId);
+  const pk=document.createElement('div');pk.classList.add('packet');pk.style.color=color;
+  pk.innerHTML=`<div class="packet-dot" style="background:${color}"></div>`+(label?`<span class="packet-label">${label}</span>`:'');
+  cv.appendChild(pk);
+  const dx=tx-fx,dy=ty-fy;
+  const cx1=fx+dx*0.4,cy1=fy,cx2=fx+dx*0.6,cy2=ty;
+  const st=performance.now();
+  function step(now){
+    const t=Math.min((now-st)/dur,1);
+    const e=t<0.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+    const u=1-e;
+    const px=u*u*u*fx+3*u*u*e*cx1+3*u*e*e*cx2+e*e*e*tx;
+    const py=u*u*u*fy+3*u*u*e*cy1+3*u*e*e*cy2+e*e*e*ty;
+    pk.style.left=(px-3)+'px';pk.style.top=(py-3)+'px';
+    if(t<1) requestAnimationFrame(step); else pk.remove();
+  }
+  requestAnimationFrame(step);
+}
+
+function up(c,t){
+  document.getElementById('progressFill').style.width=Math.round(c/t*100)+'%';
+  document.getElementById('progressText').textContent=`${c} / ${t}`;
+}
+
+function showTip(e){
+  const tip=document.getElementById('tooltip'),n=e.currentTarget;
+  document.getElementById('tipTitle').textContent=n.querySelector('.node-name').textContent;
+  document.getElementById('tipBody').textContent=n.dataset.tip||'';
+  const r=n.getBoundingClientRect(),cr=document.getElementById('canvas').getBoundingClientRect();
+  let left=r.right-cr.left+10;
+  if(left+240>cr.width) left=r.left-cr.left-250;
+  tip.style.left=left+'px';tip.style.top=(r.top-cr.top)+'px';tip.classList.add('show');
+}
+function hideTip(){document.getElementById('tooltip').classList.remove('show');}
+
+function sp(n,t){
+  const el=document.getElementById('phaseLabel');
+  el.innerHTML=`<span class="pn">${n}</span> &mdash; ${t}`;
+  el.classList.add('visible');
+  document.getElementById('legend').classList.add('visible');
+}
+
+const DS=[
+  {id:'iam',          tf:'aws_iam_role.lambda_role',          r:'IAM Roles + OIDC'},
+  {id:'dynamodb',     tf:'aws_dynamodb_table.users (+8)',     r:'9 DynamoDB Tables'},
+  {id:'s3',           tf:'aws_s3_bucket.app_bucket',          r:'S3 Bucket (versioned)'},
+  {id:'sqs',          tf:'aws_sqs_queue.registration',        r:'SQS Queue + DLQ'},
+  {id:'ses',          tf:'aws_ses_email_identity.noreply',    r:'SES Email Identity'},
+  {id:'lambdaApp',    tf:'aws_lambda_function.flask_app',     r:'Lambda Flask App (512MB)'},
+  {id:'lambdaWorker', tf:'aws_lambda_function.reg_worker',    r:'Lambda Worker (256MB)'},
+  {id:'apigw',        tf:'aws_apigatewayv2_api.http_api',     r:'API Gateway v2'},
+  {id:'cloudfront',   tf:'aws_cloudfront_distribution.cdn',   r:'CloudFront CDN'},
+  {id:'cloudwatch',   tf:'aws_cloudwatch_dashboard.overview', r:'CloudWatch + Alarms'},
+];
+
+async function deployPhase(){
+  sp('01','TERRAFORM INIT &rarr; APPLY');sz();
+  document.getElementById('termBody').innerHTML='';
+  nodes.gha.classList.add('visible');
+  await tl('<span class="t-prompt">$</span> <span class="t-cmd">terraform init -backend-config=backend/dev.hcl</span>',200);
+  await tl('<span class="t-ok">&#10003; Terraform initialized (S3 backend)</span>',500);
+  await tl('<span class="t-prompt">$</span> <span class="t-cmd">terraform apply -auto-approve</span>',400);
+  await tl('<span class="t-info">Plan: 13 to add, 0 to change, 0 to destroy</span>',400);
+  nodes.terraform.classList.add('visible');
+  sc('gha','terraform');ap('gha','terraform','#818cf8','OIDC',800);
+  await new Promise(r=>{animTimers.push(setTimeout(r,600));});
+
+  for(let i=0;i<DS.length;i++){
+    const s=DS[i];
+    await tl(`<span class="t-res">${s.tf}</span> <span class="t-aws">creating&hellip;</span>`,280);
+    sc('terraform',s.id);ap('terraform',s.id,'#7B42BC','create',800);
+    await new Promise(r=>{animTimers.push(setTimeout(r,420));});
+    nodes[s.id].classList.add('visible');
+    await new Promise(r=>{animTimers.push(setTimeout(r,140));});
+    nodes[s.id].classList.add('deployed');
+    await tl(`<span class="t-ok">&#10003;</span> ${s.r}`,130);
+    up(i+1,13);
+  }
+  await tl('',100);
+  await tl('<span class="t-ok">Apply complete! 13 added, 0 changed, 0 destroyed</span>',300);
+  await tl('<span class="t-prompt">$</span> <span class="t-cmd">aws s3 sync examples/ s3://&hellip;/eml-samples/</span>',400);
+  sc('gha','s3');ap('gha','s3','#818cf8','98 .eml',1200);
+  await tl('<span class="t-ok">&#10003; 98 EML + videos synced</span>',600);
+  await tl('<span class="t-prompt">$</span> <span class="t-cmd">python3 seed_dynamodb.py</span>',400);
+  await tl('<span class="t-ok">&#10003; admin + 5 quizzes seeded</span>',500);
+  nodes.student.classList.add('visible');nodes.admin.classList.add('visible');
+  up(13,13);
+  await new Promise(r=>{animTimers.push(setTimeout(r,500));});
+  sp('&#10003;','DEPLOY COMPLETE &mdash; SELECT A FLOW');
+}
+
+async function flowPhase(){
+  sp('02','LIVE RUNTIME DATA FLOW');sz();san();hac();
+  document.getElementById('termBody').innerHTML='';
+  if(showRt) saType('rt',true);
+  if(showTf) saType('tf',false);
+  await tl('<span class="t-info">&mdash; runtime architecture active &mdash;</span>',200);
+  await tl('Student/Admin &rarr; <span class="t-ok">CF</span> &rarr; <span class="t-aws">APIGW</span> &rarr; <span class="t-ok">&lambda; Flask</span>',300);
+  await tl('&lambda; Flask &rarr; <span class="t-res">DynamoDB</span> + <span class="t-res">S3</span> + <span class="t-warn">SQS</span>',300);
+  function loop(){
+    ap('student','cloudfront','#38bdf8','HTTPS',900);
+    const t1=setTimeout(()=>ap('cloudfront','apigw','#8B5CF6','proxy',700),600);
+    const t2=setTimeout(()=>ap('apigw','lambdaApp','#E11D48','$default',700),1100);
+    const t3=setTimeout(()=>{ap('lambdaApp','dynamodb','#FF9900','CRUD',900);ap('lambdaApp','s3','#569A31','GetObject',1000);},1800);
+    const t4=setTimeout(()=>ap('lambdaApp','cloudwatch','#06B6D4','X-Ray',900),2400);
+    const t5=setTimeout(()=>ap('admin','cloudfront','#38bdf8','HTTPS',900),1500);
+    animTimers.push(t1,t2,t3,t4,t5);
+    animTimers.push(setTimeout(loop,3500));
+  }
+  animTimers.push(setTimeout(loop,400));up(13,13);
+}
+
+async function quizPhase(){
+  sp('03','QUIZ FLOW &mdash; VIDEO GATE &rarr; QUESTIONS &rarr; SCORE');sz();san();hac();
+  document.getElementById('termBody').innerHTML='';
+  const steps=[
+    {m:'<span class="t-ok">1</span> GET /quiz/ &mdash; list quizzes',f:'student',t:'cloudfront',c:'#38bdf8',l:'HTTPS'},
+    {m:'<span class="t-info">&ensp;&#9492;&#9472;</span> CF &rarr; APIGW &rarr; Lambda',f:'cloudfront',t:'apigw',c:'#8B5CF6',l:'proxy'},
+    {m:'',f:'apigw',t:'lambdaApp',c:'#E11D48',l:'$default'},
+    {m:'<span class="t-ok">2</span> list_quizzes() + get_attempt()',f:'lambdaApp',t:'dynamodb',c:'#FF9900',l:'query'},
+    {m:'<span class="t-ok">3</span> Video gate &mdash; fetch from S3',f:'lambdaApp',t:'s3',c:'#569A31',l:'video URL'},
+    {m:'<span class="t-ok">4</span> Student watches video, unlocks quiz',f:null,t:null},
+    {m:'<span class="t-ok">5</span> POST &mdash; save_response()',f:'lambdaApp',t:'dynamodb',c:'#4053D6',l:'put_item'},
+    {m:'<span class="t-ok">6</span> All answered &rarr; create_attempt()',f:'lambdaApp',t:'dynamodb',c:'#FF9900',l:'cond write'},
+    {m:'<span class="t-ok">7</span> mark_quiz_completed()',f:'lambdaApp',t:'dynamodb',c:'#FF9900',l:'update'},
+    {m:'<span class="t-ok">8</span> X-Ray trace logged',f:'lambdaApp',t:'cloudwatch',c:'#06B6D4',l:'X-Ray'},
+    {m:'<span class="t-ok">&#10003;</span> Rank: Novice &rarr; Trainee &rarr; Defender &rarr; Cyber Sentinel',f:null,t:null},
+  ];
+  for(const s of steps){
+    await tl(s.m,450);
+    if(s.f&&s.t){sc(s.f,s.t,true);ap(s.f,s.t,s.c,s.l,900);}
+    await new Promise(r=>{animTimers.push(setTimeout(r,600));});
+  }
+  up(13,13);
+}
+
+async function inspectorPhase(){
+  sp('04','EMAIL THREAT INSPECTOR &mdash; CLASSIFY &amp; SIGNAL');sz();san();hac();
+  document.getElementById('termBody').innerHTML='';
+  const steps=[
+    {m:'<span class="t-ok">1</span> GET /inspector/ &mdash; SPA shell',f:'student',t:'cloudfront',c:'#38bdf8',l:'HTTPS'},
+    {m:'<span class="t-info">&ensp;&#9492;&#9472;</span> CF &rarr; APIGW &rarr; Lambda',f:'cloudfront',t:'apigw',c:'#8B5CF6',l:'proxy'},
+    {m:'',f:'apigw',t:'lambdaApp',c:'#E11D48',l:'route'},
+    {m:'<span class="t-ok">2</span> list_objects_v2 &rarr; S3 eml-samples/',f:'lambdaApp',t:'s3',c:'#569A31',l:'list_objects'},
+    {m:'<span class="t-ok">3</span> get_effective_answer_key()',f:'lambdaApp',t:'dynamodb',c:'#4053D6',l:'merge keys'},
+    {m:'<span class="t-info">&ensp;&#9492;&#9472;</span> static answer_key.py + DDB overrides',f:null,t:null},
+    {m:'<span class="t-ok">4</span> Build pool: 1-3 spam + phishing (max 8)',f:null,t:null},
+    {m:'<span class="t-ok">5</span> User clicks email &rarr; GetObject .eml',f:'lambdaApp',t:'s3',c:'#569A31',l:'GetObject'},
+    {m:'<span class="t-ok">6</span> Parse EML: headers, body, links, warnings',f:null,t:null},
+    {m:'<span class="t-ok">7</span> POST /inspector/api/submit',f:'student',t:'cloudfront',c:'#38bdf8',l:'classify'},
+    {m:'<span class="t-ok">8</span> create_inspector_attempt_anonymous()',f:'lambdaApp',t:'dynamodb',c:'#FF9900',l:'GDPR write'},
+    {m:'<span class="t-ok">9</span> 8/8 done &rarr; inspector_locked=True',f:'lambdaApp',t:'dynamodb',c:'#4053D6',l:'lock'},
+    {m:'<span class="t-ok">&#10003;</span> 10 signal categories tracked per email',f:null,t:null},
+  ];
+  for(const s of steps){
+    await tl(s.m,400);
+    if(s.f&&s.t){sc(s.f,s.t,true);ap(s.f,s.t,s.c,s.l,900);}
+    await new Promise(r=>{animTimers.push(setTimeout(r,550));});
+  }
+  up(13,13);
+}
+
+async function regPhase(){
+  sp('05','QR SELF-REGISTRATION &mdash; ASYNC PIPELINE');sz();san();hac();
+  document.getElementById('termBody').innerHTML='';
+  const steps=[
+    {m:'<span class="t-warn">1</span> Admin &rarr; /auth/admin/generate-qr',f:'admin',t:'cloudfront',c:'#38bdf8',l:'HTTPS'},
+    {m:'<span class="t-info">&ensp;&#9492;&#9472;</span> qrcode.make() &rarr; PNG',f:null,t:null},
+    {m:'<span class="t-ok">2</span> Student scans QR &rarr; POST /auth/register',f:'student',t:'cloudfront',c:'#38bdf8',l:'register'},
+    {m:'<span class="t-info">&ensp;&#9492;&#9472;</span> CF &rarr; APIGW &rarr; Lambda',f:'cloudfront',t:'apigw',c:'#8B5CF6',l:'proxy'},
+    {m:'',f:'apigw',t:'lambdaApp',c:'#E11D48',l:'POST'},
+    {m:'<span class="t-ok">3</span> Duplicate check: get_user + email GSI',f:'lambdaApp',t:'dynamodb',c:'#FF9900',l:'query'},
+    {m:'<span class="t-ok">4</span> enqueue_registration() &rarr; SQS',f:'lambdaApp',t:'sqs',c:'#FF4F8B',l:'enqueue'},
+    {m:'<span class="t-ok">5</span> SQS triggers Lambda Worker (batch=1)',f:'sqs',t:'lambdaWorker',c:'#FF4F8B',l:'trigger'},
+    {m:'<span class="t-ok">6</span> Worker &rarr; put_item(user) conditional',f:'lambdaWorker',t:'dynamodb',c:'#FF9900',l:'put_item'},
+    {m:'<span class="t-ok">7</span> Worker &rarr; SES confirmation email',f:'lambdaWorker',t:'ses',c:'#E27152',l:'send_email'},
+    {m:'<span class="t-ok">8</span> Student receives email &rarr; logs in',f:null,t:null},
+    {m:'<span class="t-info">&ensp;&#9492;&#9472;</span> Full trace in CloudWatch',f:'lambdaWorker',t:'cloudwatch',c:'#06B6D4',l:'logs'},
+    {m:'<span class="t-ok">&#10003;</span> Zero-blocking async registration',f:null,t:null},
+  ];
+  for(const s of steps){
+    await tl(s.m,450);
+    if(s.f&&s.t){sc(s.f,s.t,true);ap(s.f,s.t,s.c,s.l,1000);}
+    await new Promise(r=>{animTimers.push(setTimeout(r,650));});
+  }
+  up(13,13);
+}
+
+function startPhase(phase){
+  resetAll();
+  const btns=document.getElementById('flowBtns').querySelectorAll('.btn');
+  btns.forEach(b=>b.classList.remove('active'));
+  const map={deploy:0,flow:1,quiz:2,inspector:3,registration:4};
+  if(map[phase]!==undefined&&btns[map[phase]]) btns[map[phase]].classList.add('active');
+  switch(phase){
+    case 'deploy':deployPhase();break;
+    case 'flow':flowPhase();break;
+    case 'quiz':quizPhase();break;
+    case 'inspector':inspectorPhase();break;
+    case 'registration':regPhase();break;
+  }
+}
+
+function resetAll(){
+  animTimers.forEach(t=>clearTimeout(t));animTimers=[];
+  han();hac();hz();
+  document.getElementById('termBody').innerHTML='';
+  document.getElementById('phaseLabel').classList.remove('visible');
+  up(0,13);
+  document.querySelectorAll('.packet').forEach(p=>p.remove());
+}
+
+let rT;window.addEventListener('resize',()=>{clearTimeout(rT);rT=setTimeout(drawConns,200);});
+window.addEventListener('DOMContentLoaded',init);
+</script>
+</body>
+</html>
