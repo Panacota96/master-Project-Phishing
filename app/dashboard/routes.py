@@ -317,8 +317,6 @@ def reset_answer_key():
 @bp.route('/animation')
 @login_required
 def animation():
-    if not current_user.is_admin:
-        abort(403)
     return render_template('dashboard/animation.html')
 
 

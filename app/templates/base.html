@@ -43,12 +43,14 @@
                             <li><a class="dropdown-item" href="{{ url_for('auth.generate_qr') }}">Generate QR Code</a></li>
                             <li><a class="dropdown-item" href="{{ url_for('dashboard.reports') }}">Reports</a></li>
                             <li><a class="dropdown-item" href="{{ url_for('dashboard.list_bugs') }}">Bug Reports</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('dashboard.animation') }}">Architecture Animation</a></li>
                         </ul>
                     </li>
                     {% endif %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('inspector.index') }}">Email Inspector</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('dashboard.animation') }}">Architecture</a>
                     </li>
                     {% endif %}
                 </ul>
