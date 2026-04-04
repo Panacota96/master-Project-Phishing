@@ -28,7 +28,6 @@ group object-ID whose members should receive admin rights.  Leave it empty
 (the default) to keep all SSO users as ordinary students.
 """
 
-import os
 import secrets
 
 import msal
@@ -156,7 +155,7 @@ def handle_sso_callback():
 
     if user is None:
         # Auto-provision a new student account.
-        admin_group_id = os.environ.get('MSAL_ADMIN_GROUP_ID', '')
+        admin_group_id = current_app.config.get('MSAL_ADMIN_GROUP_ID', '')
         groups_in_token = id_token_claims.get('groups', [])
         is_admin = bool(admin_group_id and admin_group_id in groups_in_token)
 

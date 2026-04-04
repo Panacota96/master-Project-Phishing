@@ -35,7 +35,7 @@ class ChangePasswordForm(FlaskForm):
 
 
 def _validate_password_strength(form, field):
-    """Shared password-strength validator used by registration form."""
+    """Kept for backward-compatibility — delegates to the shared validator."""
     validate_password_strength(form, field)
 
 
@@ -46,7 +46,7 @@ class RegistrationForm(FlaskForm):
     academic_year = StringField('Academic Year', validators=[DataRequired(), Length(max=16)])
     major = StringField('Major', validators=[DataRequired(), Length(max=64)])
     facility = StringField('Facility / Campus', validators=[DataRequired(), Length(max=64)])
-    password = PasswordField('Password', validators=[DataRequired(), _validate_password_strength])
+    password = PasswordField('Password', validators=[DataRequired(), validate_password_strength])
     confirm_password = PasswordField(
         'Confirm Password',
         validators=[DataRequired(), EqualTo('password', message='Passwords must match.')],
