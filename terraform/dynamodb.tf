@@ -231,3 +231,76 @@ resource "aws_dynamodb_table" "cohort_tokens" {
     enabled        = true
   }
 }
+
+# ─── Threat Cache (OpenPhish) ─────────────────────────────────────────────────
+
+resource "aws_dynamodb_table" "threat_cache" {
+  name         = "${local.prefix}-threat-cache"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "cache_key"
+
+  attribute {
+    name = "cache_key"
+    type = "S"
+  }
+
+  ttl {
+    attribute_name = "ttl"
+    enabled        = true
+  }
+}
+
+# ─── Campaigns ────────────────────────────────────────────────────────────────
+
+resource "aws_dynamodb_table" "campaigns" {
+  name         = "${local.prefix}-campaigns"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "campaign_id"
+
+  attribute {
+    name = "campaign_id"
+    type = "S"
+  }
+
+  attribute {
+    name = "cohort"
+    type = "S"
+  }
+
+  global_secondary_index {
+    name            = "cohort-index"
+    hash_key        = "cohort"
+    projection_type = "ALL"
+  }
+}
+
+# ─── Campaign Events ─────────────────────────────────────────────────────────
+
+resource "aws_dynamodb_table" "campaign_events" {
+  name         = "${local.prefix}-campaign-events"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "campaign_id"
+  range_key    = "event_id"
+
+  attribute {
+    name = "campaign_id"
+    type = "S"
+  }
+
+  attribute {
+    name = "event_id"
+    type = "S"
+  }
+
+  attribute {
+    name = "event_type"
+    type = "S"
+  }
+
+  global_secondary_index {
+    name            = "event-type-index"
+    hash_key        = "event_type"
+    range_key       = "event_id"
+    projection_type = "ALL"
+  }
+}

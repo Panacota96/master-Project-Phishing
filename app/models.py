@@ -1,5 +1,6 @@
 """DynamoDB data access layer — replaces SQLAlchemy models."""
 
+import json
 import time
 from datetime import datetime, timezone
 from decimal import Decimal
@@ -47,38 +48,179 @@ def _paginated_scan(table, **kwargs):
     return total if is_count else items
 
 
+def _redis_client():
+    return getattr(current_app, 'redis_client', None)
+
+
 # ─── Shared cache + configuration helpers ─────────────────────────────────────
 
 def get_threat_cache():
     """Return cached threat feed data from DynamoDB if configured, else None."""
+    redis_client = _redis_client()
+    if redis_client:
+        try:
+            raw = redis_client.get('threat:openphish')
+            if raw:
+                return json.loads(raw)
+        except Exception:
+            current_app.logger.warning('Redis threat cache lookup failed; falling back to DynamoDB.')
+
     table_name = current_app.config.get('DYNAMODB_THREAT_CACHE')
-    if not table_name:
-        return None
-    try:
-        table = current_app.dynamodb.Table(table_name)
-        resp = table.get_item(Key={'cache_key': 'openphish'})
-        item = resp.get('Item')
-        if not item:
+    if table_name:
+        try:
+            table = current_app.dynamodb.Table(table_name)
+            resp = table.get_item(Key={'cache_key': 'openphish'})
+            item = resp.get('Item')
+            if not item:
+                return None
+            ttl = item.get('ttl')
+            if ttl and time.time() > float(ttl):
+                return None
+            return item.get('data')
+        except Exception:
             return None
-        ttl = item.get('ttl')
-        if ttl and time.time() > float(ttl):
-            return None
-        return item.get('data')
-    except Exception:
-        return None
+    return None
 
 
 def set_threat_cache(data):
     """Persist threat feed data with TTL when the table is configured."""
+    ttl_seconds = int(current_app.config.get('THREAT_CACHE_TTL_SECONDS', 3600))
+    redis_client = _redis_client()
+    if redis_client:
+        try:
+            redis_client.setex('threat:openphish', ttl_seconds, json.dumps(data))
+            redis_client.publish('threat-feed', json.dumps(data))
+        except Exception:
+            current_app.logger.warning('Redis threat cache write failed; continuing with DynamoDB fallback.')
+
     table_name = current_app.config.get('DYNAMODB_THREAT_CACHE')
     if not table_name:
         return
     try:
-        ttl = int(time.time()) + int(current_app.config.get('THREAT_CACHE_TTL_SECONDS', 3600))
+        ttl = int(time.time()) + ttl_seconds
         table = current_app.dynamodb.Table(table_name)
         table.put_item(Item={'cache_key': 'openphish', 'data': data, 'ttl': ttl})
     except Exception:
         current_app.logger.warning('Failed to persist threat cache; continuing with in-memory cache.')
+
+
+def create_campaign(cohort, filters, status='queued', scheduled=False):
+    table_name = current_app.config.get('DYNAMODB_CAMPAIGNS')
+    if not table_name:
+        return None
+    table = _get_table('DYNAMODB_CAMPAIGNS')
+    campaign_id = str(uuid4())
+    now = _now_iso()
+    item = {
+        'campaign_id': campaign_id,
+        'cohort': cohort,
+        'filters': filters,
+        'status': status,
+        'scheduled': scheduled,
+        'created_at': now,
+        'updated_at': now,
+        'sent_count': 0,
+    }
+    table.put_item(Item=item)
+    return item
+
+
+def update_campaign_status(campaign_id, status, extra_updates=None):
+    table_name = current_app.config.get('DYNAMODB_CAMPAIGNS')
+    if not table_name:
+        return
+    table = _get_table('DYNAMODB_CAMPAIGNS')
+    expression = ['SET #status = :status', '#updated_at = :updated']
+    values = {':status': status, ':updated': _now_iso()}
+    names = {'#status': 'status', '#updated_at': 'updated_at'}
+    if extra_updates:
+        for key, value in extra_updates.items():
+            names[f"#{key}"] = key
+            values[f":{key}"] = value
+            expression.append(f"#{key} = :{key}")
+    try:
+        table.update_item(
+            Key={'campaign_id': campaign_id},
+            UpdateExpression=', '.join(expression),
+            ExpressionAttributeValues=values,
+            ExpressionAttributeNames=names,
+        )
+    except Exception:
+        current_app.logger.warning('Failed to update campaign %s', campaign_id)
+
+
+def get_campaign(campaign_id):
+    table_name = current_app.config.get('DYNAMODB_CAMPAIGNS')
+    if not table_name:
+        return None
+    try:
+        table = _get_table('DYNAMODB_CAMPAIGNS')
+        resp = table.get_item(Key={'campaign_id': campaign_id})
+        return resp.get('Item')
+    except Exception:
+        return None
+
+
+def list_campaigns(limit=50):
+    table_name = current_app.config.get('DYNAMODB_CAMPAIGNS')
+    if not table_name:
+        return []
+    table = _get_table('DYNAMODB_CAMPAIGNS')
+    items = _paginated_scan(table)
+    items_sorted = sorted(items, key=lambda i: i.get('created_at', ''), reverse=True)
+    return items_sorted[:limit]
+
+
+def record_campaign_event(campaign_id, event_type, detail=None):
+    table_name = current_app.config.get('DYNAMODB_CAMPAIGN_EVENTS')
+    if not table_name:
+        return
+    table = _get_table('DYNAMODB_CAMPAIGN_EVENTS')
+    event_id = f"{_now_iso()}#{uuid4()}"
+    item = {
+        'campaign_id': campaign_id,
+        'event_id': event_id,
+        'event_type': event_type,
+        'timestamp': _now_iso(),
+    }
+    if detail:
+        item.update(detail)
+    try:
+        table.put_item(Item=item)
+    except Exception:
+        current_app.logger.warning('Failed to record campaign event %s', event_type)
+
+
+def list_campaign_events(campaign_id):
+    table_name = current_app.config.get('DYNAMODB_CAMPAIGN_EVENTS')
+    if not table_name:
+        return []
+    table = _get_table('DYNAMODB_CAMPAIGN_EVENTS')
+    try:
+        resp = table.query(
+            KeyConditionExpression=Key('campaign_id').eq(campaign_id),
+            ScanIndexForward=False,
+        )
+        return resp.get('Items', [])
+    except Exception:
+        return []
+
+
+def find_users_by_filters(filters):
+    """Return users matching cohort filters; fallback to full scan."""
+    table = _get_table('DYNAMODB_USERS')
+    filter_expr = None
+    for key in ('class_name', 'academic_year', 'major', 'facility', 'group'):
+        val = filters.get(key)
+        if val and val != 'All':
+            clause = Attr(key).eq(val)
+            filter_expr = clause if filter_expr is None else filter_expr & clause
+
+    if filter_expr is None:
+        return [User.from_dynamo(item) for item in _paginated_scan(table)]
+
+    resp = table.scan(FilterExpression=filter_expr)
+    return [User.from_dynamo(item) for item in resp.get('Items', [])]
 
 
 def _cohort_key(class_name, academic_year, major, facility, group):

@@ -35,6 +35,8 @@ from app.models import (
     get_quiz,
     get_user,
     get_user_by_email,
+    create_campaign,
+    list_campaigns as list_campaigns_db,
     get_threat_cache,
     list_all_users,
     list_all_attempts,
@@ -42,11 +44,14 @@ from app.models import (
     list_bug_reports,
     list_inspector_attempts_anonymous,
     list_quizzes,
+    find_users_by_filters,
+    record_campaign_event,
     reset_user_inspector_state,
     reset_users_inspector_state,
     save_inspector_config_for_cohort,
     set_answer_key_override,
     set_threat_cache,
+    update_campaign_status,
     update_user_password,
 )
 
@@ -57,6 +62,23 @@ THREAT_CACHE = {
 }
 
 CAMPAIGN_STORE = []
+
+
+def _redis_client():
+    return getattr(current_app, 'redis_client', None)
+
+
+def _publish(channel, payload):
+    client = _redis_client()
+    if not client:
+        return
+    try:
+        if isinstance(payload, str):
+            client.publish(channel, payload)
+        else:
+            client.publish(channel, json.dumps(payload))
+    except Exception:
+        current_app.logger.warning('Redis publish failed on %s', channel)
 
 
 def _load_cached_threats():
@@ -74,6 +96,29 @@ def _save_cached_threats(data):
     THREAT_CACHE['data'] = data
     THREAT_CACHE['timestamp'] = time.time()
     set_threat_cache(data)
+
+
+def _campaign_filters_from_request():
+    filters = {
+        'class_name': request.form.get('class_name', 'All'),
+        'academic_year': request.form.get('academic_year', 'All'),
+        'major': request.form.get('major', 'All'),
+        'facility': request.form.get('facility', 'All'),
+        'group': request.form.get('group', 'All'),
+    }
+    cohort = request.form.get('cohort', '')
+    if cohort and all(v in ('', 'All') for v in filters.values()):
+        parts = cohort.split('|')
+        if len(parts) >= 4:
+            filters.update({
+                'class_name': parts[0] or 'All',
+                'academic_year': parts[1] or 'All',
+                'major': parts[2] or 'All',
+                'facility': parts[3] or 'All',
+            })
+            if len(parts) >= 5:
+                filters['group'] = parts[4] or 'All'
+    return filters
 
 
 @bp.route('/api/threat-feed')
@@ -111,7 +156,12 @@ def api_threat_feed():
                 elif 'apple' in u or 'icloud' in u:
                     target = "Apple"
 
-                defanged.append({'target': target, 'url': safe_url})
+                defanged.append({
+                    'target': target,
+                    'url': safe_url,
+                    'raw_url': u,
+                    'fetched_at': datetime.now(timezone.utc).isoformat(),
+                })
 
             _save_cached_threats(defanged)
             return jsonify(defanged)
@@ -130,7 +180,8 @@ def promote_threat_to_inspector():
         abort(403)
 
     data = request.get_json(silent=True) or {}
-    url = data.get('url', '').strip()
+    url = data.get('raw_url') or data.get('url', '')
+    url = url.strip()
     target = data.get('target', 'Unknown')
     if not url:
         return jsonify({'error': 'url is required'}), 400
@@ -478,7 +529,10 @@ def update_inspector_config():
 def list_campaigns():
     if not current_user.is_admin:
         abort(403)
-    return jsonify({'campaigns': CAMPAIGN_STORE})
+    campaigns = list_campaigns_db()
+    if not campaigns:
+        campaigns = CAMPAIGN_STORE
+    return jsonify({'campaigns': campaigns})
 
 
 @bp.route('/campaigns/launch', methods=['POST'])
@@ -487,32 +541,50 @@ def launch_campaign():
     if not current_user.is_admin:
         abort(403)
 
-    class_name = request.form.get('class_name', 'All')
-    academic_year = request.form.get('academic_year', 'All')
-    major = request.form.get('major', 'All')
-    facility = request.form.get('facility', 'All')
-    cohort_label = f"{class_name}|{academic_year}|{major}|{facility}"
+    filters = _campaign_filters_from_request()
+    cohort_label = f"{filters['class_name']}|{filters['academic_year']}|{filters['major']}|{filters['facility']}|{filters['group']}"
 
-    campaign = {
-        'id': str(uuid4()),
-        'cohort': cohort_label,
-        'status': 'launched',
-        'created_at': datetime.now(timezone.utc).isoformat(),
+    campaign = create_campaign(cohort_label, filters, status='queued')
+    if not campaign:
+        campaign = {
+            'campaign_id': str(uuid4()),
+            'cohort': cohort_label,
+            'filters': filters,
+            'status': 'queued',
+            'created_at': datetime.now(timezone.utc).isoformat(),
+        }
+        CAMPAIGN_STORE.insert(0, campaign)
+        CAMPAIGN_STORE[:] = CAMPAIGN_STORE[:25]
+
+    payload = {
+        'campaign_id': campaign['campaign_id'],
+        'filters': filters,
     }
-    CAMPAIGN_STORE.insert(0, campaign)
-    CAMPAIGN_STORE[:] = CAMPAIGN_STORE[:25]  # keep recent history
 
-    lambda_arn = current_app.config.get('CAMPAIGN_LAMBDA_ARN')
-    if lambda_arn and getattr(current_app, 'lambda_client', None):
-        try:
-            current_app.lambda_client.invoke(
-                FunctionName=lambda_arn,
-                InvocationType='Event',
-                Payload=json.dumps({'cohort': cohort_label}).encode('utf-8'),
+    queue_url = current_app.config.get('SQS_CAMPAIGN_QUEUE_URL')
+    try:
+        if queue_url:
+            current_app.sqs_client.send_message(
+                QueueUrl=queue_url,
+                MessageBody=json.dumps(payload),
             )
-        except Exception:
-            current_app.logger.warning('Lambda invocation failed; campaign recorded locally only.')
+            update_campaign_status(campaign['campaign_id'], 'queued')
+            record_campaign_event(campaign['campaign_id'], 'queued', {'note': 'Queued via SQS'})
+        elif current_app.config.get('CAMPAIGN_LAMBDA_ARN') and getattr(current_app, 'lambda_client', None):
+            current_app.lambda_client.invoke(
+                FunctionName=current_app.config['CAMPAIGN_LAMBDA_ARN'],
+                InvocationType='Event',
+                Payload=json.dumps(payload).encode('utf-8'),
+            )
+            update_campaign_status(campaign['campaign_id'], 'queued')
+        else:
+            update_campaign_status(campaign['campaign_id'], 'queued')
+    except Exception:
+        update_campaign_status(campaign['campaign_id'], 'failed')
+        current_app.logger.exception('Failed to queue campaign')
+        return jsonify({'error': 'Failed to queue campaign'}), 500
 
+    _publish('campaign-events', {'type': 'queued', 'campaign_id': campaign['campaign_id']})
     return jsonify({'success': True, 'campaign': campaign})
 
 
@@ -522,11 +594,48 @@ def send_validation_email():
     if not current_user.is_admin:
         abort(403)
 
-    cohort = request.form.get('cohort', 'All')
+    filters = _campaign_filters_from_request()
     template = current_app.config.get('VALIDATION_EMAIL_TEMPLATE')
-    # This is a stub — SES template + recipient selection would live here.
-    current_app.logger.info(f"Validation email queued for cohort {cohort} using template {template or 'default'}")
-    return jsonify({'success': True, 'message': f'Validation email triggered for {cohort}.'})
+    ses_from = current_app.config.get('SES_FROM_EMAIL')
+    if not ses_from:
+        return jsonify({'error': 'SES_FROM_EMAIL not configured.'}), 400
+
+    users = find_users_by_filters(filters)
+    if not users:
+        return jsonify({'error': 'No matching users found for this cohort.'}), 404
+
+    sent = 0
+    for user in users:
+        try:
+            subject = 'Email validation'
+            body_text = (
+                f"Hello {user.username},\n\n"
+                "This is a validation email to confirm delivery for the upcoming phishing simulation."
+            )
+            body_html = f"""
+            <html><body>
+            <p>Hello <strong>{user.username}</strong>,</p>
+            <p>This is a validation email to confirm delivery for the upcoming phishing simulation.</p>
+            </body></html>
+            """
+            current_app.ses_client.send_email(
+                Source=ses_from,
+                Destination={'ToAddresses': [user.email]},
+                Message={
+                    'Subject': {'Data': template or subject, 'Charset': 'UTF-8'},
+                    'Body': {
+                        'Text': {'Data': body_text, 'Charset': 'UTF-8'},
+                        'Html': {'Data': body_html, 'Charset': 'UTF-8'},
+                    },
+                },
+            )
+            sent += 1
+        except Exception:
+            current_app.logger.exception('Failed to send validation email to %s', user.email)
+
+    record_campaign_event('validation', 'validation', {'recipients': sent})
+    _publish('campaign-events', {'type': 'validation', 'recipients': sent})
+    return jsonify({'success': True, 'message': f'Validation email triggered for cohort; sent {sent} emails.'})
 
 
 @bp.route('/animation')
@@ -793,10 +902,28 @@ def api_stats_stream():
         abort(403)
 
     def event_stream():
-        while True:
-            payload = json.dumps(_build_live_stats())
-            yield f"data: {payload}\n\n"
-            time.sleep(5)
+        client = _redis_client()
+        if client:
+            pubsub = client.pubsub()
+            pubsub.subscribe('dashboard:stats')
+            initial = json.dumps(_build_live_stats())
+            _publish('dashboard:stats', initial)
+            yield f"data: {initial}\n\n"
+            try:
+                for message in pubsub.listen():
+                    if message['type'] != 'message':
+                        continue
+                    data = message['data']
+                    if isinstance(data, bytes):
+                        data = data.decode('utf-8')
+                    yield f"data: {data}\n\n"
+            finally:
+                pubsub.close()
+        else:
+            while True:
+                payload = json.dumps(_build_live_stats())
+                yield f"data: {payload}\n\n"
+                time.sleep(5)
 
     return Response(
         stream_with_context(event_stream()),
@@ -811,7 +938,9 @@ def api_stats():
     """Live statistics endpoint — polled by the dashboard every 30 seconds."""
     if not current_user.is_admin:
         abort(403)
-    return jsonify(_build_live_stats())
+    stats = _build_live_stats()
+    _publish('dashboard:stats', stats)
+    return jsonify(stats)
 
 
 @bp.route('/reports')

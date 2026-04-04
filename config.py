@@ -26,6 +26,9 @@ class Config:
         'DYNAMODB_ANSWER_KEY_OVERRIDES',
         'en-garde-prod-answer-key-overrides',
     )
+    DYNAMODB_THREAT_CACHE = os.environ.get('DYNAMODB_THREAT_CACHE', 'en-garde-prod-threat-cache')
+    DYNAMODB_CAMPAIGNS = os.environ.get('DYNAMODB_CAMPAIGNS', 'en-garde-prod-campaigns')
+    DYNAMODB_CAMPAIGN_EVENTS = os.environ.get('DYNAMODB_CAMPAIGN_EVENTS', 'en-garde-prod-campaign-events')
 
     # S3
     S3_BUCKET = os.environ.get('S3_BUCKET', 'en-garde-prod-eu-west-3')
@@ -34,12 +37,18 @@ class Config:
 
     # SQS / SES (QR self-registration)
     SQS_REGISTRATION_QUEUE_URL = os.environ.get('SQS_REGISTRATION_QUEUE_URL', '')
+    SQS_CAMPAIGN_QUEUE_URL = os.environ.get('SQS_CAMPAIGN_QUEUE_URL', '')
     SES_FROM_EMAIL = os.environ.get('SES_FROM_EMAIL', '')
     APP_LOGIN_URL = os.environ.get('APP_LOGIN_URL', 'http://localhost:5000/auth/login')
 
     # DynamoDB Local (for local development)
     DYNAMODB_ENDPOINT = os.environ.get('DYNAMODB_ENDPOINT', None)
     S3_ENDPOINT = os.environ.get('S3_ENDPOINT', None)
+
+    # Redis / ElastiCache
+    REDIS_ENDPOINT = os.environ.get('REDIS_ENDPOINT', '')
+    REDIS_URL = os.environ.get('REDIS_URL', '')
+    REDIS_USE_TLS = os.environ.get('REDIS_USE_TLS', 'false').lower() == 'true'
 
     # ── Microsoft 365 / Azure AD SSO (optional) ─────────────────────────────
     # Set all three variables to enable the "Sign in with Microsoft" button.

@@ -82,6 +82,12 @@
         </div>
         <div class="row g-2 mb-3">
             <div class="col-md-3">
+                <label class="form-label">Group</label>
+                <input type="text" class="form-control" id="campaignGroup" placeholder="All">
+            </div>
+        </div>
+        <div class="row g-2 mb-3">
+            <div class="col-md-3">
                 <label class="form-label">Pool Size</label>
                 <input type="number" min="1" class="form-control" id="poolSizeInput" placeholder="8">
             </div>
@@ -427,6 +433,7 @@ const cohortInputs = {
     year: document.getElementById('campaignYear'),
     major: document.getElementById('campaignMajor'),
     facility: document.getElementById('campaignFacility'),
+    group: document.getElementById('campaignGroup'),
 };
 
 function updateStatus(message) {
@@ -441,6 +448,7 @@ function cohortPayload() {
         academic_year: cohortInputs.year?.value || '',
         major: cohortInputs.major?.value || '',
         facility: cohortInputs.facility?.value || '',
+        group: cohortInputs.group?.value || '',
     };
 }
 
@@ -487,7 +495,8 @@ if (validationBtn) {
     validationBtn.addEventListener('click', async () => {
         updateStatus('Sending validation email...');
         try {
-            const payload = { cohort: Object.values(cohortPayload()).filter(Boolean).join('|') || 'All' };
+            const cohort = cohortPayload();
+            const payload = { ...cohort, cohort: Object.values(cohort).filter(Boolean).join('|') || 'All' };
             const data = await postForm('{{ url_for("dashboard.send_validation_email") }}', payload);
             updateStatus(data.message || 'Validation email triggered.');
         } catch (e) {

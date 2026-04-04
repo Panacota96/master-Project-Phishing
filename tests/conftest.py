@@ -32,8 +32,12 @@ def aws_env(monkeypatch):
     monkeypatch.setenv('DYNAMODB_INSPECTOR_ANON', 'test-inspector-anon')
     monkeypatch.setenv('DYNAMODB_ANSWER_KEY_OVERRIDES', 'test-answer-key-overrides')
     monkeypatch.setenv('DYNAMODB_COHORT_TOKENS', 'test-cohort-tokens')
+    monkeypatch.setenv('DYNAMODB_THREAT_CACHE', 'test-threat-cache')
+    monkeypatch.setenv('DYNAMODB_CAMPAIGNS', 'test-campaigns')
+    monkeypatch.setenv('DYNAMODB_CAMPAIGN_EVENTS', 'test-campaign-events')
     monkeypatch.setenv('S3_BUCKET', 'test-bucket')
     monkeypatch.setenv('SQS_REGISTRATION_QUEUE_URL', 'https://sqs.eu-west-3.amazonaws.com/123456789012/test-registration-queue')
+    monkeypatch.setenv('SQS_CAMPAIGN_QUEUE_URL', 'https://sqs.eu-west-3.amazonaws.com/123456789012/test-campaign-queue')
     monkeypatch.setenv('SES_FROM_EMAIL', 'no-reply@test.example.com')
     monkeypatch.setenv('APP_LOGIN_URL', 'http://localhost:5000/auth/login')
 
@@ -211,6 +215,57 @@ def _create_dynamodb_tables(region='eu-west-3'):
         BillingMode='PAY_PER_REQUEST',
     )
 
+    # Threat cache table
+    dynamodb.create_table(
+        TableName='test-threat-cache',
+        KeySchema=[{'AttributeName': 'cache_key', 'KeyType': 'HASH'}],
+        AttributeDefinitions=[{'AttributeName': 'cache_key', 'AttributeType': 'S'}],
+        BillingMode='PAY_PER_REQUEST',
+    )
+
+    # Campaigns table
+    dynamodb.create_table(
+        TableName='test-campaigns',
+        KeySchema=[{'AttributeName': 'campaign_id', 'KeyType': 'HASH'}],
+        AttributeDefinitions=[
+            {'AttributeName': 'campaign_id', 'AttributeType': 'S'},
+            {'AttributeName': 'cohort', 'AttributeType': 'S'},
+        ],
+        GlobalSecondaryIndexes=[
+            {
+                'IndexName': 'cohort-index',
+                'KeySchema': [{'AttributeName': 'cohort', 'KeyType': 'HASH'}],
+                'Projection': {'ProjectionType': 'ALL'},
+            },
+        ],
+        BillingMode='PAY_PER_REQUEST',
+    )
+
+    # Campaign events table
+    dynamodb.create_table(
+        TableName='test-campaign-events',
+        KeySchema=[
+            {'AttributeName': 'campaign_id', 'KeyType': 'HASH'},
+            {'AttributeName': 'event_id', 'KeyType': 'RANGE'},
+        ],
+        AttributeDefinitions=[
+            {'AttributeName': 'campaign_id', 'AttributeType': 'S'},
+            {'AttributeName': 'event_id', 'AttributeType': 'S'},
+            {'AttributeName': 'event_type', 'AttributeType': 'S'},
+        ],
+        GlobalSecondaryIndexes=[
+            {
+                'IndexName': 'event-type-index',
+                'KeySchema': [
+                    {'AttributeName': 'event_type', 'KeyType': 'HASH'},
+                    {'AttributeName': 'event_id', 'KeyType': 'RANGE'},
+                ],
+                'Projection': {'ProjectionType': 'ALL'},
+            },
+        ],
+        BillingMode='PAY_PER_REQUEST',
+    )
+
 
 def _create_s3_bucket(region='eu-west-3'):
     s3 = boto3.client('s3', region_name=region)
@@ -220,12 +275,22 @@ def _create_s3_bucket(region='eu-west-3'):
     )
 
 
+def _create_sqs_queues(region='eu-west-3'):
+    sqs = boto3.client('sqs', region_name=region)
+    reg = sqs.create_queue(QueueName='test-registration-queue')
+    camp = sqs.create_queue(QueueName='test-campaign-queue')
+    return reg['QueueUrl'], camp['QueueUrl']
+
+
 @pytest.fixture()
 def app():
     """Create a Flask test app with mocked AWS services."""
     with mock_aws():
         _create_dynamodb_tables()
         _create_s3_bucket()
+        reg_url, camp_url = _create_sqs_queues()
+        os.environ['SQS_REGISTRATION_QUEUE_URL'] = reg_url
+        os.environ['SQS_CAMPAIGN_QUEUE_URL'] = camp_url
 
         from app import create_app
         application = create_app()

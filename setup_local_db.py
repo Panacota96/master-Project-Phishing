@@ -157,6 +157,51 @@ TABLES = [
         AttributeDefinitions=[{'AttributeName': 'email_file', 'AttributeType': 'S'}],
         BillingMode='PAY_PER_REQUEST',
     ),
+    dict(
+        TableName='phishing-app-dev-threat-cache',
+        KeySchema=[{'AttributeName': 'cache_key', 'KeyType': 'HASH'}],
+        AttributeDefinitions=[{'AttributeName': 'cache_key', 'AttributeType': 'S'}],
+        BillingMode='PAY_PER_REQUEST',
+    ),
+    dict(
+        TableName='phishing-app-dev-campaigns',
+        KeySchema=[{'AttributeName': 'campaign_id', 'KeyType': 'HASH'}],
+        AttributeDefinitions=[
+            {'AttributeName': 'campaign_id', 'AttributeType': 'S'},
+            {'AttributeName': 'cohort', 'AttributeType': 'S'},
+        ],
+        GlobalSecondaryIndexes=[
+            {
+                'IndexName': 'cohort-index',
+                'KeySchema': [{'AttributeName': 'cohort', 'KeyType': 'HASH'}],
+                'Projection': {'ProjectionType': 'ALL'},
+            },
+        ],
+        BillingMode='PAY_PER_REQUEST',
+    ),
+    dict(
+        TableName='phishing-app-dev-campaign-events',
+        KeySchema=[
+            {'AttributeName': 'campaign_id', 'KeyType': 'HASH'},
+            {'AttributeName': 'event_id', 'KeyType': 'RANGE'},
+        ],
+        AttributeDefinitions=[
+            {'AttributeName': 'campaign_id', 'AttributeType': 'S'},
+            {'AttributeName': 'event_id', 'AttributeType': 'S'},
+            {'AttributeName': 'event_type', 'AttributeType': 'S'},
+        ],
+        GlobalSecondaryIndexes=[
+            {
+                'IndexName': 'event-type-index',
+                'KeySchema': [
+                    {'AttributeName': 'event_type', 'KeyType': 'HASH'},
+                    {'AttributeName': 'event_id', 'KeyType': 'RANGE'},
+                ],
+                'Projection': {'ProjectionType': 'ALL'},
+            },
+        ],
+        BillingMode='PAY_PER_REQUEST',
+    ),
 ]
 
 existing = {t.name for t in dynamodb.tables.all()}

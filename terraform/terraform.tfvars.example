@@ -11,3 +11,6 @@ secret_key     = "CHANGE-ME-to-a-long-random-string"
 # lambda_timeout     = 30
 # domain_name        = "engarde.esme.fr"
 # route53_zone_id    = "Z0123456789ABCDEFGHIJ"
+# redis_node_type    = "cache.t4g.small"
+# campaign_schedule_enabled = false
+# campaign_schedule_expression = "rate(1 day)"
