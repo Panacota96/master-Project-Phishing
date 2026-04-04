@@ -6,6 +6,7 @@ This folder contains resources for DevOps engineers and system administrators ma
 - [**INFRASTRUCTURE.md**](INFRASTRUCTURE.md): Detailed AWS resource mapping, IAM roles, and Terraform configuration.
 - [**CICD.md**](CICD.md): GitHub Actions pipeline overview, OIDC authentication, workflow files, and required secrets/environments.
 - [**DEPLOYMENT.md**](DEPLOYMENT.md): Procedures for initial and regular deployments, Lambda packaging, and environment management.
+- [**DEPLOYMENT_GUIDE.md**](DEPLOYMENT_GUIDE.md): Extended deployment runbook covering GitLab CI, rollback procedures, and environment tear-down.
 - [**MAINTENANCE.md**](MAINTENANCE.md): Database migrations, backups, user management, and troubleshooting common issues.
 
 ## Environments

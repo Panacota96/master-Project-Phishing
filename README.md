@@ -163,34 +163,42 @@ Every phishing email in the inspector is annotated with one or more of these sig
 
 ## Repository Structure
 
+The repository is organised as a monorepo with a clear boundary between the **Flask application** and the **AWS infrastructure**. See [`documentation/REPO_SEPARATION.md`](documentation/REPO_SEPARATION.md) for a guide to splitting these into two standalone repositories.
+
 ```
 master-Project-Phishing/
-├── app/                         # Flask application
-├── tests/                       # Pytest test suite
-├── scripts/                     # App build, content, and utility scripts
-├── documentation/               # Full documentation suite
-├── examples/                    # Real-world .eml phishing samples
-├── registration_worker/         # Async SQS Lambda worker
-├── campaign_mailer/             # Campaign mailer Lambda
-├── nginx/                       # Nginx reverse proxy configuration
-├── phishing-platform-infra/     # Infrastructure repo (Terraform, Ansible, AWS helper scripts)
-│   ├── terraform/               # Infrastructure as Code (Terraform)
-│   ├── ansible/                 # Optional VM deployment playbooks
-│   ├── aws/                     # Legacy EC2 deployment guide
-│   └── scripts/                 # Infra + migration scripts
-├── .github/workflows/           # GitHub Actions (app CI/CD)
-├── Phishing AOC/                # TryHackMe reference materials
-├── jury-presentation/           # Project review presentation
-├── Dockerfile                   # Python 3.12-slim + Gunicorn
-├── docker-compose.yml           # Web + Nginx + DynamoDB Local
-├── seed_dynamodb.py             # Seeds admin user + quizzes
-├── setup_local_db.py            # Creates all 9 DynamoDB tables locally
-├── config.py                    # Env var → app config mapping
-├── run.py                       # Local development entry point
-├── requirements.txt             # Python runtime dependencies
-├── Makefile                     # Build and workflow shortcuts
-├── VERSION                      # Current version (1.2.4)
-└── CHANGELOG.md                 # Version history
+├── app/                              # Flask application (blueprints, models, templates, static)
+├── tests/                            # Pytest test suite
+├── scripts/                          # Build, content, and utility scripts
+├── documentation/                    # Full documentation suite
+│   ├── dev/                          # Developer guides (setup, contributing, testing, EML)
+│   ├── operator/                     # Operations guides (deployment, infra, CI/CD)
+│   ├── user/                         # End-user guides (student, admin)
+│   ├── ARCHITECTURE.md               # System design + Mermaid diagrams
+│   └── REPO_SEPARATION.md            # Guide to splitting app vs infra into separate repos
+├── examples/                         # Real-world .eml phishing samples
+├── nginx/                            # Nginx reverse proxy configuration
+├── phishing-platform-infra/          # AWS infrastructure (Terraform, Lambda source, scripts)
+│   ├── terraform/                    # Infrastructure as Code (Lambda, DDB, S3, CloudFront…)
+│   ├── lambda/                       # Lambda function source code
+│   │   ├── campaign_mailer/          # Campaign mailer Lambda (SQS → SES)
+│   │   └── registration_worker/      # Registration worker Lambda (SQS → DDB → SES)
+│   ├── ansible/                      # Optional VM deployment playbooks
+│   ├── aws/                          # Legacy EC2 deployment guide (deprecated)
+│   └── scripts/                      # Infra + migration helper scripts
+├── .github/workflows/                # GitHub Actions CI/CD
+├── jury-presentation/                # Project review presentation materials
+├── phishing-aoc/                     # TryHackMe Advent of Cyber reference materials
+├── Dockerfile                        # Python 3.12-slim + Gunicorn
+├── docker-compose.yml                # Web + Nginx + DynamoDB Local dev stack
+├── seed_dynamodb.py                  # Seeds admin user + quizzes
+├── setup_local_db.py                 # Creates all DynamoDB tables locally
+├── config.py                         # Env var → app config mapping
+├── run.py                            # Local development entry point
+├── requirements.txt                  # Python runtime dependencies
+├── Makefile                          # Build and workflow shortcuts
+├── VERSION                           # Current version
+└── CHANGELOG.md                      # Version history
 ```
 
 ---
@@ -345,16 +353,24 @@ Infra + migration helpers now live under `phishing-platform-infra/scripts/`.
 
 ---
 
-### `registration_worker/` — Async Registration Lambda
+### `phishing-platform-infra/lambda/` — Lambda Function Source
 
-A standalone AWS Lambda function that processes student self-registration requests asynchronously:
+Standalone AWS Lambda functions that handle async background work. Source lives under `phishing-platform-infra/lambda/` alongside the Terraform definitions that deploy them.
+
+#### `registration_worker/` — Async Registration Lambda
 
 1. Student scans a QR code → fills out the registration form
 2. Flask app enqueues the request to **SQS**
 3. **SNS** triggers this Lambda when the message arrives
 4. Lambda creates the user account in DynamoDB and sends a **SES** confirmation email
 
-Key file: `registration_worker/handler.py`
+Key file: `phishing-platform-infra/lambda/registration_worker/handler.py`
+
+#### `campaign_mailer/` — Campaign Mailer Lambda
+
+Processes phishing simulation campaign messages from SQS, fans out SES emails to the target cohort, and records delivery events in DynamoDB + Redis pub/sub.
+
+Key file: `phishing-platform-infra/lambda/campaign_mailer/handler.py`
 
 ---
 
