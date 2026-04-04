@@ -12,6 +12,9 @@ from flask_login import UserMixin
 from werkzeug.security import check_password_hash, generate_password_hash
 
 
+ADMIN_ROLES = ('admin', 'instructor')
+
+
 # ─── Helper ───────────────────────────────────────────────────────────────────
 
 def _get_table(name_config_key):
@@ -50,6 +53,13 @@ def _paginated_scan(table, **kwargs):
 
 def _redis_client():
     return getattr(current_app, 'redis_client', None)
+
+
+def _normalize_role(role, fallback='student'):
+    normalized = (role or '').strip().lower() or fallback
+    if normalized not in ('student', 'admin', 'instructor'):
+        return fallback
+    return normalized
 
 
 # ─── Shared cache + configuration helpers ─────────────────────────────────────
@@ -282,14 +292,29 @@ def save_inspector_config_for_cohort(class_name, academic_year, major, facility,
 class User(UserMixin):
     """In-memory user object hydrated from DynamoDB."""
 
-    def __init__(self, username, email, password_hash, is_admin=False,
-                 group='default', quiz_completed=False, created_at=None,
-                 class_name='unknown', academic_year='unknown', major='unknown',
-                 facility='unknown'):
+    def __init__(
+        self,
+        username,
+        email,
+        password_hash,
+        role='student',
+        group='default',
+        quiz_completed=False,
+        created_at=None,
+        class_name='unknown',
+        academic_year='unknown',
+        major='unknown',
+        facility='unknown',
+        is_admin=None,  # legacy flag (pre-RBAC); preserved for backwards compatibility
+    ):
+        resolved_role = _normalize_role(role)
+        if is_admin is not None:
+            resolved_role = 'admin' if is_admin else 'student'
+
         self.username = username
         self.email = email
         self.password_hash = password_hash
-        self.is_admin = is_admin
+        self.role = resolved_role
         self.group = group
         self.quiz_completed = quiz_completed
         self.created_at = created_at or _now_iso()
@@ -308,12 +333,25 @@ class User(UserMixin):
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
+    @property
+    def is_admin(self):
+        """Legacy boolean: true for admin or instructor (dashboard access)."""
+        return self.role in ADMIN_ROLES
+
+    @property
+    def is_instructor(self):
+        return self.role == 'instructor'
+
+    @property
+    def has_admin_access(self):
+        return self.role in ADMIN_ROLES
+
     def to_dynamo(self):
         return {
             'username': self.username,
             'email': self.email,
             'password_hash': self.password_hash,
-            'is_admin': self.is_admin,
+            'role': self.role,
             'group': self.group,
             'quiz_completed': self.quiz_completed,
             'created_at': self.created_at,
@@ -331,7 +369,9 @@ class User(UserMixin):
             username=item['username'],
             email=item['email'],
             password_hash=item['password_hash'],
-            is_admin=item.get('is_admin', False),
+            role=_normalize_role(
+                item.get('role') or ('admin' if item.get('is_admin') else 'student')
+            ),
             group=item.get('group', 'default'),
             quiz_completed=item.get('quiz_completed', False),
             created_at=item.get('created_at'),
@@ -371,7 +411,7 @@ def create_user(
     username,
     email,
     password,
-    is_admin=False,
+    role='student',
     group='default',
     class_name='unknown',
     academic_year='unknown',
@@ -379,11 +419,12 @@ def create_user(
     facility='unknown',
 ):
     table = _get_table('DYNAMODB_USERS')
+    role = _normalize_role(role)
     user = User(
         username=username,
         email=email,
         password_hash=generate_password_hash(password),
-        is_admin=is_admin,
+        role=role,
         group=group,
         class_name=class_name,
         academic_year=academic_year,
@@ -405,8 +446,8 @@ def create_user(
 
 def batch_create_users(users_list):
     """Write multiple users to DynamoDB in batch.
-    users_list: list of dicts with keys username, email, password, group, class_name,
-    academic_year, major, facility.
+    users_list: list of dicts with keys username, email, password, role (optional),
+    group, class_name, academic_year, major, facility.
     Returns (created_count, skipped_usernames).
     """
     table = _get_table('DYNAMODB_USERS')
@@ -429,6 +470,7 @@ def batch_create_users(users_list):
                 username=u['username'],
                 email=u['email'],
                 password_hash=generate_password_hash(u['password']),
+                role=_normalize_role(u.get('role', 'student')),
                 group=u.get('group', 'default'),
                 class_name=u.get('class_name', 'unknown'),
                 academic_year=u.get('academic_year', 'unknown'),
@@ -495,6 +537,18 @@ def update_user_password(username, new_password):
         Key={'username': username},
         UpdateExpression='SET password_hash = :val',
         ExpressionAttributeValues={':val': generate_password_hash(new_password)},
+    )
+
+
+def update_user_role(username, role):
+    """Update a user's role (student/instructor/admin)."""
+    normalized = _normalize_role(role)
+    table = _get_table('DYNAMODB_USERS')
+    table.update_item(
+        Key={'username': username},
+        UpdateExpression='SET #r = :role',
+        ExpressionAttributeNames={'#r': 'role'},
+        ExpressionAttributeValues={':role': normalized},
     )
 
 

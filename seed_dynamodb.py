@@ -30,7 +30,7 @@ with app.app_context():
             username='admin',
             email='admin@example.com',
             password='admin123',
-            is_admin=True,
+            role='admin',
             group='admin',
             class_name='Admin',
             academic_year='2025',

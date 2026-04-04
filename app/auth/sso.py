@@ -22,10 +22,10 @@ local-password login for SSO-only accounts.
 
 RBAC mapping
 ------------
-The ``groups`` claim returned by Microsoft Graph can optionally be mapped to
-the local ``is_admin`` flag.  Set ``MSAL_ADMIN_GROUP_ID`` to the Azure AD
-group object-ID whose members should receive admin rights.  Leave it empty
-(the default) to keep all SSO users as ordinary students.
+The ``groups`` claim returned by Microsoft Graph maps Azure AD group IDs to
+local roles.  Use ``MSAL_ADMIN_GROUP_ID`` and ``MSAL_INSTRUCTOR_GROUP_ID`` to
+assign ``admin`` or ``instructor`` roles; all other users default to
+``student``.
 """
 
 import secrets
@@ -34,7 +34,7 @@ import msal
 from flask import current_app, flash, redirect, request, session, url_for
 from flask_login import login_user
 
-from app.models import create_user, get_user, get_user_by_email
+from app.models import create_user, get_user, get_user_by_email, update_user_role
 
 
 # ── helpers ──────────────────────────────────────────────────────────────────
@@ -59,6 +59,17 @@ def _build_msal_app(cache=None):
 
 def _callback_url() -> str:
     return url_for('auth.sso_callback', _external=True)
+
+
+def _map_groups_to_role(groups):
+    """Map Azure AD group IDs to local roles."""
+    admin_group_id = current_app.config.get('MSAL_ADMIN_GROUP_ID', '')
+    instructor_group_id = current_app.config.get('MSAL_INSTRUCTOR_GROUP_ID', '')
+    if admin_group_id and admin_group_id in groups:
+        return 'admin'
+    if instructor_group_id and instructor_group_id in groups:
+        return 'instructor'
+    return 'student'
 
 
 # ── route helpers called from auth/routes.py ─────────────────────────────────
@@ -142,6 +153,7 @@ def handle_sso_callback():
     ).lower().strip()
     email = (id_token_claims.get('email') or upn).lower().strip()
     display_name = id_token_claims.get('name', upn)
+    groups_in_token = id_token_claims.get('groups', [])
 
     if not upn:
         flash('SSO login failed: could not retrieve your Microsoft identity.', 'danger')
@@ -155,9 +167,7 @@ def handle_sso_callback():
 
     if user is None:
         # Auto-provision a new student account.
-        admin_group_id = current_app.config.get('MSAL_ADMIN_GROUP_ID', '')
-        groups_in_token = id_token_claims.get('groups', [])
-        is_admin = bool(admin_group_id and admin_group_id in groups_in_token)
+        role = _map_groups_to_role(groups_in_token)
 
         try:
             create_user(
@@ -168,7 +178,7 @@ def handle_sso_callback():
                 # login will always fail for SSO-only accounts; they must
                 # authenticate through Microsoft.
                 password=secrets.token_urlsafe(32),
-                is_admin=is_admin,
+                role=role,
                 group='default',
                 class_name='',
                 academic_year='',
@@ -177,12 +187,29 @@ def handle_sso_callback():
             )
             user = get_user(username_candidate)
             current_app.logger.info(
-                'SSO auto-provisioned user %s (%s)', username_candidate, display_name
+                'SSO auto-provisioned user %s (%s) with role %s',
+                username_candidate,
+                display_name,
+                role,
             )
         except Exception as exc:
             current_app.logger.error('SSO user provision failed: %s', exc)
             flash('SSO login failed: could not create your account.', 'danger')
             return redirect(url_for('auth.login'))
+    else:
+        # Update role on every login to reflect current group membership
+        desired_role = _map_groups_to_role(groups_in_token)
+        if user.role != desired_role:
+            try:
+                update_user_role(user.username, desired_role)
+                user.role = desired_role
+                current_app.logger.info(
+                    'SSO role updated for %s to %s based on group membership',
+                    user.username,
+                    desired_role,
+                )
+            except Exception as exc:
+                current_app.logger.warning('Could not update role for %s: %s', user.username, exc)
 
     if user is None:
         flash('SSO login failed: account not found.', 'danger')

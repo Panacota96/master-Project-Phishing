@@ -105,7 +105,7 @@ def test_worker_creates_user(aws_resources):
     assert item is not None
     assert item['email'] == 'student1@test.com'
     assert item['class_name'] == 'Class A'
-    assert item['is_admin'] is False
+    assert item['role'] == 'student'
 
 
 def test_worker_skips_duplicate(aws_resources):

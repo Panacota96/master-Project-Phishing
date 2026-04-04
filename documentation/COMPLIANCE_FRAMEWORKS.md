@@ -32,7 +32,7 @@ We actively mitigate the most critical web risks:
 
 - **A01:2021-Broken Access Control**: 
     - Use of `Flask-Login` for session management.
-    - Admin-only routes are protected with `is_admin` checks and `@login_required`.
+    - Admin-only routes are protected with role-based checks (`role` in `admin`/`instructor`) and `@login_required`.
 - **A02:2021-Cryptographic Failures**: Passwords are never stored in plain text; industry-standard `Werkzeug` hashing is used.
 - **A03:2021-Injection**: Use of **AWS DynamoDB** (NoSQL) and parameterized queries via `boto3` mitigates traditional SQL injection.
 - **A05:2021-Security Misconfiguration**: Infrastructure is provisioned via Terraform, reducing human error in AWS Console configurations.

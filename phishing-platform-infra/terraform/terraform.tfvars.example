@@ -5,6 +5,11 @@ aws_region     = "eu-west-3"
 environment    = "prod"
 app_name       = "en-garde"
 secret_key     = "CHANGE-ME-to-a-long-random-string"
+# msal_client_id       = ""
+# msal_client_secret   = ""
+# msal_authority       = "https://login.microsoftonline.com/<tenant-id>/v2.0"
+# msal_admin_group_id  = ""
+# msal_instructor_group_id = ""
 
 # Optional overrides
 # lambda_memory_size = 512

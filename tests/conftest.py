@@ -319,7 +319,7 @@ def seed_admin(app):
             'admin',
             'admin@test.com',
             'admin123',
-            is_admin=True,
+            role='admin',
             group='admin',
             class_name='Class A',
             academic_year='2025',

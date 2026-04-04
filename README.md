@@ -109,7 +109,7 @@ Every phishing email in the inspector is annotated with one or more of these sig
 
 ### Authentication & User Management
 - Login / Logout with form validation and Werkzeug password hashing
-- Admin vs student roles controlled by `is_admin` flag
+- Roles via `role` field (`admin`, `instructor`, `student`) — admin + instructor share dashboard access; mapped from Microsoft 365 groups when SSO is enabled
 - No public self-registration — accounts created by admins only (no exposed registration page)
 - Bulk student import via CSV upload
 - QR code generation for cohort self-registration: students scan → fill form → Lambda worker creates account + sends SES confirmation email
