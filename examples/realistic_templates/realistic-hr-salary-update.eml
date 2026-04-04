@@ -1,0 +1,91 @@
+From: "Human Resources" <hr-noreply@{{company_name}}-hr.net>
+To: "{{.FirstName}} {{.LastName}}" <{{.Email}}>
+Subject: [Action Required] Q2 Salary Adjustment – Review Your Revised Pay Statement
+Date: Wed, 01 Apr 2026 08:30:00 +0000
+Message-ID: <hr-salary-0401.2026@{{company_name}}-hr.net>
+Reply-To: "HR Payroll Team" <payroll@{{company_name}}-hr.net>
+Return-Path: <bounce@{{company_name}}-hr.net>
+MIME-Version: 1.0
+Authentication-Results: mx.example.com; spf=pass smtp.mailfrom={{company_name}}-hr.net; dkim=fail; dmarc=fail
+Received: from mail.{{company_name}}-hr.net (198.51.100.99) by mx.example.com with ESMTPS id DEF456 for <{{.Email}}>; Wed, 01 Apr 2026 08:30:00 +0000
+Content-Type: multipart/mixed; boundary="mix-hr-001"
+
+--mix-hr-001
+Content-Type: multipart/alternative; boundary="alt-hr-001"
+
+--alt-hr-001
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+
+Dear {{.FirstName}},
+
+Please find attached your revised Q2 2026 pay statement reflecting the salary adjustment approved last week.
+
+To access the full breakdown and acknowledge receipt, open the attachment or visit:
+{{.URL}}
+
+This action is required by April 5, 2026 to ensure timely processing of your updated direct deposit details.
+
+Kind regards,
+HR Payroll Team
+{{company_name}}
+
+--alt-hr-001
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+
+<html>
+  <body style="font-family: Arial, sans-serif; background: #f7f8fa; margin: 0; padding: 0;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background: #f7f8fa;">
+      <tr>
+        <td align="center" style="padding: 28px 16px;">
+          <table width="580" cellpadding="0" cellspacing="0" style="background: #ffffff; border-radius: 6px; overflow: hidden;">
+            <tr>
+              <td style="background: #1a3c6e; padding: 18px 28px;">
+                <span style="font-size: 18px; font-weight: 700; color: #ffffff; letter-spacing: 1px;">{{company_name}} Human Resources</span>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 28px;">
+                <p style="margin: 0 0 12px; color: #1f2937; font-size: 15px;">Dear <strong>{{.FirstName}}</strong>,</p>
+                <p style="margin: 0 0 16px; color: #374151;">Your <strong>Q2 2026 Salary Adjustment</strong> has been approved. Please review your revised pay statement and acknowledge receipt before <strong>April 5, 2026</strong>.</p>
+                <table cellpadding="8" cellspacing="0" style="background: #f0f4ff; border-left: 4px solid #1a3c6e; margin-bottom: 20px; width: 100%;">
+                  <tr><td style="color:#374151; font-size:13px;"><strong>Employee:</strong></td><td style="color:#374151; font-size:13px;">{{.FirstName}} {{.LastName}}</td></tr>
+                  <tr><td style="color:#374151; font-size:13px;"><strong>Pay Period:</strong></td><td style="color:#374151; font-size:13px;">Q2 2026 (April – June)</td></tr>
+                  <tr><td style="color:#374151; font-size:13px;"><strong>Statement ID:</strong></td><td style="color:#374151; font-size:13px;">PAY-2026-Q2-{{.FirstName}}</td></tr>
+                </table>
+                <p style="margin: 0 0 20px; color: #374151;">The attached PDF contains your complete pay statement. To confirm your updated bank details, please click the button below:</p>
+                <p style="text-align: center; margin: 0 0 20px;">
+                  <a href="{{.URL}}" style="display:inline-block; padding:12px 28px; background:#1a3c6e; color:#fff; text-decoration:none; border-radius:4px; font-weight:600; font-size:15px;">Review &amp; Acknowledge</a>
+                </p>
+                <p style="font-size: 12px; color: #9ca3af; margin: 0;">This is an automated notification from the {{company_name}} HR system. If you have questions, contact <a href="mailto:payroll@{{company_name}}-hr.net" style="color:#1a3c6e;">payroll@{{company_name}}-hr.net</a>.</p>
+              </td>
+            </tr>
+            <tr>
+              <td style="background: #f9fafb; padding: 12px 28px; font-size: 11px; color: #9ca3af; text-align: center;">
+                {{company_name}} · All rights reserved · {{company_name}}-hr.net
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
+
+--alt-hr-001--
+
+--mix-hr-001
+Content-Type: application/pdf
+Content-Disposition: attachment; filename="Q2-2026-Salary-Statement.pdf"
+Content-Transfer-Encoding: base64
+
+JVBERi0xLjQKJeLjz9MKMSAwIG9iago8PC9UeXBlIC9DYXRhbG9nCi9QYWdlcyAyIDAgUgo+
+PgplbmRvYmoKMiAwIG9iago8PC9UeXBlIC9QYWdlcwovS2lkcyBbMyAwIFJdCi9Db3VudCAx
+Pj4KZW5kb2JqCjMgMCBvYmoKPDwvVHlwZSAvUGFnZQovUGFyZW50IDIgMCBSCi9NZWRpYUJv
+eCBbMCAwIDYxMiA3OTJdCj4+CmVuZG9iagp4cmVmCjAgNAowMDAwMDAwMDAwIDY1NTM1IGYg
+CjAwMDAwMDAwMDkgMDAwMDAgbiAKMDAwMDAwMDA1OCAwMDAwMCBuIAowMDAwMDAwMTE1IDAw
+MDAwIG4gCnRyYWlsZXIKPDwvU2l6ZSA0Ci9Sb290IDEgMCBSPj4Kc3RhcnR4cmVmCjE5Mwol
+JUVPRgo=
+
+--mix-hr-001--

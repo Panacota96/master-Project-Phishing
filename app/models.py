@@ -1,6 +1,7 @@
 """DynamoDB data access layer — replaces SQLAlchemy models."""
 
 import json
+import re
 import time
 from datetime import datetime, timezone
 from decimal import Decimal
@@ -279,7 +280,10 @@ def save_inspector_config_for_cohort(class_name, academic_year, major, facility,
 
     try:
         table = current_app.dynamodb.Table(table_name)
-        item = dict(config)
+        item = {}
+        for k, v in config.items():
+            # DynamoDB does not accept Python floats; convert to Decimal
+            item[k] = Decimal(str(v)) if isinstance(v, float) else v
         item['cohort_key'] = key
         table.put_item(Item=item)
     except Exception:
@@ -876,28 +880,72 @@ def get_answer_key_overrides():
         return {}
 
 
+VALID_SIGNALS = frozenset([
+    'impersonation', 'punycode', 'externaldomain', 'spoof',
+    'socialeng', 'urgency', 'fakeinvoice', 'attachment', 'fakelogin', 'sidechannel',
+])
+VALID_CLASSIFICATIONS = frozenset(['Phishing', 'Spam'])
+
+
+def _normalize_signals(signals):
+    """Return a deduplicated list of lowercase-alphanumeric signal names."""
+    seen = set()
+    result = []
+    for s in (signals or []):
+        normalized = re.sub(r'[^a-z0-9]', '', str(s).lower())
+        if normalized and normalized not in seen:
+            seen.add(normalized)
+            result.append(normalized)
+    return result
+
+
 def get_effective_answer_key():
-    """Merge static ANSWER_KEY with DynamoDB overrides (overrides win)."""
+    """Merge static ANSWER_KEY with DynamoDB overrides (overrides win).
+
+    Signals in the merged result are guaranteed to be lowercase and
+    deduplicated so that comparisons against user-submitted signals are
+    consistent regardless of how the override was stored.
+    """
     from app.inspector.answer_key import ANSWER_KEY
     overrides = get_answer_key_overrides()
-    merged = dict(ANSWER_KEY)
+    merged = {}
+    for email_file, entry in ANSWER_KEY.items():
+        merged[email_file] = {
+            'classification': entry['classification'],
+            'signals': _normalize_signals(entry.get('signals', [])),
+            'explanation': entry.get('explanation', ''),
+        }
     for email_file, override in overrides.items():
         merged[email_file] = {
             'classification': override['classification'],
-            'signals': list(override.get('signals', [])),
+            'signals': _normalize_signals(override.get('signals', [])),
             'explanation': override.get('explanation', ''),
         }
     return merged
 
 
 def set_answer_key_override(email_file, classification, signals, explanation=''):
-    """Write or update an admin override for an email's answer key entry."""
+    """Write or update an admin override for an email's answer key entry.
+
+    Raises ValueError for unknown classification or signal names so that
+    callers get immediate feedback instead of storing invalid data.
+    """
+    if classification not in VALID_CLASSIFICATIONS:
+        raise ValueError(
+            f"Invalid classification '{classification}'. Must be one of {sorted(VALID_CLASSIFICATIONS)}."
+        )
+    normalized = _normalize_signals(signals)
+    unknown = [s for s in normalized if s not in VALID_SIGNALS]
+    if unknown:
+        raise ValueError(
+            f"Unknown signal(s): {unknown}. Valid signals: {sorted(VALID_SIGNALS)}."
+        )
     table = _get_table('DYNAMODB_ANSWER_KEY_OVERRIDES')
     table.put_item(Item={
         'email_file': email_file,
         'classification': classification,
-        'signals': signals,
-        'explanation': explanation,
+        'signals': normalized,
+        'explanation': str(explanation),
     })
 
 
