@@ -1,6 +1,7 @@
 import csv
 import io
 import json
+import os
 import time
 from uuid import uuid4
 from datetime import datetime, timezone
@@ -127,6 +128,16 @@ def api_threat_feed():
     """Fetch and defang real-time phishing URLs from OpenPhish."""
     if not current_user.is_admin:
         abort(403)
+
+    if current_app.config.get('TESTING') or os.environ.get('DISABLE_THREAT_FEED_NETWORK'):
+        sample = [{
+            'target': 'Microsoft 365',
+            'url': 'hxxps://login.microsoftonline.com.evil[.]com/verify',
+            'raw_url': 'https://login.microsoftonline.com.evil.com/verify',
+            'fetched_at': datetime.now(timezone.utc).isoformat(),
+        }]
+        _save_cached_threats(sample)
+        return jsonify(sample)
 
     cached = _load_cached_threats()
     if cached:

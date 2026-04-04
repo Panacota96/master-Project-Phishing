@@ -1,0 +1,9 @@
+-r requirements.txt
+pytest
+pytest-cov
+pytest-playwright==0.6.2
+playwright==1.52.0
+moto
+flake8
+bandit
+mcp-playwright

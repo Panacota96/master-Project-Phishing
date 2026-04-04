@@ -483,4 +483,41 @@ ANSWER_KEY = {
         "classification": "Phishing",
         "signals": ["impersonation", "socialeng", "punycode"],
     },
+
+    # ─── MICROSOFT 365 / UNIVERSITY ──────────────────────────────────────────
+    "onedrive-shared-document.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "cloudshare", "externaldomain"],
+        "explanation": (
+            "A fake OneDrive sharing alert. The link uses a lookalike SharePoint host to steal credentials."
+        ),
+    },
+    "teams-voicemail-alert.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "teamsalert", "externaldomain"],
+        "explanation": (
+            "Teams voicemail lure with a lookalike domain. The voicemail link is not on microsoft.com and requests sign-in."
+        ),
+    },
+    "mfa-fatigue-prompt.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "mfafatigue", "urgency"],
+        "explanation": (
+            "Abuses MFA fatigue: pushes the user to approve an Authenticator prompt to avoid lockout."
+        ),
+    },
+    "lms-grade-alert.eml": {
+        "classification": "Phishing",
+        "signals": ["lmsalert", "externaldomain", "fakelogin"],
+        "explanation": (
+            "University LMS spoof that pressures students to acknowledge a grade on a fake login page."
+        ),
+    },
+    "campus-it-reset.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "oauthconsent", "urgency"],
+        "explanation": (
+            "Campus IT Wi-Fi reset phishing. Uses an OAuth consent style flow on a fake enrollment domain."
+        ),
+    },
 }

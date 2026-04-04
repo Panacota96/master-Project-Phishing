@@ -1,0 +1,39 @@
+From: "LMS Notifications" <no-reply@learning.esme.edu>
+To: Student <student@esme.edu>
+Subject: Grade release requires immediate acknowledgment
+MIME-Version: 1.0
+Message-ID: <lms-grade-{{uuid}}@learning.esme.edu>
+Date: Tue, 04 Mar 2025 11:05:00 +0000
+Return-Path: bounce@learning.esme.edu
+Content-Type: multipart/alternative; boundary="lms-grade"
+Authentication-Results: mx.esme.edu; spf=pass smtp.mailfrom=learning.esme.edu
+
+--lms-grade
+Content-Type: text/plain; charset="UTF-8"
+
+Your instructor posted a grade that requires your acknowledgment within 2 hours.
+
+Course: Secure Coding 401
+Assessment: Final project rubric
+
+View details: https://lms.esme.edu.verify-login.net/courses/secure-coding
+
+--lms-grade
+Content-Type: text/html; charset="UTF-8"
+
+<html>
+  <body style="font-family:Arial,sans-serif;color:#111827;background:#f8fafc;">
+    <p style="margin:0 0 8px;">Your instructor posted a grade that requires your acknowledgment within <strong>2 hours</strong>.</p>
+    <p style="margin:0 0 6px;">Course: <strong>Secure Coding 401</strong></p>
+    <p style="margin:0 0 12px;">Assessment: Final project rubric</p>
+    <p>
+      <a href="https://lms.esme.edu.verify-login.net/courses/secure-coding"
+         style="background:#16a34a;color:#fff;padding:12px 16px;border-radius:6px;text-decoration:none;font-weight:600;">
+         Acknowledge Grade
+      </a>
+    </p>
+    <p style="font-size:13px;color:#6b7280;">Failure to acknowledge will delay transcript submission.</p>
+  </body>
+</html>
+
+--lms-grade--

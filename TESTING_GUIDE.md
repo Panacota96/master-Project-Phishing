@@ -10,8 +10,11 @@ python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
 python -m pip install pytest moto
+python -m pip install -r requirements-dev.txt  # playwright, bandit, pytest plugins
+python -m playwright install chromium          # one-time browser download
 make test
 make validate-eml
+pytest tests/e2e/ --browser chromium --headed=false
 ```
 
 ## Troubleshooting
@@ -38,6 +41,14 @@ python -m pip install pytest moto
 ```bash
 pytest tests/ -v
 ```
+
+### Run Playwright E2E Tests
+
+```bash
+pytest tests/e2e/ --browser chromium --headed=false
+```
+
+The E2E suite starts a local Flask server with mocked AWS (moto) and drives Chromium via Playwright.
 
 ### Validate EML Realism
 

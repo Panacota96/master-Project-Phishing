@@ -1,0 +1,37 @@
+From: "ESME IT Service Desk" <helpdesk@it-esme.fr>
+To: Student <student@esme.edu>
+Subject: Verify your identity to restore Wi-Fi access
+MIME-Version: 1.0
+Message-ID: <campus-it-reset-{{uuid}}@it-esme.fr>
+Date: Tue, 04 Mar 2025 11:20:00 +0000
+Return-Path: bounce@it-esme.fr
+Content-Type: multipart/alternative; boundary="campus-it"
+Authentication-Results: mx.esme.edu; dkim=fail; spf=softfail smtp.mailfrom=it-esme.fr
+
+--campus-it
+Content-Type: text/plain; charset="UTF-8"
+
+Your Wi-Fi profile needs revalidation after a security update.
+
+To prevent deactivation, sign in with your campus account and approve the device enrollment prompt.
+
+Secure portal: https://wifi.esme.fr.device-reset.net/enroll
+
+--campus-it
+Content-Type: text/html; charset="UTF-8"
+
+<html>
+  <body style="font-family:Arial,sans-serif;color:#0f172a;background:#f3f4f6;">
+    <p style="margin:0 0 10px;">Your Wi-Fi profile needs revalidation after a security update.</p>
+    <p style="margin:0 0 10px;">To prevent deactivation, sign in with your campus account and approve the device enrollment prompt.</p>
+    <p>
+      <a href="https://wifi.esme.fr.device-reset.net/enroll"
+         style="background:#2563eb;color:#fff;padding:12px 18px;border-radius:6px;text-decoration:none;font-weight:700;">
+         Revalidate Wi-Fi Profile
+      </a>
+    </p>
+    <p style="font-size:13px;color:#6b7280;">This action must be completed today to avoid network blocking.</p>
+  </body>
+</html>
+
+--campus-it--

@@ -35,6 +35,8 @@ def extract_parts(msg):
     html_body = ''
     attachments = []
 
+    headers = {k.lower(): v for k, v in msg.items()}
+
     if msg.is_multipart():
         for part in msg.walk():
             content_type = part.get_content_type()
@@ -73,6 +75,7 @@ def extract_parts(msg):
         'attachments': attachments,
         'image_attachments': image_attachments,
         'non_inline_attachments': non_inline_attachments,
+        'headers': headers,
     }
 
 
@@ -97,6 +100,7 @@ def extract_parts_from_json(obj: dict):
         'attachments': attachments,
         'image_attachments': image_attachments,
         'non_inline_attachments': non_inline_attachments,
+        'headers': {k.lower(): v for k, v in (obj.get('headers') or {}).items()},
     }
 
 
@@ -146,7 +150,77 @@ def validate_eml(path: Path, allowlist: dict):
     if skip.get('require_attachment', False) and not has_attachments:
         failures.append('missing attachment')
 
-    return failures, warnings
+    score, score_notes = score_parts(parts)
+    warnings.extend(score_notes)
+
+    min_score = skip.get('min_score_override', None)
+    if min_score is None:
+        min_score = allowlist.get('min_score', 50)
+    try:
+        min_score_int = int(min_score)
+    except (TypeError, ValueError):
+        min_score_int = 50
+
+    if score < min_score_int and not skip.get('skip_min_score', False):
+        failures.append(f'realism score {score} below minimum {min_score_int}')
+
+    return failures, warnings, score
+
+
+def score_parts(parts: dict):
+    """Compute a simple realism score out of 100 based on structure richness."""
+    score = 0
+    notes = []
+
+    has_text = bool(parts.get('text', '').strip())
+    has_html = bool(parts.get('html', '').strip())
+    has_links = bool(parts.get('links'))
+    has_attachments = bool(parts.get('non_inline_attachments'))
+    has_images = bool(parts.get('images') or parts.get('image_attachments'))
+    headers = parts.get('headers') or {}
+
+    if has_text and has_html:
+        score += 20
+    elif has_html or has_text:
+        score += 10
+        notes.append('only one body part present')
+    else:
+        notes.append('no body content detected')
+
+    if has_links:
+        score += 20
+    else:
+        notes.append('no hyperlinks present')
+
+    if has_images:
+        score += 10
+    else:
+        notes.append('no inline images found')
+
+    if has_attachments:
+        score += 15
+    else:
+        notes.append('no downloadable attachments detected')
+
+    if headers.get('authentication-results') or headers.get('dkim-signature') or headers.get('received-spf'):
+        score += 10
+    else:
+        notes.append('no authentication headers (DKIM/SPF) present')
+
+    if headers.get('message-id'):
+        score += 5
+    else:
+        notes.append('missing Message-ID header')
+
+    if headers.get('return-path') or headers.get('reply-to'):
+        score += 5
+
+    if headers.get('received'):
+        score += 5
+    else:
+        notes.append('no Received headers found')
+
+    return min(score, 100), notes
 
 
 def main() -> int:
@@ -154,24 +228,29 @@ def main() -> int:
     parser.add_argument('--root', default='examples', help='Root folder to scan for .eml')
     parser.add_argument('--allowlist', default='examples/realism_allowlist.json')
     parser.add_argument('--report', default='examples/realism_report.json', help='Path to write JSON report')
+    parser.add_argument('--min-score', type=int, default=50, help='Minimum realism score to pass')
     args = parser.parse_args()
 
     root = Path(args.root)
     allowlist = load_allowlist(Path(args.allowlist))
+    allowlist.setdefault('min_score', args.min_score)
 
     failures = {}
     warnings = {}
+    scores = {}
     for path in root.rglob('*.eml'):
-        errors, warns = validate_eml(path, allowlist)
+        errors, warns, score = validate_eml(path, allowlist)
         if errors:
             failures[str(path)] = errors
         if warns:
             warnings[str(path)] = warns
+        scores[str(path)] = score
 
     report_path = Path(args.report)
     report_payload = {
         'failures': failures,
         'warnings': warnings,
+        'scores': scores,
     }
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(json.dumps(report_payload, indent=2))

@@ -1,0 +1,43 @@
+From: "Microsoft Teams" <voicemail@teams.microsoft.com>
+To: Student <student@esme.edu>
+Subject: Missed Teams voicemail from +33 1 23 45 67 89
+MIME-Version: 1.0
+Message-ID: <teams-voicemail-{{uuid}}@teams.microsoft.com>
+Date: Tue, 04 Mar 2025 10:25:00 +0000
+Return-Path: bounce@teams.microsoft.com
+Content-Type: multipart/alternative; boundary="teams-voicemail"
+Authentication-Results: mx.esme.edu; dkim=fail; spf=softfail smtp.mailfrom=teams.microsoft.com
+
+--teams-voicemail
+Content-Type: text/plain; charset="UTF-8"
+
+You have a new voicemail in Microsoft Teams.
+
+Caller: +33 1 23 45 67 89
+Length: 01:12
+
+Play voicemail: https://teams.microsoft.com.evil.link/call/recording?id=AZCdjhlks
+
+Transcription requires sign-in. This recording will be deleted after 12 hours.
+
+--teams-voicemail
+Content-Type: text/html; charset="UTF-8"
+
+<html>
+  <body style="font-family:Segoe UI,Arial,sans-serif;color:#111827;background:#f9fafb;">
+    <p style="margin:0 0 8px;">You have a new voicemail in Microsoft Teams.</p>
+    <div style="background:#e0f2fe;padding:12px;border-radius:8px;margin-bottom:12px;">
+      <div style="font-weight:600;">Caller: +33 1 23 45 67 89</div>
+      <div>Length: 01:12</div>
+    </div>
+    <p>
+      <a href="https://teams.microsoft.com.evil.link/call/recording?id=AZCdjhlks"
+         style="background:#0ea5e9;color:#fff;padding:10px 14px;border-radius:6px;text-decoration:none;font-weight:600;">
+        Play Voicemail
+      </a>
+    </p>
+    <p style="font-size:13px;color:#6b7280;">Transcription requires sign-in. This recording will be deleted after 12 hours.</p>
+  </body>
+</html>
+
+--teams-voicemail--

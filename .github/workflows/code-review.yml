@@ -1,0 +1,46 @@
+name: Automated Code Review
+
+on:
+  pull_request:
+    branches: [main, develop]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  code-review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: Request Copilot Review
+        uses: github/copilot-code-review-action@v1
+
+      - name: Ruff Lint
+        uses: astral-sh/ruff-action@v1
+        with:
+          args: "check app/ tests/ --output-format=github"
+
+      - name: Bandit Security Scan
+        run: bandit -r app/ -f json -o bandit-report.json || true
+
+      - name: Run Tests
+        run: pytest tests/ --cov=app --cov-report=xml
+
+      - name: Install Playwright Browsers
+        run: playwright install chromium
+
+      - name: Run E2E Tests
+        run: pytest tests/e2e/ --browser chromium --headed=false

@@ -1,0 +1,46 @@
+From: "OneDrive Notifications" <no-reply@sharepointonline.com>
+To: Student <student@esme.edu>
+Subject: [Action Required] A file was shared with you in OneDrive
+MIME-Version: 1.0
+Message-ID: <onedrive-share-{{uuid}}@sharepointonline.com>
+Date: Tue, 04 Mar 2025 10:15:00 +0000
+Return-Path: bounce@sharepointonline.com
+Reply-To: support@contoso-storage.com
+Content-Type: multipart/alternative; boundary="onedrive-boundary"
+Authentication-Results: mx.esme.edu; dkim=fail; spf=softfail smtp.mailfrom=sharepointonline.com
+
+--onedrive-boundary
+Content-Type: text/plain; charset="UTF-8"
+
+Hi,
+
+Contoso IT shared the document "Budget_Reforecast_Q3.xlsx" with you on OneDrive.
+
+The link will expire in 24 hours for security reasons. If you do not open it, access will be revoked.
+
+Open document: https://contoso-my.sharepoint.com.evil.link/onedrive/redir.aspx?item=Budget_Reforecast_Q3
+
+If you think this was sent in error, contact IT immediately.
+
+--onedrive-boundary
+Content-Type: text/html; charset="UTF-8"
+
+<html>
+  <body style="font-family:Segoe UI,Arial,sans-serif;color:#1f2937;background:#f8fafc;">
+    <p style="font-size:14px;">Hi,</p>
+    <p style="font-size:14px;">Contoso IT shared the document <strong>Budget_Reforecast_Q3.xlsx</strong> with you on OneDrive.</p>
+    <p style="font-size:14px;">The link will expire in <strong>24 hours</strong> for security reasons. If you do not open it, access will be revoked.</p>
+    <p>
+      <a href="https://contoso-my.sharepoint.com.evil.link/onedrive/redir.aspx?item=Budget_Reforecast_Q3"
+         style="background:#2563eb;color:#fff;padding:12px 16px;border-radius:6px;text-decoration:none;display:inline-block;">
+        Open in OneDrive
+      </a>
+    </p>
+    <p style="font-size:13px;color:#6b7280;">
+      If you think this was sent in error, contact IT immediately.<br>
+      <img src="https://pixel.contoso-storage.com/track?id=onedrive" width="1" height="1" alt="">
+    </p>
+  </body>
+</html>
+
+--onedrive-boundary--
