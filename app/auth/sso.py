@@ -16,9 +16,9 @@ Auto-provisioning
 -----------------
 When a Microsoft user authenticates for the first time a local account is
 created automatically using the Microsoft UPN as the username and the OIDC
-``email`` claim as the email address.  The account is created **without** a
-usable local password (the hash is set to the placeholder ``"sso-only"``),
-preventing local-password login for SSO-only accounts.
+``email`` claim as the email address.  The account is created with a
+cryptographically random password that is never revealed, preventing
+local-password login for SSO-only accounts.
 
 RBAC mapping
 ------------
@@ -30,7 +30,6 @@ group object-ID whose members should receive admin rights.  Leave it empty
 
 import os
 import secrets
-from urllib.parse import urlparse
 
 import msal
 from flask import current_app, flash, redirect, request, session, url_for
@@ -69,7 +68,9 @@ def _callback_url() -> str:
 def initiate_sso_login():
     """Redirect the browser to Microsoft's login page.
 
-    Stores a PKCE *state* nonce in the session to prevent CSRF on the callback.
+    Stores a PKCE *state* nonce in the session to prevent CSRF on the
+    callback.  Any *next* page requested before SSO is stored in the session
+    (not the query string) to avoid open-redirect via the callback URL.
     Returns a Flask ``Response`` object.
     """
     if not _sso_enabled():
@@ -78,6 +79,12 @@ def initiate_sso_login():
 
     state = secrets.token_urlsafe(32)
     session['sso_state'] = state
+
+    # Store the intended destination in the session so that the callback can
+    # redirect there without exposing it as a query-string parameter.
+    next_path = request.args.get('next', '')
+    if next_path and next_path.startswith('/') and not next_path.startswith('//'):
+        session['sso_next'] = next_path
 
     msal_app = _build_msal_app()
     auth_url = msal_app.get_authorization_request_url(
@@ -184,9 +191,7 @@ def handle_sso_callback():
 
     login_user(user)
     flash(f'Signed in via Microsoft as {display_name}.', 'success')
-    next_page = request.args.get('next', '')
-    # Prevent open-redirect: only allow relative paths on the same host.
-    parsed = urlparse(next_page)
-    if parsed.netloc or parsed.scheme:
-        next_page = url_for('quiz.quiz_list')
-    return redirect(next_page or url_for('quiz.quiz_list'))
+    # Retrieve the intended destination from the session (set by initiate_sso_login).
+    # Never redirect to an externally supplied URL to prevent open-redirect attacks.
+    next_page = session.pop('sso_next', None) or url_for('quiz.quiz_list')
+    return redirect(next_page)
