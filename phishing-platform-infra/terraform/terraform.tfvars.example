@@ -19,3 +19,7 @@ secret_key     = "CHANGE-ME-to-a-long-random-string"
 # redis_node_type    = "cache.t4g.small"
 # campaign_schedule_enabled = false
 # campaign_schedule_expression = "rate(1 day)"
+
+# Security & audit (both default to true; set to false to skip in dev)
+# enable_waf         = true   # AWS WAF v2 on CloudFront (rate limiting + OWASP rules)
+# enable_cloudtrail  = true   # Multi-region CloudTrail to a dedicated S3 bucket

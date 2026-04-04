@@ -7,6 +7,7 @@ resource "aws_cloudfront_distribution" "app" {
   comment             = "${local.prefix} – stable login URL"
   default_root_object = ""
   aliases             = var.domain_name != "" ? [var.domain_name] : []
+  web_acl_id          = var.enable_waf ? aws_wafv2_web_acl.app[0].arn : null
 
   origin {
     domain_name = replace(aws_apigatewayv2_api.app.api_endpoint, "https://", "")

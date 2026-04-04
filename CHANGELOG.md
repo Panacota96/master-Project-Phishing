@@ -6,6 +6,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [1.3.0] - 2026-04-04
+
+### Added
+- **AWS WAF v2** (`waf.tf`): CloudFront-scoped Web ACL (us-east-1) with `AWSManagedRulesCommonRuleSet`, `AWSManagedRulesKnownBadInputsRuleSet`, and a per-IP rate-based rule (300 requests / 5 minutes). Controlled by `enable_waf` variable (default `true`).
+- **AWS Secrets Manager** (`secrets_manager.tf`): Flask `SECRET_KEY` and `MSAL_CLIENT_SECRET` are now stored in a Secrets Manager secret (`{prefix}/app-secrets`). The Lambda receives `SECRET_ARN` instead of the plaintext values, preventing credentials from appearing in the AWS console environment variables view.
+- **AWS CloudTrail** (`cloudtrail.tf`): Multi-region trail writing to a dedicated AES256-encrypted S3 bucket with log-file validation enabled and S3 data-event logging for the application bucket. Controlled by `enable_cloudtrail` variable (default `true`).
+- **DynamoDB PITR**: Point-in-Time Recovery enabled on all 11 DynamoDB tables for a 35-day recovery window.
+- **SQS DLQ alarms**: Two new CloudWatch alarms (`{prefix}-registration-dlq-depth` and `{prefix}-campaign-dlq-depth`) fire on the SNS alerts topic when either dead-letter queue accumulates ≥ 1 message.
+- **`config.py` Secrets Manager resolver**: `_resolve_secret_key()` and `_resolve_msal_client_secret()` fetch credentials from Secrets Manager when `SECRET_ARN` is set, falling back to the `SECRET_KEY` / `MSAL_CLIENT_SECRET` environment variables for local development and unit tests.
+- **Terraform variables**: `enable_waf` (bool, default `true`) and `enable_cloudtrail` (bool, default `true`) added to `variables.tf`.
+- **Terraform outputs**: `waf_arn`, `app_secrets_arn`, `secrets_manager_arn`, and `cloudtrail_bucket` added to `outputs.tf`.
+
+### Changed
+- `lambda.tf`: Lambda env var `SECRET_KEY` replaced with `SECRET_ARN`; `MSAL_CLIENT_SECRET` removed from plaintext env vars (now fetched at runtime from Secrets Manager).
+- `iam.tf`: Lambda execution role now includes `secretsmanager:GetSecretValue` on the application secrets ARN.
+- `cloudfront.tf`: `web_acl_id` now references the WAF Web ACL ARN when `enable_waf = true`.
+- `terraform.tfvars.example`: Documents `enable_waf` and `enable_cloudtrail` optional overrides.
+- `documentation/ARCHITECTURE.md`: Updated System Overview and AWS Infrastructure diagrams to show WAF, Secrets Manager, CloudTrail, SQS DLQs for both queues, 11 DynamoDB tables, and 8 CloudWatch alarms.
+
+---
+
 ## [1.2.5] - 2026-04-04
 
 ### Added

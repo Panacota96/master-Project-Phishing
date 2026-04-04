@@ -31,31 +31,37 @@ graph TB
     end
 
     subgraph AWS["AWS — eu-west-3"]
+        WAF["WAF v2\nOWASP rules + rate limiting"]
         CF["CloudFront\nCDN + HTTPS"]
         APIGW["API Gateway v2\nHTTP API"]
         LambdaApp["Lambda Flask App\nPython 3.12 · 512 MB"]
         LambdaWorker["Lambda Registration Worker\nPython 3.12 · 256 MB"]
-        DDB[("DynamoDB\n9 Tables")]
+        DDB[("DynamoDB\n11 Tables + PITR")]
         S3[("S3 Bucket\nEML + Videos + Reports")]
         SQS["SQS Queue\nRegistration"]
         SES["SES\nEmail"]
         SNS["SNS\nAlerts + Events"]
         CW["CloudWatch\nAlarms + Dashboard + X-Ray"]
+        SM["Secrets Manager\nSECRET_KEY + MSAL"]
+        CT["CloudTrail\nAudit Log"]
     end
 
-    Student -->|HTTPS| CF
-    Admin -->|HTTPS| CF
+    Student -->|HTTPS| WAF
+    Admin -->|HTTPS| WAF
+    WAF --> CF
     CF --> APIGW
     APIGW --> LambdaApp
     LambdaApp --> DDB
     LambdaApp --> S3
     LambdaApp --> SQS
+    LambdaApp --> SM
     SQS --> LambdaWorker
     LambdaWorker --> DDB
     LambdaWorker --> SES
     LambdaWorker --> SNS
     LambdaApp --> CW
     SNS --> CW
+    CT --> S3
     GHA -->|Terraform apply| LambdaApp
     GHA -->|S3 sync| S3
     GHA -->|seed_dynamodb.py| DDB
@@ -73,6 +79,9 @@ graph TB
 ![CloudFront](https://img.shields.io/badge/CloudFront-232F3E?logo=amazonaws&logoColor=white)
 ![API Gateway](https://img.shields.io/badge/API_Gateway-FF4F8B?logo=amazonaws&logoColor=white)
 ![CloudWatch](https://img.shields.io/badge/CloudWatch-FF4F8B?logo=amazonaws&logoColor=white)
+![AWS WAF](https://img.shields.io/badge/AWS_WAF-DD344C?logo=amazonaws&logoColor=white)
+![Secrets Manager](https://img.shields.io/badge/Secrets_Manager-DD344C?logo=amazonaws&logoColor=white)
+![CloudTrail](https://img.shields.io/badge/CloudTrail-232F3E?logo=amazonaws&logoColor=white)
 
 All resources grouped by AWS service with connection direction.
 
@@ -83,8 +92,12 @@ graph LR
         ACM["ACM Cert\nus-east-1"]
     end
 
+    subgraph Security["WAF v2 (us-east-1)"]
+        WAF["Web ACL\nAWSManagedRulesCommonRuleSet\nAWSManagedRulesKnownBadInputsRuleSet\nRate limit: 300 req/5 min per IP"]
+    end
+
     subgraph CDN["CloudFront"]
-        CF["Distribution\nTTL=0 · Compress\nredirect-to-https"]
+        CF["Distribution\nTTL=0 · Compress\nredirect-to-https · WAF attached"]
     end
 
     subgraph APIGW_["API Gateway v2"]
@@ -98,9 +111,10 @@ graph LR
 
     subgraph Storage["S3"]
         S3["phishing-app-{env}-eu-west-3\nVersioned · AES256\nPublic read: videos/* (dev only)\nPrivate: eml-samples/ reports/"]
+        S3Trail["phishing-app-{env}-cloudtrail-{acct}\nAES256 · Public access blocked"]
     end
 
-    subgraph DB["DynamoDB — 9 tables (PAY_PER_REQUEST)"]
+    subgraph DB["DynamoDB — 11 tables (PAY_PER_REQUEST + PITR)"]
         TUsers["users\nPK: username\nGSI: email-index, group-index"]
         TQuizzes["quizzes\nPK: quiz_id"]
         TAttempts["attempts\nPK: username+quiz_id\nGSI: quiz-index, group-index"]
@@ -110,11 +124,15 @@ graph LR
         TBugs["bugs\nPK: bug_id"]
         TAnswerKey["answer-key-overrides\nPK: email_file"]
         TCohort["cohort-tokens\nPK: token · TTL: expires_at (90 days)"]
+        TThreatCache["threat-cache\nPK: cache_key · TTL: ttl"]
+        TCampaigns["campaigns\nPK: campaign_id · GSI: cohort-index"]
     end
 
     subgraph Async["SQS + SES + SNS"]
         SQS["Registration Queue\nDLQ · SSE · 60s visibility · 1-day retention"]
         DLQQ["Registration DLQ\n14-day retention · maxReceiveCount=4"]
+        CampaignQ["Campaign Queue\nDLQ · SSE · 300s visibility · 7-day retention"]
+        CampaignDLQ["Campaign DLQ\n14-day retention"]
         SES["SES Email Identity\nno-reply@..."]
         SNSReg["SNS Registration Topic\nFuture fan-out"]
         SNSAlerts["SNS Alerts Topic\n+ Email subscription (optional)"]
@@ -122,12 +140,17 @@ graph LR
 
     subgraph Observe["CloudWatch"]
         CWLogs["Log Groups\n/aws/lambda/{app,worker} · /aws/apigateway/*\n14-day retention"]
-        CWAlarms["6 Alarms\nLambda errors(>=5)/duration-p95(>=25s)/throttles(>=1)\nAPI GW 4xx(>=50)/5xx(>=3) · DynamoDB SystemErrors(>=1)"]
+        CWAlarms["8 Alarms\nLambda errors/duration-p95/throttles\nAPI GW 4xx/5xx · DynamoDB SystemErrors\nRegistration DLQ depth · Campaign DLQ depth"]
         CWDash["Dashboard\nphishing-app-{env}-overview\n3 rows: Lambda · API GW · DynamoDB"]
     end
 
+    subgraph SecretsAudit["Secrets + Audit"]
+        SM["Secrets Manager\n{prefix}/app-secrets\nSECRET_KEY + MSAL_CLIENT_SECRET"]
+        CT["CloudTrail\n{prefix}-trail · multi-region\nS3 data events for app bucket"]
+    end
+
     subgraph IAM_["IAM"]
-        RoleLambda["phishing-app-{env}-lambda-role\nDynamoDB (9 tables+GSIs) · S3 · SQS:SendMessage · X-Ray"]
+        RoleLambda["phishing-app-{env}-lambda-role\nDynamoDB (11 tables+GSIs) · S3 · SQS:SendMessage\nX-Ray · secretsmanager:GetSecretValue"]
         RoleWorker["phishing-app-{env}-registration-worker-role\nDynamoDB:users · SES:SendEmail · SQS:Receive+Delete · SNS:Publish"]
         RoleGHA["phishing-app-{env}-github-actions-deploy\nOIDC · Lambda · IAM · DynamoDB · S3 · API GW\nCloudFront · CloudWatch · SNS · SQS · SES · X-Ray · ACM · Route53"]
         OIDC["OIDC Provider\ntoken.actions.githubusercontent.com\nrepo: Panacota96/master-Project-Phishing:*"]
@@ -135,13 +158,17 @@ graph LR
 
     R53 --> CF
     ACM --> CF
+    WAF --> CF
     CF --> APIGW
     APIGW --> LApp
-    LApp --> TUsers & TQuizzes & TAttempts & TResponses & TInspector & TInspectorAnon & TBugs & TAnswerKey & TCohort
+    LApp --> TUsers & TQuizzes & TAttempts & TResponses & TInspector & TInspectorAnon & TBugs & TAnswerKey & TCohort & TThreatCache & TCampaigns
     LApp --> S3
     LApp --> SQS
+    LApp --> CampaignQ
+    LApp --> SM
     SQS --> LWorker
     SQS --> DLQQ
+    CampaignQ --> CampaignDLQ
     LWorker --> TUsers
     LWorker --> SES
     LWorker --> SNSReg
@@ -149,6 +176,7 @@ graph LR
     LApp --> CWLogs
     LWorker --> CWLogs
     APIGW --> CWLogs
+    CT --> S3Trail
     RoleLambda --> LApp
     RoleWorker --> LWorker
     OIDC --> RoleGHA

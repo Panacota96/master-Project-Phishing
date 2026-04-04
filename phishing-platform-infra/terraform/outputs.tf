@@ -87,3 +87,13 @@ output "custom_domain_url" {
   description = "Custom domain URL (empty if not configured)"
   value       = var.domain_name != "" ? "https://${var.domain_name}" : ""
 }
+
+output "secrets_manager_arn" {
+  description = "ARN of the Secrets Manager secret holding Flask SECRET_KEY and MSAL credentials"
+  value       = aws_secretsmanager_secret.app_secrets.arn
+}
+
+output "waf_arn" {
+  description = "ARN of the WAF v2 Web ACL attached to CloudFront (empty if WAF disabled)"
+  value       = var.enable_waf ? aws_wafv2_web_acl.app[0].arn : ""
+}

@@ -142,3 +142,20 @@ resource "aws_iam_role_policy" "lambda_s3" {
     ]
   })
 }
+
+# Secrets Manager access (read SECRET_KEY and MSAL credentials at runtime)
+resource "aws_iam_role_policy" "lambda_secrets" {
+  name = "${local.prefix}-lambda-secrets"
+  role = aws_iam_role.lambda.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = ["secretsmanager:GetSecretValue"]
+        Resource = aws_secretsmanager_secret.app_secrets.arn
+      }
+    ]
+  })
+}

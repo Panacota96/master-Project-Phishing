@@ -124,3 +124,15 @@ variable "campaign_schedule_expression" {
   type        = string
   default     = "rate(1 day)"
 }
+
+variable "enable_waf" {
+  description = "Enable AWS WAF v2 Web ACL on CloudFront (rate limiting + OWASP managed rules)"
+  type        = bool
+  default     = true
+}
+
+variable "enable_cloudtrail" {
+  description = "Enable multi-region AWS CloudTrail audit logging with a dedicated S3 bucket"
+  type        = bool
+  default     = true
+}

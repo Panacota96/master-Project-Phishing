@@ -1,8 +1,63 @@
+import json
+import logging
 import os
+
+logger = logging.getLogger(__name__)
+
+
+def _resolve_secret_key() -> str:
+    """Return the Flask SECRET_KEY.
+
+    When running on AWS Lambda the ``SECRET_ARN`` environment variable points
+    to a Secrets Manager secret that holds the key as a JSON object
+    ``{"SECRET_KEY": "..."}`` alongside other credentials.  We fetch the value
+    at startup so the plaintext key is never stored as a Lambda environment
+    variable (where it is visible in the AWS console).
+
+    Falls back to the ``SECRET_KEY`` environment variable (or the insecure
+    development default) when ``SECRET_ARN`` is absent — this preserves
+    backward-compatibility for local development and unit tests.
+    """
+    secret_arn = os.environ.get("SECRET_ARN", "")
+    if secret_arn:
+        try:
+            import boto3
+            from botocore.exceptions import BotoCoreError, ClientError
+
+            region = os.environ.get("AWS_REGION_NAME", "eu-west-3")
+            client = boto3.client("secretsmanager", region_name=region)
+            resp = client.get_secret_value(SecretId=secret_arn)
+            data = json.loads(resp["SecretString"])
+            return data.get("SECRET_KEY", os.environ.get("SECRET_KEY", "dev-secret-key-change-in-production"))
+        except (ClientError, BotoCoreError) as exc:
+            logger.warning("Secrets Manager fetch failed (%s); falling back to SECRET_KEY env var", exc)
+        except (json.JSONDecodeError, KeyError) as exc:
+            logger.warning("Secrets Manager secret parse error (%s); falling back to SECRET_KEY env var", exc)
+    return os.environ.get("SECRET_KEY", "dev-secret-key-change-in-production")
+
+
+def _resolve_msal_client_secret() -> str:
+    """Return the MSAL client secret from Secrets Manager or env var."""
+    secret_arn = os.environ.get("SECRET_ARN", "")
+    if secret_arn:
+        try:
+            import boto3
+            from botocore.exceptions import BotoCoreError, ClientError
+
+            region = os.environ.get("AWS_REGION_NAME", "eu-west-3")
+            client = boto3.client("secretsmanager", region_name=region)
+            resp = client.get_secret_value(SecretId=secret_arn)
+            data = json.loads(resp["SecretString"])
+            return data.get("MSAL_CLIENT_SECRET", os.environ.get("MSAL_CLIENT_SECRET", ""))
+        except (ClientError, BotoCoreError) as exc:
+            logger.warning("Secrets Manager fetch failed (%s); falling back to MSAL_CLIENT_SECRET env var", exc)
+        except (json.JSONDecodeError, KeyError) as exc:
+            logger.warning("Secrets Manager secret parse error (%s); falling back to MSAL_CLIENT_SECRET env var", exc)
+    return os.environ.get("MSAL_CLIENT_SECRET", "")
 
 
 class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
+    SECRET_KEY = _resolve_secret_key()
 
     # Flask-WTF CSRF — allow requests through CloudFront where the Referer
     # header is the CloudFront domain, not the API Gateway origin.
@@ -54,7 +109,7 @@ class Config:
     # Set all three variables to enable the "Sign in with Microsoft" button.
     # Leave them empty (default) to disable SSO entirely.
     MSAL_CLIENT_ID = os.environ.get('MSAL_CLIENT_ID', '')
-    MSAL_CLIENT_SECRET = os.environ.get('MSAL_CLIENT_SECRET', '')
+    MSAL_CLIENT_SECRET = _resolve_msal_client_secret()
     # e.g. "https://login.microsoftonline.com/<tenant-id>/v2.0" or
     #       "https://login.microsoftonline.com/common/v2.0" for multi-tenant.
     MSAL_AUTHORITY = os.environ.get(

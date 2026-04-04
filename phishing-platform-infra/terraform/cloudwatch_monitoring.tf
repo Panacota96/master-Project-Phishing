@@ -112,6 +112,40 @@ resource "aws_cloudwatch_metric_alarm" "dynamodb_system_errors" {
   ok_actions          = [aws_sns_topic.alerts.arn]
 }
 
+# ─── SQS Dead-Letter Queue Alarms ─────────────────────────────────────────────
+
+resource "aws_cloudwatch_metric_alarm" "registration_dlq_depth" {
+  alarm_name          = "${local.prefix}-registration-dlq-depth"
+  alarm_description   = "Messages in registration DLQ >= 1 — review failed registration events"
+  namespace           = "AWS/SQS"
+  metric_name         = "ApproximateNumberOfMessagesVisible"
+  dimensions          = { QueueName = aws_sqs_queue.registration_dlq.name }
+  statistic           = "Sum"
+  period              = 300
+  evaluation_periods  = 1
+  threshold           = 1
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  treat_missing_data  = "notBreaching"
+  alarm_actions       = [aws_sns_topic.alerts.arn]
+  ok_actions          = [aws_sns_topic.alerts.arn]
+}
+
+resource "aws_cloudwatch_metric_alarm" "campaign_dlq_depth" {
+  alarm_name          = "${local.prefix}-campaign-dlq-depth"
+  alarm_description   = "Messages in campaign DLQ >= 1 — review failed campaign-mailer events"
+  namespace           = "AWS/SQS"
+  metric_name         = "ApproximateNumberOfMessagesVisible"
+  dimensions          = { QueueName = aws_sqs_queue.campaign_dlq.name }
+  statistic           = "Sum"
+  period              = 300
+  evaluation_periods  = 1
+  threshold           = 1
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  treat_missing_data  = "notBreaching"
+  alarm_actions       = [aws_sns_topic.alerts.arn]
+  ok_actions          = [aws_sns_topic.alerts.arn]
+}
+
 # ─── CloudWatch Dashboard ─────────────────────────────────────────────────────
 
 resource "aws_cloudwatch_dashboard" "overview" {

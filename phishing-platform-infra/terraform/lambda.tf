@@ -14,7 +14,7 @@ resource "aws_lambda_function" "app" {
   environment {
     variables = {
       FLASK_ENV          = var.environment
-      SECRET_KEY         = var.secret_key
+      SECRET_ARN         = aws_secretsmanager_secret.app_secrets.arn
       AWS_REGION_NAME    = var.aws_region
       DYNAMODB_USERS     = aws_dynamodb_table.users.name
       DYNAMODB_QUIZZES   = aws_dynamodb_table.quizzes.name
