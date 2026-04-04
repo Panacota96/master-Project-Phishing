@@ -54,7 +54,7 @@
                     <strong>Explanation:</strong> {{ question.explanation }}
                 </div>
                 {% endif %}
-                <a href="{{ url_for('quiz.take_question') }}" class="btn btn-primary">Next Question</a>
+                <a href="{{ url_for('quiz.take_question') }}" class="btn btn-primary" id="next-question-link">Next Question</a>
                 {% endif %}
             </div>
         </div>
@@ -102,7 +102,7 @@ if (timerEl) {
 
 const options = document.querySelectorAll('.quiz-option');
 const submitForm = document.querySelector('form');
-const nextLink = document.querySelector('a[href="{{ url_for("quiz.take_question") }}"]');
+const nextLink = document.getElementById('next-question-link');
 
 options.forEach(opt => {
     opt.addEventListener('click', () => {

@@ -17,6 +17,17 @@ from app.quiz import bp
 from app.quiz.forms import QuestionForm
 
 
+def _compute_rank(completed_count, total_quizzes, avg_score):
+    """Return (rank_label, badge_color) based on completion and average score."""
+    if total_quizzes > 0 and completed_count >= total_quizzes / 2:
+        if avg_score >= 90:
+            return 'Cyber Sentinel', 'success'
+        if avg_score >= 70:
+            return 'Defender', 'primary'
+        return 'Trainee', 'info'
+    return 'Novice', 'secondary'
+
+
 @bp.route('/')
 @login_required
 def quiz_list():
@@ -276,19 +287,7 @@ def history():
 
     attempts.sort(key=lambda a: a.get('completed_at', ''), reverse=True)
 
-    # Calculate rank
-    rank = "Novice"
-    badge_color = "secondary"
-    if completed_count >= total_quizzes / 2:
-        if avg_score >= 90:
-            rank = "Cyber Sentinel"
-            badge_color = "success"
-        elif avg_score >= 70:
-            rank = "Defender"
-            badge_color = "primary"
-        else:
-            rank = "Trainee"
-            badge_color = "info"
+    rank, badge_color = _compute_rank(completed_count, total_quizzes, avg_score)
 
     return render_template(
         'quiz/history.html',
@@ -314,18 +313,7 @@ def profile():
     if completed_count > 0:
         avg_score = sum(float(a.get('percentage', 0)) for a in attempts) / completed_count
 
-    rank = 'Novice'
-    badge_color = 'secondary'
-    if total_quizzes > 0 and completed_count >= total_quizzes / 2:
-        if avg_score >= 90:
-            rank = 'Cyber Sentinel'
-            badge_color = 'success'
-        elif avg_score >= 70:
-            rank = 'Defender'
-            badge_color = 'primary'
-        else:
-            rank = 'Trainee'
-            badge_color = 'info'
+    rank, badge_color = _compute_rank(completed_count, total_quizzes, avg_score)
 
     inspector_state = get_user_inspector_state(current_user.username)
     inspector_submitted = len(inspector_state.get('submitted') or [])

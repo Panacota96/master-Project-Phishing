@@ -1286,8 +1286,10 @@
               el.disabled = true;
             });
 
-            // Update session progress bar
-            updateProgressBar(sessionSubmittedCount + 1, sessionPoolSize);
+            // Update session progress bar only when the server confirmed success
+            if (payload.success) {
+              updateProgressBar(sessionSubmittedCount + 1, sessionPoolSize);
+            }
 
             if (payload.completed) {
               alert("All emails completed! You will now be returned to the main page.");
