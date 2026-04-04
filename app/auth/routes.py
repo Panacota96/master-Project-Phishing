@@ -7,6 +7,7 @@ from werkzeug.security import generate_password_hash
 
 from app.auth import bp
 from app.auth.forms import CSVUploadForm, ChangePasswordForm, CohortQRForm, LoginForm, RegistrationForm
+from app.auth.sso import handle_sso_callback, initiate_sso_login
 from app.models import (
     batch_create_users,
     enqueue_registration,
@@ -29,7 +30,11 @@ def login():
             flash('Logged in successfully.', 'success')
             return redirect(next_page or url_for('quiz.quiz_list'))
         flash('Invalid username or password.', 'danger')
-    return render_template('auth/login.html', form=form)
+    sso_enabled = bool(
+        current_app.config.get('MSAL_CLIENT_ID')
+        and current_app.config.get('MSAL_CLIENT_SECRET')
+    )
+    return render_template('auth/login.html', form=form, sso_enabled=sso_enabled)
 
 
 @bp.route('/logout')
@@ -172,3 +177,15 @@ def change_password():
             flash('Password updated. Please log in again.', 'success')
             return redirect(url_for('auth.login'))
     return render_template('auth/change_password.html', form=form)
+
+
+@bp.route('/sso/login')
+def sso_login():
+    """Redirect to Microsoft login (MSAL OIDC flow)."""
+    return initiate_sso_login()
+
+
+@bp.route('/sso/callback')
+def sso_callback():
+    """Handle the redirect back from Microsoft after authentication."""
+    return handle_sso_callback()

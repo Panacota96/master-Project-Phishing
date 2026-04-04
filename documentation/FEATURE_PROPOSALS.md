@@ -3,7 +3,7 @@
 **Project:** En Garde — Phishing Awareness Training (ESME)
 **Date:** 2026-03-21
 **Author:** Claude Sonnet 4.6 (research & design pass)
-**Status:** Proposal — not yet implemented
+**Status:** Feature A implemented (2026-04-04). Features B and C remain proposals.
 
 ---
 
