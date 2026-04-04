@@ -30,6 +30,7 @@ group object-ID whose members should receive admin rights.  Leave it empty
 
 import os
 import secrets
+from urllib.parse import urlparse
 
 import msal
 from flask import current_app, flash, redirect, request, session, url_for
@@ -156,8 +157,11 @@ def handle_sso_callback():
             create_user(
                 username=username_candidate,
                 email=email,
-                # Placeholder: SSO users cannot use local-password login.
-                password='sso-only',
+                # Use a cryptographically random token as the password.
+                # Because the value is unknown and never returned, local-password
+                # login will always fail for SSO-only accounts; they must
+                # authenticate through Microsoft.
+                password=secrets.token_urlsafe(32),
                 is_admin=is_admin,
                 group='default',
                 class_name='',
@@ -180,5 +184,9 @@ def handle_sso_callback():
 
     login_user(user)
     flash(f'Signed in via Microsoft as {display_name}.', 'success')
-    next_page = request.args.get('next') or url_for('quiz.quiz_list')
-    return redirect(next_page)
+    next_page = request.args.get('next', '')
+    # Prevent open-redirect: only allow relative paths on the same host.
+    parsed = urlparse(next_page)
+    if parsed.netloc or parsed.scheme:
+        next_page = url_for('quiz.quiz_list')
+    return redirect(next_page or url_for('quiz.quiz_list'))
