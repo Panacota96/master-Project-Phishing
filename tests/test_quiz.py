@@ -111,4 +111,5 @@ class TestProfile:
         login(client, 'testuser', 'password123')
         resp = client.get('/quiz/profile')
         assert resp.status_code == 200
+        # Profile shows either the "X / Y" count or the "100%" progress label
         assert b'1 / 1' in resp.data or b'100%' in resp.data

@@ -19,7 +19,7 @@ from app.quiz.forms import QuestionForm
 
 def _compute_rank(completed_count, total_quizzes, avg_score):
     """Return (rank_label, badge_color) based on completion and average score."""
-    if total_quizzes > 0 and completed_count >= total_quizzes / 2:
+    if total_quizzes > 0 and completed_count * 2 >= total_quizzes:
         if avg_score >= 90:
             return 'Cyber Sentinel', 'success'
         if avg_score >= 70:

@@ -122,7 +122,13 @@ document.addEventListener('keydown', (e) => {
     // Number keys 1-4 or letter keys a-d: select corresponding option
     const numMap = {'1': 0, '2': 1, '3': 2, '4': 3};
     const letterMap = {'a': 0, 'b': 1, 'c': 2, 'd': 3};
-    const idx = numMap[key] !== undefined ? numMap[key] : (letterMap[key.toLowerCase()] !== undefined ? letterMap[key.toLowerCase()] : -1);
+    let idx = numMap[key];
+    if (idx === undefined) {
+        idx = letterMap[key.toLowerCase()];
+    }
+    if (idx === undefined) {
+        idx = -1;
+    }
 
     if (idx >= 0 && idx < options.length) {
         e.preventDefault();
