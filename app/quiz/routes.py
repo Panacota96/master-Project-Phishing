@@ -71,7 +71,15 @@ def start_quiz(quiz_id):
     session['quiz_score'] = 0
     session['quiz_total'] = 0
     session['quiz_id'] = quiz_id
-    ordered_questions = sorted(questions, key=lambda q: q.get('difficulty', 1), reverse=session.get('quiz_attempt_number', 1) > 1) if adaptive else questions
+    ordered_questions = (
+        sorted(
+            questions,
+            key=lambda q: q.get('difficulty', 1),
+            reverse=session.get('quiz_attempt_number', 1) > 1,
+        )
+        if adaptive
+        else questions
+    )
     session['question_ids'] = [q['question_id'] for q in ordered_questions]
     session['current_index'] = 0
     if time_limit_seconds:
@@ -226,7 +234,17 @@ def finish_quiz():
         mark_quiz_completed(current_user.username)
 
     # Clean up session
-    for key in ('quiz_score', 'quiz_total', 'quiz_id', 'question_ids', 'current_index', 'quiz_attempt_number', 'quiz_time_limit', 'quiz_started_at'):
+    cleanup_keys = (
+        'quiz_score',
+        'quiz_total',
+        'quiz_id',
+        'question_ids',
+        'current_index',
+        'quiz_attempt_number',
+        'quiz_time_limit',
+        'quiz_started_at',
+    )
+    for key in cleanup_keys:
         session.pop(key, None)
 
     return render_template(

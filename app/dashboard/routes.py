@@ -7,7 +7,18 @@ from datetime import datetime, timezone
 
 import requests
 
-from flask import abort, current_app, flash, jsonify, redirect, render_template, request, url_for, Response, stream_with_context
+from flask import (
+    Response,
+    abort,
+    current_app,
+    flash,
+    jsonify,
+    redirect,
+    render_template,
+    request,
+    stream_with_context,
+    url_for,
+)
 from flask_login import current_user, login_required
 
 from app.dashboard import bp
@@ -24,7 +35,6 @@ from app.models import (
     get_quiz,
     get_user,
     get_user_by_email,
-    get_inspector_config_for_cohort,
     get_threat_cache,
     list_all_users,
     list_all_attempts,
