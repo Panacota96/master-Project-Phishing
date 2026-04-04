@@ -37,6 +37,9 @@ terraform/*.tfstate
 terraform/*.tfstate.*
 terraform/terraform.tfvars
 terraform/env/*.tfvars
+# Catch tfstate at any depth (e.g. phishing-platform-infra/terraform.tfstate)
+**/terraform.tfstate
+**/terraform.tfstate.backup
 
 # Build artifacts
 lambda.zip
@@ -64,3 +67,6 @@ terraform/.terraform.lock.hcl
 
 # Source templates (already converted to examples/linksec)
 phishing-templates/
+
+# Test fixture CSVs with sample credentials — never commit real ones
+test_load.csv
