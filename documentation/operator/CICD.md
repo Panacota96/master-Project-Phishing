@@ -3,7 +3,7 @@
 ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?logo=github-actions&logoColor=white)
 ![Terraform](https://img.shields.io/badge/Terraform-7B42BC?logo=terraform&logoColor=white)
 
-The Phishing Awareness Training Application uses **GitHub Actions** for all CI/CD automation. There are four workflow files under `.github/workflows/`.
+The Phishing Awareness Training Application uses **GitHub Actions** for all CI/CD automation. App workflows stay under `.github/workflows/`; Terraform steps run against `phishing-platform-infra/terraform/` (and the deploy/destroy workflows can be copied into the dedicated infra repo if split).
 
 ---
 
@@ -26,7 +26,7 @@ GitHub Actions assumes the deploy IAM role via **OIDC** (`sts:AssumeRoleWithWebI
 GitHub OIDC token  →  AWS STS  →  phishing-app-{env}-github-actions-deploy role
 ```
 
-The OIDC provider (`token.actions.githubusercontent.com`) and the trust policy are managed by Terraform (`terraform/github_actions_oidc.tf`). The trust condition is scoped to the specific repository.
+The OIDC provider (`token.actions.githubusercontent.com`) and the trust policy are managed by Terraform (`phishing-platform-infra/terraform/github_actions_oidc.tf`). The trust condition is scoped to the specific repository.
 
 ---
 

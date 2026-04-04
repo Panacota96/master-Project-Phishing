@@ -71,12 +71,12 @@ This generates `lambda.zip` containing the app and all dependencies in the `pack
 - **Naming:** Follow standard Python (snake_case) for functions/variables and PascalCase for classes.
 - **Models:** Add new DynamoDB interactions in `app/models.py`. Always use the `_get_table` helper to ensure correct configuration.
 - **Blueprints:** When adding new features, create a new blueprint in `app/` and register it in `app/__init__.py`.
-- **Infrastructure:** All AWS resources are managed in the `terraform/` directory. Do not create resources manually in the AWS Console.
+- **Infrastructure:** All AWS resources are managed in `phishing-platform-infra/terraform/`. Do not create resources manually in the AWS Console.
 - **Templates:** Use the base layout `app/templates/base.html` and include accessibility-friendly Bootstrap components.
 
 ## Key Files
 - `app/models.py`: Data access layer for DynamoDB.
 - `app/inspector/routes.py`: Logic for parsing `.eml` files.
 - `lambda_handler.py`: Entry point for AWS Lambda.
-- `terraform/main.tf`: Main infrastructure definition.
+- `phishing-platform-infra/terraform/main.tf`: Main infrastructure definition.
 - `config.py`: Environment-based configuration management.

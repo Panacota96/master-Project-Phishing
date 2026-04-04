@@ -19,7 +19,7 @@
 Before deploying for the first time, create the Terraform state bucket and lock table:
 
 ```bash
-cd terraform/bootstrap
+cd phishing-platform-infra/terraform/bootstrap
 terraform init
 terraform apply \
   -var="state_bucket_name=phishing-terraform-state" \
@@ -78,7 +78,7 @@ This generates:
 Infrastructure changes are managed via Terraform:
 
 ```bash
-cd terraform/
+cd phishing-platform-infra/terraform/
 
 # Initialize (first time or environment change)
 terraform init -reconfigure -backend-config="backend/dev.hcl"
@@ -150,8 +150,8 @@ See [`CICD.md`](CICD.md) for the full pipeline diagram and workflow details.
 
 ## Special Considerations
 
-- **Lambda Memory & Timeout**: For large `.eml` files or high traffic, increase `lambda_memory_size` (default: 512 MB) and `lambda_timeout` (default: 30 s) in `terraform/variables.tf`.
-- **API Gateway Throttling**: Configure rate limiting in `terraform/api_gateway.tf` if needed.
+- **Lambda Memory & Timeout**: For large `.eml` files or high traffic, increase `lambda_memory_size` (default: 512 MB) and `lambda_timeout` (default: 30 s) in `phishing-platform-infra/terraform/variables.tf`.
+- **API Gateway Throttling**: Configure rate limiting in `phishing-platform-infra/terraform/api_gateway.tf` if needed.
 - **Videos not loading**: Set `VIDEO_BASE_URL` to the S3 base URL and re-run `seed_dynamodb.py`.
   Example: `VIDEO_BASE_URL=https://phishing-app-dev-eu-west-3.s3.eu-west-3.amazonaws.com/videos`
 

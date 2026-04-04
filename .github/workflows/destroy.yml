@@ -38,11 +38,11 @@ jobs:
         run: chmod +x scripts/*.sh
 
       - name: Terraform init
-        working-directory: terraform
+        working-directory: phishing-platform-infra/terraform
         run: terraform init -reconfigure -backend-config="backend/${{ inputs.environment }}.hcl"
 
       - name: Write tfvars
-        working-directory: terraform
+        working-directory: phishing-platform-infra/terraform
         run: |
           mkdir -p env
           cat > env/${{ inputs.environment }}.tfvars <<EOF
@@ -53,7 +53,7 @@ jobs:
           EOF
 
       - name: Remove deployment IAM from state
-        working-directory: terraform
+        working-directory: phishing-platform-infra/terraform
         run: |
           terraform state rm aws_iam_role_policy.github_actions_deploy || true
           terraform state rm aws_iam_role.github_actions_deploy || true
@@ -96,5 +96,5 @@ jobs:
           PYEOF
 
       - name: Terraform destroy
-        working-directory: terraform
+        working-directory: phishing-platform-infra/terraform
         run: terraform destroy -auto-approve -var-file="env/${{ inputs.environment }}.tfvars"

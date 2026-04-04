@@ -2,12 +2,12 @@
 
 ## Database Migrations
 Database schema changes are infrequent in DynamoDB, but data migrations may be necessary:
-- **`scripts/migrate_dynamodb.py`**: Migrates users and quiz definitions between environments (`dev` to `prod`).
-    - **Usage**: `python3 scripts/migrate_dynamodb.py --from dev --to prod`
-- **`scripts/migrate_s3.sh`**: Syncs EML samples and Lambda artifacts across environments.
-    - **Usage**: `bash scripts/migrate_s3.sh`
-- **`scripts/migrate_inspector_attempts.py`**: GDPR-safe migration of old inspector attempts to the anonymous table.
-    - **Usage**: `python3 scripts/migrate_inspector_attempts.py`
+- **`phishing-platform-infra/scripts/migrate_dynamodb.py`**: Migrates users and quiz definitions between environments (`dev` to `prod`).
+    - **Usage**: `python3 phishing-platform-infra/scripts/migrate_dynamodb.py --from dev --to prod`
+- **`phishing-platform-infra/scripts/migrate_s3.sh`**: Syncs EML samples and Lambda artifacts across environments.
+    - **Usage**: `bash phishing-platform-infra/scripts/migrate_s3.sh`
+- **`phishing-platform-infra/scripts/migrate_inspector_attempts.py`**: GDPR-safe migration of old inspector attempts to the anonymous table.
+    - **Usage**: `python3 phishing-platform-infra/scripts/migrate_inspector_attempts.py`
 
 ## User Management
 For large cohorts, bulk importing users from CSV is the most efficient method:
@@ -34,10 +34,10 @@ The Inspector's ground-truth answer key can be edited without a code deployment:
 ## Backup and Recovery
 - **DynamoDB Backups**: Enable "Point-In-Time Recovery" (PITR) for critical tables (`-users`, `-attempts`, `-inspector-attempts`) in the AWS Console or Terraform.
 - **S3 Versioning**: Versioning is enabled on the primary S3 bucket for data recovery.
-- **Infrastructure Code**: The `terraform/` directory is the authoritative source for the environment. Ensure all changes are committed to Git.
+- **Infrastructure Code**: The `phishing-platform-infra/terraform/` directory is the authoritative source for the environment. Ensure all changes are committed to Git.
 
 ## Common Issues & Fixes
-- **`lambda.zip` Not Updating**: Re-run `./scripts/build_lambda.sh` and ensure the `source_code_hash` in `terraform/lambda.tf` triggers a redeploy.
+- **`lambda.zip` Not Updating**: Re-run `./scripts/build_lambda.sh` and ensure the `source_code_hash` in `phishing-platform-infra/terraform/lambda.tf` triggers a redeploy.
 - **Videos Not Loading**: Verify `VIDEO_BASE_URL` in the environment and ensure the S3 objects have public read access.
 - **Inspector Email Not Found**: Ensure the `.eml` file exists in the S3 bucket's `eml-samples/` prefix and matches the filename in the database.
 - **IAM Permission Denied**: Check the Lambda execution role for `dynamodb:*` and `s3:GetObject` permissions for the correct resources.

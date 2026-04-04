@@ -1,7 +1,7 @@
 # AWS Infrastructure Improvement Report — En Garde (Phishing Awareness Platform)
 
 > **Scope:** Production-readiness and business-showcase improvements for the En Garde phishing awareness training application.
-> **Infrastructure baseline:** Terraform files in `terraform/` as of March 2026.
+> **Infrastructure baseline:** Terraform files in `phishing-platform-infra/terraform/` as of March 2026.
 > **Region:** eu-west-3 (Paris).
 > **Priority labels:** 🔴 Critical &nbsp;|&nbsp; 🟠 High &nbsp;|&nbsp; 🟡 Medium &nbsp;|&nbsp; 🟢 Nice-to-have
 
@@ -39,7 +39,7 @@
 
 ### 1.2 CloudTrail for API Audit Logging
 
-**Current state:** No `aws_cloudtrail` resource exists anywhere in `terraform/`. There is no audit trail of who called which AWS API and when.
+**Current state:** No `aws_cloudtrail` resource exists anywhere in `phishing-platform-infra/terraform/`. There is no audit trail of who called which AWS API and when.
 
 **Gap:** For a business showcase, auditability is a baseline expectation. Without CloudTrail, there is no record of DynamoDB reads/writes from the Lambda functions, S3 object access, IAM role assumptions by GitHub Actions, or any administrative API call.
 
@@ -362,7 +362,7 @@ This is a correct separation of concerns. The plan/apply split with artifact upl
 
 ### 5.3 Terraform State Locking
 
-**Current state:** The bootstrap (`terraform/bootstrap/main.tf`) creates `aws_dynamodb_table.lock` with hash key `LockID`. This is the standard DynamoDB state locking table for the S3 Terraform backend.
+**Current state:** The bootstrap (`phishing-platform-infra/terraform/bootstrap/main.tf`) creates `aws_dynamodb_table.lock` with hash key `LockID`. This is the standard DynamoDB state locking table for the S3 Terraform backend.
 
 **Assessment:** State locking is correctly provisioned. The backend configuration references this table via `backend/dev.hcl` and `backend/prod.hcl` (not visible in the read files but inferred from `terraform init -backend-config="backend/dev.hcl"`). The `phishing-terraform-locks` table ARN appears in the GitHub Actions DynamoDB policy, confirming it is in use.
 
@@ -517,7 +517,7 @@ The AWS Well-Architected Framework has six pillars. Here is an honest mapping of
 **Findings:**
 
 - 🟠 **Verify `dynamodb_table` in backend HCL files.** The DynamoDB lock table `phishing-terraform-locks` exists in AWS (referenced in the GitHub Actions IAM policy) but the HCL backend config files were not readable in this review. If `dynamodb_table` is absent from either HCL file, concurrent CI runs will not be serialized and state corruption is possible.
-- 🟡 **The Terraform state S3 bucket lacks `aws_s3_bucket_public_access_block`** in the bootstrap. The bootstrap (`terraform/bootstrap/main.tf`) creates `aws_s3_bucket_public_access_block.state` correctly with all four block settings set to `true`. This is correct — noted as confirmed.
+- 🟡 **The Terraform state S3 bucket lacks `aws_s3_bucket_public_access_block`** in the bootstrap. The bootstrap (`phishing-platform-infra/terraform/bootstrap/main.tf`) creates `aws_s3_bucket_public_access_block.state` correctly with all four block settings set to `true`. This is correct — noted as confirmed.
 - 🟡 **The Terraform state bucket is not versioned at the object level in the bootstrap HCL.** `aws_s3_bucket_versioning.state` has versioning enabled, which is correct. Ensure the bootstrap bucket itself is not accidentally destroyed by adding a `lifecycle { prevent_destroy = true }` block to `aws_s3_bucket.state` in the bootstrap.
 
 ### 7.4 Terraform Cloud / HCP Terraform vs. S3+DynamoDB Backend
@@ -580,4 +580,4 @@ For a single-team academic project with GitHub Actions as the CI system, the exi
 
 ---
 
-*Report generated from infrastructure analysis of `terraform/` directory. All resource names reference actual Terraform resources found in the codebase. No resources were invented or assumed.*
+*Report generated from infrastructure analysis of `phishing-platform-infra/terraform/` directory. All resource names reference actual Terraform resources found in the codebase. No resources were invented or assumed.*

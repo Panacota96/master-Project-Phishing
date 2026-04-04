@@ -7,7 +7,7 @@ Welcome to the documentation for the Phishing Awareness Training Application. Th
 ```mermaid
 graph TD
     Root[Project Root] --> App[app/ - Flask Backend]
-    Root --> TF[terraform/ - Infrastructure]
+    Root --> TF[phishing-platform-infra/terraform/ - Infrastructure]
     Root --> Scripts[scripts/ - Automation]
     Root --> Examples[examples/ - EML Samples]
     Root --> Docs[documentation/ - Guides]

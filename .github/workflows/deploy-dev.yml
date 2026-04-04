@@ -41,15 +41,15 @@ jobs:
           name: lambda-artifacts
 
       - name: Terraform init
-        working-directory: terraform
+        working-directory: phishing-platform-infra/terraform
         run: terraform init -reconfigure -backend-config="backend/dev.hcl"
 
       - name: Terraform validate
-        working-directory: terraform
+        working-directory: phishing-platform-infra/terraform
         run: terraform validate
 
       - name: Bootstrap IAM permissions
-        working-directory: terraform
+        working-directory: phishing-platform-infra/terraform
         run: |
           mkdir -p env
           cat > env/dev.tfvars <<EOF
@@ -75,7 +75,7 @@ jobs:
           sleep 20
 
       - name: Write dev tfvars
-        working-directory: terraform
+        working-directory: phishing-platform-infra/terraform
         run: |
           mkdir -p env
           cat > env/dev.tfvars <<EOF
@@ -86,7 +86,7 @@ jobs:
           EOF
 
       - name: Terraform plan
-        working-directory: terraform
+        working-directory: phishing-platform-infra/terraform
         run: terraform plan -var-file="env/dev.tfvars" -out=tfplan
 
       - name: Upload Terraform plan
@@ -94,8 +94,8 @@ jobs:
         with:
           name: tfplan-dev
           path: |
-            terraform/tfplan
-            terraform/.terraform.lock.hcl
+            phishing-platform-infra/terraform/tfplan
+            phishing-platform-infra/terraform/.terraform.lock.hcl
 
   deploy_dev:
     needs: plan_dev
@@ -127,19 +127,19 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: tfplan-dev
-          path: terraform
+          path: phishing-platform-infra/terraform
 
       - name: Terraform init
-        working-directory: terraform
+        working-directory: phishing-platform-infra/terraform
         run: terraform init -reconfigure -backend-config="backend/dev.hcl"
 
       - name: Terraform apply
-        working-directory: terraform
+        working-directory: phishing-platform-infra/terraform
         run: terraform apply -auto-approve tfplan
 
       - name: Capture Terraform outputs
         id: tf_outputs
-        working-directory: terraform
+        working-directory: phishing-platform-infra/terraform
         run: |
           echo "s3_bucket=$(terraform output -raw s3_bucket_name)" >> $GITHUB_OUTPUT
           echo "cloudfront_url=$(terraform output -raw cloudfront_url)" >> $GITHUB_OUTPUT
