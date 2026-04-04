@@ -10,7 +10,6 @@ from playwright.sync_api import Page
 def test_quiz_list_page_loads(page: Page, authenticated_user: Page, base_url: str):
     """Authenticated user can reach the quiz list."""
     page.goto(f"{base_url}/quiz/")
-    content = page.content()
     # Should render some kind of quiz listing or empty state — not a login page
     assert "/auth/login" not in page.url
 

@@ -4,11 +4,16 @@ on:
   pull_request:
     branches: [main, develop]
 
+permissions:
+  contents: read
+
 jobs:
   # ── 1. Static analysis ────────────────────────────────────────────────────
   ruff-lint:
     name: Ruff — Python lint & format check
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
 
@@ -20,6 +25,8 @@ jobs:
   bandit-security:
     name: Bandit — Security scan
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
 
@@ -45,6 +52,8 @@ jobs:
   pytest-coverage:
     name: pytest + coverage
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
 
@@ -79,6 +88,8 @@ jobs:
   playwright-e2e:
     name: Playwright — E2E tests
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
 
@@ -96,11 +107,11 @@ jobs:
           playwright install chromium --with-deps
 
       - name: Run E2E tests
-        run: pytest tests/e2e/ -m e2e --browser chromium --headed=false -v
+        run: pytest tests/e2e/ -m e2e --browser chromium --headed=false -v --junitxml=e2e-report.xml
 
       - name: Upload E2E test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: e2e-results
-          path: report.xml
+          path: e2e-report.xml

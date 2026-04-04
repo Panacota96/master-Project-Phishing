@@ -158,7 +158,7 @@ def _create_tables(dynamodb):
 
 
 @pytest.fixture(scope="session")
-def live_server(tmp_path_factory):
+def live_server():
     """
     Start a live Flask server backed by moto mocks for the whole test session.
 
