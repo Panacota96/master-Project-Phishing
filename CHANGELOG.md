@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [1.2.5] - 2026-04-04
+
+### Added
+- **Real-time cache + SSE**: provisioned ElastiCache Redis with pub/sub wiring in the dashboard for live stats and OpenPhish caching; added threat-cache DynamoDB table for TTL persistence.
+- **Campaign mailer pipeline**: new SQS campaign queue, Lambda campaign mailer, EventBridge scheduler (optional), and DynamoDB `campaigns` + `campaign_events` tables for tracking.
+- **Admin tooling**: dashboard now targets cohorts/groups for campaign launches and validation emails via SES with Redis-backed updates.
+- **Build tooling**: `make campaign-mailer` + `scripts/build_campaign_mailer.sh` to package the new Lambda.
+
+### Changed
+- Main Lambda now runs inside the default VPC for Redis access and publishes campaign/threat feed updates through Redis where available.
+- Local setup scripts and tests create the new DynamoDB tables and queues; README documents the additional env vars and targets.
+
+---
+
 ## [1.2.4] - 2026-03-21
 
 ### Added

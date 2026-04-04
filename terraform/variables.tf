@@ -69,3 +69,27 @@ variable "registration_queue_arn" {
   type        = string
   default     = ""
 }
+
+variable "redis_node_type" {
+  description = "ElastiCache Redis node type"
+  type        = string
+  default     = "cache.t4g.small"
+}
+
+variable "redis_engine_version" {
+  description = "ElastiCache Redis engine version"
+  type        = string
+  default     = "7.1"
+}
+
+variable "campaign_schedule_enabled" {
+  description = "Enable EventBridge Scheduler for recurring campaigns"
+  type        = bool
+  default     = false
+}
+
+variable "campaign_schedule_expression" {
+  description = "EventBridge schedule expression for recurring campaigns"
+  type        = string
+  default     = "rate(1 day)"
+}

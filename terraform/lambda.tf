@@ -25,15 +25,27 @@ resource "aws_lambda_function" "app" {
       DYNAMODB_BUGS                 = aws_dynamodb_table.bugs.name
       DYNAMODB_ANSWER_KEY_OVERRIDES = aws_dynamodb_table.answer_key_overrides.name
       DYNAMODB_COHORT_TOKENS        = aws_dynamodb_table.cohort_tokens.name
+      DYNAMODB_THREAT_CACHE         = aws_dynamodb_table.threat_cache.name
+      DYNAMODB_CAMPAIGNS            = aws_dynamodb_table.campaigns.name
+      DYNAMODB_CAMPAIGN_EVENTS      = aws_dynamodb_table.campaign_events.name
       S3_BUCKET                     = aws_s3_bucket.app.id
       SQS_REGISTRATION_QUEUE_URL    = aws_sqs_queue.registration.url
+      SQS_CAMPAIGN_QUEUE_URL        = aws_sqs_queue.campaigns.url
       SES_FROM_EMAIL                = var.ses_from_email
       APP_LOGIN_URL                 = "https://${aws_cloudfront_distribution.app.domain_name}/auth/login"
+      REDIS_ENDPOINT                = "${aws_elasticache_replication_group.redis.primary_endpoint_address}:${aws_elasticache_replication_group.redis.port}"
+      REDIS_USE_TLS                 = "false"
+      CAMPAIGN_LAMBDA_ARN           = aws_lambda_function.campaign_mailer.arn
     }
   }
 
   tracing_config {
     mode = var.enable_xray ? "Active" : "PassThrough"
+  }
+
+  vpc_config {
+    subnet_ids         = data.aws_subnets.default.ids
+    security_group_ids = [aws_security_group.lambda.id]
   }
 }
 

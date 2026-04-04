@@ -1,4 +1,4 @@
-.PHONY: lambda registration-worker test lint validate-eml sync-assets sync-eml audit-eml
+.PHONY: lambda registration-worker campaign-mailer test lint validate-eml sync-assets sync-eml audit-eml
 
 AWS_REGION ?= eu-west-3
 TF_DIR ?= terraform
@@ -11,6 +11,9 @@ lambda:
 
 registration-worker:
 	./scripts/build_registration_worker.sh
+
+campaign-mailer:
+	./scripts/build_campaign_mailer.sh
 
 test:
 	pytest tests/ -v --junitxml=report.xml

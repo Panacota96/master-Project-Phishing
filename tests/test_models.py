@@ -160,3 +160,33 @@ class TestResponseModel:
 
             q1_responses = get_responses_by_question('quiz1', 'q1')
             assert len(q1_responses) == 2
+
+
+class TestCampaignModel:
+    def test_create_campaign_and_events(self, app, seed_user):
+        with app.app_context():
+            from app.models import create_campaign, list_campaign_events, list_campaigns, record_campaign_event
+            filters = {
+                'class_name': 'Class A',
+                'academic_year': '2025',
+                'major': 'CS',
+                'facility': 'Paris',
+                'group': 'engineering',
+            }
+            campaign = create_campaign('Class A|2025|CS|Paris|engineering', filters)
+            assert campaign is not None
+            campaigns = list_campaigns()
+            assert any(c.get('campaign_id') == campaign['campaign_id'] for c in campaigns)
+
+            record_campaign_event(campaign['campaign_id'], 'queued')
+            events = list_campaign_events(campaign['campaign_id'])
+            assert len(events) == 1
+            assert events[0]['event_type'] == 'queued'
+
+    def test_find_users_by_filters(self, app, seed_user):
+        with app.app_context():
+            from app.models import create_user, find_users_by_filters
+            create_user('other', 'o@test.com', 'pass', group='other', class_name='Other', academic_year='2026', major='Math')
+            matches = find_users_by_filters({'group': 'engineering'})
+            assert any(u.username == 'testuser' for u in matches)
+            assert all(u.group == 'engineering' for u in matches)

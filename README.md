@@ -102,6 +102,7 @@ Every phishing email in the inspector is annotated with one or more of these sig
 - Stats overview: total users, total quiz attempts, average score, score distribution chart
 - Per-quiz statistics, cohort analytics, and inspector signal accuracy reporting
 - Real-time stats polling and OpenPhish live threat feed widget
+- Redis/ElastiCache pub/sub for live SSE dashboard updates and SQS-backed campaign launcher (Lambda mailer + SES) with optional EventBridge scheduling
 - **Risk Dashboard**: per-cohort risk score combining quiz failure rate and inspector signal miss rate
 - CSV report generation with pre-signed S3 download links
 - **Answer Key Editor**: change any email's classification and signals without a code deployment — overrides stored in DynamoDB take precedence over the static `answer_key.py` at runtime
@@ -128,6 +129,8 @@ Every phishing email in the inspector is annotated with one or more of these sig
   <img src="https://img.shields.io/badge/DynamoDB-4053D6?style=flat-square&logo=amazondynamodb&logoColor=white" />
   <img src="https://img.shields.io/badge/Amazon_S3-569A31?style=flat-square&logo=amazons3&logoColor=white" />
   <img src="https://img.shields.io/badge/Amazon_SQS-FF4F8B?style=flat-square&logo=amazonsqs&logoColor=white" />
+  <img src="https://img.shields.io/badge/ElastiCache_Redis-C925D1?style=flat-square&logo=redis&logoColor=white" />
+  <img src="https://img.shields.io/badge/EventBridge-8A2BE2?style=flat-square&logo=amazonaws&logoColor=white" />
   <img src="https://img.shields.io/badge/Amazon_SES-232F3E?style=flat-square&logo=amazonaws&logoColor=white" />
   <img src="https://img.shields.io/badge/CloudFront-232F3E?style=flat-square&logo=amazonaws&logoColor=white" />
   <img src="https://img.shields.io/badge/API_Gateway-FF4F8B?style=flat-square&logo=amazonaws&logoColor=white" />
@@ -428,6 +431,9 @@ The ground truth for all 130 classified emails lives in [`app/inspector/answer_k
 | `bugs` | User-submitted bug reports with status tracking |
 | `answer_key_overrides` | Admin-editable overrides merged with `answer_key.py` at runtime |
 | `cohort_tokens` | QR self-registration tokens with 90-day TTL |
+| `threat_cache` | OpenPhish feed cache with TTL (Redis/DynamoDB hybrid) |
+| `campaigns` | Phishing simulation campaign definitions and status |
+| `campaign_events` | Delivery/open/click/validation audit trail for campaigns |
 
 All tables use **PAY_PER_REQUEST** (on-demand) billing. Table names are configured via environment variables — see `config.py`.
 
@@ -460,7 +466,11 @@ export DYNAMODB_INSPECTOR_ANON=phishing-app-dev-inspector-attempts-anon
 export DYNAMODB_BUGS=phishing-app-dev-bugs
 export DYNAMODB_ANSWER_KEY_OVERRIDES=phishing-app-dev-answer-key-overrides
 export DYNAMODB_COHORT_TOKENS=phishing-app-dev-cohort-tokens
+export DYNAMODB_THREAT_CACHE=phishing-app-dev-threat-cache
+export DYNAMODB_CAMPAIGNS=phishing-app-dev-campaigns
+export DYNAMODB_CAMPAIGN_EVENTS=phishing-app-dev-campaign-events
 export S3_BUCKET=phishing-app-dev-eu-west-3
+export SQS_CAMPAIGN_QUEUE_URL=https://sqs.eu-west-3.amazonaws.com/123456789012/phishing-app-dev-campaigns
 export SECRET_KEY=dev-secret
 python seed_dynamodb.py
 
@@ -511,6 +521,7 @@ make lint                  # flake8 --max-line-length=120
 make test                  # pytest + moto (JUnit XML report)
 make lambda                # build lambda.zip
 make registration-worker   # build registration_worker.zip
+make campaign-mailer       # build campaign_mailer.zip
 make validate-eml          # validate .eml file realism
 make sync-eml              # sync examples/*.eml -> S3 eml-samples/
 make sync-assets           # sync app/static/videos/*.mp4 -> S3 videos/

@@ -58,6 +58,21 @@ output "dynamodb_bugs_table" {
   value       = aws_dynamodb_table.bugs.name
 }
 
+output "dynamodb_threat_cache_table" {
+  description = "DynamoDB threat cache table name"
+  value       = aws_dynamodb_table.threat_cache.name
+}
+
+output "dynamodb_campaigns_table" {
+  description = "DynamoDB campaigns table name"
+  value       = aws_dynamodb_table.campaigns.name
+}
+
+output "dynamodb_campaign_events_table" {
+  description = "DynamoDB campaign events table name"
+  value       = aws_dynamodb_table.campaign_events.name
+}
+
 output "cloudfront_url" {
   description = "Stable CloudFront URL for the application (share this with students)"
   value       = "https://${aws_cloudfront_distribution.app.domain_name}"

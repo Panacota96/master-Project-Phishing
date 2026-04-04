@@ -23,6 +23,11 @@ resource "aws_iam_role_policy_attachment" "lambda_logs" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
+resource "aws_iam_role_policy_attachment" "lambda_vpc" {
+  role       = aws_iam_role.lambda.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+}
+
 # DynamoDB access
 resource "aws_iam_role_policy" "lambda_dynamodb" {
   name = "${local.prefix}-lambda-dynamodb"
@@ -59,7 +64,12 @@ resource "aws_iam_role_policy" "lambda_dynamodb" {
           aws_dynamodb_table.bugs.arn,
           aws_dynamodb_table.answer_key_overrides.arn,
           aws_dynamodb_table.cohort_tokens.arn,
-          "${aws_dynamodb_table.cohort_tokens.arn}/index/*"
+          "${aws_dynamodb_table.cohort_tokens.arn}/index/*",
+          aws_dynamodb_table.threat_cache.arn,
+          aws_dynamodb_table.campaigns.arn,
+          "${aws_dynamodb_table.campaigns.arn}/index/*",
+          aws_dynamodb_table.campaign_events.arn,
+          "${aws_dynamodb_table.campaign_events.arn}/index/*"
         ]
       }
     ]
@@ -77,7 +87,10 @@ resource "aws_iam_role_policy" "lambda_sqs" {
       {
         Effect   = "Allow"
         Action   = ["sqs:SendMessage"]
-        Resource = aws_sqs_queue.registration.arn
+        Resource = [
+          aws_sqs_queue.registration.arn,
+          aws_sqs_queue.campaigns.arn
+        ]
       }
     ]
   })
