@@ -89,3 +89,26 @@ class TestQuizHistory:
         login(client, 'testuser', 'password123')
         resp = client.get('/quiz/history')
         assert b"haven't taken any quizzes" in resp.data.lower() or b'Start one now' in resp.data
+
+
+class TestProfile:
+    def test_profile_requires_login(self, client):
+        resp = client.get('/quiz/profile')
+        assert resp.status_code == 302  # Redirect to login
+
+    def test_profile_renders(self, client, seed_user):
+        login(client, 'testuser', 'password123')
+        resp = client.get('/quiz/profile')
+        assert resp.status_code == 200
+        assert b'My Profile' in resp.data
+        assert b'testuser' in resp.data
+
+    def test_profile_shows_quiz_progress(self, client, app, seed_user, seed_quiz):
+        with app.app_context():
+            from app.models import create_attempt
+            create_attempt('testuser', 'quiz-test', 2, 2, 'engineering')
+
+        login(client, 'testuser', 'password123')
+        resp = client.get('/quiz/profile')
+        assert resp.status_code == 200
+        assert b'1 / 1' in resp.data or b'100%' in resp.data

@@ -7,6 +7,7 @@ from app.models import (
     create_attempt,
     get_attempt,
     get_quiz,
+    get_user_inspector_state,
     list_attempts_by_user,
     list_quizzes,
     mark_quiz_completed,
@@ -298,4 +299,46 @@ def history():
         rank=rank,
         badge_color=badge_color,
         completion_pct=int((completed_count / total_quizzes * 100) if total_quizzes > 0 else 0)
+    )
+
+
+@bp.route('/profile')
+@login_required
+def profile():
+    attempts = list_attempts_by_user(current_user.username)
+    quizzes = list_quizzes()
+    total_quizzes = len(quizzes)
+    completed_count = len(attempts)
+
+    avg_score = 0.0
+    if completed_count > 0:
+        avg_score = sum(float(a.get('percentage', 0)) for a in attempts) / completed_count
+
+    rank = 'Novice'
+    badge_color = 'secondary'
+    if total_quizzes > 0 and completed_count >= total_quizzes / 2:
+        if avg_score >= 90:
+            rank = 'Cyber Sentinel'
+            badge_color = 'success'
+        elif avg_score >= 70:
+            rank = 'Defender'
+            badge_color = 'primary'
+        else:
+            rank = 'Trainee'
+            badge_color = 'info'
+
+    inspector_state = get_user_inspector_state(current_user.username)
+    inspector_submitted = len(inspector_state.get('submitted') or [])
+    inspector_locked = inspector_state.get('locked', False)
+
+    return render_template(
+        'quiz/profile.html',
+        total_quizzes=total_quizzes,
+        completed_count=completed_count,
+        avg_score=round(avg_score, 1),
+        rank=rank,
+        badge_color=badge_color,
+        completion_pct=int((completed_count / total_quizzes * 100) if total_quizzes > 0 else 0),
+        inspector_submitted=inspector_submitted,
+        inspector_locked=inspector_locked,
     )

@@ -114,6 +114,35 @@
         text-shadow: 0 1px 2px rgba(15, 23, 42, 0.45);
       }
 
+      .session-progress {
+        padding: 0.6rem 1.25rem 0.75rem;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+        background: rgba(15, 23, 42, 0.35);
+      }
+
+      .session-progress-label {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.78rem;
+        color: rgba(248, 250, 252, 0.75);
+        margin-bottom: 0.35rem;
+      }
+
+      .session-progress-bar-track {
+        height: 6px;
+        background: rgba(148, 163, 184, 0.2);
+        border-radius: 999px;
+        overflow: hidden;
+      }
+
+      .session-progress-bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #bef264, #34d399);
+        border-radius: 999px;
+        transition: width 0.4s ease;
+        width: 0%;
+      }
+
       #email-list {
         overflow-y: auto;
         flex: 1;
@@ -648,6 +677,15 @@
       <main>
         <aside>
           <div class="list-header">Available Emails</div>
+          <div class="session-progress" id="session-progress" hidden>
+            <div class="session-progress-label">
+              <span>Session Progress</span>
+              <span id="progress-text">0 / 0</span>
+            </div>
+            <div class="session-progress-bar-track">
+              <div class="session-progress-bar-fill" id="progress-fill"></div>
+            </div>
+          </div>
           <div id="email-list" aria-live="polite">
             <div class="empty-state">
               <div>
@@ -716,6 +754,23 @@
 
       const IS_ADMIN = {{ 'true' if current_user.is_admin else 'false' }};
 
+      let sessionPoolSize = 0;
+      let sessionSubmittedCount = 0;
+
+      function updateProgressBar(submitted, total) {
+        sessionSubmittedCount = submitted;
+        sessionPoolSize = total;
+        const progressEl = document.getElementById('session-progress');
+        const textEl = document.getElementById('progress-text');
+        const fillEl = document.getElementById('progress-fill');
+        if (!progressEl || !textEl || !fillEl) return;
+        if (total > 0) {
+          progressEl.hidden = false;
+          textEl.textContent = `${submitted} / ${total}`;
+          fillEl.style.width = `${Math.round((submitted / total) * 100)}%`;
+        }
+      }
+
       async function fetchEmailList() {
         setListState({ loading: true });
         try {
@@ -731,6 +786,7 @@
             return;
           }
 
+          updateProgressBar(payload.submitted_count || 0, payload.pool_size || 0);
           renderEmailList(payload.emails || []);
         } catch (error) {
           renderListError(error.message);
@@ -1229,6 +1285,9 @@
             form.querySelectorAll("input, button").forEach((el) => {
               el.disabled = true;
             });
+
+            // Update session progress bar
+            updateProgressBar(sessionSubmittedCount + 1, sessionPoolSize);
 
             if (payload.completed) {
               alert("All emails completed! You will now be returned to the main page.");
