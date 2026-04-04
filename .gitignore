@@ -58,6 +58,9 @@ app/static/videos/*.mp4
 # Reports
 examples/realism_report.json
 
+# Test reports
+report.xml
+
 # OS files
 .DS_Store
 Thumbs.db
