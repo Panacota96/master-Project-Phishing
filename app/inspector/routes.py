@@ -11,6 +11,7 @@ from app.inspector import bp
 from app.models import (
     create_inspector_attempt_anonymous,
     get_effective_answer_key,
+    get_inspector_config_for_cohort,
     get_user_inspector_state,
     update_user_inspector_state,
 )
@@ -27,12 +28,13 @@ def _bucket():
 
 
 def _get_eml_keys():
-    """List all .eml object keys under the eml-samples/ prefix in S3."""
+    """List all .eml/.json object keys under the eml-samples/ prefix in S3."""
     try:
         resp = _s3_client().list_objects_v2(Bucket=_bucket(), Prefix=EML_PREFIX)
         keys = []
         for obj in resp.get('Contents', []):
-            if obj['Key'].lower().endswith('.eml'):
+            key_lower = obj['Key'].lower()
+            if key_lower.endswith('.eml') or key_lower.endswith('.json'):
                 keys.append(obj['Key'])
         return sorted(keys)
     except Exception:
@@ -40,7 +42,7 @@ def _get_eml_keys():
 
 
 def _get_or_create_email_pool():
-    """Return a stable per-session list of email filenames (max 8)."""
+    """Return a stable per-session list of email filenames (max configurable)."""
     eml_keys = _get_eml_keys()
     key_map = {key.split('/')[-1]: key for key in eml_keys}
 
@@ -48,8 +50,21 @@ def _get_or_create_email_pool():
     if pool and all(name in key_map for name in pool):
         return pool, key_map
 
+    cohort_config = get_inspector_config_for_cohort(
+        getattr(current_user, 'class_name', 'unknown'),
+        getattr(current_user, 'academic_year', 'unknown'),
+        getattr(current_user, 'major', 'unknown'),
+        getattr(current_user, 'facility', 'unknown'),
+        getattr(current_user, 'group', 'default'),
+    )
+
     answer_key = get_effective_answer_key()
     filenames = [name for name in key_map.keys() if name in answer_key]
+
+    targets = cohort_config.get('targets') or []
+    if targets:
+        filenames = [name for name in filenames if name in targets]
+
     if not filenames:
         session['inspector_email_pool'] = []
         return [], key_map
@@ -57,12 +72,19 @@ def _get_or_create_email_pool():
     spam_files = [name for name in filenames if answer_key.get(name, {}).get('classification') == 'Spam']
     phishing_files = [name for name in filenames if name not in spam_files]
 
-    spam_max = min(3, len(spam_files))
-    pool_size = min(8, len(filenames), len(phishing_files) + spam_max)
+    max_spam_allowed = min(int(cohort_config.get('max_spam', 3)), len(spam_files))
+    pool_size = min(
+        int(cohort_config.get('pool_size', 8)),
+        len(filenames),
+        len(phishing_files) + max_spam_allowed,
+    )
+    if pool_size <= 0:
+        pool_size = min(8, len(filenames))
 
     spam_min = 1 if spam_files and pool_size > 0 else 0
-    max_spam_allowed = min(spam_max, pool_size)
-    min_spam_required = max(spam_min, pool_size - len(phishing_files))
+    spam_ratio = cohort_config.get('spam_ratio', 0.35)
+    target_spam = int(round(pool_size * spam_ratio))
+    min_spam_required = max(spam_min, pool_size - len(phishing_files), target_spam)
 
     if min_spam_required > max_spam_allowed:
         spam_count = max_spam_allowed
@@ -369,6 +391,7 @@ def api_submit():
     filename = data.get('fileName')
     classification = data.get('classification')
     selected_signals = data.get('signals', [])
+    explanation_rating = data.get('explanationRating') or data.get('explanation_rating')
 
     if not filename:
         return jsonify({'error': 'Missing email filename.'}), 400
@@ -400,6 +423,15 @@ def api_submit():
         if selected_signals:
             return jsonify({'error': 'Spam classifications should not include phishing signals.'}), 400
 
+    rating_value = None
+    if explanation_rating not in (None, ''):
+        try:
+            rating_value = int(explanation_rating)
+        except (TypeError, ValueError):
+            return jsonify({'error': 'Explanation rating must be a number between 1 and 5.'}), 400
+        if rating_value < 1 or rating_value > 5:
+            return jsonify({'error': 'Explanation rating must be between 1 and 5.'}), 400
+
     expected_classification = requirement['classification']
     expected_signals = requirement.get('signals', [])
 
@@ -429,6 +461,8 @@ def api_submit():
         class_name=current_user.class_name,
         academic_year=current_user.academic_year,
         major=current_user.major,
+        facility=getattr(current_user, 'facility', 'unknown'),
+        explanation_rating=rating_value,
     )
 
     submitted = submitted + [filename]

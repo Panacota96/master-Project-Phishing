@@ -1,11 +1,24 @@
 import csv
 import io
+import json
 import time
+from uuid import uuid4
 from datetime import datetime, timezone
 
 import requests
 
-from flask import abort, current_app, flash, jsonify, redirect, render_template, request, url_for
+from flask import (
+    Response,
+    abort,
+    current_app,
+    flash,
+    jsonify,
+    redirect,
+    render_template,
+    request,
+    stream_with_context,
+    url_for,
+)
 from flask_login import current_user, login_required
 
 from app.dashboard import bp
@@ -22,6 +35,7 @@ from app.models import (
     get_quiz,
     get_user,
     get_user_by_email,
+    get_threat_cache,
     list_all_users,
     list_all_attempts,
     list_attempts_by_quiz,
@@ -30,7 +44,9 @@ from app.models import (
     list_quizzes,
     reset_user_inspector_state,
     reset_users_inspector_state,
+    save_inspector_config_for_cohort,
     set_answer_key_override,
+    set_threat_cache,
     update_user_password,
 )
 
@@ -40,6 +56,25 @@ THREAT_CACHE = {
     'timestamp': 0
 }
 
+CAMPAIGN_STORE = []
+
+
+def _load_cached_threats():
+    # Prefer DynamoDB TTL cache when available
+    cached = get_threat_cache()
+    if cached:
+        return cached
+    now = time.time()
+    if now - THREAT_CACHE['timestamp'] < current_app.config.get('THREAT_CACHE_TTL_SECONDS', 3600):
+        return THREAT_CACHE['data']
+    return []
+
+
+def _save_cached_threats(data):
+    THREAT_CACHE['data'] = data
+    THREAT_CACHE['timestamp'] = time.time()
+    set_threat_cache(data)
+
 
 @bp.route('/api/threat-feed')
 @login_required
@@ -48,10 +83,9 @@ def api_threat_feed():
     if not current_user.is_admin:
         abort(403)
 
-    # Check cache (1 hour expiry)
-    now = time.time()
-    if now - THREAT_CACHE['timestamp'] < 3600 and THREAT_CACHE['data']:
-        return jsonify(THREAT_CACHE['data'])
+    cached = _load_cached_threats()
+    if cached:
+        return jsonify(cached)
 
     try:
         # OpenPhish free feed provides raw URLs
@@ -79,14 +113,71 @@ def api_threat_feed():
 
                 defanged.append({'target': target, 'url': safe_url})
 
-            THREAT_CACHE['data'] = defanged
-            THREAT_CACHE['timestamp'] = now
+            _save_cached_threats(defanged)
             return jsonify(defanged)
 
     except Exception as e:
         current_app.logger.error(f"Threat feed fetch failed: {e}")
 
     return jsonify([])  # Return empty list on failure
+
+
+@bp.route('/api/threat-feed/promote', methods=['POST'])
+@login_required
+def promote_threat_to_inspector():
+    """Promote a threat-feed URL into the inspector dataset as a JSON EML sample."""
+    if not current_user.is_admin:
+        abort(403)
+
+    data = request.get_json(silent=True) or {}
+    url = data.get('url', '').strip()
+    target = data.get('target', 'Unknown')
+    if not url:
+        return jsonify({'error': 'url is required'}), 400
+
+    filename = data.get('filename') or f"openphish-{int(time.time())}.json"
+    if not filename.lower().endswith('.json'):
+        filename = f"{filename}.json"
+
+    summary = {
+        'fileName': filename,
+        'subject': f"Suspicious link reported: {target}",
+        'from': 'threat-intel@openphish.example',
+        'to': 'student@example.com',
+        'date': datetime.now(timezone.utc).isoformat(),
+    }
+    body = {
+        'summary': summary,
+        'headers': [
+            {'name': 'X-Imported-From', 'value': 'OpenPhish'},
+            {'name': 'X-Target', 'value': target},
+        ],
+        'textBody': f"This synthetic training sample references {url}",
+        'htmlBody': f"<p>This synthetic training sample references <strong>{url}</strong></p>",
+        'attachments': [],
+        'links': [url],
+        'warnings': ['Imported from live threat feed; treat as phishing training material'],
+    }
+
+    try:
+        s3_key = f"eml-samples/{filename}"
+        current_app.s3_client.put_object(
+            Bucket=current_app.config['S3_BUCKET'],
+            Key=s3_key,
+            Body=json.dumps(body).encode('utf-8'),
+            ContentType='application/json',
+        )
+        # Default ground truth: phishing with common signals
+        set_answer_key_override(
+            filename,
+            classification='Phishing',
+            signals=['externaldomain', 'fakelogin', 'urgency'],
+            explanation=f'Live threat imported from OpenPhish ({target}).',
+        )
+        return jsonify({'success': True, 'email_file': filename})
+    except Exception:
+        current_app.logger.exception('Failed to promote threat feed URL')
+        return jsonify({'error': 'Failed to promote threat to inspector.'}), 500
 
 
 @bp.route('/users')
@@ -340,6 +431,104 @@ def reset_answer_key():
     return jsonify({'success': True})
 
 
+@bp.route('/inspector/config', methods=['POST'])
+@login_required
+def update_inspector_config():
+    """Admin-only endpoint to tune inspector pool per cohort."""
+    if not current_user.is_admin:
+        abort(403)
+
+    class_name = request.form.get('class_name', 'unknown').strip() or 'unknown'
+    academic_year = request.form.get('academic_year', 'unknown').strip() or 'unknown'
+    major = request.form.get('major', 'unknown').strip() or 'unknown'
+    facility = request.form.get('facility', 'unknown').strip() or 'unknown'
+    group = request.form.get('group', 'default').strip() or 'default'
+    pool_size = request.form.get('pool_size') or current_app.config.get('INSPECTOR_POOL_SIZE_DEFAULT', 8)
+    max_spam = request.form.get('max_spam') or current_app.config.get('INSPECTOR_MAX_SPAM_DEFAULT', 3)
+    spam_ratio = request.form.get('spam_ratio') or current_app.config.get('INSPECTOR_SPAM_RATIO_DEFAULT', 0.35)
+    targets_raw = request.form.get('targets', '')
+
+    try:
+        pool_size_int = max(1, int(pool_size))
+        max_spam_int = max(0, int(max_spam))
+        spam_ratio_f = max(0.0, min(1.0, float(spam_ratio)))
+    except ValueError:
+        return jsonify({'error': 'Invalid numeric value.'}), 400
+
+    targets = [t.strip() for t in targets_raw.split(',') if t.strip()]
+
+    config = save_inspector_config_for_cohort(
+        class_name,
+        academic_year,
+        major,
+        facility,
+        group,
+        {
+            'pool_size': pool_size_int,
+            'max_spam': max_spam_int,
+            'spam_ratio': spam_ratio_f,
+            'targets': targets,
+        },
+    )
+    return jsonify({'success': True, 'config': config})
+
+
+@bp.route('/api/campaigns', methods=['GET'])
+@login_required
+def list_campaigns():
+    if not current_user.is_admin:
+        abort(403)
+    return jsonify({'campaigns': CAMPAIGN_STORE})
+
+
+@bp.route('/campaigns/launch', methods=['POST'])
+@login_required
+def launch_campaign():
+    if not current_user.is_admin:
+        abort(403)
+
+    class_name = request.form.get('class_name', 'All')
+    academic_year = request.form.get('academic_year', 'All')
+    major = request.form.get('major', 'All')
+    facility = request.form.get('facility', 'All')
+    cohort_label = f"{class_name}|{academic_year}|{major}|{facility}"
+
+    campaign = {
+        'id': str(uuid4()),
+        'cohort': cohort_label,
+        'status': 'launched',
+        'created_at': datetime.now(timezone.utc).isoformat(),
+    }
+    CAMPAIGN_STORE.insert(0, campaign)
+    CAMPAIGN_STORE[:] = CAMPAIGN_STORE[:25]  # keep recent history
+
+    lambda_arn = current_app.config.get('CAMPAIGN_LAMBDA_ARN')
+    if lambda_arn and getattr(current_app, 'lambda_client', None):
+        try:
+            current_app.lambda_client.invoke(
+                FunctionName=lambda_arn,
+                InvocationType='Event',
+                Payload=json.dumps({'cohort': cohort_label}).encode('utf-8'),
+            )
+        except Exception:
+            current_app.logger.warning('Lambda invocation failed; campaign recorded locally only.')
+
+    return jsonify({'success': True, 'campaign': campaign})
+
+
+@bp.route('/campaigns/validation-email', methods=['POST'])
+@login_required
+def send_validation_email():
+    if not current_user.is_admin:
+        abort(403)
+
+    cohort = request.form.get('cohort', 'All')
+    template = current_app.config.get('VALIDATION_EMAIL_TEMPLATE')
+    # This is a stub — SES template + recipient selection would live here.
+    current_app.logger.info(f"Validation email queued for cohort {cohort} using template {template or 'default'}")
+    return jsonify({'success': True, 'message': f'Validation email triggered for {cohort}.'})
+
+
 @bp.route('/animation')
 @login_required
 def animation():
@@ -428,12 +617,21 @@ def index():
     inspector_correct = sum(1 for a in inspector_attempts if a.get('is_correct'))
     inspector_phishing = sum(1 for a in inspector_attempts if a.get('classification') == 'Phishing')
     inspector_spam = sum(1 for a in inspector_attempts if a.get('classification') == 'Spam')
+    rating_total = 0
+    rating_count = 0
 
     # Signal Accuracy Stats
     signal_stats = {}  # {signal_alias: {expected: 0, identified: 0}}
     for attempt in inspector_attempts:
         expected = attempt.get('expected_signals', [])
         selected = attempt.get('selected_signals', [])
+        rating_val = attempt.get('explanation_rating')
+        if rating_val is not None:
+            try:
+                rating_total += float(rating_val)
+                rating_count += 1
+            except (TypeError, ValueError):
+                pass
         for sig in expected:
             if sig not in signal_stats:
                 signal_stats[sig] = {'expected': 0, 'identified': 0}
@@ -463,6 +661,30 @@ def index():
         key=lambda item: item['count'],
         reverse=True,
     )
+    inspector_avg_rating = round(rating_total / rating_count, 1) if rating_count else None
+    inspector_progress_map = {}
+    for attempt in inspector_attempts:
+        key = (
+            attempt.get('class_name', 'unknown'),
+            attempt.get('academic_year', 'unknown'),
+            attempt.get('major', 'unknown'),
+            attempt.get('facility', 'unknown'),
+        )
+        if key not in inspector_progress_map:
+            inspector_progress_map[key] = {'attempts': 0, 'correct': 0}
+        inspector_progress_map[key]['attempts'] += 1
+        if attempt.get('is_correct'):
+            inspector_progress_map[key]['correct'] += 1
+    inspector_progress_rows = []
+    for (class_name, academic_year, major, facility), stats in inspector_progress_map.items():
+        inspector_progress_rows.append({
+            'class_name': class_name,
+            'academic_year': academic_year,
+            'major': major,
+            'facility': facility,
+            'attempts': stats['attempts'],
+            'correct': stats['correct'],
+        })
 
     return render_template(
         'dashboard/dashboard.html',
@@ -478,19 +700,15 @@ def index():
         inspector_correct=inspector_correct,
         inspector_phishing=inspector_phishing,
         inspector_spam=inspector_spam,
+        inspector_avg_rating=inspector_avg_rating,
+        inspector_progress_rows=inspector_progress_rows,
         inspector_recent=[],
         inspector_per_email=inspector_per_email,
         signal_accuracy=signal_accuracy,
     )
 
 
-@bp.route('/api/stats')
-@login_required
-def api_stats():
-    """Live statistics endpoint — polled by the dashboard every 30 seconds."""
-    if not current_user.is_admin:
-        abort(403)
-
+def _build_live_stats():
     total_users = count_users()
     attempts = list_all_attempts()
     total_attempts = len(attempts)
@@ -505,7 +723,6 @@ def api_stats():
     completed_count = total_attempts
     pending_count = total_users - completed_count
 
-    # Per-cohort stats (class/year/major)
     per_group = {}
     for attempt in attempts:
         class_name = attempt.get('class_name', 'unknown')
@@ -520,13 +737,81 @@ def api_stats():
         count = stats['count']
         stats['avg'] = round(stats['total_pct'] / count, 1) if count > 0 else 0
 
-    return jsonify({
+    inspector_attempts = list_inspector_attempts_anonymous()
+    inspector_progress = {}
+    rating_total = 0
+    rating_count = 0
+    for attempt in inspector_attempts:
+        key = (
+            attempt.get('class_name', 'unknown'),
+            attempt.get('academic_year', 'unknown'),
+            attempt.get('major', 'unknown'),
+            attempt.get('facility', 'unknown'),
+        )
+        if key not in inspector_progress:
+            inspector_progress[key] = {'attempts': 0, 'correct': 0}
+        inspector_progress[key]['attempts'] += 1
+        if attempt.get('is_correct'):
+            inspector_progress[key]['correct'] += 1
+        rating_val = attempt.get('explanation_rating')
+        if rating_val is not None:
+            try:
+                rating_total += float(rating_val)
+                rating_count += 1
+            except (TypeError, ValueError):
+                continue
+
+    inspector_rows = []
+    for (class_name, academic_year, major, facility), stats in inspector_progress.items():
+        inspector_rows.append({
+            'class_name': class_name,
+            'academic_year': academic_year,
+            'major': major,
+            'facility': facility,
+            'attempts': stats['attempts'],
+            'correct': stats['correct'],
+        })
+
+    avg_rating = round(rating_total / rating_count, 1) if rating_count else None
+
+    return {
         'total_users': total_users,
         'completed_count': completed_count,
         'pending_count': pending_count,
         'avg_score': avg_score,
         'per_group': per_group,
-    })
+        'inspector_progress': inspector_rows,
+        'avg_explanation_rating': avg_rating,
+    }
+
+
+@bp.route('/api/stats/stream')
+@login_required
+def api_stats_stream():
+    """Server-sent events stream for real-time dashboard updates."""
+    if not current_user.is_admin:
+        abort(403)
+
+    def event_stream():
+        while True:
+            payload = json.dumps(_build_live_stats())
+            yield f"data: {payload}\n\n"
+            time.sleep(5)
+
+    return Response(
+        stream_with_context(event_stream()),
+        mimetype='text/event-stream',
+        headers={'Cache-Control': 'no-cache'},
+    )
+
+
+@bp.route('/api/stats')
+@login_required
+def api_stats():
+    """Live statistics endpoint — polled by the dashboard every 30 seconds."""
+    if not current_user.is_admin:
+        abort(403)
+    return jsonify(_build_live_stats())
 
 
 @bp.route('/reports')

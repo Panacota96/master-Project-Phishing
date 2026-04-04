@@ -1,4 +1,6 @@
-from flask import flash, jsonify, redirect, render_template, session, url_for
+import time
+
+from flask import current_app, flash, jsonify, redirect, render_template, session, url_for
 from flask_login import current_user, login_required
 
 from app.models import (
@@ -33,9 +35,13 @@ def start_quiz(quiz_id):
         flash('Quiz not found.', 'danger')
         return redirect(url_for('quiz.quiz_list'))
 
+    max_retries = int(quiz.get('max_retries', current_app.config.get('QUIZ_MAX_RETRIES_DEFAULT', 1)))
+    adaptive = bool(quiz.get('adaptive', current_app.config.get('QUIZ_ADAPTIVE_DEFAULT', False)))
+    time_limit_seconds = int(quiz.get('time_limit_seconds', current_app.config.get('QUIZ_TIMER_DEFAULT', 0)))
+
     # One-attempt lock: check if user already completed this quiz
     existing = get_attempt(current_user.username, quiz_id)
-    if existing:
+    if existing and max_retries <= int(existing.get('attempt_number', 1)):
         flash('You have already completed this quiz.', 'warning')
         video_url = quiz.get('video_url')
         return render_template(
@@ -46,6 +52,10 @@ def start_quiz(quiz_id):
             already_completed=True,
             video_url=video_url,
         )
+    elif existing:
+        session['quiz_attempt_number'] = int(existing.get('attempt_number', 1)) + 1
+    else:
+        session['quiz_attempt_number'] = 1
 
     video_url = quiz.get('video_url')
     if video_url:
@@ -61,8 +71,20 @@ def start_quiz(quiz_id):
     session['quiz_score'] = 0
     session['quiz_total'] = 0
     session['quiz_id'] = quiz_id
-    session['question_ids'] = [q['question_id'] for q in questions]
+    ordered_questions = (
+        sorted(
+            questions,
+            key=lambda q: q.get('difficulty', 1),
+            reverse=session.get('quiz_attempt_number', 1) > 1,
+        )
+        if adaptive
+        else questions
+    )
+    session['question_ids'] = [q['question_id'] for q in ordered_questions]
     session['current_index'] = 0
+    if time_limit_seconds:
+        session['quiz_time_limit'] = time_limit_seconds
+        session['quiz_started_at'] = time.time()
     return redirect(url_for('quiz.take_question'))
 
 
@@ -100,6 +122,15 @@ def take_question():
     question_ids = session.get('question_ids', [])
     current_index = session.get('current_index', 0)
     quiz_id = session.get('quiz_id')
+
+    time_limit = session.get('quiz_time_limit')
+    started_at = session.get('quiz_started_at')
+    elapsed = None
+    if time_limit and started_at:
+        elapsed = time.time() - started_at
+        if elapsed > time_limit:
+            flash('Time is up for this quiz.', 'warning')
+            return redirect(url_for('quiz.finish_quiz'))
 
     if current_index >= len(question_ids):
         return redirect(url_for('quiz.finish_quiz'))
@@ -157,6 +188,7 @@ def take_question():
         show_explanation = True
 
     progress = int((current_index / len(question_ids)) * 100)
+    remaining_seconds = max(int(time_limit - elapsed), 0) if time_limit and elapsed is not None else None
 
     return render_template(
         'quiz/take_quiz.html',
@@ -168,6 +200,8 @@ def take_question():
         current=current_index + 1,
         total=len(question_ids),
         progress=progress,
+        time_limit=time_limit,
+        remaining_seconds=remaining_seconds,
     )
 
 
@@ -177,6 +211,8 @@ def finish_quiz():
     quiz_id = session.get('quiz_id')
     score = session.get('quiz_score', 0)
     total = session.get('quiz_total', 0)
+    attempt_number = session.get('quiz_attempt_number', 1)
+    time_limit_seconds = session.get('quiz_time_limit')
     quiz = get_quiz(quiz_id) if quiz_id else None
     video_url = quiz.get('video_url') if quiz else None
 
@@ -191,11 +227,24 @@ def finish_quiz():
             class_name=current_user.class_name,
             academic_year=current_user.academic_year,
             major=current_user.major,
+            allow_overwrite=attempt_number > 1,
+            attempt_number=attempt_number,
+            time_limit_seconds=time_limit_seconds,
         )
         mark_quiz_completed(current_user.username)
 
     # Clean up session
-    for key in ('quiz_score', 'quiz_total', 'quiz_id', 'question_ids', 'current_index'):
+    cleanup_keys = (
+        'quiz_score',
+        'quiz_total',
+        'quiz_id',
+        'question_ids',
+        'current_index',
+        'quiz_attempt_number',
+        'quiz_time_limit',
+        'quiz_started_at',
+    )
+    for key in cleanup_keys:
         session.pop(key, None)
 
     return render_template(

@@ -472,6 +472,29 @@
         background: rgba(220, 38, 38, 0.08);
       }
 
+      .rating-row {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+        margin: 0.65rem 0;
+      }
+
+      .rating-control {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+      }
+
+      .rating-control input[type="range"] {
+        flex: 1;
+      }
+
+      .rating-value {
+        font-weight: 700;
+        min-width: 1.5rem;
+        text-align: right;
+      }
+
       .signal-feedback {
         margin-top: 0.5rem;
         border-radius: 0.55rem;
@@ -973,6 +996,13 @@
                   ${signalCheckboxes}
                 </div>
               </div>
+              <div class="rating-row">
+                <label for="${sanitizedIdBase}-rating">How clear was the explanation? (1-5)</label>
+                <div class="rating-control">
+                  <input type="range" min="1" max="5" step="1" value="5" id="${sanitizedIdBase}-rating" name="explanationRating" />
+                  <span class="rating-value" aria-live="polite">5</span>
+                </div>
+              </div>
               <button type="submit" class="classification-submit">Submit</button>
               <div class="classification-status" aria-live="polite"></div>
             </form>
@@ -1085,6 +1115,15 @@
         const signalSection = form.querySelector(".signal-section");
         const classificationInputs = Array.from(form.querySelectorAll('input[name="classification"]'));
         const signalInputs = Array.from(form.querySelectorAll('input[name="signals"]'));
+        const ratingInput = form.querySelector('input[name="explanationRating"]');
+        const ratingDisplay = form.querySelector(".rating-value");
+
+        if (ratingInput && ratingDisplay) {
+          ratingDisplay.textContent = ratingInput.value;
+          ratingInput.addEventListener("input", () => {
+            ratingDisplay.textContent = ratingInput.value;
+          });
+        }
 
         signalInputs.forEach((input) => {
           input.addEventListener("change", () => {
@@ -1165,6 +1204,7 @@
                 fileName: emailFileName,
                 classification: selectedClassification,
                 signals: selectedAliases,
+                explanationRating: ratingInput ? ratingInput.value : undefined,
               }),
             });
             const payload = await response.json();
