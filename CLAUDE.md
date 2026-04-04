@@ -64,6 +64,11 @@ export S3_BUCKET=phishing-app-dev-eu-west-3
 export SECRET_KEY=dev-secret
 export SQS_REGISTRATION_QUEUE_URL=
 export SES_FROM_EMAIL=no-reply@example.com
+# Optional: Microsoft 365 SSO (leave empty to disable)
+export MSAL_CLIENT_ID=
+export MSAL_CLIENT_SECRET=
+export MSAL_AUTHORITY=https://login.microsoftonline.com/common/v2.0
+export MSAL_ADMIN_GROUP_ID=
 python seed_dynamodb.py
 ```
 

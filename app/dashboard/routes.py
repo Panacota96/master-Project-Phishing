@@ -9,6 +9,7 @@ from flask import abort, current_app, flash, jsonify, redirect, render_template,
 from flask_login import current_user, login_required
 
 from app.dashboard import bp
+from app.dashboard.forms import AdminSetPasswordForm
 from app.models import (
     count_users,
     create_bug_report,
@@ -30,6 +31,7 @@ from app.models import (
     reset_user_inspector_state,
     reset_users_inspector_state,
     set_answer_key_override,
+    update_user_password,
 )
 
 # Simple in-memory cache for threat feed
@@ -93,7 +95,8 @@ def list_users():
     if not current_user.is_admin:
         abort(403)
     users = list_all_users()
-    return render_template('admin/users.html', users=users)
+    set_password_form = AdminSetPasswordForm()
+    return render_template('admin/users.html', users=users, set_password_form=set_password_form)
 
 
 @bp.route('/users/delete/<username>', methods=['POST'])
@@ -158,6 +161,29 @@ def add_user():
     except Exception as e:
         current_app.logger.error(f'Failed to create user {username}: {e}')
         flash('Failed to create user.', 'danger')
+
+    return redirect(url_for('dashboard.list_users'))
+
+
+@bp.route('/users/<username>/set-password', methods=['POST'])
+@login_required
+def set_user_password(username):
+    """Allow an admin to set a new password for any user."""
+    if not current_user.is_admin:
+        abort(403)
+
+    target = get_user(username)
+    if target is None:
+        abort(404)
+
+    form = AdminSetPasswordForm()
+    if form.validate_on_submit():
+        update_user_password(username, form.new_password.data)
+        flash(f'Password updated for {username}.', 'success')
+    else:
+        for field_errors in form.errors.values():
+            for err in field_errors:
+                flash(err, 'danger')
 
     return redirect(url_for('dashboard.list_users'))
 

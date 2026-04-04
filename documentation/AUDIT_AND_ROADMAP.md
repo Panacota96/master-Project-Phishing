@@ -1,4 +1,4 @@
-# Project Audit & Future Roadmap (February 2026)
+# Project Audit & Future Roadmap (April 2026)
 
 This document provides a comprehensive overview of the current feature set of the Phishing Awareness Training Application and outlines the strategic roadmap for future enhancements.
 
@@ -16,6 +16,7 @@ This document provides a comprehensive overview of the current feature set of th
 
 ### 🛠️ Administrative & Operational Tools
 - **Full User Lifecycle Management**: Admin UI to view, filter, and delete student accounts.
+- **Admin-Side Password Reset (IMPLEMENTED — M2)**: Admins can reset any student's password directly from the user management table without deleting and recreating the account. A per-user modal form enforces the same password-strength policy as the student self-service flow (`app/dashboard/forms.py`, `POST /dashboard/users/<username>/set-password`).
 - **Inspector Ground-Truth Dashboard**: Dedicated view to verify the "Answer Key" and preview how the parser handles specific emails.
 - **Editable Answer Key (IMPLEMENTED)**: Admins can override any email's classification (Phishing/Spam) and required signals directly from the UI. Overrides are stored in DynamoDB (`DYNAMODB_ANSWER_KEY_OVERRIDES`) and take effect immediately without a code deployment. The static `answer_key.py` remains the fallback baseline.
 - **Dynamic Signal Count (IMPLEMENTED)**: Required signal count per email is driven by the answer key (`len(signals)`), not hardcoded. Student UI and server-side validation both respect this dynamically.
@@ -23,6 +24,10 @@ This document provides a comprehensive overview of the current feature set of th
     - **Signal Accuracy Heatmap**: Visual Polar Chart identifying which phishing tactics (e.g., Punycode, Spoofing) are most misunderstood.
     - **Cohort Reporting**: Automated CSV generation filtered by Class, Major, and Academic Year.
 - **Bulk Data Operations**: CSV import tools for large cohorts and bulk reset capabilities for retakes.
+
+### 🔐 Authentication & SSO
+- **Microsoft 365 / Azure AD SSO (IMPLEMENTED — M4)**: Optional MSAL OIDC integration. When `MSAL_CLIENT_ID` and `MSAL_CLIENT_SECRET` environment variables are set a "Sign in with Microsoft" button appears on the login page (`/auth/sso/login` → `/auth/sso/callback`). The callback auto-provisions a local account on first login. SSO users cannot use local-password login. The admin group can be mapped via `MSAL_ADMIN_GROUP_ID`. See `app/auth/sso.py`.
+- **Local Password Login**: Flask-Login with Werkzeug hashing; unchanged and fully backward-compatible.
 
 ### 🔒 Security, Privacy & DevOps
 - **GDPR by Design**: Anonymous data tables for threat analysis and aggregated cohort-level reporting.

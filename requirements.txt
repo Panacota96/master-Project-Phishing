@@ -11,3 +11,4 @@ asgiref==3.8.1
 requests==2.32.3
 qrcode[pil]==8.0
 aws-xray-sdk==2.14.0
+msal==1.35.1
