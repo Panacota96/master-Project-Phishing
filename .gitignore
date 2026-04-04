@@ -52,6 +52,7 @@ app/static/videos/*.mp4
 
 # Reports
 examples/realism_report.json
+report.xml
 
 # OS files
 .DS_Store
