@@ -121,7 +121,7 @@ Tests use `moto` to mock all AWS services. The `conftest.py` fixture `app()` wra
 ### Deployment
 
 - **Lambda**: Flask is wrapped with `mangum` for AWS Lambda + API Gateway
-- **Terraform**: `terraform/` manages all AWS infrastructure; `terraform/bootstrap/` creates the Terraform state bucket
+- **Terraform**: `phishing-platform-infra/terraform/` manages all AWS infrastructure; `phishing-platform-infra/terraform/bootstrap/` creates the Terraform state bucket
 - **CI/CD**: GitHub Actions — four workflows: `ci.yml` (lint/test/build), `deploy-dev.yml` (auto-deploy on push to main), `deploy-prod.yml` (manual), `destroy.yml` (manual teardown); plus `claude.yml` and `claude-code-review.yml`. Uses OIDC to assume the deploy role — no static AWS keys stored in GitHub secrets.
 - **Docker**: `docker compose up -d --build` starts three services: `dynamodb-local` (port 8766), `web` (Gunicorn/Flask, reads `.env`), and `nginx` (port 80). Static assets are served directly by Nginx; app routes go through the reverse proxy to Gunicorn.
 

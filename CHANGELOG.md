@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Changed
 - Main Lambda now runs inside the default VPC for Redis access and publishes campaign/threat feed updates through Redis where available.
 - Local setup scripts and tests create the new DynamoDB tables and queues; README documents the additional env vars and targets.
+- Split infrastructure assets into `phishing-platform-infra/` (Terraform, Ansible, legacy AWS helpers, infra scripts) and retargeted deploy workflows/docs to the new path.
 
 ---
 

@@ -5,7 +5,7 @@ Creates the S3 bucket and DynamoDB lock table used for Terraform remote state.
 ## Usage
 
 ```bash
-cd terraform/bootstrap
+cd phishing-platform-infra/terraform/bootstrap
 terraform init
 terraform apply \
   -var="state_bucket_name=phishing-terraform-state" \

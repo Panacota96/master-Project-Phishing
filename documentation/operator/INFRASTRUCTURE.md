@@ -10,7 +10,7 @@
 
 ## Infrastructure Overview
 
-The application uses a serverless AWS architecture managed entirely via **Terraform** (`terraform/` directory).
+The application uses a serverless AWS architecture managed entirely via **Terraform** (`phishing-platform-infra/terraform/` directory).
 
 ```mermaid
 architecture-beta
@@ -34,11 +34,11 @@ architecture-beta
 
 ## AWS Resource Mapping
 
-Infrastructure is located in the `terraform/` directory.
+Infrastructure is located in the `phishing-platform-infra/terraform/` directory.
 
 ### Bootstrap (Initial Setup)
 
-Before deploying the main infrastructure, a bootstrap process (`terraform/bootstrap/`) creates:
+Before deploying the main infrastructure, a bootstrap process (`phishing-platform-infra/terraform/bootstrap/`) creates:
 - **S3 Bucket** (`phishing-terraform-state`): Terraform remote state storage.
 - **DynamoDB Table** (`phishing-terraform-locks`): Terraform state locking (`LockID`).
 
@@ -117,7 +117,7 @@ Distribution in front of API Gateway:
 
 ## Configuration Variables
 
-Managed in `terraform/variables.tf` and `terraform/env/*.tfvars`.
+Managed in `phishing-platform-infra/terraform/variables.tf` and `phishing-platform-infra/terraform/env/*.tfvars`.
 
 | Variable | Description | Default |
 |---|---|---|

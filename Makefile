@@ -1,7 +1,7 @@
 .PHONY: lambda registration-worker campaign-mailer test lint validate-eml sync-assets sync-eml audit-eml
 
 AWS_REGION ?= eu-west-3
-TF_DIR ?= terraform
+TF_DIR ?= phishing-platform-infra/terraform
 S3_BUCKET = $(shell terraform -chdir=$(TF_DIR) output -raw s3_bucket_name 2>/dev/null)
 AWS_PROFILE_ARG := $(if $(AWS_PROFILE),--profile $(AWS_PROFILE),)
 DRY_RUN_ARG := $(if $(DRY_RUN),--dryrun,)

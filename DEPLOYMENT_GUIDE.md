@@ -16,7 +16,7 @@ source .venv/bin/activate
 ./scripts/build_lambda.sh
 
 # Terraform init (dev backend)
-cd terraform
+cd phishing-platform-infra/terraform
 terraform init -backend-config=backend/dev.hcl
 
 # Configure variables
@@ -47,13 +47,13 @@ python seed_dynamodb.py
 - **AccessDenied for DynamoDB**: switch to `terraform-deployer` or update IAM permissions.
 - **PEP 668 / pip install blocked**: use a venv (`python3 -m venv .venv`).
 - **Wrong bucket/env**: ensure `<env>` placeholders are replaced (dev vs prod).
-- **CI tries to recreate existing resources**: run `./scripts/import_resources.sh` to import live AWS resources into state.
+- **CI tries to recreate existing resources**: run `./phishing-platform-infra/scripts/import_resources.sh` to import live AWS resources into state.
 
 ## Session Log (Example — Dev)
 Use this as a template to document what was done in this session.
 
 **Bootstrap remote state (completed)**  
-- `terraform/bootstrap`  
+- `phishing-platform-infra/terraform/bootstrap`  
 - S3 state bucket created: `phishing-terraform-state`  
 - DynamoDB lock table created: `phishing-terraform-locks`  
 
@@ -180,7 +180,7 @@ Save the **Access Key ID** and **Secret Access Key** — you'll need them.
 Terraform stores its state in S3 and uses a DynamoDB table for state locking. Bootstrap these once:
 
 ```bash
-cd master-Project-Phishing/terraform/bootstrap
+cd master-Project-Phishing/phishing-platform-infra/terraform/bootstrap
 
 terraform init
 terraform apply \
@@ -214,11 +214,11 @@ cp env/prod.tfvars.example env/prod.tfvars
 #   app_name    = "phishing-app"
 #   secret_key  = "your-random-secret-string-here"  ← generate a strong key
 #
-# Note: `terraform/env/*.tfvars` is gitignored to avoid leaking secrets.
+# Note: `phishing-platform-infra/terraform/env/*.tfvars` is gitignored to avoid leaking secrets.
 #
 # Alternatively, start from:
-#   terraform/env/dev.tfvars.example
-#   terraform/env/prod.tfvars.example
+#   phishing-platform-infra/terraform/env/dev.tfvars.example
+#   phishing-platform-infra/terraform/env/prod.tfvars.example
 ```
 
 ### 2.1.1 Configure the Remote Backend
@@ -247,7 +247,7 @@ Note: The Lambda handler wraps Flask as ASGI using `asgiref` + `mangum`.
 ### 2.3 Deploy with Terraform
 
 ```bash
-cd terraform
+cd phishing-platform-infra/terraform
 
 # Preview what will be created
 terraform plan -var-file=env/dev.tfvars
@@ -333,7 +333,7 @@ Go to **GitLab → Your Project → Settings → CI/CD → Variables**. Add thes
 | `SKIP_SEED`             | `true` to skip seeding        | No      |
 | `CLEAN_S3`              | `true` to purge versioned objects before destroy | No |
 
-CI/CD generates `terraform/env/<env>.tfvars` at runtime from these variables if it does not already exist in the repo.
+CI/CD generates `phishing-platform-infra/terraform/env/<env>.tfvars` at runtime from these variables if it does not already exist in the repo.
 
 ### 3.2 Pipeline Stages
 
@@ -512,12 +512,12 @@ Use this when you want **both environments live** and need to **copy data from d
 
 ### 6.1.1 Migrate S3 (all prefixes)
 ```bash
-./scripts/migrate_s3.sh
+./phishing-platform-infra/scripts/migrate_s3.sh
 ```
 
 ### 6.1.2 Migrate DynamoDB (all tables)
 ```bash
-python3 ./scripts/migrate_dynamodb.py --from dev --to prod
+python3 ./phishing-platform-infra/scripts/migrate_dynamodb.py --from dev --to prod
 ```
 
 **Notes**
@@ -538,7 +538,7 @@ aws s3 ls s3://phishing-app-prod-eu-west-3/eml-samples/ --recursive | wc -l
 
 ### Destroy (local)
 ```bash
-cd terraform
+cd phishing-platform-infra/terraform
 terraform destroy -var-file=env/<env>.tfvars
 ```
 
@@ -554,7 +554,7 @@ Note: The app is down after destroy until deploy completes.
 ## 6.3 Safe Deploy (Manual)
 **Dev**
 ```bash
-cd terraform
+cd phishing-platform-infra/terraform
 terraform init -backend-config=backend/dev.hcl
 terraform plan -var-file=env/dev.tfvars
 terraform apply -var-file=env/dev.tfvars
@@ -562,7 +562,7 @@ terraform apply -var-file=env/dev.tfvars
 
 **Prod**
 ```bash
-cd terraform
+cd phishing-platform-infra/terraform
 terraform init -backend-config=backend/prod.hcl
 terraform plan -var-file=env/prod.tfvars
 terraform apply -var-file=env/prod.tfvars
@@ -586,14 +586,14 @@ python seed_dynamodb.py
 ## 6.4 Safe Destroy (Manual)
 **Dev**
 ```bash
-cd terraform
+cd phishing-platform-infra/terraform
 terraform init -backend-config=backend/dev.hcl
 terraform destroy -var-file=env/dev.tfvars
 ```
 
 **Prod**
 ```bash
-cd terraform
+cd phishing-platform-infra/terraform
 terraform init -backend-config=backend/prod.hcl
 terraform destroy -var-file=env/prod.tfvars
 ```

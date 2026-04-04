@@ -233,7 +233,7 @@ cd master-Project-Phishing
 
 ```bash
 # Copy the example env file
-cp aws/env.example .env
+cp env.example .env
 
 # Generate a random SECRET_KEY
 SECRET_KEY=$(python3 -c "import secrets; print(secrets.token_hex(32))")

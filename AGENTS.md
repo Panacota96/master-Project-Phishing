@@ -4,11 +4,12 @@
 - `app/`: Flask app factory, blueprints (`auth/`, `quiz/`, `dashboard/`, `inspector/`), templates, and static assets.
 - `tests/`: Pytest suite (`test_auth.py`, `test_models.py`, `test_quiz.py`) plus fixtures in `conftest.py`.
 - `examples/`: Real `.eml` samples used by the inspector.
-- `aws/`, `terraform/`, `nginx/`: Deployment and infrastructure assets.
-- `terraform/bootstrap/`: Terraform state bucket + lock table bootstrap.
-- `terraform/bootstrap/README.md`: Bootstrap instructions for remote state.
-- `terraform/backend/`: Backend configs for dev/prod state.
-- `terraform/env/`: Example tfvars for dev/prod.
+- `phishing-platform-infra/`: Infrastructure bundle (Terraform, Ansible, legacy AWS helpers, infra scripts).
+- `phishing-platform-infra/terraform/`: Terraform IaC (Lambda, API GW, DynamoDB, S3, CloudFront, IAM, SQS, SNS, CloudWatch).
+- `phishing-platform-infra/terraform/bootstrap/`: Terraform state bucket + lock table bootstrap.
+- `phishing-platform-infra/terraform/bootstrap/README.md`: Bootstrap instructions for remote state.
+- `phishing-platform-infra/terraform/backend/`: Backend configs for dev/prod state.
+- `phishing-platform-infra/terraform/env/`: Example tfvars for dev/prod.
 - Root scripts: `run.py` (dev entrypoint), `seed_dynamodb.py` (DynamoDB seed), `lambda_handler.py` (AWS Lambda).
 
 ## Build, Test, and Development Commands
@@ -28,7 +29,7 @@
 - Bootstrap (AWS console):
   - S3 state bucket details page (versioning enabled).
   - DynamoDB lock table details page.
-- Terraform init (terminal):
+- Terraform init (terminal, from `phishing-platform-infra/terraform`):
   - `terraform init -backend-config=backend/dev.hcl` success output.
 - Terraform plan (terminal):
   - `terraform plan -var-file=env/dev.tfvars` summary (add/change/destroy counts).
@@ -55,16 +56,16 @@
 - Dynamic signal count: `requiredSignals` returned by `api_email_detail`; student JS and server validation both read it (no more hardcoded 3).
 - New admin routes: `POST /dashboard/inspector/answer-key/edit` and `POST /dashboard/inspector/answer-key/reset`.
 - All 53 tests pass.
-- CloudFront distribution added (`terraform/cloudfront.tf`): stable `dXXXXX.cloudfront.net` URL that survives API Gateway destroy/recreate cycles; no custom domain or ACM certificate required.
-- `terraform/outputs.tf` now exports `cloudfront_url` — run `terraform output cloudfront_url` after apply to get the URL to share with students.
+- CloudFront distribution added (`phishing-platform-infra/terraform/cloudfront.tf`): stable `dXXXXX.cloudfront.net` URL that survives API Gateway destroy/recreate cycles; no custom domain or ACM certificate required.
+- `phishing-platform-infra/terraform/outputs.tf` now exports `cloudfront_url` — run `terraform output cloudfront_url` after apply to get the URL to share with students.
 
 ## Session Notes (2026-02-18)
 - Dev environment deployed via Terraform (Lambda + API Gateway + DynamoDB + S3).
 - Remote state bootstrapped: S3 state bucket + DynamoDB lock table.
 - CI/CD fixes applied (make in CI, JUnit report, CI secret key requirement).
 - CI/CD auto-deploys dev and keeps prod manual; seeding runs every deploy (skippable via `SKIP_SEED`).
-- Added `scripts/import_resources.sh` to import existing AWS resources into state.
-- Added dev→prod migration scripts: `scripts/migrate_dynamodb.py` + `scripts/migrate_s3.sh` (supports `MIGRATE_DRY_RUN`).
+- Added `phishing-platform-infra/scripts/import_resources.sh` to import existing AWS resources into state.
+- Added dev→prod migration scripts: `phishing-platform-infra/scripts/migrate_dynamodb.py` + `phishing-platform-infra/scripts/migrate_s3.sh` (supports `MIGRATE_DRY_RUN`).
 - Added manual CI jobs: `migrate_prod`, `destroy_dev`, `destroy_prod` (optional `CLEAN_S3=true`).
 - GDPR updates: group-only analytics by class/year/major; no individual reports.
 - Inspector analytics now cohort-based with CSV export.
@@ -91,6 +92,6 @@
 
 ## Security & Configuration Tips
 - Default admin credentials are `admin` / `admin123` (change for real deployments).
-- Configure secrets and AWS resources via env vars (see `aws/env.example`).
+- Configure secrets and AWS resources via env vars (see `phishing-platform-infra/aws/env.example`).
 - Do not commit real AWS keys or production secrets.
 - CI/CD requires `TF_VAR_secret_key` set in GitLab variables.

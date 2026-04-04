@@ -381,7 +381,7 @@ The `bedrock-runtime:InvokeModel` API requires model-specific request body forma
 
 ### B.3 — IAM permissions (Terraform)
 
-Add a new IAM policy resource to `terraform/iam.tf`:
+Add a new IAM policy resource to `phishing-platform-infra/terraform/iam.tf`:
 
 ```hcl
 # Bedrock access for AI features (email explanation + phishing coach)
@@ -418,7 +418,7 @@ resource "aws_iam_role_policy" "lambda_bedrock" {
 
 ### B.4 — Lambda environment variable
 
-Add to `terraform/lambda.tf` inside the `environment { variables = { ... } }` block:
+Add to `phishing-platform-infra/terraform/lambda.tf` inside the `environment { variables = { ... } }` block:
 
 ```hcl
 BEDROCK_REGION          = var.bedrock_region   # e.g. "eu-west-3" or "us-east-1"
@@ -426,7 +426,7 @@ BEDROCK_MODEL_ID        = "anthropic.claude-3-haiku-20240307-v1:0"
 BEDROCK_AI_ENABLED      = "true"               # feature flag to disable at runtime
 ```
 
-Add corresponding variable declarations to `terraform/variables.tf`:
+Add corresponding variable declarations to `phishing-platform-infra/terraform/variables.tf`:
 
 ```hcl
 variable "bedrock_region" {
@@ -970,9 +970,9 @@ class TestPhishingCoach:
 
 - [ ] Add `BEDROCK_REGION`, `BEDROCK_MODEL_ID`, `BEDROCK_AI_ENABLED` to `config.py`
 - [ ] Add `app.bedrock_client` initialisation to `app/__init__.py`
-- [ ] Add `aws_iam_role_policy.lambda_bedrock` to `terraform/iam.tf`
-- [ ] Add Bedrock env vars to `terraform/lambda.tf` environment block
-- [ ] Add `bedrock_region` variable to `terraform/variables.tf`
+- [ ] Add `aws_iam_role_policy.lambda_bedrock` to `phishing-platform-infra/terraform/iam.tf`
+- [ ] Add Bedrock env vars to `phishing-platform-infra/terraform/lambda.tf` environment block
+- [ ] Add `bedrock_region` variable to `phishing-platform-infra/terraform/variables.tf`
 - [ ] Add `generate_ai_explanation()` to `app/models.py`
 - [ ] Modify `api_submit` in `app/inspector/routes.py` to call `generate_ai_explanation`
 - [ ] Add `call_phishing_coach()` to `app/models.py`

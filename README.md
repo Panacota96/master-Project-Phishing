@@ -167,15 +167,18 @@ Every phishing email in the inspector is annotated with one or more of these sig
 master-Project-Phishing/
 ├── app/                         # Flask application
 ├── tests/                       # Pytest test suite
-├── terraform/                   # Infrastructure as Code (Terraform)
+├── scripts/                     # App build, content, and utility scripts
 ├── documentation/               # Full documentation suite
 ├── examples/                    # Real-world .eml phishing samples
-├── scripts/                     # Build, migration & utility scripts
 ├── registration_worker/         # Async SQS Lambda worker
+├── campaign_mailer/             # Campaign mailer Lambda
 ├── nginx/                       # Nginx reverse proxy configuration
-├── ansible/                     # Optional VM deployment playbooks
-├── .github/workflows/           # GitHub Actions CI/CD workflows
-├── aws/                         # Legacy EC2 deployment guide
+├── phishing-platform-infra/     # Infrastructure repo (Terraform, Ansible, AWS helper scripts)
+│   ├── terraform/               # Infrastructure as Code (Terraform)
+│   ├── ansible/                 # Optional VM deployment playbooks
+│   ├── aws/                     # Legacy EC2 deployment guide
+│   └── scripts/                 # Infra + migration scripts
+├── .github/workflows/           # GitHub Actions (app CI/CD)
 ├── Phishing AOC/                # TryHackMe reference materials
 ├── jury-presentation/           # Project review presentation
 ├── Dockerfile                   # Python 3.12-slim + Gunicorn
@@ -230,9 +233,19 @@ pytest-based tests with full AWS mocking via `moto`. No real AWS account needed.
 
 ---
 
-### `terraform/` — Infrastructure as Code
+### `phishing-platform-infra/` — Infrastructure Repository
 
-All AWS infrastructure is managed by Terraform. See [`documentation/operator/DEPLOYMENT.md`](documentation/operator/DEPLOYMENT.md) for step-by-step deployment instructions.
+Infrastructure is now isolated under `phishing-platform-infra/` so it can be pushed to a dedicated `phishing-platform-infra` repo. Run all Terraform commands from `phishing-platform-infra/terraform`.
+
+| Path | Purpose |
+|---|---|
+| `terraform/` | AWS IaC (Lambda, API Gateway, DynamoDB, S3, CloudFront, IAM, SQS, SNS, CloudWatch) |
+| `ansible/` | Optional VM provisioning playbooks (alternative to Lambda) |
+| `aws/` | Legacy EC2 user-data scripts and AMI notes |
+| `scripts/` | Infra + migration helpers (`import_resources.sh`, `migrate_dynamodb.py`, `migrate_inspector_attempts.py`, `migrate_s3.sh`) |
+| `terraform.tfstate` | Local state snapshot (move to remote state before real deploys) |
+
+**Terraform module index (`phishing-platform-infra/terraform/`):**
 
 | File | AWS Services |
 |---|---|
@@ -313,23 +326,22 @@ When adding new `.eml` files: upload to S3 (`make sync-eml`), then add an entry 
 
 ---
 
-### `scripts/` — Build, Migration & Utility Scripts
+### `scripts/` — Build & Content Utility Scripts (App)
 
 | Script | Purpose |
 |---|---|
 | `build_lambda.sh` | Packages the Flask app into `lambda.zip` |
 | `build_registration_worker.sh` | Packages the registration worker into `registration_worker.zip` |
+| `build_campaign_mailer.sh` | Packages the campaign mailer Lambda artifact |
 | `validate_eml_realism.py` | Checks `.eml` files against baseline realism criteria |
 | `audit_eml.py` | Runs a compliance audit on all `.eml` files; outputs `compliance_report.md` |
 | `generate_eml_samples.py` | Helper to scaffold new `.eml` sample files |
 | `fix_eml_names.py` | Normalises `.eml` filenames |
 | `fix_eml_images.py` | Converts linked images to base64 inline encoding |
-| `migrate_dynamodb.py` | Migrates DynamoDB data between dev and prod environments |
-| `migrate_s3.sh` | Mirrors S3 bucket contents between environments |
-| `migrate_inspector_attempts.py` | Migrates legacy inspector attempts to the anonymous table |
 | `backfill_cohorts.py` | Backfills cohort fields on existing records |
-| `import_resources.sh` | Imports existing AWS resources into Terraform state |
 | `generate_management_deck.py` / `.sh` | Generates a management summary presentation |
+
+Infra + migration helpers now live under `phishing-platform-infra/scripts/`.
 
 ---
 
@@ -354,19 +366,19 @@ Nginx configuration used in both Docker Compose (local dev) and optional Ansible
 
 ---
 
-### `ansible/` — Optional VM Provisioning
+### `phishing-platform-infra/ansible/` — Optional VM Provisioning
 
 Ansible playbooks for deploying the app on a traditional VM (alternative to the Lambda/Terraform path):
 
 ```bash
 # Provision server dependencies
-ansible-playbook -i ansible/inventory/hosts.ini ansible/playbooks/provision.yml
+ansible-playbook -i phishing-platform-infra/ansible/inventory/hosts.ini phishing-platform-infra/ansible/playbooks/provision.yml
 
 # Deploy the Flask app
-ansible-playbook -i ansible/inventory/hosts.ini ansible/playbooks/deploy.yml
+ansible-playbook -i phishing-platform-infra/ansible/inventory/hosts.ini phishing-platform-infra/ansible/playbooks/deploy.yml
 ```
 
-See `ansible/README.md` for required variables.
+See `phishing-platform-infra/ansible/README.md` for required variables.
 
 ---
 
@@ -380,6 +392,8 @@ See `ansible/README.md` for required variables.
 | `destroy.yml` | Manual dispatch | Tears down all Terraform-managed AWS resources |
 | `claude.yml` | PR / issue events | Claude AI agent automation |
 | `claude-code-review.yml` | PR events | Automated code review by Claude |
+
+Terraform steps inside these workflows now run from `phishing-platform-infra/terraform`. When splitting repos, copy the deploy/destroy workflows into the infra repo and keep `ci.yml` in the app repo.
 
 All AWS access uses **OIDC** — no static AWS keys are stored in GitHub secrets.
 
@@ -571,7 +585,7 @@ Full Terraform + AWS deployment guide: [`documentation/operator/DEPLOYMENT.md`](
 ### Bootstrap Terraform remote state (one-time)
 
 ```bash
-cd terraform/bootstrap
+cd phishing-platform-infra/terraform/bootstrap
 terraform init
 terraform apply \
   -var="state_bucket_name=phishing-terraform-state" \
@@ -592,12 +606,12 @@ Create `dev` and `prod` environments at **Settings → Environments**.
 
 ```bash
 # Migrate S3 buckets and DynamoDB tables (preserves password hashes)
-./scripts/migrate_s3.sh
-python3 ./scripts/migrate_dynamodb.py --from dev --to prod
+./phishing-platform-infra/scripts/migrate_s3.sh
+python3 ./phishing-platform-infra/scripts/migrate_dynamodb.py --from dev --to prod
 
 # Dry run first
-MIGRATE_DRY_RUN=true ./scripts/migrate_s3.sh
-MIGRATE_DRY_RUN=true python3 ./scripts/migrate_dynamodb.py --from dev --to prod --dry-run
+MIGRATE_DRY_RUN=true ./phishing-platform-infra/scripts/migrate_s3.sh
+MIGRATE_DRY_RUN=true python3 ./phishing-platform-infra/scripts/migrate_dynamodb.py --from dev --to prod --dry-run
 ```
 
 ---
@@ -674,8 +688,8 @@ Each user can submit answers for their assigned 8 emails once. After all 8 are s
 If you have older inspector attempts containing usernames, migrate them to the anonymous table:
 
 ```bash
-python3 scripts/migrate_inspector_attempts.py --dry-run
-python3 scripts/migrate_inspector_attempts.py
+python3 phishing-platform-infra/scripts/migrate_inspector_attempts.py --dry-run
+python3 phishing-platform-infra/scripts/migrate_inspector_attempts.py
 ```
 
 ### Download Reports
