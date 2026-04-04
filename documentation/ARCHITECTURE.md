@@ -229,7 +229,7 @@ erDiagram
         string email GSI-email-index
         string group GSI-group-index
         string password_hash
-        bool is_admin
+        string role ("student"|"instructor"|"admin")
         bool quiz_completed
         string class_name
         string academic_year

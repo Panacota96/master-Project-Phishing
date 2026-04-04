@@ -13,6 +13,7 @@ class TestUserModel:
             assert user.username == 'john'
             assert user.email == 'john@test.com'
             assert user.group == 'engineering'
+            assert user.role == 'student'
             assert user.is_admin is False
 
             fetched = get_user('john')

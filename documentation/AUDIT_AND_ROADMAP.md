@@ -26,7 +26,7 @@ This document provides a comprehensive overview of the current feature set of th
 - **Bulk Data Operations**: CSV import tools for large cohorts and bulk reset capabilities for retakes.
 
 ### 🔐 Authentication & SSO
-- **Microsoft 365 / Azure AD SSO (IMPLEMENTED — M4)**: Optional MSAL OIDC integration. When `MSAL_CLIENT_ID` and `MSAL_CLIENT_SECRET` environment variables are set a "Sign in with Microsoft" button appears on the login page (`/auth/sso/login` → `/auth/sso/callback`). The callback auto-provisions a local account on first login. SSO users cannot use local-password login. The admin group can be mapped via `MSAL_ADMIN_GROUP_ID`. See `app/auth/sso.py`.
+- **Microsoft 365 / Azure AD SSO (IMPLEMENTED — M4)**: Optional MSAL OIDC integration. When `MSAL_CLIENT_ID` and `MSAL_CLIENT_SECRET` environment variables are set a "Sign in with Microsoft" button appears on the login page (`/auth/sso/login` → `/auth/sso/callback`). The callback auto-provisions a local account on first login. SSO users cannot use local-password login. Admin/instructor roles can be mapped via `MSAL_ADMIN_GROUP_ID` and `MSAL_INSTRUCTOR_GROUP_ID`. See `app/auth/sso.py`.
 - **Local Password Login**: Flask-Login with Werkzeug hashing; unchanged and fully backward-compatible.
 
 ### 🔒 Security, Privacy & DevOps

@@ -56,7 +56,7 @@
 | ID | Requirement |
 |---|---|
 | AUTH-01 | Users authenticate with username + password (Werkzeug `generate_password_hash`/`check_password_hash`) |
-| AUTH-02 | Admins (`is_admin=True`) access the full dashboard; students see only quiz + inspector |
+| AUTH-02 | Admins and instructors (`role` is `admin` or `instructor`) access the full dashboard; students see only quiz + inspector |
 | AUTH-03 | Admins can bulk-import students via CSV upload (`/auth/admin/import-users`); required columns: `username`, `email`, `password`, `class`, `academic_year`, `major`, `facility`; optional: `group` |
 | AUTH-04 | Admins can create individual student accounts via the Users admin page |
 | AUTH-05 | Admins can generate a QR code that links to the self-registration page (`/auth/register`) |
@@ -249,7 +249,7 @@ For production deployments, a separate **`prod`** GitHub environment is required
 
 | Fixture | Creates |
 |---|---|
-| `seed_admin` | `admin` / `admin123` (is_admin=True) |
+| `seed_admin` | `admin` / `admin123` (`role` = admin) |
 | `seed_user` | `testuser` / `password123` |
 | `seed_quiz` | Sample quiz with 2 questions |
 | `seed_cohort_token` | Cohort token for class `engineering-2025` |

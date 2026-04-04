@@ -53,7 +53,7 @@ erDiagram
         string class_name
         string academic_year
         string major
-        boolean is_admin
+        string role ("student"|"instructor"|"admin")
     }
     
     QUIZ {

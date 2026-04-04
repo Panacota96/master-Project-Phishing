@@ -85,8 +85,10 @@
                             <small class="text-muted">{{ user.facility }}</small>
                         </td>
                         <td>
-                            {% if user.is_admin %}
+                            {% if user.role == 'admin' %}
                             <span class="badge bg-dark">Admin</span>
+                            {% elif user.role == 'instructor' %}
+                            <span class="badge bg-info text-dark">Instructor</span>
                             {% else %}
                             <span class="badge bg-light text-dark border">Student</span>
                             {% endif %}

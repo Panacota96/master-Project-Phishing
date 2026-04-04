@@ -34,6 +34,37 @@ variable "secret_key" {
   sensitive   = true
 }
 
+variable "msal_client_id" {
+  description = "Azure AD application (client) ID for Microsoft SSO"
+  type        = string
+  default     = ""
+}
+
+variable "msal_client_secret" {
+  description = "Azure AD client secret for Microsoft SSO"
+  type        = string
+  default     = ""
+  sensitive   = true
+}
+
+variable "msal_authority" {
+  description = "Azure AD authority URL (e.g., https://login.microsoftonline.com/<tenant-id>/v2.0)"
+  type        = string
+  default     = "https://login.microsoftonline.com/common/v2.0"
+}
+
+variable "msal_admin_group_id" {
+  description = "Azure AD group object ID whose members are granted the admin role"
+  type        = string
+  default     = ""
+}
+
+variable "msal_instructor_group_id" {
+  description = "Azure AD group object ID whose members are granted the instructor role"
+  type        = string
+  default     = ""
+}
+
 variable "domain_name" {
   description = "Custom domain for CloudFront"
   type        = string

@@ -36,6 +36,11 @@ resource "aws_lambda_function" "app" {
       REDIS_ENDPOINT                = "${aws_elasticache_replication_group.redis.primary_endpoint_address}:${aws_elasticache_replication_group.redis.port}"
       REDIS_USE_TLS                 = "false"
       CAMPAIGN_LAMBDA_ARN           = aws_lambda_function.campaign_mailer.arn
+      MSAL_CLIENT_ID                = var.msal_client_id
+      MSAL_CLIENT_SECRET            = var.msal_client_secret
+      MSAL_AUTHORITY                = var.msal_authority
+      MSAL_ADMIN_GROUP_ID           = var.msal_admin_group_id
+      MSAL_INSTRUCTOR_GROUP_ID      = var.msal_instructor_group_id
     }
   }
 

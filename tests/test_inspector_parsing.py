@@ -39,6 +39,7 @@ def test_all_examples_parse(app):
         
         # Mock flask_login.current_user
         mock_user = MagicMock()
+        mock_user.role = 'admin'
         mock_user.is_admin = True
         
         from unittest.mock import patch

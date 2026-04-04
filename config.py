@@ -62,10 +62,11 @@ class Config:
         'https://login.microsoftonline.com/common/v2.0',
     )
     # Scopes requested during the OAuth2 authorisation request.
-    MSAL_SCOPES = ['openid', 'profile', 'email', 'User.Read']
-    # Optional: Azure AD group object-ID whose members get is_admin=True.
+    MSAL_SCOPES = ['openid', 'profile', 'email', 'User.Read', 'GroupMember.Read.All']
+    # Optional: Azure AD group object-IDs that map to local roles.
     # Leave empty to treat all SSO users as ordinary students.
     MSAL_ADMIN_GROUP_ID = os.environ.get('MSAL_ADMIN_GROUP_ID', '')
+    MSAL_INSTRUCTOR_GROUP_ID = os.environ.get('MSAL_INSTRUCTOR_GROUP_ID', '')
 
     # Threat feed cache (optional DynamoDB TTL table)
     DYNAMODB_THREAT_CACHE = os.environ.get('DYNAMODB_THREAT_CACHE', '')

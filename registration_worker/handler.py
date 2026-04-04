@@ -61,11 +61,15 @@ def _process_registration(data):
 
     from datetime import datetime, timezone
 
+    role = data.get('role', 'student').lower()
+    if role not in ('student', 'admin', 'instructor'):
+        role = 'student'
+
     item = {
         'username': username,
         'email': email,
         'password_hash': password_hash,
-        'is_admin': False,
+        'role': role,
         'group': data.get('group', 'default'),
         'quiz_completed': False,
         'created_at': datetime.now(timezone.utc).isoformat(),
