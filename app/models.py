@@ -1,5 +1,6 @@
 """DynamoDB data access layer — replaces SQLAlchemy models."""
 
+import time
 from datetime import datetime, timezone
 from decimal import Decimal
 from uuid import uuid4
@@ -44,6 +45,94 @@ def _paginated_scan(table, **kwargs):
         if not last_key:
             break
     return total if is_count else items
+
+
+# ─── Shared cache + configuration helpers ─────────────────────────────────────
+
+def get_threat_cache():
+    """Return cached threat feed data from DynamoDB if configured, else None."""
+    table_name = current_app.config.get('DYNAMODB_THREAT_CACHE')
+    if not table_name:
+        return None
+    try:
+        table = current_app.dynamodb.Table(table_name)
+        resp = table.get_item(Key={'cache_key': 'openphish'})
+        item = resp.get('Item')
+        if not item:
+            return None
+        ttl = item.get('ttl')
+        if ttl and time.time() > float(ttl):
+            return None
+        return item.get('data')
+    except Exception:
+        return None
+
+
+def set_threat_cache(data):
+    """Persist threat feed data with TTL when the table is configured."""
+    table_name = current_app.config.get('DYNAMODB_THREAT_CACHE')
+    if not table_name:
+        return
+    try:
+        ttl = int(time.time()) + int(current_app.config.get('THREAT_CACHE_TTL_SECONDS', 3600))
+        table = current_app.dynamodb.Table(table_name)
+        table.put_item(Item={'cache_key': 'openphish', 'data': data, 'ttl': ttl})
+    except Exception:
+        current_app.logger.warning('Failed to persist threat cache; continuing with in-memory cache.')
+
+
+def _cohort_key(class_name, academic_year, major, facility, group):
+    return f"{class_name}|{academic_year}|{major}|{facility}|{group}"
+
+
+def get_inspector_config_for_cohort(class_name, academic_year, major, facility, group):
+    """Fetch cohort-specific inspector configuration from DynamoDB or memory."""
+    cache = current_app.extensions.setdefault('inspector_cohort_config', {})
+    key = _cohort_key(class_name, academic_year, major, facility, group)
+
+    if key in cache:
+        return cache[key]
+
+    table_name = current_app.config.get('DYNAMODB_INSPECTOR_CONFIG')
+    if table_name:
+        try:
+            table = current_app.dynamodb.Table(table_name)
+            resp = table.get_item(Key={'cohort_key': key})
+            item = resp.get('Item')
+            if item:
+                cache[key] = item
+                return item
+        except Exception:
+            current_app.logger.warning('Falling back to in-memory inspector config.')
+
+    # Defaults mirror the legacy behavior: pool of 8, up to 3 spam, ~35% spam mix
+    default_config = {
+        'pool_size': current_app.config.get('INSPECTOR_POOL_SIZE_DEFAULT', 8),
+        'max_spam': current_app.config.get('INSPECTOR_MAX_SPAM_DEFAULT', 3),
+        'spam_ratio': current_app.config.get('INSPECTOR_SPAM_RATIO_DEFAULT', 0.35),
+        'targets': [],
+    }
+    cache[key] = default_config
+    return default_config
+
+
+def save_inspector_config_for_cohort(class_name, academic_year, major, facility, group, config):
+    cache = current_app.extensions.setdefault('inspector_cohort_config', {})
+    key = _cohort_key(class_name, academic_year, major, facility, group)
+    cache[key] = config
+
+    table_name = current_app.config.get('DYNAMODB_INSPECTOR_CONFIG')
+    if not table_name:
+        return config
+
+    try:
+        table = current_app.dynamodb.Table(table_name)
+        item = dict(config)
+        item['cohort_key'] = key
+        table.put_item(Item=item)
+    except Exception:
+        current_app.logger.warning('Unable to persist inspector cohort config; using in-memory cache only.')
+    return config
 
 
 # ─── User "model" (works with Flask-Login) ────────────────────────────────────
@@ -360,8 +449,11 @@ def create_attempt(
     class_name='unknown',
     academic_year='unknown',
     major='unknown',
+    allow_overwrite=False,
+    attempt_number=1,
+    time_limit_seconds=None,
 ):
-    """Write an attempt. Uses a condition to enforce one attempt per user per quiz."""
+    """Write an attempt. Uses a condition to enforce one attempt per user per quiz unless overwrite is allowed."""
     table = _get_table('DYNAMODB_ATTEMPTS')
     percentage = round((score / total * 100), 1) if total > 0 else Decimal('0')
     item = {
@@ -375,7 +467,13 @@ def create_attempt(
         'academic_year': academic_year,
         'major': major,
         'completed_at': _now_iso(),
+        'attempt_number': attempt_number,
     }
+    if time_limit_seconds:
+        item['time_limit_seconds'] = time_limit_seconds
+    if allow_overwrite:
+        table.put_item(Item=item)
+        return item
     try:
         table.put_item(
             Item=item,
@@ -526,6 +624,8 @@ def create_inspector_attempt_anonymous(
     class_name='unknown',
     academic_year='unknown',
     major='unknown',
+    facility='unknown',
+    explanation_rating=None,
 ):
     table = _get_table('DYNAMODB_INSPECTOR_ANON')
     item = {
@@ -540,7 +640,10 @@ def create_inspector_attempt_anonymous(
         'class_name': class_name,
         'academic_year': academic_year,
         'major': major,
+        'facility': facility,
     }
+    if explanation_rating is not None:
+        item['explanation_rating'] = explanation_rating
     table.put_item(Item=item)
     return item
 

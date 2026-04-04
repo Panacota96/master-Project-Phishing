@@ -55,6 +55,59 @@
     </div>
 </div>
 
+<!-- Campaign + Inspector Controls -->
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Campaign & Inspector Controls</h5>
+        <button class="btn btn-sm btn-outline-success" id="promoteThreatBtn">Use Latest Threat as Sample</button>
+    </div>
+    <div class="card-body">
+        <div class="row g-2 mb-3">
+            <div class="col-md-3">
+                <label class="form-label">Class</label>
+                <input type="text" class="form-control" id="campaignClass" placeholder="All">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Academic Year</label>
+                <input type="text" class="form-control" id="campaignYear" placeholder="All">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Major</label>
+                <input type="text" class="form-control" id="campaignMajor" placeholder="All">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Facility</label>
+                <input type="text" class="form-control" id="campaignFacility" placeholder="All">
+            </div>
+        </div>
+        <div class="row g-2 mb-3">
+            <div class="col-md-3">
+                <label class="form-label">Pool Size</label>
+                <input type="number" min="1" class="form-control" id="poolSizeInput" placeholder="8">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Max Spam</label>
+                <input type="number" min="0" class="form-control" id="maxSpamInput" placeholder="3">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Spam Ratio</label>
+                <input type="number" min="0" max="1" step="0.05" class="form-control" id="spamRatioInput" placeholder="0.35">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Targeted Files (comma separated)</label>
+                <input type="text" class="form-control" id="targetsInput" placeholder="example.eml, another.eml">
+            </div>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+            <button class="btn btn-primary" id="launchCampaignBtn">Launch Phishing Campaign</button>
+            <button class="btn btn-outline-danger" id="resetInspectorBtn">Reset Inspector for Cohort</button>
+            <button class="btn btn-outline-secondary" id="sendValidationBtn">Send Validation Email</button>
+            <button class="btn btn-outline-info" id="saveInspectorConfigBtn">Save Inspector Pool Config</button>
+        </div>
+        <div class="small text-muted mt-2" id="campaignStatus">No actions triggered yet.</div>
+    </div>
+</div>
+
 <div class="row mb-4">
     <!-- Score Distribution Chart -->
     <div class="col-md-4">
@@ -150,10 +203,11 @@
     </div>
     <div class="card-body">
         <div class="row mb-3">
-            <div class="col-md-3"><strong>Total Attempts:</strong> {{ inspector_total }}</div>
-            <div class="col-md-3"><strong>Correct:</strong> {{ inspector_correct }}</div>
-            <div class="col-md-3"><strong>Phishing:</strong> {{ inspector_phishing }}</div>
-            <div class="col-md-3"><strong>Spam:</strong> {{ inspector_spam }}</div>
+            <div class="col-md-2"><strong>Total Attempts:</strong> {{ inspector_total }}</div>
+            <div class="col-md-2"><strong>Correct:</strong> {{ inspector_correct }}</div>
+            <div class="col-md-2"><strong>Phishing:</strong> {{ inspector_phishing }}</div>
+            <div class="col-md-2"><strong>Spam:</strong> {{ inspector_spam }}</div>
+            <div class="col-md-4 mt-2 mt-md-0"><strong>Avg Explanation Rating:</strong> <span id="avgRatingStat">{{ inspector_avg_rating or '—' }}</span></div>
         </div>
         <div id="inspectorReportStatus" class="text-muted small mb-3"></div>
 
@@ -177,6 +231,30 @@
                 </table>
             </div>
         </div>
+        <div class="row">
+            <div class="col-md-12">
+                <h6>Completion by Cohort</h6>
+                <table class="table table-sm">
+                    <thead>
+                        <tr><th>Class</th><th>Year</th><th>Major</th><th>Facility</th><th>Attempts</th><th>Correct</th></tr>
+                    </thead>
+                    <tbody id="inspectorProgressBody">
+                        {% for row in inspector_progress_rows %}
+                        <tr>
+                            <td>{{ row.class_name }}</td>
+                            <td>{{ row.academic_year }}</td>
+                            <td>{{ row.major }}</td>
+                            <td>{{ row.facility }}</td>
+                            <td>{{ row.attempts }}</td>
+                            <td>{{ row.correct }}</td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="6" class="text-muted">No submissions yet.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
@@ -184,6 +262,7 @@
 {% block scripts %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <script>
+let latestThreat = null;
 // Score Distribution Chart
 const scoreCtx = document.getElementById('scoreChart').getContext('2d');
 new Chart(scoreCtx, {
@@ -252,19 +331,64 @@ new Chart(groupCtx, {
 });
 {% endif %}
 
-// Live stats polling (every 30 seconds)
-setInterval(async () => {
+function applyStats(data) {
+    if (!data) return;
+    const { total_users, completed_count, pending_count, avg_score, avg_explanation_rating, inspector_progress } = data;
+    if (total_users !== undefined) document.getElementById('statUsers').textContent = total_users;
+    if (completed_count !== undefined) document.getElementById('statCompleted').textContent = completed_count;
+    if (pending_count !== undefined) document.getElementById('statPending').textContent = pending_count;
+    if (avg_score !== undefined) document.getElementById('statAvg').textContent = avg_score + '%';
+    if (avg_explanation_rating !== undefined && document.getElementById('avgRatingStat')) {
+        document.getElementById('avgRatingStat').textContent = avg_explanation_rating ?? '—';
+    }
+    if (Array.isArray(inspector_progress) && document.getElementById('inspectorProgressBody')) {
+        const rows = inspector_progress.map(row => `
+            <tr>
+                <td>${row.class_name}</td>
+                <td>${row.academic_year}</td>
+                <td>${row.major}</td>
+                <td>${row.facility}</td>
+                <td>${row.attempts}</td>
+                <td>${row.correct}</td>
+            </tr>
+        `).join('');
+        document.getElementById('inspectorProgressBody').innerHTML = rows || '<tr><td colspan="6" class="text-muted">No submissions yet.</td></tr>';
+    }
+}
+
+async function fetchStatsFallback() {
     try {
         const resp = await fetch('{{ url_for("dashboard.api_stats") }}');
         const data = await resp.json();
-        document.getElementById('statUsers').textContent = data.total_users;
-        document.getElementById('statCompleted').textContent = data.completed_count;
-        document.getElementById('statPending').textContent = data.pending_count;
-        document.getElementById('statAvg').textContent = data.avg_score + '%';
+        applyStats(data);
     } catch (e) {
-        // Silently ignore polling errors
+        console.debug('Fallback stats polling failed', e);
     }
-}, 30000);
+}
+
+function startStatsStream() {
+    if (!window.EventSource) {
+        fetchStatsFallback();
+        setInterval(fetchStatsFallback, 30000);
+        return;
+    }
+    const source = new EventSource('{{ url_for("dashboard.api_stats_stream") }}');
+    source.onmessage = (event) => {
+        try {
+            const payload = JSON.parse(event.data);
+            applyStats(payload);
+        } catch (e) {
+            console.debug('Failed to parse stats event', e);
+        }
+    };
+    source.onerror = () => {
+        source.close();
+        fetchStatsFallback();
+        setInterval(fetchStatsFallback, 30000);
+    };
+}
+
+startStatsStream();
 
 // Threat Feed Polling
 async function loadThreatFeed() {
@@ -272,6 +396,7 @@ async function loadThreatFeed() {
     try {
         const resp = await fetch('{{ url_for("dashboard.api_threat_feed") }}');
         const data = await resp.json();
+        latestThreat = Array.isArray(data) && data.length ? data[0] : null;
         
         if (!data || data.length === 0) {
             ticker.innerHTML = '<li class="list-group-item text-center text-muted">No active threats detected currently.</li>';
@@ -295,6 +420,126 @@ async function loadThreatFeed() {
 }
 // Load immediately
 loadThreatFeed();
+
+const statusArea = document.getElementById('campaignStatus');
+const cohortInputs = {
+    class: document.getElementById('campaignClass'),
+    year: document.getElementById('campaignYear'),
+    major: document.getElementById('campaignMajor'),
+    facility: document.getElementById('campaignFacility'),
+};
+
+function updateStatus(message) {
+    if (statusArea) {
+        statusArea.textContent = message;
+    }
+}
+
+function cohortPayload() {
+    return {
+        class_name: cohortInputs.class?.value || '',
+        academic_year: cohortInputs.year?.value || '',
+        major: cohortInputs.major?.value || '',
+        facility: cohortInputs.facility?.value || '',
+    };
+}
+
+async function postForm(url, body) {
+    const formData = new URLSearchParams(body);
+    const resp = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: formData.toString() });
+    const data = await resp.json();
+    if (!resp.ok) {
+        throw new Error(data.error || 'Request failed');
+    }
+    return data;
+}
+
+const launchBtn = document.getElementById('launchCampaignBtn');
+if (launchBtn) {
+    launchBtn.addEventListener('click', async () => {
+        updateStatus('Launching campaign...');
+        try {
+            const payload = cohortPayload();
+            const data = await postForm('{{ url_for("dashboard.launch_campaign") }}', payload);
+            updateStatus(`Campaign launched for ${data.campaign.cohort}`);
+        } catch (e) {
+            updateStatus(`Error: ${e.message}`);
+        }
+    });
+}
+
+const resetBtn = document.getElementById('resetInspectorBtn');
+if (resetBtn) {
+    resetBtn.addEventListener('click', async () => {
+        updateStatus('Resetting inspector state...');
+        try {
+            const payload = { ...cohortPayload(), scope: 'filtered' };
+            const data = await postForm('{{ url_for("dashboard.reset_inspector_bulk") }}', payload);
+            updateStatus(data.message || 'Reset complete.');
+        } catch (e) {
+            updateStatus(`Error: ${e.message}`);
+        }
+    });
+}
+
+const validationBtn = document.getElementById('sendValidationBtn');
+if (validationBtn) {
+    validationBtn.addEventListener('click', async () => {
+        updateStatus('Sending validation email...');
+        try {
+            const payload = { cohort: Object.values(cohortPayload()).filter(Boolean).join('|') || 'All' };
+            const data = await postForm('{{ url_for("dashboard.send_validation_email") }}', payload);
+            updateStatus(data.message || 'Validation email triggered.');
+        } catch (e) {
+            updateStatus(`Error: ${e.message}`);
+        }
+    });
+}
+
+const configBtn = document.getElementById('saveInspectorConfigBtn');
+if (configBtn) {
+    configBtn.addEventListener('click', async () => {
+        updateStatus('Saving inspector config...');
+        try {
+            const payload = {
+                ...cohortPayload(),
+                pool_size: document.getElementById('poolSizeInput')?.value || '',
+                max_spam: document.getElementById('maxSpamInput')?.value || '',
+                spam_ratio: document.getElementById('spamRatioInput')?.value || '',
+                targets: document.getElementById('targetsInput')?.value || '',
+            };
+            const data = await postForm('{{ url_for("dashboard.update_inspector_config") }}', payload);
+            updateStatus(`Config saved: pool ${data.config.pool_size}, spam max ${data.config.max_spam}`);
+        } catch (e) {
+            updateStatus(`Error: ${e.message}`);
+        }
+    });
+}
+
+const promoteBtn = document.getElementById('promoteThreatBtn');
+if (promoteBtn) {
+    promoteBtn.addEventListener('click', async () => {
+        if (!latestThreat) {
+            updateStatus('No threat available yet — refresh the feed first.');
+            return;
+        }
+        updateStatus('Importing threat sample into inspector...');
+        try {
+            const resp = await fetch('{{ url_for("dashboard.promote_threat_to_inspector") }}', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: latestThreat.url?.replace('hxxp', 'http').replace('[.]', '.'), target: latestThreat.target }),
+            });
+            const data = await resp.json();
+            if (!resp.ok) {
+                throw new Error(data.error || 'Failed to promote threat');
+            }
+            updateStatus(`Added ${data.email_file} to inspector pool.`);
+        } catch (e) {
+            updateStatus(`Error: ${e.message}`);
+        }
+    });
+}
 
 const inspectorReportBtn = document.getElementById('inspectorReportBtn');
 const inspectorReportStatus = document.getElementById('inspectorReportStatus');

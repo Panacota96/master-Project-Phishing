@@ -57,3 +57,22 @@ class Config:
     # Optional: Azure AD group object-ID whose members get is_admin=True.
     # Leave empty to treat all SSO users as ordinary students.
     MSAL_ADMIN_GROUP_ID = os.environ.get('MSAL_ADMIN_GROUP_ID', '')
+
+    # Threat feed cache (optional DynamoDB TTL table)
+    DYNAMODB_THREAT_CACHE = os.environ.get('DYNAMODB_THREAT_CACHE', '')
+    THREAT_CACHE_TTL_SECONDS = int(os.environ.get('THREAT_CACHE_TTL_SECONDS', '3600'))
+
+    # Inspector pool tuning (per-cohort overrides stored in memory or DynamoDB)
+    DYNAMODB_INSPECTOR_CONFIG = os.environ.get('DYNAMODB_INSPECTOR_CONFIG', '')
+    INSPECTOR_POOL_SIZE_DEFAULT = int(os.environ.get('INSPECTOR_POOL_SIZE_DEFAULT', '8'))
+    INSPECTOR_MAX_SPAM_DEFAULT = int(os.environ.get('INSPECTOR_MAX_SPAM_DEFAULT', '3'))
+    INSPECTOR_SPAM_RATIO_DEFAULT = float(os.environ.get('INSPECTOR_SPAM_RATIO_DEFAULT', '0.35'))
+
+    # Quiz experience toggles
+    QUIZ_MAX_RETRIES_DEFAULT = int(os.environ.get('QUIZ_MAX_RETRIES_DEFAULT', '1'))
+    QUIZ_TIMER_DEFAULT = int(os.environ.get('QUIZ_TIMER_DEFAULT', '0'))
+    QUIZ_ADAPTIVE_DEFAULT = os.environ.get('QUIZ_ADAPTIVE_DEFAULT', 'false').lower() == 'true'
+
+    # Campaign + notifications (optional)
+    CAMPAIGN_LAMBDA_ARN = os.environ.get('CAMPAIGN_LAMBDA_ARN', '')
+    VALIDATION_EMAIL_TEMPLATE = os.environ.get('VALIDATION_EMAIL_TEMPLATE', '')

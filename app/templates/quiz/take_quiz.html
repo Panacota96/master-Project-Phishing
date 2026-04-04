@@ -9,6 +9,12 @@
             </div>
             <small class="text-muted">Question {{ current }} of {{ total }}</small>
         </div>
+        {% if time_limit %}
+        <div class="alert alert-warning d-flex justify-content-between align-items-center">
+            <span class="fw-semibold">Time remaining</span>
+            <span id="quizTimer" data-remaining="{{ remaining_seconds }}">{{ remaining_seconds }}s</span>
+        </div>
+        {% endif %}
 
         <div class="card">
             <div class="card-body">
@@ -57,6 +63,21 @@
 {% endblock %}
 {% block scripts %}
 <script>
+const timerEl = document.getElementById('quizTimer');
+if (timerEl) {
+    let remaining = parseInt(timerEl.dataset.remaining || '0', 10);
+    const intervalId = setInterval(() => {
+        remaining -= 1;
+        if (remaining <= 0) {
+            clearInterval(intervalId);
+            timerEl.textContent = '0s';
+            window.location.href = "{{ url_for('quiz.finish_quiz') }}";
+            return;
+        }
+        timerEl.textContent = `${remaining}s`;
+    }, 1000);
+}
+
 document.querySelectorAll('.quiz-option').forEach(opt => {
     opt.addEventListener('click', () => {
         document.querySelectorAll('.quiz-option').forEach(o => o.classList.remove('selected'));
