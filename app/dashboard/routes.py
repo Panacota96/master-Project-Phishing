@@ -542,7 +542,10 @@ def launch_campaign():
         abort(403)
 
     filters = _campaign_filters_from_request()
-    cohort_label = f"{filters['class_name']}|{filters['academic_year']}|{filters['major']}|{filters['facility']}|{filters['group']}"
+    cohort_label = (
+        f"{filters['class_name']}|{filters['academic_year']}|"
+        f"{filters['major']}|{filters['facility']}|{filters['group']}"
+    )
 
     campaign = create_campaign(cohort_label, filters, status='queued')
     if not campaign:
