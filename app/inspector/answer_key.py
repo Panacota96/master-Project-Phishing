@@ -490,7 +490,7 @@ ANSWER_KEY = {
         "signals": ["impersonation", "urgency", "fakelogin"],
         "explanation": (
             "This email spoofs a Microsoft security alert and uses a QR code to bypass MFA. "
-            "The sender domain 'microsft-alerts.com' is a typosquatted lookalike of microsoft.com. "
+            "The sender domain 'microsft-alerts.com' is a typosquatted look-alike of microsoft.com. "
             "The artificial 24-hour deadline is a classic urgency tactic."
         ),
     },
