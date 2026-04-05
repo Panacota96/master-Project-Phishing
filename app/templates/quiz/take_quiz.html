@@ -101,7 +101,9 @@ if (timerEl) {
 }
 
 const options = document.querySelectorAll('.quiz-option');
-const submitForm = document.querySelector('form');
+// Scope to the quiz answer form only — avoids accidentally grabbing the
+// bug-report modal form injected by base.html into the same DOM.
+const submitForm = options.length > 0 ? options[0].closest('form') : null;
 const nextLink = document.getElementById('next-question-link');
 
 options.forEach(opt => {
@@ -115,7 +117,9 @@ options.forEach(opt => {
 // Keyboard shortcuts: 1-4 / a-d select options; Enter submits or advances
 document.addEventListener('keydown', (e) => {
     const tag = document.activeElement ? document.activeElement.tagName : '';
-    if (['INPUT', 'TEXTAREA', 'SELECT', 'BUTTON'].includes(tag)) return;
+    // Exclude all interactive elements, including links, so we don't intercept
+    // normal keyboard navigation (e.g. Tab+Enter on a focused <a>).
+    if (['INPUT', 'TEXTAREA', 'SELECT', 'BUTTON', 'A'].includes(tag)) return;
 
     const key = e.key;
 
@@ -136,14 +140,15 @@ document.addEventListener('keydown', (e) => {
         return;
     }
 
-    // Enter key: submit form if options visible, or follow next-question link
+    // Enter key: prefer advancing to next question when in explanation mode,
+    // otherwise submit the answer form.
     if (key === 'Enter') {
-        if (submitForm) {
-            e.preventDefault();
-            submitForm.requestSubmit();
-        } else if (nextLink) {
+        if (nextLink) {
             e.preventDefault();
             window.location.href = nextLink.href;
+        } else if (submitForm) {
+            e.preventDefault();
+            submitForm.requestSubmit();
         }
     }
 });
