@@ -48,13 +48,13 @@ class TestAnswerKeyOverrides:
     def test_set_override_invalid_classification_raises(self, app):
         with app.app_context():
             from app.models import set_answer_key_override
-            with pytest.raises(ValueError, match='classification'):
+            with pytest.raises(ValueError, match=r"Must be one of"):
                 set_answer_key_override('bad.eml', 'Malware', ['urgency'])
 
     def test_set_override_invalid_signal_raises(self, app):
         with app.app_context():
             from app.models import set_answer_key_override
-            with pytest.raises(ValueError, match='signal'):
+            with pytest.raises(ValueError, match=r"Valid signals:"):
                 set_answer_key_override('bad.eml', 'Phishing', ['not-a-signal'])
 
     def test_set_override_spam_with_no_signals(self, app):

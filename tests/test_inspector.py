@@ -152,7 +152,8 @@ class TestInspectorValidation:
 
     def test_override_changes_correctness_verdict(self, client, app, seed_user):
         """When an admin overrides a Phishing email to Spam the student
-        must be marked correct when they submit Spam with no signals."""
+        must be marked correct when they submit Spam with no signals.
+        """
         phishing_file, _ = next(
             (k, v) for k, v in ANSWER_KEY.items() if v['classification'] == 'Phishing'
         )

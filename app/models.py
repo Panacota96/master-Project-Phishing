@@ -888,7 +888,14 @@ VALID_CLASSIFICATIONS = frozenset(['Phishing', 'Spam'])
 
 
 def _normalize_signals(signals):
-    """Return a deduplicated list of lowercase-alphanumeric signal names."""
+    """Return a deduplicated list of lowercase-alphanumeric signal names.
+
+    Non-alphanumeric characters are stripped so that 'side-channel' and
+    'sidechannel' both normalize to 'sidechannel'.  All entries in
+    ``VALID_SIGNALS`` are already purely alphanumeric, so no two valid names
+    collide after normalization.  Callers that need to validate against
+    ``VALID_SIGNALS`` should do so *after* normalization.
+    """
     seen = set()
     result = []
     for s in (signals or []):
