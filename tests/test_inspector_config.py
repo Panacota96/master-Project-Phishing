@@ -91,8 +91,7 @@ class TestInspectorConfig:
             assert list(cfg.get('targets', [])) == targets
 
     def test_memory_cache_avoids_extra_dynamo_call(self, app):
-        """Second call to get_inspector_config_for_cohort should return the
-        same cached dict object without hitting DynamoDB again."""
+        """Return the same cached object on repeated calls without hitting DynamoDB."""
         with app.app_context():
             from app.models import (
                 get_inspector_config_for_cohort,
