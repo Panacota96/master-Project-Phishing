@@ -20,22 +20,26 @@
                     <span class="text-muted small">Role</span>
                     <div class="fw-semibold text-capitalize">{{ current_user.role or 'student' }}</div>
                 </div>
-                {% if current_user.class_name %}
+                {% set _sentinel_values = ['unknown', 'n/a', 'na', 'none', 'null', '-', ''] %}
+                {% set _class_name = current_user.class_name | default('', true) | trim %}
+                {% if _class_name | lower not in _sentinel_values %}
                 <div class="mb-2">
                     <span class="text-muted small">Class</span>
-                    <div class="fw-semibold">{{ current_user.class_name }}</div>
+                    <div class="fw-semibold">{{ _class_name }}</div>
                 </div>
                 {% endif %}
-                {% if current_user.academic_year %}
+                {% set _academic_year = current_user.academic_year | default('', true) | trim %}
+                {% if _academic_year | lower not in _sentinel_values %}
                 <div class="mb-2">
                     <span class="text-muted small">Academic Year</span>
-                    <div class="fw-semibold">{{ current_user.academic_year }}</div>
+                    <div class="fw-semibold">{{ _academic_year }}</div>
                 </div>
                 {% endif %}
-                {% if current_user.major %}
+                {% set _major = current_user.major | default('', true) | trim %}
+                {% if _major | lower not in _sentinel_values %}
                 <div class="mb-2">
                     <span class="text-muted small">Major</span>
-                    <div class="fw-semibold">{{ current_user.major }}</div>
+                    <div class="fw-semibold">{{ _major }}</div>
                 </div>
                 {% endif %}
                 <div class="mt-3">
