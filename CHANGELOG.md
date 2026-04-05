@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [1.2.6] - 2026-04-04
+
+### Changed
+- **Project structure overhaul**: moved Lambda function source code (`campaign_mailer/`, `registration_worker/`) from the repository root into `phishing-platform-infra/lambda/` so all AWS infrastructure assets are co-located under one top-level directory.
+- **Build scripts updated**: `scripts/build_campaign_mailer.sh` and `scripts/build_registration_worker.sh` now resolve source files from their new location under `phishing-platform-infra/lambda/`.
+- **Directory rename**: `Phishing AOC/` renamed to `phishing-aoc/` to remove the space from the directory name.
+- **Documentation reorganised**: root-level guide files moved to the appropriate `documentation/` subdirectory — `DEPLOYMENT_GUIDE.md` → `documentation/operator/`, `TESTING_GUIDE.md` and `REALISM_GUIDE.md` → `documentation/dev/`.
+- **README updated**: repository structure tree reflects the new layout with `phishing-platform-infra/lambda/` and consolidated documentation paths.
+
+### Added
+- **`documentation/REPO_SEPARATION.md`**: step-by-step guide for splitting the Flask application and AWS infrastructure into two standalone repositories, including `git filter-repo` commands, CI/CD handoff strategy, and CODEOWNERS alternative.
+- **Documentation index updates**: `documentation/README.md`, `documentation/dev/README.md`, and `documentation/operator/README.md` now list all files in their respective directories.
+
+---
+
 ## [1.2.5] - 2026-04-04
 
 ### Added

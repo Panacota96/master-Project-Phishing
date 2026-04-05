@@ -46,6 +46,8 @@ lambda.zip
 package/
 registration_worker.zip
 registration_worker_package/
+campaign_mailer.zip
+campaign_mailer_package/
 
 # Video assets — large binaries served from S3, not stored in git (make sync-assets)
 app/static/videos/*.mp4
@@ -55,6 +57,9 @@ app/static/videos/*.mp4
 
 # Reports
 examples/realism_report.json
+
+# Test reports
+report.xml
 
 # OS files
 .DS_Store
