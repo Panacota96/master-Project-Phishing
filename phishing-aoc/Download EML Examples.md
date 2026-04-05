@@ -4,25 +4,55 @@
 - TryHackMe VM must be **running** and accessible
 - Update the IP/URL below if your VM address changes
 
+> **Security note:** Never commit real browser session cookies to version control.
+> Replace the placeholder values below with cookies captured live from your own
+> browser session (DevTools → Network → Copy as PowerShell) and run the script
+> locally. Discard the cookies after use.
+
+---
+
+## Cookie placeholders
+
+Before running any script below, replace these variables with the values from
+your own browser session:
+
+```powershell
+$VM_IP     = "10-64-147-3"   # Replace with your TryHackMe VM IP segment
+$USER_ID   = "<YOUR_THM_USER_ID>"
+$DEVICE_ID = "<YOUR_INTERCOM_DEVICE_ID>"
+$SESSION   = "<YOUR_INTERCOM_SESSION_TOKEN>"
+$OUT_DIR   = "$HOME\examples"   # Adjust to your local clone path
+```
+
+---
+
+## Helper function (paste once per session)
+
+```powershell
+function Get-ThmEml {
+    param([string]$EmlFile, [string]$OutSubdir)
+    $session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
+    $session.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+    $session.Cookies.Add((New-Object System.Net.Cookie("ajs_user_id",         $USER_ID,   "/", ".tryhackme.com")))
+    $session.Cookies.Add((New-Object System.Net.Cookie("logged-in-hint",      $USER_ID,   "/", ".tryhackme.com")))
+    $session.Cookies.Add((New-Object System.Net.Cookie("_cioid",              $USER_ID,   "/", ".tryhackme.com")))
+    $session.Cookies.Add((New-Object System.Net.Cookie("intercom-device-id-pgpbhph6", $DEVICE_ID, "/", ".tryhackme.com")))
+    $session.Cookies.Add((New-Object System.Net.Cookie("intercom-session-pgpbhph6",   $SESSION,   "/", ".tryhackme.com")))
+    $baseUrl = "https://$VM_IP.reverse-proxy.cell-prod-us-east-1a.vm.tryhackme.com"
+    Invoke-WebRequest -UseBasicParsing `
+        -Uri "$baseUrl/api/emails/$EmlFile" `
+        -WebSession $session `
+        -Headers @{"Accept"="*/*"; "Referer"="$baseUrl/"} `
+        -OutFile "$OUT_DIR\$OutSubdir\$EmlFile"
+}
+```
+
 ---
 
 ## 1. Fake Invoice Example
 
 ```powershell
-$session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
-$session.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 OPR/126.0.0.0"
-$session.Cookies.Add((New-Object System.Net.Cookie("_ga", "GA1.1.22156733.1769454898", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("ajs_anonymous_id", "15f364db-a8d9-4c9f-87b3-c4095f056014", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("ajs_user_id", "67f0f84312915140405a9277", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("intercom-device-id-pgpbhph6", "aeddfdf4-dbc5-456e-9893-6b564c94b9a6", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("_gcl_au", "1.1.1644970611.1769454898.1892155888.1769454909.1769454911", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("_cioid", "67f0f84312915140405a9277", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("analytics_session_id", "1770846394420", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("logged-in-hint", "67f0f84312915140405a9277", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("intercom-session-pgpbhph6", "M0hwemM3Tk5kekxoNlNFZjN5bytsWEZUbEZZbEdaN1ZsNjN6Z0VVd2c1MXdvTndoRWw5UWNROU5yN1dvNXZQd0ZjNjRXTllpQjltTUtZNVhMZ1dtYlEzQk5mVVBmR0FkTmo0N0JienZ0MjA9LS1yb0huREx5Ui9NQnJ2S1NuME14eVdRPT0=--5923cba7ed71cb6270adddfe863d7aca0060059a", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("analytics_session_id.last_access", "1770846514040", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("_ga_Z8D4WL3D4P", "GS2.1.s1770846497`$o7`$g1`$t1770846591`$j60`$l0`$h0", "/", ".tryhackme.com")))
-Invoke-WebRequest -UseBasicParsing -Uri "https://10-64-147-3.reverse-proxy.cell-prod-us-east-1a.vm.tryhackme.com/api/emails/fakeinvoice-urgency-spoofing-socialeng.eml" -WebSession $session -Headers @{"Accept"="*/*"; "Accept-Language"="en-US,en;q=0.9"; "Referer"="https://10-64-147-3.reverse-proxy.cell-prod-us-east-1a.vm.tryhackme.com/"} -OutFile "$HOME\OneDrive - ESME\Documents\INGE3C\Project INGE3C\master-Project-Phishing\examples\fake-invoice\fakeinvoice-urgency-spoofing-socialeng.eml"
+Get-ThmEml "fakeinvoice-urgency-spoofing-socialeng.eml" "fake-invoice"
 ```
 
 ---
@@ -30,20 +60,7 @@ Invoke-WebRequest -UseBasicParsing -Uri "https://10-64-147-3.reverse-proxy.cell-
 ## 2. Impersonation Example
 
 ```powershell
-$session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
-$session.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 OPR/126.0.0.0"
-$session.Cookies.Add((New-Object System.Net.Cookie("_ga", "GA1.1.22156733.1769454898", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("ajs_anonymous_id", "15f364db-a8d9-4c9f-87b3-c4095f056014", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("ajs_user_id", "67f0f84312915140405a9277", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("intercom-device-id-pgpbhph6", "aeddfdf4-dbc5-456e-9893-6b564c94b9a6", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("_gcl_au", "1.1.1644970611.1769454898.1892155888.1769454909.1769454911", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("_cioid", "67f0f84312915140405a9277", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("analytics_session_id", "1770846394420", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("logged-in-hint", "67f0f84312915140405a9277", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("intercom-session-pgpbhph6", "M0hwemM3Tk5kekxoNlNFZjN5bytsWEZUbEZZbEdaN1ZsNjN6Z0VVd2c1MXdvTndoRWw5UWNROU5yN1dvNXZQd0ZjNjRXTllpQjltTUtZNVhMZ1dtYlEzQk5mVVBmR0FkTmo0N0JienZ0MjA9LS1yb0huREx5Ui9NQnJ2S1NuME14eVdRPT0=--5923cba7ed71cb6270adddfe863d7aca0060059a", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("analytics_session_id.last_access", "1770846514040", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("_ga_Z8D4WL3D4P", "GS2.1.s1770846497`$o7`$g1`$t1770846591`$j60`$l0`$h0", "/", ".tryhackme.com")))
-Invoke-WebRequest -UseBasicParsing -Uri "https://10-64-147-3.reverse-proxy.cell-prod-us-east-1a.vm.tryhackme.com/api/emails/impersonation-attachment-socialeng-spoof.eml" -WebSession $session -Headers @{"Accept"="*/*"; "Accept-Language"="en-US,en;q=0.9"; "Referer"="https://10-64-147-3.reverse-proxy.cell-prod-us-east-1a.vm.tryhackme.com/"} -OutFile "$HOME\OneDrive - ESME\Documents\INGE3C\Project INGE3C\master-Project-Phishing\examples\impersonation\impersonation-attachment-socialeng-spoof.eml"
+Get-ThmEml "impersonation-attachment-socialeng-spoof.eml" "impersonation"
 ```
 
 ---
@@ -51,20 +68,7 @@ Invoke-WebRequest -UseBasicParsing -Uri "https://10-64-147-3.reverse-proxy.cell-
 ## 3. Spam / Marketing Example
 
 ```powershell
-$session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
-$session.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 OPR/126.0.0.0"
-$session.Cookies.Add((New-Object System.Net.Cookie("_ga", "GA1.1.22156733.1769454898", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("ajs_anonymous_id", "15f364db-a8d9-4c9f-87b3-c4095f056014", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("ajs_user_id", "67f0f84312915140405a9277", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("intercom-device-id-pgpbhph6", "aeddfdf4-dbc5-456e-9893-6b564c94b9a6", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("_gcl_au", "1.1.1644970611.1769454898.1892155888.1769454909.1769454911", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("_cioid", "67f0f84312915140405a9277", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("analytics_session_id", "1770846394420", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("logged-in-hint", "67f0f84312915140405a9277", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("intercom-session-pgpbhph6", "M0hwemM3Tk5kekxoNlNFZjN5bytsWEZUbEZZbEdaN1ZsNjN6Z0VVd2c1MXdvTndoRWw5UWNROU5yN1dvNXZQd0ZjNjRXTllpQjltTUtZNVhMZ1dtYlEzQk5mVVBmR0FkTmo0N0JienZ0MjA9LS1yb0huREx5Ui9NQnJ2S1NuME14eVdRPT0=--5923cba7ed71cb6270adddfe863d7aca0060059a", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("analytics_session_id.last_access", "1770846514040", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("_ga_Z8D4WL3D4P", "GS2.1.s1770846497`$o7`$g1`$t1770846591`$j60`$l0`$h0", "/", ".tryhackme.com")))
-Invoke-WebRequest -UseBasicParsing -Uri "https://10-64-147-3.reverse-proxy.cell-prod-us-east-1a.vm.tryhackme.com/api/emails/marketing-spam-logistics.eml" -WebSession $session -Headers @{"Accept"="*/*"; "Accept-Language"="en-US,en;q=0.9"; "Referer"="https://10-64-147-3.reverse-proxy.cell-prod-us-east-1a.vm.tryhackme.com/"} -OutFile "$HOME\OneDrive - ESME\Documents\INGE3C\Project INGE3C\master-Project-Phishing\examples\spam\marketing-spam-logistics.eml"
+Get-ThmEml "marketing-spam-logistics.eml" "spam"
 ```
 
 ---
@@ -72,20 +76,7 @@ Invoke-WebRequest -UseBasicParsing -Uri "https://10-64-147-3.reverse-proxy.cell-
 ## 4. Legit App Impersonation Example
 
 ```powershell
-$session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
-$session.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 OPR/126.0.0.0"
-$session.Cookies.Add((New-Object System.Net.Cookie("_ga", "GA1.1.22156733.1769454898", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("ajs_anonymous_id", "15f364db-a8d9-4c9f-87b3-c4095f056014", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("ajs_user_id", "67f0f84312915140405a9277", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("intercom-device-id-pgpbhph6", "aeddfdf4-dbc5-456e-9893-6b564c94b9a6", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("_gcl_au", "1.1.1644970611.1769454898.1892155888.1769454909.1769454911", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("_cioid", "67f0f84312915140405a9277", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("analytics_session_id", "1770846394420", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("logged-in-hint", "67f0f84312915140405a9277", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("intercom-session-pgpbhph6", "M0hwemM3Tk5kekxoNlNFZjN5bytsWEZUbEZZbEdaN1ZsNjN6Z0VVd2c1MXdvTndoRWw5UWNROU5yN1dvNXZQd0ZjNjRXTllpQjltTUtZNVhMZ1dtYlEzQk5mVVBmR0FkTmo0N0JienZ0MjA9LS1yb0huREx5Ui9NQnJ2S1NuME14eVdRPT0=--5923cba7ed71cb6270adddfe863d7aca0060059a", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("analytics_session_id.last_access", "1770846514040", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("_ga_Z8D4WL3D4P", "GS2.1.s1770846497`$o7`$g1`$t1770846591`$j60`$l0`$h0", "/", ".tryhackme.com")))
-Invoke-WebRequest -UseBasicParsing -Uri "https://10-64-147-3.reverse-proxy.cell-prod-us-east-1a.vm.tryhackme.com/api/emails/legitapp-impersonation-externaldomain-socialeng.eml" -WebSession $session -Headers @{"Accept"="*/*"; "Accept-Language"="en-US,en;q=0.9"; "Referer"="https://10-64-147-3.reverse-proxy.cell-prod-us-east-1a.vm.tryhackme.com/"} -OutFile "$HOME\OneDrive - ESME\Documents\INGE3C\Project INGE3C\master-Project-Phishing\examples\legit-impersonation\legitapp-impersonation-externaldomain-socialeng.eml"
+Get-ThmEml "legitapp-impersonation-externaldomain-socialeng.eml" "legit-impersonation"
 ```
 
 ---
@@ -93,20 +84,7 @@ Invoke-WebRequest -UseBasicParsing -Uri "https://10-64-147-3.reverse-proxy.cell-
 ## 5. Punycode Impersonation Example
 
 ```powershell
-$session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
-$session.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 OPR/126.0.0.0"
-$session.Cookies.Add((New-Object System.Net.Cookie("_ga", "GA1.1.22156733.1769454898", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("ajs_anonymous_id", "15f364db-a8d9-4c9f-87b3-c4095f056014", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("ajs_user_id", "67f0f84312915140405a9277", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("intercom-device-id-pgpbhph6", "aeddfdf4-dbc5-456e-9893-6b564c94b9a6", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("_gcl_au", "1.1.1644970611.1769454898.1892155888.1769454909.1769454911", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("_cioid", "67f0f84312915140405a9277", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("analytics_session_id", "1770846394420", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("logged-in-hint", "67f0f84312915140405a9277", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("intercom-session-pgpbhph6", "M0hwemM3Tk5kekxoNlNFZjN5bytsWEZUbEZZbEdaN1ZsNjN6Z0VVd2c1MXdvTndoRWw5UWNROU5yN1dvNXZQd0ZjNjRXTllpQjltTUtZNVhMZ1dtYlEzQk5mVVBmR0FkTmo0N0JienZ0MjA9LS1yb0huREx5Ui9NQnJ2S1NuME14eVdRPT0=--5923cba7ed71cb6270adddfe863d7aca0060059a", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("analytics_session_id.last_access", "1770846514040", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("_ga_Z8D4WL3D4P", "GS2.1.s1770846497`$o7`$g1`$t1770846591`$j60`$l0`$h0", "/", ".tryhackme.com")))
-Invoke-WebRequest -UseBasicParsing -Uri "https://10-64-147-3.reverse-proxy.cell-prod-us-east-1a.vm.tryhackme.com/api/emails/punycode-impersonation-legitapp-socialeng.eml" -WebSession $session -Headers @{"Accept"="*/*"; "Accept-Language"="en-US,en;q=0.9"; "Referer"="https://10-64-147-3.reverse-proxy.cell-prod-us-east-1a.vm.tryhackme.com/"} -OutFile "$HOME\OneDrive - ESME\Documents\INGE3C\Project INGE3C\master-Project-Phishing\examples\punycode\punycode-impersonation-legitapp-socialeng.eml"
+Get-ThmEml "punycode-impersonation-legitapp-socialeng.eml" "punycode"
 ```
 
 ---
@@ -114,28 +92,15 @@ Invoke-WebRequest -UseBasicParsing -Uri "https://10-64-147-3.reverse-proxy.cell-
 ## 6. Impersonation + Social Engineering + Urgency Example
 
 ```powershell
-$session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
-$session.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 OPR/126.0.0.0"
-$session.Cookies.Add((New-Object System.Net.Cookie("_ga", "GA1.1.22156733.1769454898", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("ajs_anonymous_id", "15f364db-a8d9-4c9f-87b3-c4095f056014", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("ajs_user_id", "67f0f84312915140405a9277", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("intercom-device-id-pgpbhph6", "aeddfdf4-dbc5-456e-9893-6b564c94b9a6", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("_gcl_au", "1.1.1644970611.1769454898.1892155888.1769454909.1769454911", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("_cioid", "67f0f84312915140405a9277", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("analytics_session_id", "1770846394420", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("logged-in-hint", "67f0f84312915140405a9277", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("intercom-session-pgpbhph6", "M0hwemM3Tk5kekxoNlNFZjN5bytsWEZUbEZZbEdaN1ZsNjN6Z0VVd2c1MXdvTndoRWw5UWNROU5yN1dvNXZQd0ZjNjRXTllpQjltTUtZNVhMZ1dtYlEzQk5mVVBmR0FkTmo0N0JienZ0MjA9LS1yb0huREx5Ui9NQnJ2S1NuME14eVdRPT0=--5923cba7ed71cb6270adddfe863d7aca0060059a", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("analytics_session_id.last_access", "1770846514040", "/", ".tryhackme.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("_ga_Z8D4WL3D4P", "GS2.1.s1770846497`$o7`$g1`$t1770846591`$j60`$l0`$h0", "/", ".tryhackme.com")))
-Invoke-WebRequest -UseBasicParsing -Uri "https://10-64-147-3.reverse-proxy.cell-prod-us-east-1a.vm.tryhackme.com/api/emails/impersonation-socialeng-urgency.eml" -WebSession $session -Headers @{"Accept"="*/*"; "Accept-Language"="en-US,en;q=0.9"; "Referer"="https://10-64-147-3.reverse-proxy.cell-prod-us-east-1a.vm.tryhackme.com/"} -OutFile "$HOME\OneDrive - ESME\Documents\INGE3C\Project INGE3C\master-Project-Phishing\examples\impersonation-urgency\impersonation-socialeng-urgency.eml"
+Get-ThmEml "impersonation-socialeng-urgency.eml" "impersonation-urgency"
 ```
 
 ---
 
 ## Notes
-- If cookies expire, re-capture the request from your browser (DevTools > Network > Copy as PowerShell)
-- If the VM IP changes, replace `10-64-147-3` in all URLs
-- Files are saved to:
+- If cookies expire, re-capture the request from your browser (DevTools > Network > Copy as PowerShell) and update the variables at the top of this file.
+- If the VM IP changes, update `$VM_IP` above.
+- Output directories (relative to your local clone):
   - `examples/fake-invoice/`
   - `examples/impersonation/`
   - `examples/spam/`
