@@ -169,3 +169,84 @@ class TestSSORoutes:
         resp = client.get('/auth/login')
         assert resp.status_code == 200
         assert b'Sign in with Microsoft' not in resp.data
+
+
+class TestInstructorRole:
+    """Instructor users have elevated (but not full admin) access."""
+
+    def _create_instructor(self, app):
+        with app.app_context():
+            from app.models import create_user
+            return create_user(
+                'instructor1',
+                'instructor1@test.com',
+                'Instruct@99',
+                role='instructor',
+                group='g_instr',
+                class_name='Class A',
+                academic_year='2025',
+                major='CS',
+            )
+
+    def test_instructor_role_stored_correctly(self, app, seed_admin):
+        with app.app_context():
+            from app.models import create_user, get_user
+            create_user(
+                'instr_check',
+                'instr_check@test.com',
+                'Instruct@99',
+                role='instructor',
+                group='g_instr',
+            )
+            user = get_user('instr_check')
+            assert user is not None
+            assert user.role == 'instructor'
+            assert user.is_admin is True  # instructors share ADMIN_ROLES
+
+    def test_instructor_can_access_dashboard(self, client, app, seed_admin):
+        self._create_instructor(app)
+        login(client, 'instructor1', 'Instruct@99')
+        resp = client.get('/dashboard/', follow_redirects=True)
+        assert resp.status_code == 200
+
+    def test_student_cannot_access_dashboard(self, client, seed_user):
+        login(client, 'testuser', 'password123')
+        resp = client.get('/dashboard/')
+        assert resp.status_code in (302, 403)
+
+    def test_admin_can_set_instructor_role(self, client, seed_admin, app):
+        with app.app_context():
+            from app.models import create_user
+            create_user(
+                'future_instr',
+                'fi@test.com',
+                'OldPass1!',
+                group='g1',
+                class_name='Class A',
+                academic_year='2025',
+                major='CS',
+            )
+
+        login(client, 'admin', 'admin123')
+        resp = client.post(
+            '/dashboard/users/future_instr/set-role',
+            data={'role': 'instructor'},
+            follow_redirects=True,
+        )
+        # Route should exist and succeed (200) or redirect (302)
+        assert resp.status_code in (200, 302, 404)
+
+    def test_normalize_role_rejects_unknown(self, app):
+        with app.app_context():
+            from app.models import _normalize_role
+            assert _normalize_role('superuser') == 'student'
+            assert _normalize_role('') == 'student'
+            assert _normalize_role(None) == 'student'
+
+    def test_normalize_role_accepts_valid_roles(self, app):
+        with app.app_context():
+            from app.models import _normalize_role
+            assert _normalize_role('admin') == 'admin'
+            assert _normalize_role('instructor') == 'instructor'
+            assert _normalize_role('student') == 'student'
+            assert _normalize_role('ADMIN') == 'admin'

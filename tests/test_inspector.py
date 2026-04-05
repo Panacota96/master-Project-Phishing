@@ -101,3 +101,95 @@ class TestInspectorSubmit:
             saved = items[-1]
             assert saved.get('email_file') == filename
             assert saved.get('is_correct') is False
+
+
+class TestInspectorValidation:
+    """Edge-case tests for inspector submission validation logic."""
+
+    def test_spam_correct_with_no_signals(self, client, app, seed_user):
+        """A Spam email requires zero signals; submitting none must be correct."""
+        spam_file = next(k for k, v in ANSWER_KEY.items() if v['classification'] == 'Spam')
+        _seed_eml_files(app, [spam_file])
+        login(client, 'testuser', 'password123')
+        client.get('/inspector/api/emails')
+
+        resp = client.post('/inspector/api/submit', json={
+            'fileName': spam_file,
+            'classification': 'Spam',
+            'signals': [],
+        })
+        assert resp.status_code == 200
+        payload = resp.get_json()
+        assert payload.get('message') == 'Answer saved.'
+
+        with app.app_context():
+            table = app.dynamodb.Table(app.config['DYNAMODB_INSPECTOR_ANON'])
+            items = table.scan().get('Items', [])
+            saved = next(i for i in items if i.get('email_file') == spam_file)
+            assert saved['is_correct'] is True
+
+    def test_spam_incorrect_when_classified_as_phishing(self, client, app, seed_user):
+        """Classifying a Spam email as Phishing must be marked incorrect."""
+        spam_file = next(k for k, v in ANSWER_KEY.items() if v['classification'] == 'Spam')
+        _seed_eml_files(app, [spam_file])
+        login(client, 'testuser', 'password123')
+        client.get('/inspector/api/emails')
+
+        # Spam entries have 0 expected signals, so Phishing with 0 signals passes
+        # input validation but the classification mismatch makes it incorrect.
+        resp = client.post('/inspector/api/submit', json={
+            'fileName': spam_file,
+            'classification': 'Phishing',
+            'signals': [],
+        })
+        assert resp.status_code == 200
+
+        with app.app_context():
+            table = app.dynamodb.Table(app.config['DYNAMODB_INSPECTOR_ANON'])
+            items = table.scan().get('Items', [])
+            saved = next(i for i in items if i.get('email_file') == spam_file)
+            assert saved['is_correct'] is False
+
+    def test_override_changes_correctness_verdict(self, client, app, seed_user):
+        """Overriding a Phishing email to Spam makes a Spam submission correct."""
+        phishing_file, _ = next(
+            (k, v) for k, v in ANSWER_KEY.items() if v['classification'] == 'Phishing'
+        )
+        _seed_eml_files(app, [phishing_file])
+
+        # Admin overrides the entry to Spam
+        with app.app_context():
+            from app.models import set_answer_key_override
+            set_answer_key_override(phishing_file, 'Spam', [])
+
+        login(client, 'testuser', 'password123')
+        client.get('/inspector/api/emails')
+
+        resp = client.post('/inspector/api/submit', json={
+            'fileName': phishing_file,
+            'classification': 'Spam',
+            'signals': [],
+        })
+        assert resp.status_code == 200
+
+        with app.app_context():
+            table = app.dynamodb.Table(app.config['DYNAMODB_INSPECTOR_ANON'])
+            items = table.scan().get('Items', [])
+            saved = next(i for i in items if i.get('email_file') == phishing_file)
+            assert saved['is_correct'] is True
+
+    def test_unknown_file_rejected(self, client, app, seed_user):
+        """Submitting a fileName not in the session pool must not return HTTP 500."""
+        login(client, 'testuser', 'password123')
+        client.get('/inspector/api/emails')
+
+        resp = client.post('/inspector/api/submit', json={
+            'fileName': 'totally-unknown-file.eml',
+            'classification': 'Phishing',
+            'signals': ['urgency'],
+        })
+        # The route should handle this gracefully (4xx or a JSON error, not 500)
+        assert resp.status_code in (400, 403, 404, 200)
+        if resp.status_code == 200:
+            payload = resp.get_json()
+            assert payload is not None

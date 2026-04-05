@@ -1,0 +1,84 @@
+From: "Microsoft Security" <security@microsft-alerts.com>
+To: "{{.FirstName}} {{.LastName}}" <{{.Email}}>
+Subject: Urgent: New Sign-in to Your Microsoft Account – Verify Now
+Date: Mon, 30 Mar 2026 09:14:00 +0000
+Message-ID: <mfa-qr-0330.2026@microsft-alerts.com>
+Reply-To: "Security Team" <noreply@microsft-alerts.com>
+Return-Path: <bounce@microsft-alerts.com>
+MIME-Version: 1.0
+Authentication-Results: mx.example.com; spf=softfail smtp.mailfrom=microsft-alerts.com; dkim=none; dmarc=fail
+Received: from mail.microsft-alerts.com (203.0.113.77) by mx.example.com with ESMTPS id ABC123 for <{{.Email}}>; Mon, 30 Mar 2026 09:14:00 +0000
+Content-Type: multipart/mixed; boundary="mix-mfa-001"
+
+--mix-mfa-001
+Content-Type: multipart/alternative; boundary="alt-mfa-001"
+
+--alt-mfa-001
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+
+Dear {{.FirstName}},
+
+We detected a new sign-in to your Microsoft account from an unrecognized device.
+
+Location: Bucharest, Romania
+Device:   Windows 11 / Chrome 122
+Time:     March 30, 2026 09:12 UTC
+
+If this was not you, secure your account immediately by scanning the QR code below or visiting:
+{{.URL}}
+
+Your account will be temporarily suspended in 24 hours if no action is taken.
+
+Microsoft Security Team
+
+--alt-mfa-001
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+
+<html>
+  <body style="font-family: 'Segoe UI', Arial, sans-serif; background: #f3f4f6; margin: 0; padding: 0;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background: #f3f4f6;">
+      <tr>
+        <td align="center" style="padding: 32px 16px;">
+          <table width="600" cellpadding="0" cellspacing="0" style="background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+            <tr>
+              <td style="background: #0078d4; padding: 20px 32px;">
+                <span style="font-size: 22px; font-weight: 700; color: #ffffff;">Microsoft</span>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 32px;">
+                <h2 style="margin: 0 0 12px; font-size: 20px; color: #111827;">Unusual sign-in activity</h2>
+                <p style="margin: 0 0 16px; color: #374151;">Dear <strong>{{.FirstName}}</strong>,</p>
+                <p style="margin: 0 0 16px; color: #374151;">We detected a sign-in to <strong>{{.Email}}</strong> from a device we don't recognise.</p>
+                <table cellpadding="8" cellspacing="0" style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; margin-bottom: 20px; width: 100%;">
+                  <tr><td style="color:#6b7280; font-size:13px;">Location</td><td style="color:#111827; font-size:13px;">Bucharest, Romania</td></tr>
+                  <tr><td style="color:#6b7280; font-size:13px;">Device</td><td style="color:#111827; font-size:13px;">Windows 11 / Chrome 122</td></tr>
+                  <tr><td style="color:#6b7280; font-size:13px;">Time</td><td style="color:#111827; font-size:13px;">March 30, 2026 09:12 UTC</td></tr>
+                </table>
+                <p style="margin: 0 0 16px; color: #374151;">If this was not you, scan the QR code below to immediately secure your account. Your account will be <strong>suspended in 24 hours</strong> if no action is taken.</p>
+                <p style="text-align: center; margin: 0 0 20px;">
+                  <img src="cid:qr-mfa-001" alt="Scan to verify" width="150" height="150" style="border: 1px solid #e5e7eb; border-radius: 4px;" />
+                </p>
+                <p style="text-align: center; margin: 0 0 24px;">
+                  <a href="{{.URL}}" style="display:inline-block; padding:12px 28px; background:#0078d4; color:#fff; text-decoration:none; border-radius:4px; font-weight:600; font-size:15px;">Verify My Account</a>
+                </p>
+                <p style="font-size: 12px; color: #9ca3af;">If you recognise this sign-in, no action is needed. This automated security alert was sent to {{.Email}}.</p>
+              </td>
+            </tr>
+            <tr>
+              <td style="background: #f9fafb; padding: 16px 32px; font-size: 11px; color: #9ca3af; text-align: center;">
+                Microsoft Corporation · One Microsoft Way · Redmond, WA 98052
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
+
+--alt-mfa-001--
+
+--mix-mfa-001--

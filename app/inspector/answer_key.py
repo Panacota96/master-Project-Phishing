@@ -483,4 +483,33 @@ ANSWER_KEY = {
         "classification": "Phishing",
         "signals": ["impersonation", "socialeng", "punycode"],
     },
+
+    # ─── REALISTIC TEMPLATES (new additions) ─────────────────────────────────
+    "realistic-mfa-bypass-qr.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "urgency", "fakelogin"],
+        "explanation": (
+            "This email spoofs a Microsoft security alert and uses a QR code to bypass MFA. "
+            "The sender domain 'microsft-alerts.com' is a typosquatted look-alike of microsoft.com. "
+            "The artificial 24-hour deadline is a classic urgency tactic."
+        ),
+    },
+    "realistic-hr-salary-update.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "attachment", "socialeng"],
+        "explanation": (
+            "This fake HR email baits employees with a salary adjustment notice. "
+            "The attached PDF is a lure and the sender domain does not belong to the real organisation. "
+            "Triggering financial curiosity is a classic social engineering technique."
+        ),
+    },
+    "realistic-it-vpn-credentials.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "urgency", "sidechannel"],
+        "explanation": (
+            "This email impersonates an IT Security Operations team and creates an artificial midnight deadline "
+            "to pressure the recipient into submitting VPN credentials via email reply (a side-channel). "
+            "Legitimate IT teams never request credentials by email."
+        ),
+    },
 }
