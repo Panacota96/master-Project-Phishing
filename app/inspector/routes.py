@@ -353,8 +353,11 @@ def api_email_list():
             emails.append(_parse_eml_summary(key))
         except Exception:
             continue
+    submitted = state.get('submitted') or []
     return jsonify({
         'emails': emails,
+        'submitted_count': len(submitted),
+        'pool_size': len(pool),
         'samplesDirectory': f's3://{_bucket()}/{EML_PREFIX}',
     })
 

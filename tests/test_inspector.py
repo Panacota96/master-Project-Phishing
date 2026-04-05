@@ -34,6 +34,19 @@ class TestInspectorEmails:
 
         assert emails1 == emails2
 
+    def test_email_list_includes_progress_fields(self, client, app, seed_user):
+        filenames = list(ANSWER_KEY.keys())[:10]
+        _seed_eml_files(app, filenames)
+        login(client, 'testuser', 'password123')
+
+        resp = client.get('/inspector/api/emails')
+        assert resp.status_code == 200
+        data = resp.get_json()
+        assert 'submitted_count' in data
+        assert 'pool_size' in data
+        assert data['submitted_count'] == 0
+        assert data['pool_size'] > 0
+
     def test_email_pool_spam_bounds(self, client, app, seed_user):
         spam_files = [k for k, v in ANSWER_KEY.items() if v['classification'] == 'Spam']
         phishing_files = [k for k, v in ANSWER_KEY.items() if v['classification'] == 'Phishing']
