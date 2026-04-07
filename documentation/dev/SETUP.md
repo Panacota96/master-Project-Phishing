@@ -17,7 +17,7 @@ The `docker-compose.yml` includes three services: `dynamodb-local` (port 8766), 
 git clone <repository-url>
 cd master-Project-Phishing
 
-# 2. Copy the env file (already present in the repo)
+# 2. Create a local env file from the example
 cp .env.example .env   # edit SECRET_KEY and other vars as needed
 
 # 3. Start all services

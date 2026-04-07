@@ -1,4 +1,4 @@
-.PHONY: lambda registration-worker campaign-mailer test lint validate-eml sync-assets sync-eml audit-eml
+.PHONY: lambda registration-worker campaign-mailer test lint docs-check validate-eml sync-assets sync-eml audit-eml
 
 AWS_REGION ?= eu-west-3
 TF_DIR ?= phishing-platform-infra/terraform
@@ -20,6 +20,9 @@ test:
 
 lint:
 	flake8 app/ --max-line-length=120 --exclude=__pycache__
+
+docs-check:
+	python3 scripts/check_docs_consistency.py
 
 validate-eml:
 	python3 scripts/validate_eml_realism.py --root examples --allowlist examples/realism_allowlist.json --report examples/realism_report.json

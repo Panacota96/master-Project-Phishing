@@ -69,7 +69,6 @@ class Config:
     MSAL_INSTRUCTOR_GROUP_ID = os.environ.get('MSAL_INSTRUCTOR_GROUP_ID', '')
 
     # Threat feed cache (optional DynamoDB TTL table)
-    DYNAMODB_THREAT_CACHE = os.environ.get('DYNAMODB_THREAT_CACHE', '')
     THREAT_CACHE_TTL_SECONDS = int(os.environ.get('THREAT_CACHE_TTL_SECONDS', '3600'))
 
     # Inspector pool tuning (per-cohort overrides stored in memory or DynamoDB)

@@ -1,11 +1,11 @@
 # ─── Networking (Default VPC) ────────────────────────────────────────────────
 
-data "aws_default_vpc" "default" {}
+resource "aws_default_vpc" "default" {}
 
 data "aws_subnets" "default" {
   filter {
     name   = "vpc-id"
-    values = [data.aws_default_vpc.default.id]
+    values = [aws_default_vpc.default.id]
   }
 
   filter {
@@ -19,7 +19,7 @@ data "aws_subnets" "default" {
 resource "aws_security_group" "lambda" {
   name        = "${local.prefix}-lambda-sg"
   description = "Lambda access to Redis and outbound internet"
-  vpc_id      = data.aws_default_vpc.default.id
+  vpc_id      = aws_default_vpc.default.id
 
   egress {
     from_port   = 0
@@ -32,7 +32,7 @@ resource "aws_security_group" "lambda" {
 resource "aws_security_group" "redis" {
   name        = "${local.prefix}-redis-sg"
   description = "Redis access from Lambda"
-  vpc_id      = data.aws_default_vpc.default.id
+  vpc_id      = aws_default_vpc.default.id
 
   ingress {
     description     = "Redis from Lambda"
@@ -59,11 +59,11 @@ resource "aws_elasticache_subnet_group" "redis" {
 
 resource "aws_elasticache_replication_group" "redis" {
   replication_group_id          = "${local.prefix}-redis"
-  replication_group_description = "Redis cache for real-time dashboard + threat feed"
+  description                   = "Redis cache for real-time dashboard + threat feed"
   engine                        = "redis"
   engine_version                = var.redis_engine_version
   node_type                     = var.redis_node_type
-  number_cache_clusters         = 1
+  num_cache_clusters            = 1
   automatic_failover_enabled    = false
   multi_az_enabled              = false
   port                          = 6379

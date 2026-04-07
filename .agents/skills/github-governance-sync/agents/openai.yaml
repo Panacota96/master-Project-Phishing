@@ -1,0 +1,7 @@
+interface:
+  display_name: "GitHub Governance Sync"
+  short_description: "Sync backlog and repo policy"
+  default_prompt: "Use $github-governance-sync to create the milestone, issue, branch, and protection updates for this repo."
+
+policy:
+  allow_implicit_invocation: true

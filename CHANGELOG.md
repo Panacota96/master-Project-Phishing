@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [Unreleased]
+
+### Added
+- Governance baseline for solo-safe development: `CODEOWNERS`, PR template, structured issue templates, a live workboard, and repo-local skills under `.agents/`.
+- CI coverage for documentation drift and Terraform parsing via `docs-check` and `terraform-validate`.
+- `code-review.yml` workflow to summarize PR review context against the required branch checks.
+
+### Changed
+- Local Docker defaults no longer rely on a pre-created `.env`; `.env.example` is now the explicit starting point.
+- Documentation now treats `documentation/WORKBOARD.md` as the source of truth for milestone, issue, and branch tracking.
+- Terraform, Docker, and config baselines were corrected to match the current repository layout and runtime behavior.
+
+---
+
 ## [1.2.5] - 2026-04-04
 
 ### Added

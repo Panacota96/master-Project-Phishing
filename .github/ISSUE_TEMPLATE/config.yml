@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Workboard
+    url: https://github.com/Panacota96/master-Project-Phishing/blob/main/documentation/WORKBOARD.md
+    about: Check the live milestone and issue map before opening new backlog items.

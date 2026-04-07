@@ -8,9 +8,27 @@ services:
 
   web:
     build: .
-    env_file: .env
     depends_on:
       - dynamodb-local
+    environment:
+      AWS_REGION_NAME: eu-west-3
+      AWS_ACCESS_KEY_ID: fake
+      AWS_SECRET_ACCESS_KEY: fake
+      DYNAMODB_ENDPOINT: http://dynamodb-local:8000
+      DYNAMODB_USERS: phishing-app-dev-users
+      DYNAMODB_QUIZZES: phishing-app-dev-quizzes
+      DYNAMODB_ATTEMPTS: phishing-app-dev-attempts
+      DYNAMODB_RESPONSES: phishing-app-dev-responses
+      DYNAMODB_INSPECTOR: phishing-app-dev-inspector-attempts
+      DYNAMODB_INSPECTOR_ANON: phishing-app-dev-inspector-attempts-anon
+      DYNAMODB_BUGS: phishing-app-dev-bugs
+      DYNAMODB_ANSWER_KEY_OVERRIDES: phishing-app-dev-answer-key-overrides
+      DYNAMODB_COHORT_TOKENS: phishing-app-dev-cohort-tokens
+      DYNAMODB_THREAT_CACHE: phishing-app-dev-threat-cache
+      DYNAMODB_CAMPAIGNS: phishing-app-dev-campaigns
+      DYNAMODB_CAMPAIGN_EVENTS: phishing-app-dev-campaign-events
+      S3_BUCKET: phishing-app-dev-eu-west-3
+      SECRET_KEY: dev-secret-key
     restart: unless-stopped
 
   nginx:
