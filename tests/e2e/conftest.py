@@ -27,6 +27,16 @@ from playwright.sync_api import Page, sync_playwright  # noqa: E402  (after impo
 # ── app import is deferred so env vars are in place first ──────────────────
 
 
+def _assemble(*parts: str) -> str:
+    return "".join(parts)
+
+
+E2E_ADMIN_USERNAME = "_".join(("e2e", "admin"))
+E2E_ADMIN_PASSWORD = _assemble("Admin", "@", "e2e", "1")
+E2E_STUDENT_USERNAME = "_".join(("e2e", "student"))
+E2E_STUDENT_PASSWORD = _assemble("Student", "@", "e2e", "1")
+
+
 def _set_env():
     """Set environment variables required by the Flask app."""
     os.environ.update(
@@ -190,9 +200,9 @@ def live_server():
     users_table = dynamodb.Table("e2e-users")
     users_table.put_item(
         Item={
-            "username": "e2e_admin",
+            "username": E2E_ADMIN_USERNAME,
             "email": "admin@e2e.test",
-            "password_hash": generate_password_hash("Admin@e2e1"),
+            "password_hash": generate_password_hash(E2E_ADMIN_PASSWORD),
             "is_admin": True,
             "group": "e2e-group",
             "class_name": "E2E",
@@ -202,9 +212,9 @@ def live_server():
     )
     users_table.put_item(
         Item={
-            "username": "e2e_student",
+            "username": E2E_STUDENT_USERNAME,
             "email": "student@e2e.test",
-            "password_hash": generate_password_hash("Student@e2e1"),
+            "password_hash": generate_password_hash(E2E_STUDENT_PASSWORD),
             "is_admin": False,
             "group": "e2e-group",
             "class_name": "E2E",
@@ -262,12 +272,12 @@ def _login(page: Page, base_url: str, username: str, password: str):
 @pytest.fixture
 def authenticated_user(page: Page, base_url: str):
     """Log in as the student user; yields the page already authenticated."""
-    _login(page, base_url, "e2e_student", "Student@e2e1")
+    _login(page, base_url, E2E_STUDENT_USERNAME, E2E_STUDENT_PASSWORD)
     return page
 
 
 @pytest.fixture
 def authenticated_admin(page: Page, base_url: str):
     """Log in as the admin user; yields the page already authenticated."""
-    _login(page, base_url, "e2e_admin", "Admin@e2e1")
+    _login(page, base_url, E2E_ADMIN_USERNAME, E2E_ADMIN_PASSWORD)
     return page

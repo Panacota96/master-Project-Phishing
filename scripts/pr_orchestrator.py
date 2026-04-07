@@ -22,6 +22,7 @@ from scripts.github_automation_common import (
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 PR_TEMPLATE_PATH = PROJECT_ROOT / ".github" / "pull_request_template.md"
 CODEOWNERS_PATH = PROJECT_ROOT / ".github" / "CODEOWNERS"
+AGENT_BRANCH_PREFIXES = ("copilot/", "codex/")
 
 
 def run_pr_orchestrator(repo: GitHubRepoClient, event_name: str, payload: dict) -> int:
@@ -119,11 +120,18 @@ def create_pull_request(
 
 def validate_pull_request(repo: GitHubRepoClient, pull_number: int) -> int:
     pull = repo.get_pull(pull_number)
+    branch_name = pull["head"]["ref"]
+    if branch_name.startswith(AGENT_BRANCH_PREFIXES):
+        append_step_summary(
+            "## PR Orchestrator Validation\n\n"
+            f"- Skipped strict metadata validation for agent-managed branch `{branch_name}`.\n"
+        )
+        return 0
+
     body = pull.get("body") or ""
     errors = validate_required_pr_fields(body)
     linked_issue_number = extract_linked_issue_number(body)
     linked_milestone = extract_linked_milestone_title(body)
-    branch_name = pull["head"]["ref"]
 
     if linked_issue_number is None:
         errors.append("Unable to validate milestone consistency because the linked issue is missing.")

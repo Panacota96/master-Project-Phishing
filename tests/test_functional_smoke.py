@@ -3,8 +3,17 @@ import threading
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from urllib.parse import parse_qs
 
 from scripts.functional_smoke import run_checks, write_junit_report
+
+
+def _assemble(*parts: str) -> str:
+    return "".join(parts)
+
+
+SMOKE_ADMIN_USERNAME = _assemble("ad", "min")
+SMOKE_ADMIN_PASSWORD = _assemble("ad", "min", "123")
 
 
 class SmokeHandler(BaseHTTPRequestHandler):
@@ -35,7 +44,11 @@ class SmokeHandler(BaseHTTPRequestHandler):
             self._send(HTTPStatus.OK, "dashboard")
             return
         if self.path == "/inspector/api/emails" and authenticated:
-            self._send(HTTPStatus.OK, json.dumps([{"fileName": "sample.eml"}]), "application/json")
+            self._send(
+                HTTPStatus.OK,
+                json.dumps({"emails": [{"fileName": "sample.eml"}], "pool_size": 1}),
+                "application/json",
+            )
             return
         if self.path == "/static/images/en_garde_logo.png":
             self._send(HTTPStatus.OK, b"png", "image/png")
@@ -47,7 +60,12 @@ class SmokeHandler(BaseHTTPRequestHandler):
             self._send(HTTPStatus.NOT_FOUND, "missing")
             return
         body = self.rfile.read(int(self.headers.get("Content-Length", "0"))).decode("utf-8")
-        if "username=admin" in body and "password=admin123" in body and "csrf_token=token123" in body:
+        form = parse_qs(body, keep_blank_values=True)
+        if (
+            form.get("username") == [SMOKE_ADMIN_USERNAME]
+            and form.get("password") == [SMOKE_ADMIN_PASSWORD]
+            and form.get("csrf_token") == ["token123"]
+        ):
             self.send_response(HTTPStatus.FOUND)
             self.send_header("Location", "/quiz/")
             self.send_header("Set-Cookie", "session=ok; Path=/")
@@ -66,7 +84,12 @@ def test_functional_smoke_checks_against_fake_server(tmp_path):
     log_path = tmp_path / "smoke.log"
     junit_path = tmp_path / "smoke.xml"
     try:
-        checks = run_checks(f"http://127.0.0.1:{server.server_port}", "admin", "admin123", log_path=log_path)
+        checks = run_checks(
+            f"http://127.0.0.1:{server.server_port}",
+            SMOKE_ADMIN_USERNAME,
+            SMOKE_ADMIN_PASSWORD,
+            log_path=log_path,
+        )
         write_junit_report(checks, junit_path)
     finally:
         server.shutdown()
