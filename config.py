@@ -1,8 +1,52 @@
 import json
 import logging
 import os
+from typing import Any
 
 logger = logging.getLogger(__name__)
+
+_APP_SECRETS_CACHE: dict[str, Any] | None = None
+_APP_SECRETS_CACHE_ARN: str | None = None
+
+
+def _get_app_secrets() -> dict[str, Any]:
+    """Fetch and cache the shared app secret bundle from Secrets Manager."""
+    global _APP_SECRETS_CACHE, _APP_SECRETS_CACHE_ARN
+
+    secret_arn = os.environ.get("SECRET_ARN", "").strip()
+    if not secret_arn:
+        return {}
+
+    if (
+        _APP_SECRETS_CACHE is not None
+        and _APP_SECRETS_CACHE_ARN == secret_arn
+    ):
+        return _APP_SECRETS_CACHE
+
+    import boto3
+    from botocore.exceptions import BotoCoreError, ClientError
+
+    try:
+        region = os.environ.get("AWS_REGION_NAME", "eu-west-3")
+        client = boto3.client("secretsmanager", region_name=region)
+        resp = client.get_secret_value(SecretId=secret_arn)
+        data = json.loads(resp["SecretString"])
+        if not isinstance(data, dict):
+            raise ValueError("secret payload must be a JSON object")
+    except (
+        ClientError,
+        BotoCoreError,
+        json.JSONDecodeError,
+        KeyError,
+        ValueError,
+    ) as exc:
+        raise RuntimeError(
+            f"Failed to load application secrets from {secret_arn}: {exc}"
+        ) from exc
+
+    _APP_SECRETS_CACHE = data
+    _APP_SECRETS_CACHE_ARN = secret_arn
+    return data
 
 
 def _resolve_secret_key() -> str:
@@ -18,41 +62,39 @@ def _resolve_secret_key() -> str:
     development default) when ``SECRET_ARN`` is absent — this preserves
     backward-compatibility for local development and unit tests.
     """
-    secret_arn = os.environ.get("SECRET_ARN", "")
+    secret_arn = os.environ.get("SECRET_ARN", "").strip()
     if secret_arn:
-        try:
-            import boto3
-            from botocore.exceptions import BotoCoreError, ClientError
+        secret_key = _get_app_secrets().get("SECRET_KEY")
+        if secret_key:
+            return secret_key
 
-            region = os.environ.get("AWS_REGION_NAME", "eu-west-3")
-            client = boto3.client("secretsmanager", region_name=region)
-            resp = client.get_secret_value(SecretId=secret_arn)
-            data = json.loads(resp["SecretString"])
-            return data.get("SECRET_KEY", os.environ.get("SECRET_KEY", "dev-secret-key-change-in-production"))
-        except (ClientError, BotoCoreError) as exc:
-            logger.warning("Secrets Manager fetch failed (%s); falling back to SECRET_KEY env var", exc)
-        except (json.JSONDecodeError, KeyError) as exc:
-            logger.warning("Secrets Manager secret parse error (%s); falling back to SECRET_KEY env var", exc)
+        env_secret_key = os.environ.get("SECRET_KEY", "")
+        if env_secret_key:
+            logger.warning(
+                "SECRET_ARN is set but SECRET_KEY was not found in Secrets Manager; "
+                "falling back to SECRET_KEY env var"
+            )
+            return env_secret_key
+
+        raise RuntimeError(
+            "SECRET_ARN is set but SECRET_KEY could not be resolved from Secrets "
+            "Manager and no SECRET_KEY env fallback is configured"
+        )
     return os.environ.get("SECRET_KEY", "dev-secret-key-change-in-production")
 
 
 def _resolve_msal_client_secret() -> str:
     """Return the MSAL client secret from Secrets Manager or env var."""
-    secret_arn = os.environ.get("SECRET_ARN", "")
+    secret_arn = os.environ.get("SECRET_ARN", "").strip()
     if secret_arn:
-        try:
-            import boto3
-            from botocore.exceptions import BotoCoreError, ClientError
+        msal_client_secret = _get_app_secrets().get("MSAL_CLIENT_SECRET")
+        if msal_client_secret:
+            return msal_client_secret
 
-            region = os.environ.get("AWS_REGION_NAME", "eu-west-3")
-            client = boto3.client("secretsmanager", region_name=region)
-            resp = client.get_secret_value(SecretId=secret_arn)
-            data = json.loads(resp["SecretString"])
-            return data.get("MSAL_CLIENT_SECRET", os.environ.get("MSAL_CLIENT_SECRET", ""))
-        except (ClientError, BotoCoreError) as exc:
-            logger.warning("Secrets Manager fetch failed (%s); falling back to MSAL_CLIENT_SECRET env var", exc)
-        except (json.JSONDecodeError, KeyError) as exc:
-            logger.warning("Secrets Manager secret parse error (%s); falling back to MSAL_CLIENT_SECRET env var", exc)
+        logger.warning(
+            "SECRET_ARN is set but MSAL_CLIENT_SECRET was not found in Secrets "
+            "Manager; falling back to MSAL_CLIENT_SECRET env var"
+        )
     return os.environ.get("MSAL_CLIENT_SECRET", "")
 
 

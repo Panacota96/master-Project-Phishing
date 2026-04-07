@@ -136,3 +136,9 @@ variable "enable_cloudtrail" {
   type        = bool
   default     = true
 }
+
+variable "cloudtrail_bucket_force_destroy" {
+  description = "Allow Terraform to delete non-empty CloudTrail log buckets; keep false outside disposable environments"
+  type        = bool
+  default     = false
+}

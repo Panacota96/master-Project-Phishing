@@ -9,7 +9,7 @@ data "aws_caller_identity" "current" {}
 resource "aws_s3_bucket" "cloudtrail" {
   count         = var.enable_cloudtrail ? 1 : 0
   bucket        = "${local.prefix}-cloudtrail-${data.aws_caller_identity.current.account_id}"
-  force_destroy = true
+  force_destroy = var.cloudtrail_bucket_force_destroy
 
   tags = {
     Name = "${local.prefix}-cloudtrail"
@@ -82,8 +82,8 @@ resource "aws_s3_bucket_policy" "cloudtrail" {
 # ─── CloudTrail Trail ─────────────────────────────────────────────────────────
 
 resource "aws_cloudtrail" "app" {
-  count  = var.enable_cloudtrail ? 1 : 0
-  name   = "${local.prefix}-trail"
+  count = var.enable_cloudtrail ? 1 : 0
+  name  = "${local.prefix}-trail"
 
   s3_bucket_name                = aws_s3_bucket.cloudtrail[0].id
   include_global_service_events = true
