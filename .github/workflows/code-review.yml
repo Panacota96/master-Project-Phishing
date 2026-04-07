@@ -1,0 +1,123 @@
+name: Automated Code Review
+
+on:
+  pull_request:
+    branches: [main, develop]
+
+permissions:
+  contents: read
+
+jobs:
+  # ── 1. Static analysis ────────────────────────────────────────────────────
+  ruff-lint:
+    name: Ruff — Python lint & format check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install Ruff
+        run: pip install ruff
+
+      - name: Ruff lint
+        run: ruff check app/ tests/ --output-format=github
+
+  bandit-security:
+    name: Bandit — Security scan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install Bandit
+        run: pip install bandit
+
+      - name: Run Bandit
+        run: bandit -r app/ -f json -o bandit-report.json -ll || true
+
+      - name: Upload Bandit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bandit-report
+          path: bandit-report.json
+
+  # ── 2. Unit / integration tests with coverage ────────────────────────────
+  pytest-coverage:
+    name: pytest + coverage
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pytest pytest-cov moto
+
+      - name: Run tests
+        run: pytest tests/ --cov=app --cov-report=xml --junitxml=report.xml
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.xml
+
+      - name: Upload test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report
+          path: report.xml
+
+  # ── 3. E2E tests with Playwright ─────────────────────────────────────────
+  playwright-e2e:
+    name: Playwright — E2E tests
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install app dependencies
+        run: pip install -r requirements.txt
+
+      - name: Install Playwright & pytest-playwright
+        run: |
+          pip install playwright==1.49.0 pytest-playwright==0.6.2 moto
+          playwright install chromium --with-deps
+
+      - name: Run E2E tests
+        run: pytest tests/e2e/ -m e2e --browser chromium -v --junitxml=e2e-report.xml
+
+      - name: Upload E2E test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-results
+          path: e2e-report.xml

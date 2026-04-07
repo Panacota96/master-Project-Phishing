@@ -75,3 +75,4 @@ phishing-templates/
 
 # Test fixture CSVs with sample credentials — never commit real ones
 test_load.csv
+report.xml

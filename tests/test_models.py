@@ -1,9 +1,5 @@
 """Tests for the DynamoDB data access layer (app/models.py)."""
 
-from moto import mock_aws
-
-from conftest import login
-
 
 class TestUserModel:
     def test_create_and_get_user(self, app):

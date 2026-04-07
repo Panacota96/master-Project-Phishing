@@ -484,32 +484,79 @@ ANSWER_KEY = {
         "signals": ["impersonation", "socialeng", "punycode"],
     },
 
-    # ─── REALISTIC TEMPLATES (new additions) ─────────────────────────────────
-    "realistic-mfa-bypass-qr.eml": {
+    # ─── Microsoft 365 themed phishing ────────────────────────────────────
+    "m365-onedrive-shared-document-phishing.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "fakelogin", "externaldomain"],
+        "explanation": (
+            "A fake OneDrive sharing notification. The 'Open in OneDrive' button leads to a "
+            "credential harvesting page hosted on a non-Microsoft domain."
+        ),
+    },
+    "m365-teams-missed-message-alert-phishing.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "spoof"],
+        "explanation": (
+            "Mimics a Microsoft Teams missed-message alert. The sender address is spoofed and "
+            "the 'Reply in Teams' link points to a phishing site collecting O365 credentials."
+        ),
+    },
+    "m365-mfa-prompt-phishing.eml": {
         "classification": "Phishing",
         "signals": ["impersonation", "urgency", "fakelogin"],
         "explanation": (
-            "This email spoofs a Microsoft security alert and uses a QR code to bypass MFA. "
-            "The sender domain 'microsft-alerts.com' is a typosquatted look-alike of microsoft.com. "
-            "The artificial 24-hour deadline is a classic urgency tactic."
+            "Fake Microsoft MFA enrollment prompt. Uses urgency ('Your account will be locked') "
+            "and a convincing Office 365 login page clone to steal credentials."
         ),
     },
-    "realistic-hr-salary-update.eml": {
+    "m365-sharepoint-file-request-phishing.eml": {
         "classification": "Phishing",
-        "signals": ["impersonation", "attachment", "socialeng"],
+        "signals": ["impersonation", "fakelogin", "punycode"],
         "explanation": (
-            "This fake HR email baits employees with a salary adjustment notice. "
-            "The attached PDF is a lure and the sender domain does not belong to the real organisation. "
-            "Triggering financial curiosity is a classic social engineering technique."
+            "SharePoint file-request template with a punycode domain in the CTA link. "
+            "Victims land on a pixel-perfect O365 login clone."
         ),
     },
-    "realistic-it-vpn-credentials.eml": {
+    "m365-password-expiry-phishing.eml": {
         "classification": "Phishing",
-        "signals": ["impersonation", "urgency", "sidechannel"],
+        "signals": ["impersonation", "urgency", "spoof"],
         "explanation": (
-            "This email impersonates an IT Security Operations team and creates an artificial midnight deadline "
-            "to pressure the recipient into submitting VPN credentials via email reply (a side-channel). "
-            "Legitimate IT teams never request credentials by email."
+            "Claims the user's Microsoft 365 password expires today. Uses a spoofed "
+            "'Microsoft IT Support' address and links to a credential-stealing page."
+        ),
+    },
+
+    # ─── University / LMS themed phishing ─────────────────────────────────
+    "university-lms-grade-notification-phishing.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "socialeng", "fakelogin"],
+        "explanation": (
+            "Fake LMS grade-release notification. Social-engineering bait targets students "
+            "anxious about results; the 'View Grade' link harvests university portal credentials."
+        ),
+    },
+    "university-it-password-reset-phishing.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "urgency", "spoof"],
+        "explanation": (
+            "Impersonates the university IT helpdesk. Urgent language ('reset before 5 PM') "
+            "and a spoofed sender push victims to a phishing form."
+        ),
+    },
+    "university-scholarship-offer-phishing.eml": {
+        "classification": "Phishing",
+        "signals": ["socialeng", "attachment", "impersonation"],
+        "explanation": (
+            "Fake scholarship offer with a malicious PDF attachment. Uses social engineering "
+            "to convince students to open an attachment that requests personal details."
+        ),
+    },
+    "university-library-overdue-fine-phishing.eml": {
+        "classification": "Phishing",
+        "signals": ["impersonation", "urgency", "fakeinvoice"],
+        "explanation": (
+            "Fake library overdue-fine notice. Creates urgency by threatening account suspension "
+            "and links to a fake payment portal mimicking the university's library system."
         ),
     },
 }
