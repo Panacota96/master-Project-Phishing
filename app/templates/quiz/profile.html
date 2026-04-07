@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block title %}My Profile{% endblock %}
+{% block content %}
+<div class="d-flex align-items-center mb-4 gap-3">
+    <h2 class="mb-0">My Profile</h2>
+    <span class="rank-badge rank-{{ badge_color }}">{{ rank }}</span>
+</div>
+
+<div class="row g-4 mb-4">
+    <!-- Identity card -->
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h6 class="text-muted text-uppercase small mb-3">Account</h6>
+                <div class="mb-2">
+                    <span class="text-muted small">Username</span>
+                    <div class="fw-semibold">{{ current_user.username }}</div>
+                </div>
+                <div class="mb-2">
+                    <span class="text-muted small">Role</span>
+                    <div class="fw-semibold text-capitalize">{{ current_user.role or 'student' }}</div>
+                </div>
+                {% set _sentinel_values = ['unknown', 'n/a', 'na', 'none', 'null', '-', ''] %}
+                {% set _class_name = current_user.class_name | default('', true) | trim %}
+                {% if _class_name | lower not in _sentinel_values %}
+                <div class="mb-2">
+                    <span class="text-muted small">Class</span>
+                    <div class="fw-semibold">{{ _class_name }}</div>
+                </div>
+                {% endif %}
+                {% set _academic_year = current_user.academic_year | default('', true) | trim %}
+                {% if _academic_year | lower not in _sentinel_values %}
+                <div class="mb-2">
+                    <span class="text-muted small">Academic Year</span>
+                    <div class="fw-semibold">{{ _academic_year }}</div>
+                </div>
+                {% endif %}
+                {% set _major = current_user.major | default('', true) | trim %}
+                {% if _major | lower not in _sentinel_values %}
+                <div class="mb-2">
+                    <span class="text-muted small">Major</span>
+                    <div class="fw-semibold">{{ _major }}</div>
+                </div>
+                {% endif %}
+                <div class="mt-3">
+                    <a href="{{ url_for('auth.change_password') }}" class="btn btn-secondary btn-sm">Change Password</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz progress card -->
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h6 class="text-muted text-uppercase small mb-3">Quiz Progress</h6>
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="small">Modules completed</span>
+                    <span class="fw-semibold" style="color:#67e8f9;">{{ completed_count }} / {{ total_quizzes }}</span>
+                </div>
+                <div class="progress mb-3" style="height:18px;border-radius:8px;">
+                    <div class="progress-bar" role="progressbar"
+                         style="width:{{ completion_pct }}%"
+                         aria-valuenow="{{ completion_pct }}" aria-valuemin="0" aria-valuemax="100">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <span class="text-muted small">Average score</span>
+                    <div class="fs-4 fw-bold" style="color:#34d399;">{{ avg_score }}%</div>
+                </div>
+                <a href="{{ url_for('quiz.history') }}" class="btn btn-primary btn-sm">View Full History</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inspector status card -->
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h6 class="text-muted text-uppercase small mb-3">Email Inspector</h6>
+                {% if inspector_locked %}
+                <div class="alert alert-success py-2 px-3 mb-3">
+                    <strong>&#10003; Session complete</strong>
+                </div>
+                <p class="text-muted small">You have analysed all assigned emails. Contact your instructor to reset if needed.</p>
+                {% else %}
+                <div class="mb-2">
+                    <span class="text-muted small">Emails analysed</span>
+                    <div class="fw-semibold">{{ inspector_submitted }}</div>
+                </div>
+                {% if inspector_submitted == 0 %}
+                <p class="text-muted small">You haven't analysed any emails yet.</p>
+                {% endif %}
+                <a href="{{ url_for('inspector.index') }}" class="btn btn-primary btn-sm">Open Inspector</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex gap-2">
+    <a href="{{ url_for('quiz.quiz_list') }}" class="btn btn-primary">Go to Quizzes</a>
+    <a href="{{ url_for('inspector.index') }}" class="btn btn-secondary">Go to Inspector</a>
+</div>
+{% endblock %}
