@@ -74,6 +74,8 @@ graph TB
 ![API Gateway](https://img.shields.io/badge/API_Gateway-FF4F8B?logo=amazonaws&logoColor=white)
 ![CloudWatch](https://img.shields.io/badge/CloudWatch-FF4F8B?logo=amazonaws&logoColor=white)
 
+Mermaid does not support embedding official AWS architecture logos inside nodes. Keep AWS service badges or a legend outside the diagram, and generate companion SVG/PNG assets only when logo-rich visuals are needed.
+
 All resources grouped by AWS service with connection direction.
 
 ```mermaid
@@ -383,7 +385,7 @@ flowchart TD
         DeployProd["deploy-prod.yml\nworkflow_dispatch only\nbuild → plan_prod → deploy_prod\n(env: prod · requires prod environment approval)"]
         DestroyWF["destroy.yml\nworkflow_dispatch\nChoose env: dev or prod\nOptional: empty S3 versioned bucket\nRemoves IAM from state before destroy"]
         ClaudeAction["claude.yml\n@claude mentions in Issues/PRs"]
-        ClaudeReview["claude-code-review.yml\nAuto PR review on every PR"]
+        ReviewPrep["code-review.yml\nReview summary on PRs to main"]
     end
 ```
 

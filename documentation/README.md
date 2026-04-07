@@ -1,6 +1,6 @@
 # Phishing Awareness Training - Documentation Suite
 
-Welcome to the documentation for the Phishing Awareness Training Application. This project is a Flask-based web application deployed on AWS using a serverless architecture (Lambda + API Gateway + DynamoDB).
+Welcome to the documentation for the Phishing Awareness Training Application. This repository uses `documentation/WORKBOARD.md` as the live backlog and governance index, while the rest of this folder stays focused on architecture, setup, operations, and user guidance.
 
 ## Project Overview
 
@@ -24,6 +24,9 @@ graph TD
 ```
 
 ## Documentation Structure
+
+### 📌 [Workboard](WORKBOARD.md)
+Live source of truth for milestones, initiative issues, confirmed bugs, and branch naming conventions.
 
 ### 🛠️ [Developer Guides](dev/README.md)
 For software engineers contributing to the codebase.

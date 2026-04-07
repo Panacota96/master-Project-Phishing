@@ -1,0 +1,34 @@
+name: Feature initiative
+description: Track a new milestone-backed capability with implementation, docs, and validation slices.
+title: "[Initiative] "
+labels:
+  - enhancement
+body:
+  - type: input
+    id: milestone
+    attributes:
+      label: Milestone
+      description: Name of the milestone cluster for this initiative.
+    validations:
+      required: true
+  - type: textarea
+    id: objective
+    attributes:
+      label: Objective
+      description: Describe the user or operational outcome.
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: List the implementation slices and boundaries.
+    validations:
+      required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: Validation
+      description: State the tests, smoke checks, or acceptance criteria.
+    validations:
+      required: true

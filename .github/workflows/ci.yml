@@ -7,6 +7,9 @@ on:
     branches: [main]
   workflow_call:
 
+permissions:
+  contents: read
+
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -56,9 +59,34 @@ jobs:
           name: test-report
           path: report.xml
 
+  docs-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run docs consistency checks
+        run: make docs-check
+
+  terraform-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform init
+        run: terraform -chdir=phishing-platform-infra/terraform init -backend=false
+
+      - name: Terraform validate
+        run: terraform -chdir=phishing-platform-infra/terraform validate
+
   build:
     runs-on: ubuntu-latest
-    needs: [lint, test]
+    needs: [lint, test, docs-check, terraform-validate]
     steps:
       - uses: actions/checkout@v4
 

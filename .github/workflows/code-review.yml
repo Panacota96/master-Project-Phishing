@@ -1,3 +1,54 @@
+<<<<<<< feature/deep-scan-governance-rollout
+name: Code Review Prep
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  review-context:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - id: changed
+        uses: tj-actions/changed-files@v45
+
+      - name: Build review summary
+        env:
+          ADDED_FILES: ${{ steps.changed.outputs.added_files }}
+          MODIFIED_FILES: ${{ steps.changed.outputs.modified_files }}
+          DELETED_FILES: ${{ steps.changed.outputs.deleted_files }}
+          ALL_CHANGED_FILES: ${{ steps.changed.outputs.all_changed_files }}
+        run: |
+          {
+            echo "## Review Focus"
+            echo
+            echo "- Linked issue and milestone are present in the PR template."
+            echo "- Required checks for main: lint, test, build, docs-check, terraform-validate."
+            echo "- Review security-sensitive changes first: auth, workflows, Terraform, and deployment scripts."
+            echo
+            echo "## Changed Files"
+            echo
+            echo '```'
+            printf '%s\n' "$ALL_CHANGED_FILES"
+            echo '```'
+            echo
+            echo "## Diff Summary"
+            echo
+            echo "- Added files: ${ADDED_FILES:-none}"
+            echo "- Modified files: ${MODIFIED_FILES:-none}"
+            echo "- Deleted files: ${DELETED_FILES:-none}"
+          } >> "$GITHUB_STEP_SUMMARY"
+=======
 name: Automated Code Review
 
 on:
@@ -121,3 +172,4 @@ jobs:
         with:
           name: e2e-results
           path: e2e-report.xml
+>>>>>>> main

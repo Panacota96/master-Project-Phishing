@@ -1,0 +1,34 @@
+name: Bug report
+description: Report a confirmed defect with reproduction steps and evidence.
+title: "bug: "
+labels:
+  - bug
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Describe the broken behavior and the expected behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: File paths, logs, screenshots, or commands that confirm the bug.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: List the steps to reproduce the issue.
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact
+      description: Explain why this matters and who is affected.
+    validations:
+      required: true

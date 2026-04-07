@@ -1,0 +1,27 @@
+name: Security review
+description: Capture an identity, auth, data handling, or workflow security concern.
+title: "security: "
+labels:
+  - security
+body:
+  - type: textarea
+    id: finding
+    attributes:
+      label: Finding
+      description: Describe the security concern and threat model.
+    validations:
+      required: true
+  - type: textarea
+    id: surface
+    attributes:
+      label: Affected surface
+      description: List routes, workflows, infrastructure, or docs involved.
+    validations:
+      required: true
+  - type: textarea
+    id: mitigation
+    attributes:
+      label: Proposed mitigation
+      description: State the expected hardening or follow-up work.
+    validations:
+      required: true

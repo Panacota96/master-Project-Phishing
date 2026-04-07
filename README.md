@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-1.2.4-blue?style=flat-square" />
+  <img src="https://img.shields.io/badge/version-1.2.5-blue?style=flat-square" />
   <img src="https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square&logo=python&logoColor=white" />
   <img src="https://img.shields.io/badge/Flask-3.1.0-000000?style=flat-square&logo=flask&logoColor=white" />
   <img src="https://img.shields.io/badge/Terraform-%3E%3D1.5-7B42BC?style=flat-square&logo=terraform&logoColor=white" />
@@ -41,6 +41,7 @@
 - [CI/CD Overview](#cicd-overview)
 - [AWS Deployment](#aws-deployment)
 - [Documentation Index](#documentation-index)
+- [Workboard](#workboard)
 - [Admin Operations](#admin-operations-guide)
 - [Improving Example Emails](#improving-example-emails-realism-checklist)
 - [Contributing](#contributing)
@@ -110,7 +111,7 @@ Every phishing email in the inspector is annotated with one or more of these sig
 ### Authentication & User Management
 - Login / Logout with form validation and Werkzeug password hashing
 - Roles via `role` field (`admin`, `instructor`, `student`) — admin + instructor share dashboard access; mapped from Microsoft 365 groups when SSO is enabled
-- No public self-registration — accounts created by admins only (no exposed registration page)
+- Public `/auth/register` currently exists for QR-assisted onboarding; token enforcement hardening is tracked in issue `#78`
 - Bulk student import via CSV upload
 - QR code generation for cohort self-registration: students scan → fill form → Lambda worker creates account + sends SES confirmation email
 - Students can change their own password
@@ -237,7 +238,7 @@ pytest-based tests with full AWS mocking via `moto`. No real AWS account needed.
 - Run: `make test` (outputs JUnit XML report)
 - Lint: `make lint` (flake8, max-line-length=120)
 
-> **Note:** There is no public registration flow. Tests that need a student use the `seed_user` fixture — never simulate a registration form.
+> **Note:** Most tests should keep using the `seed_user` fixture instead of driving `/auth/register`; registration hardening is tracked separately in issue `#78`.
 
 ---
 
@@ -407,7 +408,7 @@ See `phishing-platform-infra/ansible/README.md` for required variables.
 | `deploy-prod.yml` | Manual dispatch | Same flow targeting `prod` environment (requires approval) |
 | `destroy.yml` | Manual dispatch | Tears down all Terraform-managed AWS resources |
 | `claude.yml` | PR / issue events | Claude AI agent automation |
-| `claude-code-review.yml` | PR events | Automated code review by Claude |
+| `code-review.yml` | PR events | Review-context summary for main-bound pull requests |
 
 Terraform steps inside these workflows now run from `phishing-platform-infra/terraform`. When splitting repos, copy the deploy/destroy workflows into the infra repo and keep `ci.yml` in the app repo.
 
@@ -636,6 +637,7 @@ MIGRATE_DRY_RUN=true python3 ./phishing-platform-infra/scripts/migrate_dynamodb.
 
 | Guide | Audience | Description |
 |---|---|---|
+| [Workboard](documentation/WORKBOARD.md) | Maintainers | Live milestone, issue, and branch map for the deep-scan backlog |
 | [Architecture](documentation/ARCHITECTURE.md) | All | 10 Mermaid diagrams: system, AWS infra, schema, CI/CD, flows |
 | [Requirements](documentation/REQUIREMENTS.md) | All | Infrastructure, functional & IAM requirements |
 | [Audit & Roadmap](documentation/AUDIT_AND_ROADMAP.md) | All | Known issues + upcoming feature roadmap |
@@ -659,6 +661,12 @@ MIGRATE_DRY_RUN=true python3 ./phishing-platform-infra/scripts/migrate_dynamodb.
 | [Infrastructure](documentation/operator/INFRASTRUCTURE.md) | Operators | AWS resource reference |
 | [CI/CD](documentation/operator/CICD.md) | Operators | GitHub Actions workflow details |
 | [Maintenance](documentation/operator/MAINTENANCE.md) | Operators | Operational tasks (seeding, migrations, resets) |
+
+---
+
+## Workboard
+
+Use [`documentation/WORKBOARD.md`](documentation/WORKBOARD.md) as the backlog source of truth. It links each milestone cluster to its initiative issue, sub-issues, confirmed bugs, and the branch naming pattern expected for follow-up work.
 
 ---
 
@@ -757,7 +765,7 @@ This project is released under **CC0** (public domain). Use it freely.
 ## Changelog & License
 
 - Full version history: [CHANGELOG.md](CHANGELOG.md)
-- Current version: **1.2.4**
+- Current version: **1.2.5**
 - License: **CC0** — no rights reserved
 
 ---

@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+<<<<<<< feature/deep-scan-governance-rollout
+## [Unreleased]
+
+### Added
+- Governance baseline for solo-safe development: `CODEOWNERS`, PR template, structured issue templates, a live workboard, and repo-local skills under `.agents/`.
+- CI coverage for documentation drift and Terraform parsing via `docs-check` and `terraform-validate`.
+- `code-review.yml` workflow to summarize PR review context against the required branch checks.
+
+### Changed
+- Local Docker defaults no longer rely on a pre-created `.env`; `.env.example` is now the explicit starting point.
+- Documentation now treats `documentation/WORKBOARD.md` as the source of truth for milestone, issue, and branch tracking.
+- Terraform, Docker, and config baselines were corrected to match the current repository layout and runtime behavior.
+=======
 ## [1.2.6] - 2026-04-04
 
 ### Changed
@@ -18,6 +31,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Added
 - **`documentation/REPO_SEPARATION.md`**: step-by-step guide for splitting the Flask application and AWS infrastructure into two standalone repositories, including `git filter-repo` commands, CI/CD handoff strategy, and CODEOWNERS alternative.
 - **Documentation index updates**: `documentation/README.md`, `documentation/dev/README.md`, and `documentation/operator/README.md` now list all files in their respective directories.
+>>>>>>> main
 
 ---
 

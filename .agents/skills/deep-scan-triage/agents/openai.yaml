@@ -1,0 +1,7 @@
+interface:
+  display_name: "Deep Scan Triage"
+  short_description: "Turn repo scans into issues"
+  default_prompt: "Use $deep-scan-triage to turn this repository scan into deduped bug issues, feature milestones, and validation tasks."
+
+policy:
+  allow_implicit_invocation: true
