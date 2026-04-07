@@ -20,8 +20,8 @@ fi
 rm -rf "${PKG_DIR}"
 mkdir -p "${PKG_DIR}"
 
-"${PYTHON_BIN}" -m pip install -r "${ROOT_DIR}/registration_worker/requirements.txt" -t "${PKG_DIR}"
-cp "${ROOT_DIR}/registration_worker/handler.py" "${PKG_DIR}/"
+"${PYTHON_BIN}" -m pip install -r "${ROOT_DIR}/phishing-platform-infra/lambda/registration_worker/requirements.txt" -t "${PKG_DIR}"
+cp "${ROOT_DIR}/phishing-platform-infra/lambda/registration_worker/handler.py" "${PKG_DIR}/"
 
 ( cd "${PKG_DIR}" && zip -r "${OUT_ZIP}" . )
 

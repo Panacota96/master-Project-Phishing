@@ -191,3 +191,78 @@ class TestCampaignModel:
             matches = find_users_by_filters({'group': 'engineering'})
             assert any(u.username == 'testuser' for u in matches)
             assert all(u.group == 'engineering' for u in matches)
+
+
+class TestCohortToken:
+    def test_create_and_get_token(self, app, seed_cohort_token):
+        with app.app_context():
+            from app.models import get_cohort_token
+            token = get_cohort_token('test-token-engineering-2025')
+            assert token is not None
+            assert token['class_name'] == 'Class A'
+            assert token['academic_year'] == '2025'
+            assert token['major'] == 'CS'
+            assert token['facility'] == 'Paris'
+            assert token['created_by'] == 'admin'
+
+    def test_get_nonexistent_token_returns_none(self, app):
+        with app.app_context():
+            from app.models import get_cohort_token
+            assert get_cohort_token('does-not-exist') is None
+
+    def test_expired_token_returns_none(self, app):
+        """A token whose expires_at is in the past must not be returned."""
+        import time
+        with app.app_context():
+            from app.models import get_cohort_token
+            table = app.dynamodb.Table(app.config['DYNAMODB_COHORT_TOKENS'])
+            table.put_item(Item={
+                'token': 'expired-token',
+                'class_name': 'X',
+                'academic_year': '2020',
+                'major': 'X',
+                'facility': 'X',
+                'created_by': 'admin',
+                'expires_at': int(time.time()) - 1,
+            })
+            assert get_cohort_token('expired-token') is None
+
+    def test_valid_token_not_expired(self, app):
+        """A token with a future expires_at must be returned."""
+        import time
+        with app.app_context():
+            from app.models import get_cohort_token
+            table = app.dynamodb.Table(app.config['DYNAMODB_COHORT_TOKENS'])
+            table.put_item(Item={
+                'token': 'valid-future-token',
+                'class_name': 'Y',
+                'academic_year': '2027',
+                'major': 'Y',
+                'facility': 'Y',
+                'created_by': 'admin',
+                'expires_at': int(time.time()) + 9999,
+            })
+            assert get_cohort_token('valid-future-token') is not None
+
+
+class TestThreatCache:
+    def test_cache_miss_returns_none(self, app):
+        with app.app_context():
+            from app.models import get_threat_cache
+            assert get_threat_cache() is None
+
+    def test_set_and_get_threat_cache(self, app):
+        with app.app_context():
+            from app.models import get_threat_cache, set_threat_cache
+            test_data = ['http://malicious.example.com', 'http://phish.example.net']
+            set_threat_cache(test_data)
+            result = get_threat_cache()
+            assert result == test_data
+
+    def test_set_threat_cache_overwrites_previous(self, app):
+        with app.app_context():
+            from app.models import get_threat_cache, set_threat_cache
+            set_threat_cache(['http://old.example.com'])
+            set_threat_cache(['http://new.example.com'])
+            result = get_threat_cache()
+            assert result == ['http://new.example.com']
