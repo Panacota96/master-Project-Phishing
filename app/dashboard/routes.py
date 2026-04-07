@@ -166,8 +166,8 @@ def api_threat_feed():
             _save_cached_threats(defanged)
             return jsonify(defanged)
 
-    except Exception as e:
-        current_app.logger.error(f"Threat feed fetch failed: {e}")
+    except Exception:
+        current_app.logger.exception("Threat feed fetch failed")
 
     return jsonify([])  # Return empty list on failure
 

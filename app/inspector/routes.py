@@ -1,6 +1,7 @@
 import email
 import email.policy
 import json
+import os
 import random
 import re
 
@@ -108,7 +109,6 @@ def _get_eml_body(key):
 
 def _find_eml_key_by_filename(filename):
     """Find an .eml key by its basename, preventing path traversal."""
-    import os
     basename = os.path.basename(filename)
     if basename != filename or '..' in filename:
         return None
