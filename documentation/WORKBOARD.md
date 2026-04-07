@@ -26,11 +26,15 @@ This file is the source of truth for the deep-scan backlog, milestone layout, an
 
 - Milestone: [Infrastructure Reliability & IaC Quality](https://github.com/Panacota96/master-Project-Phishing/milestone/2)
 - Parent issue: [#34](https://github.com/Panacota96/master-Project-Phishing/issues/34)
-- Child issues: [#46](https://github.com/Panacota96/master-Project-Phishing/issues/46), [#47](https://github.com/Panacota96/master-Project-Phishing/issues/47), [#48](https://github.com/Panacota96/master-Project-Phishing/issues/48)
-- Confirmed bugs: [#73](https://github.com/Panacota96/master-Project-Phishing/issues/73)
+- Backlog:
+  - [ ] [#46](https://github.com/Panacota96/master-Project-Phishing/issues/46) — implementation backlog and remediation slices
+  - [ ] [#47](https://github.com/Panacota96/master-Project-Phishing/issues/47) — documentation and workboard synchronization
+  - [ ] [#48](https://github.com/Panacota96/master-Project-Phishing/issues/48) — validation, smoke tests, and acceptance checks
+- Confirmed bugs:
+  - [ ] [#73](https://github.com/Panacota96/master-Project-Phishing/issues/73) — `terraform validate` fails in `elasticache.tf` (invalid `aws_default_vpc` data source)
 - Starter branch: `feature/infrastructure-reliability-iac-quality`
 - Bug branch pattern: `fix/<issue-number>-terraform`
-- Status: Open
+- Status: Open (last sync: 2026-04-07)
 
 ### API Correctness & Contracts
 
