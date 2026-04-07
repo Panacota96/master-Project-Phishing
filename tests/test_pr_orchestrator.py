@@ -95,6 +95,21 @@ def test_pr_orchestrator_validation_fails_on_branch_mismatch():
     assert code == 1
 
 
+def test_pr_orchestrator_skips_validation_for_agent_managed_branch():
+    repo = FakeRepo()
+    repo.pulls[56] = {
+        "number": 56,
+        "body": "",
+        "head": {"ref": "copilot/review-project-structure-and-functionality"},
+        "milestone": None,
+    }
+    payload = {"pull_request": {"number": 56}}
+
+    code = run_pr_orchestrator(repo, "pull_request", payload)
+
+    assert code == 0
+
+
 def test_pr_orchestrator_rejects_unauthorized_comment():
     repo = FakeRepo()
     payload = {
