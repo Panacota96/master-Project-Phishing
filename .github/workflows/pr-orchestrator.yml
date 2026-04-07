@@ -1,0 +1,50 @@
+name: PR Orchestrator
+
+on:
+  issue_comment:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: "Issue number to link to the PR"
+        required: true
+        type: string
+      head_branch:
+        description: "Existing remote branch to open as a PR"
+        required: true
+        type: string
+      base_branch:
+        description: "Base branch for the new PR"
+        required: false
+        default: main
+        type: string
+      draft:
+        description: "Create the PR as draft"
+        required: false
+        default: true
+        type: boolean
+  pull_request:
+    types: [opened, edited, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  orchestrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install lightweight dependencies
+        run: pip install requests
+
+      - name: Run PR orchestration
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python .github/scripts/pr_orchestrator.py

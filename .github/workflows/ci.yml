@@ -114,3 +114,10 @@ jobs:
           path: |
             lambda.zip
             registration_worker.zip
+
+  functional-smoke:
+    needs: build
+    uses: ./.github/workflows/functional-smoke.yml
+    with:
+      mode: local
+      base_url: http://127.0.0.1
