@@ -17,10 +17,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Ruff lint
-        uses: astral-sh/ruff-action@v1
+      - uses: actions/setup-python@v5
         with:
-          args: "check app/ tests/ --output-format=github"
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install Ruff
+        run: pip install ruff
+
+      - name: Ruff lint
+        run: ruff check app/ tests/ --output-format=github
 
   bandit-security:
     name: Bandit — Security scan
@@ -107,7 +113,7 @@ jobs:
           playwright install chromium --with-deps
 
       - name: Run E2E tests
-        run: pytest tests/e2e/ -m e2e --browser chromium --headed=false -v --junitxml=e2e-report.xml
+        run: pytest tests/e2e/ -m e2e --browser chromium -v --junitxml=e2e-report.xml
 
       - name: Upload E2E test results
         if: always()

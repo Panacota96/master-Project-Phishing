@@ -1,6 +1,4 @@
 """Tests for M2 Feature A (admin-side password reset) and M4 (SSO routes)."""
-import pytest
-
 from app.models import create_user, get_user
 from tests.conftest import login
 

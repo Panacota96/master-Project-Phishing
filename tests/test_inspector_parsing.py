@@ -20,8 +20,7 @@ def mock_app_context(app):
 
 def test_all_examples_parse(app):
     """Verify that every .eml in examples/ can be parsed by the inspector logic."""
-    from app.inspector.routes import _get_eml_body
-    from flask_login import current_user
+    from app.inspector.routes import _get_eml_body  # noqa: F401 (imported for side-effect validation)
     
     examples_dir = 'examples'
     eml_files = []

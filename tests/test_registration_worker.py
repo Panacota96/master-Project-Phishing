@@ -1,7 +1,6 @@
 """Tests for the registration worker Lambda handler."""
 
 import json
-import os
 import sys
 from pathlib import Path
 
@@ -148,8 +147,6 @@ def test_worker_sends_email(aws_resources, monkeypatch):
     import registration_worker.handler as m
     import importlib
     importlib.reload(m)
-
-    original_send = m._ses.send_email
 
     def fake_send(**kwargs):
         sent.append(kwargs)

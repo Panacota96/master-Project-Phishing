@@ -26,7 +26,6 @@ Requirements
 from __future__ import annotations
 
 import argparse
-import os
 import random
 import re
 import sys
@@ -252,8 +251,8 @@ def main():
     for snippet in snippets:
         print(snippet, end="")
     print("─────────────────────────────────────────────────────────────────────")
-    print(f"\nDone. Add the snippet above to app/inspector/answer_key.py,")
-    print(f"then sync with: make sync-eml")
+    print("\nDone. Add the snippet above to app/inspector/answer_key.py,")
+    print("then sync with: make sync-eml")
 
 
 if __name__ == "__main__":
