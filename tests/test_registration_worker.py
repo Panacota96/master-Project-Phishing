@@ -1,7 +1,6 @@
 """Tests for the registration worker Lambda handler."""
 
 import json
-import os
 import sys
 from pathlib import Path
 
@@ -12,6 +11,11 @@ from moto import mock_aws
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
+
+# Lambda source code now lives under phishing-platform-infra/lambda/
+LAMBDA_SRC = PROJECT_ROOT / 'phishing-platform-infra' / 'lambda'
+if str(LAMBDA_SRC) not in sys.path:
+    sys.path.insert(0, str(LAMBDA_SRC))
 
 
 def _make_sqs_event(body: dict) -> dict:
@@ -143,8 +147,6 @@ def test_worker_sends_email(aws_resources, monkeypatch):
     import registration_worker.handler as m
     import importlib
     importlib.reload(m)
-
-    original_send = m._ses.send_email
 
     def fake_send(**kwargs):
         sent.append(kwargs)

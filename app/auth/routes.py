@@ -1,5 +1,6 @@
 import csv
 import io
+from urllib.parse import urlparse
 
 from flask import abort, current_app, flash, redirect, render_template, request, session, url_for
 from flask_login import current_user, login_required, login_user, logout_user
@@ -27,6 +28,15 @@ def login():
         if user and user.check_password(form.password.data):
             login_user(user)
             next_page = request.args.get('next')
+            if next_page:
+                parsed_next = urlparse(next_page)
+                if (
+                    not next_page.startswith('/')
+                    or next_page.startswith('//')
+                    or parsed_next.scheme
+                    or parsed_next.netloc
+                ):
+                    next_page = None
             flash('Logged in successfully.', 'success')
             return redirect(next_page or url_for('quiz.quiz_list'))
         flash('Invalid username or password.', 'danger')

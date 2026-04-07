@@ -23,14 +23,14 @@ All new features and bug fixes must be accompanied by relevant tests:
 
 ## Branching Strategy
 - **`main`**: The production branch (protected).
-- **`dev`**: The default development branch.
-- **Feature Branches**: Create feature-specific branches (e.g., `feature/new-quiz-type`) and open a Pull Request (PR) on GitHub for review.
+- **Short-lived branches**: Branch from `main` using `fix/<issue-number>-<slug>`, `feature/<milestone-slug>`, `docs/<slug>`, or `chore/<slug>`.
+- **Pull requests**: Open a PR back to `main` for every change, even for solo work, so the required checks and branch protections stay effective.
 
 ## Pull Request (Merge Request) Process
-1. Ensure your branch is up-to-date with `dev`.
-2. Run all tests (`make test`) and linting (`make lint`).
-3. Describe the changes in the PR description, including any new environment variables or infrastructure updates.
-4. Request a review from the maintainers.
+1. Branch from the latest `main`.
+2. Run the required local checks: `make lint`, `make test`, `make docs-check`, and `terraform -chdir=phishing-platform-infra/terraform validate` when infra changes are involved.
+3. Link the backing issue and milestone in the PR description.
+4. Update the workboard and affected docs before merging.
 
 ## Documentation Standards
 When updating the codebase, ensure you also update the relevant documentation in the `documentation/` folder:

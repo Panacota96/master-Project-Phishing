@@ -1,0 +1,50 @@
+name: Workboard Sync
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - documentation/WORKBOARD.md
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Synchronization mode"
+        type: choice
+        options: [check, apply]
+        default: check
+  schedule:
+    - cron: "0 6 * * *"
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install lightweight dependencies
+        run: pip install requests
+
+      - name: Resolve mode
+        id: mode
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then
+            echo "mode=apply" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "mode=${{ inputs.mode }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "mode=check" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Synchronize workboard
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python .github/scripts/sync_workboard.py --mode "${{ steps.mode.outputs.mode }}"

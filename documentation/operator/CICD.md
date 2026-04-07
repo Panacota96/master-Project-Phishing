@@ -12,6 +12,7 @@ The Phishing Awareness Training Application uses **GitHub Actions** for all CI/C
 | Workflow file | Trigger | Purpose |
 |---|---|---|
 | `ci.yml` | Every push + PR to `main` | Lint, EML validation, tests, Lambda build |
+| `code-review.yml` | PRs to `main` | Builds a review summary around changed files and required checks |
 | `deploy-dev.yml` | Push to `main` | Bootstrap IAM → Terraform plan/apply → sync assets → seed DynamoDB |
 | `deploy-prod.yml` | `workflow_dispatch` only | Same build/plan/apply flow targeting the `prod` environment |
 | `destroy.yml` | `workflow_dispatch` only | Tear down all infrastructure for a chosen environment |
@@ -40,8 +41,10 @@ flowchart TD
         Lint["make lint · flake8 max-line-length=120"]
         EML["make validate-eml · EML realism checks"]
         Test["make test · pytest + moto · JUnit XML artifact"]
+        Docs["make docs-check · docs/workboard/version drift"]
+        TFValidate["terraform init -backend=false + validate"]
         Build["make lambda + make registration-worker\nlambda.zip + registration_worker.zip artifact"]
-        Lint --> EML --> Test --> Build
+        Lint --> EML --> Test --> Docs --> TFValidate --> Build
     end
 
     CI -->|on push to main| PlanDev
@@ -110,17 +113,29 @@ Both `deploy-dev.yml` and `deploy-prod.yml` accept a `skip_seed` boolean input (
 
 | Branch | Behaviour |
 |---|---|
-| `main` | Every push triggers the full CI + dev deploy pipeline automatically |
-| Feature branches | CI only (lint + test + build) — no deploy |
+| `main` | Protected branch; every merge triggers the full CI + dev deploy pipeline automatically |
+| Short-lived branches | Open PRs back to `main`; CI runs without deploy on branch pushes |
 | Production | Manual `workflow_dispatch` on `deploy-prod.yml` with prod environment approval |
 
 ---
 
-## Claude Workflows (Supplementary)
+## Required Checks on `main`
 
-Two additional workflows support AI-assisted development and are not part of the deploy pipeline:
+- `lint`
+- `test`
+- `build`
+- `docs-check`
+- `terraform-validate`
+
+Branch protection should require a pull request, block force pushes and deletions, and require conversation resolution without imposing approval-count rules that would deadlock a solo maintainer.
+
+---
+
+## Supplementary Workflows
+
+Two additional workflows support AI-assisted development and review prep and are not part of the deploy pipeline:
 
 | Workflow | Trigger |
 |---|---|
 | `claude.yml` | `@claude` mention in any issue or PR comment |
-| `claude-code-review.yml` | Auto-reviews every opened or updated PR |
+| `code-review.yml` | Pull requests targeting `main` |

@@ -1,0 +1,175 @@
+<<<<<<< feature/deep-scan-governance-rollout
+name: Code Review Prep
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  review-context:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - id: changed
+        uses: tj-actions/changed-files@v45
+
+      - name: Build review summary
+        env:
+          ADDED_FILES: ${{ steps.changed.outputs.added_files }}
+          MODIFIED_FILES: ${{ steps.changed.outputs.modified_files }}
+          DELETED_FILES: ${{ steps.changed.outputs.deleted_files }}
+          ALL_CHANGED_FILES: ${{ steps.changed.outputs.all_changed_files }}
+        run: |
+          {
+            echo "## Review Focus"
+            echo
+            echo "- Linked issue and milestone are present in the PR template."
+            echo "- Required checks for main: lint, test, build, docs-check, terraform-validate."
+            echo "- Review security-sensitive changes first: auth, workflows, Terraform, and deployment scripts."
+            echo
+            echo "## Changed Files"
+            echo
+            echo '```'
+            printf '%s\n' "$ALL_CHANGED_FILES"
+            echo '```'
+            echo
+            echo "## Diff Summary"
+            echo
+            echo "- Added files: ${ADDED_FILES:-none}"
+            echo "- Modified files: ${MODIFIED_FILES:-none}"
+            echo "- Deleted files: ${DELETED_FILES:-none}"
+          } >> "$GITHUB_STEP_SUMMARY"
+=======
+name: Automated Code Review
+
+on:
+  pull_request:
+    branches: [main, develop]
+
+permissions:
+  contents: read
+
+jobs:
+  # ── 1. Static analysis ────────────────────────────────────────────────────
+  ruff-lint:
+    name: Ruff — Python lint & format check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install Ruff
+        run: pip install ruff
+
+      - name: Ruff lint
+        run: ruff check app/ tests/ --output-format=github
+
+  bandit-security:
+    name: Bandit — Security scan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install Bandit
+        run: pip install bandit
+
+      - name: Run Bandit
+        run: bandit -r app/ -f json -o bandit-report.json -ll || true
+
+      - name: Upload Bandit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bandit-report
+          path: bandit-report.json
+
+  # ── 2. Unit / integration tests with coverage ────────────────────────────
+  pytest-coverage:
+    name: pytest + coverage
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pytest pytest-cov moto
+
+      - name: Run tests
+        run: pytest tests/ --cov=app --cov-report=xml --junitxml=report.xml
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.xml
+
+      - name: Upload test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report
+          path: report.xml
+
+  # ── 3. E2E tests with Playwright ─────────────────────────────────────────
+  playwright-e2e:
+    name: Playwright — E2E tests
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install app dependencies
+        run: pip install -r requirements.txt
+
+      - name: Install Playwright & pytest-playwright
+        run: |
+          pip install playwright==1.49.0 pytest-playwright==0.6.2 moto
+          playwright install chromium --with-deps
+
+      - name: Run E2E tests
+        run: pytest tests/e2e/ -m e2e --browser chromium -v --junitxml=e2e-report.xml
+
+      - name: Upload E2E test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-results
+          path: e2e-report.xml
+>>>>>>> main

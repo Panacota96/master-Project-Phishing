@@ -33,7 +33,7 @@ make sync-assets
 
 ### Local Development with DynamoDB Local
 
-**Option A — Docker Compose (recommended):** The `docker-compose.yml` includes a `dynamodb-local` service (exposes port `8766` to the host). Copy `.env` (already present) and start everything, then create tables:
+**Option A — Docker Compose (recommended):** The `docker-compose.yml` includes a `dynamodb-local` service (exposes port `8766` to the host). Copy `.env.example` to `.env` if you want overrides, then start everything and create tables:
 
 ```bash
 docker compose up -d --build
@@ -115,7 +115,7 @@ Quizzes require watching a training video before starting (enforced via `session
 
 ### Testing
 
-> **No self-registration**: there is no public registration flow. All user accounts are created by admins — either manually or via the CSV bulk-import endpoint (`/auth/admin/import-users`). When writing tests that need a student user, use the `seed_user` fixture from `conftest.py` rather than simulating a registration form.
+> **Registration note**: `/auth/register` exists today for QR-assisted onboarding, but it should not be used as the default test path. For most tests, use the `seed_user` fixture from `conftest.py`; token hardening is tracked in issue `#78`.
 
 Tests use `moto` to mock all AWS services. The `conftest.py` fixture `app()` wraps everything in `mock_aws()`, creates all DynamoDB tables with correct schemas and GSIs, and creates an S3 bucket. CSRF is disabled in tests. Use `seed_admin`, `seed_user`, `seed_quiz` fixtures and the `login()` helper in `conftest.py`.
 
@@ -123,7 +123,7 @@ Tests use `moto` to mock all AWS services. The `conftest.py` fixture `app()` wra
 
 - **Lambda**: Flask is wrapped with `mangum` for AWS Lambda + API Gateway
 - **Terraform**: `phishing-platform-infra/terraform/` manages all AWS infrastructure; `phishing-platform-infra/terraform/bootstrap/` creates the Terraform state bucket
-- **CI/CD**: GitHub Actions — four workflows: `ci.yml` (lint/test/build), `deploy-dev.yml` (auto-deploy on push to main), `deploy-prod.yml` (manual), `destroy.yml` (manual teardown); plus `claude.yml` and `claude-code-review.yml`. Uses OIDC to assume the deploy role — no static AWS keys stored in GitHub secrets.
+- **CI/CD**: GitHub Actions — `ci.yml` (lint/test/build/docs/Terraform validate), `deploy-dev.yml` (auto-deploy on push to main), `deploy-prod.yml` (manual), `destroy.yml` (manual teardown), `claude.yml`, and `code-review.yml`. Uses OIDC to assume the deploy role — no static AWS keys stored in GitHub secrets.
 - **Docker**: `docker compose up -d --build` starts three services: `dynamodb-local` (port 8766), `web` (Gunicorn/Flask, reads `.env`), and `nginx` (port 80). Static assets are served directly by Nginx; app routes go through the reverse proxy to Gunicorn.
 
 ## Code Conventions

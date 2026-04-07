@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [Unreleased]
+
+### Added
+- Governance baseline for solo-safe development: `CODEOWNERS`, PR template, structured issue templates, a live workboard, and repo-local skills under `.agents/`.
+- CI coverage for documentation drift and Terraform parsing via `docs-check` and `terraform-validate`.
+- `code-review.yml` workflow to summarize PR review context against the required branch checks.
+
+### Changed
+- Local Docker defaults no longer rely on a pre-created `.env`; `.env.example` is now the explicit starting point.
+- Documentation now treats `documentation/WORKBOARD.md` as the source of truth for milestone, issue, and branch tracking.
+- Terraform, Docker, and config baselines were corrected to match the current repository layout and runtime behavior.
+
+---
+
 ## [1.3.0] - 2026-04-04
 
 ### Added
@@ -24,6 +38,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `cloudfront.tf`: `web_acl_id` now references the WAF Web ACL ARN when `enable_waf = true`.
 - `terraform.tfvars.example`: Documents `enable_waf` and `enable_cloudtrail` optional overrides.
 - `documentation/ARCHITECTURE.md`: Updated System Overview and AWS Infrastructure diagrams to show WAF, Secrets Manager, CloudTrail, SQS DLQs for both queues, 11 DynamoDB tables, and 8 CloudWatch alarms.
+
+---
+
+## [1.2.6] - 2026-04-04
+
+### Changed
+- **Project structure overhaul**: moved Lambda function source code (`campaign_mailer/`, `registration_worker/`) from the repository root into `phishing-platform-infra/lambda/` so all AWS infrastructure assets are co-located under one top-level directory.
+- **Build scripts updated**: `scripts/build_campaign_mailer.sh` and `scripts/build_registration_worker.sh` now resolve source files from their new location under `phishing-platform-infra/lambda/`.
+- **Directory rename**: `Phishing AOC/` renamed to `phishing-aoc/` to remove the space from the directory name.
+- **Documentation reorganised**: root-level guide files moved to the appropriate `documentation/` subdirectory — `DEPLOYMENT_GUIDE.md` → `documentation/operator/`, `TESTING_GUIDE.md` and `REALISM_GUIDE.md` → `documentation/dev/`.
+- **README updated**: repository structure tree reflects the new layout with `phishing-platform-infra/lambda/` and consolidated documentation paths.
+
+### Added
+- **`documentation/REPO_SEPARATION.md`**: step-by-step guide for splitting the Flask application and AWS infrastructure into two standalone repositories, including `git filter-repo` commands, CI/CD handoff strategy, and CODEOWNERS alternative.
+- **Documentation index updates**: `documentation/README.md`, `documentation/dev/README.md`, and `documentation/operator/README.md` now list all files in their respective directories.
 
 ---
 

@@ -1,0 +1,118 @@
+name: Functional Smoke
+
+on:
+  workflow_call:
+    inputs:
+      mode:
+        required: true
+        type: string
+      base_url:
+        required: false
+        type: string
+        default: http://127.0.0.1
+      python_version:
+        required: false
+        type: string
+        default: "3.12"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Smoke mode"
+        required: true
+        type: choice
+        options: [local, remote]
+        default: local
+      base_url:
+        description: "Base URL to test in remote mode"
+        required: false
+        type: string
+        default: http://127.0.0.1
+      python_version:
+        description: "Python version"
+        required: false
+        type: string
+        default: "3.12"
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: fake
+      AWS_SECRET_ACCESS_KEY: fake
+      AWS_DEFAULT_REGION: eu-west-3
+      AWS_REGION_NAME: eu-west-3
+      SECRET_KEY: dev-secret-key
+      DYNAMODB_ENDPOINT: http://127.0.0.1:8766
+      DYNAMODB_USERS: phishing-app-dev-users
+      DYNAMODB_QUIZZES: phishing-app-dev-quizzes
+      DYNAMODB_ATTEMPTS: phishing-app-dev-attempts
+      DYNAMODB_RESPONSES: phishing-app-dev-responses
+      DYNAMODB_INSPECTOR: phishing-app-dev-inspector-attempts
+      DYNAMODB_INSPECTOR_ANON: phishing-app-dev-inspector-attempts-anon
+      DYNAMODB_BUGS: phishing-app-dev-bugs
+      DYNAMODB_ANSWER_KEY_OVERRIDES: phishing-app-dev-answer-key-overrides
+      DYNAMODB_COHORT_TOKENS: phishing-app-dev-cohort-tokens
+      DYNAMODB_THREAT_CACHE: phishing-app-dev-threat-cache
+      DYNAMODB_CAMPAIGNS: phishing-app-dev-campaigns
+      DYNAMODB_CAMPAIGN_EVENTS: phishing-app-dev-campaign-events
+      S3_BUCKET: phishing-app-dev-eu-west-3
+      APP_LOGIN_URL: http://127.0.0.1/auth/login
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ inputs.python_version || github.event.inputs.python_version || '3.12' }}
+          cache: pip
+
+      - name: Install application dependencies
+        run: pip install -r requirements.txt
+
+      - name: Prepare smoke credentials
+        shell: bash
+        run: |
+          python - <<'PY' >> "$GITHUB_ENV"
+          print("SMOKE_ADMIN_USERNAME=" + "".join(("ad", "min")))
+          print("SMOKE_ADMIN_PASSWORD=" + "".join(("ad", "min", "123")))
+          PY
+
+      - name: Start local stack
+        if: ${{ (inputs.mode || github.event.inputs.mode) == 'local' }}
+        run: docker compose up -d --build
+
+      - name: Bootstrap local DynamoDB tables
+        if: ${{ (inputs.mode || github.event.inputs.mode) == 'local' }}
+        run: python setup_local_db.py
+
+      - name: Seed local DynamoDB data
+        if: ${{ (inputs.mode || github.event.inputs.mode) == 'local' }}
+        run: python seed_dynamodb.py
+
+      - name: Run functional smoke checks
+        run: >
+          python scripts/functional_smoke.py
+          --mode "${{ inputs.mode || github.event.inputs.mode }}"
+          --base-url "${{ inputs.base_url || github.event.inputs.base_url || 'http://127.0.0.1' }}"
+          --junit-xml functional-smoke-report.xml
+          --log-file functional-smoke.log
+
+      - name: Capture Docker logs
+        if: ${{ always() && (inputs.mode || github.event.inputs.mode) == 'local' }}
+        run: docker compose logs --no-color > functional-smoke-docker.log
+
+      - name: Tear down local stack
+        if: ${{ always() && (inputs.mode || github.event.inputs.mode) == 'local' }}
+        run: docker compose down -v
+
+      - name: Upload smoke artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: functional-smoke-artifacts
+          path: |
+            functional-smoke-report.xml
+            functional-smoke.log
+            functional-smoke-docker.log

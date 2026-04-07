@@ -101,6 +101,9 @@ jobs:
     needs: plan_dev
     runs-on: ubuntu-latest
     environment: dev
+    outputs:
+      cloudfront_url: ${{ steps.tf_outputs.outputs.cloudfront_url }}
+      app_url: ${{ steps.tf_outputs.outputs.app_url }}
     permissions:
       id-token: write
       contents: read
@@ -187,3 +190,10 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**App URL:** ${{ steps.tf_outputs.outputs.app_url }}" >> $GITHUB_STEP_SUMMARY
           echo "**CloudFront URL:** ${{ steps.tf_outputs.outputs.cloudfront_url }}" >> $GITHUB_STEP_SUMMARY
+
+  smoke_dev:
+    needs: deploy_dev
+    uses: ./.github/workflows/functional-smoke.yml
+    with:
+      mode: remote
+      base_url: ${{ needs.deploy_dev.outputs.cloudfront_url }}

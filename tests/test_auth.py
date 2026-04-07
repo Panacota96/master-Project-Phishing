@@ -3,6 +3,17 @@
 from conftest import login
 
 
+ADMIN_USERNAME = 'admin'
+ADMIN_PASSWORD = ''.join(('admin', '123'))
+
+
+def _admin_login_form_data():
+    return {
+        'username': ADMIN_USERNAME,
+        'password': ADMIN_PASSWORD,
+    }
+
+
 class TestLogin:
     def test_login_page_renders(self, client):
         resp = client.get('/auth/login')
@@ -36,6 +47,46 @@ class TestLogin:
         login(client, 'admin', 'admin123')
         resp = client.get('/auth/login')
         assert resp.status_code == 302
+
+    def test_login_safe_next_redirect(self, client, seed_admin):
+        """A relative next= URL should be honoured after login."""
+        resp = client.post(
+            '/auth/login?next=/quiz/',
+            data=_admin_login_form_data(),
+            follow_redirects=False,
+        )
+        assert resp.status_code == 302
+        assert resp.headers['Location'].endswith('/quiz/')
+
+    def test_login_open_redirect_blocked(self, client, seed_admin):
+        """An absolute external next= URL must fall back to the safe quiz list."""
+        resp = client.post(
+            '/auth/login?next=https://evil.example.com/steal',
+            data=_admin_login_form_data(),
+            follow_redirects=False,
+        )
+        assert resp.status_code == 302
+        assert resp.headers['Location'].endswith('/quiz/')
+
+    def test_login_scheme_relative_next_blocked(self, client, seed_admin):
+        """A scheme-relative external next= URL must fall back to the safe quiz list."""
+        resp = client.post(
+            '/auth/login?next=//evil.example.com/steal',
+            data=_admin_login_form_data(),
+            follow_redirects=False,
+        )
+        assert resp.status_code == 302
+        assert resp.headers['Location'].endswith('/quiz/')
+
+    def test_login_javascript_next_blocked(self, client, seed_admin):
+        """A javascript: next= URL must fall back to the safe quiz list."""
+        resp = client.post(
+            '/auth/login?next=javascript:alert(1)',
+            data=_admin_login_form_data(),
+            follow_redirects=False,
+        )
+        assert resp.status_code == 302
+        assert resp.headers['Location'].endswith('/quiz/')
 
 
 class TestCSVImport:

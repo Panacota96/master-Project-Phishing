@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-1.2.4-blue?style=flat-square" />
+  <img src="https://img.shields.io/badge/version-1.2.5-blue?style=flat-square" />
   <img src="https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square&logo=python&logoColor=white" />
   <img src="https://img.shields.io/badge/Flask-3.1.0-000000?style=flat-square&logo=flask&logoColor=white" />
   <img src="https://img.shields.io/badge/Terraform-%3E%3D1.5-7B42BC?style=flat-square&logo=terraform&logoColor=white" />
@@ -41,6 +41,7 @@
 - [CI/CD Overview](#cicd-overview)
 - [AWS Deployment](#aws-deployment)
 - [Documentation Index](#documentation-index)
+- [Workboard](#workboard)
 - [Admin Operations](#admin-operations-guide)
 - [Improving Example Emails](#improving-example-emails-realism-checklist)
 - [Contributing](#contributing)
@@ -110,7 +111,7 @@ Every phishing email in the inspector is annotated with one or more of these sig
 ### Authentication & User Management
 - Login / Logout with form validation and Werkzeug password hashing
 - Roles via `role` field (`admin`, `instructor`, `student`) — admin + instructor share dashboard access; mapped from Microsoft 365 groups when SSO is enabled
-- No public self-registration — accounts created by admins only (no exposed registration page)
+- Public `/auth/register` currently exists for QR-assisted onboarding; token enforcement hardening is tracked in issue `#78`
 - Bulk student import via CSV upload
 - QR code generation for cohort self-registration: students scan → fill form → Lambda worker creates account + sends SES confirmation email
 - Students can change their own password
@@ -163,34 +164,42 @@ Every phishing email in the inspector is annotated with one or more of these sig
 
 ## Repository Structure
 
+The repository is organised as a monorepo with a clear boundary between the **Flask application** and the **AWS infrastructure**. See [`documentation/REPO_SEPARATION.md`](documentation/REPO_SEPARATION.md) for a guide to splitting these into two standalone repositories.
+
 ```
 master-Project-Phishing/
-├── app/                         # Flask application
-├── tests/                       # Pytest test suite
-├── scripts/                     # App build, content, and utility scripts
-├── documentation/               # Full documentation suite
-├── examples/                    # Real-world .eml phishing samples
-├── registration_worker/         # Async SQS Lambda worker
-├── campaign_mailer/             # Campaign mailer Lambda
-├── nginx/                       # Nginx reverse proxy configuration
-├── phishing-platform-infra/     # Infrastructure repo (Terraform, Ansible, AWS helper scripts)
-│   ├── terraform/               # Infrastructure as Code (Terraform)
-│   ├── ansible/                 # Optional VM deployment playbooks
-│   ├── aws/                     # Legacy EC2 deployment guide
-│   └── scripts/                 # Infra + migration scripts
-├── .github/workflows/           # GitHub Actions (app CI/CD)
-├── Phishing AOC/                # TryHackMe reference materials
-├── jury-presentation/           # Project review presentation
-├── Dockerfile                   # Python 3.12-slim + Gunicorn
-├── docker-compose.yml           # Web + Nginx + DynamoDB Local
-├── seed_dynamodb.py             # Seeds admin user + quizzes
-├── setup_local_db.py            # Creates all 9 DynamoDB tables locally
-├── config.py                    # Env var → app config mapping
-├── run.py                       # Local development entry point
-├── requirements.txt             # Python runtime dependencies
-├── Makefile                     # Build and workflow shortcuts
-├── VERSION                      # Current version (1.2.4)
-└── CHANGELOG.md                 # Version history
+├── app/                              # Flask application (blueprints, models, templates, static)
+├── tests/                            # Pytest test suite
+├── scripts/                          # Build, content, and utility scripts
+├── documentation/                    # Full documentation suite
+│   ├── dev/                          # Developer guides (setup, contributing, testing, EML)
+│   ├── operator/                     # Operations guides (deployment, infra, CI/CD)
+│   ├── user/                         # End-user guides (student, admin)
+│   ├── ARCHITECTURE.md               # System design + Mermaid diagrams
+│   └── REPO_SEPARATION.md            # Guide to splitting app vs infra into separate repos
+├── examples/                         # Real-world .eml phishing samples
+├── nginx/                            # Nginx reverse proxy configuration
+├── phishing-platform-infra/          # AWS infrastructure (Terraform, Lambda source, scripts)
+│   ├── terraform/                    # Infrastructure as Code (Lambda, DDB, S3, CloudFront…)
+│   ├── lambda/                       # Lambda function source code
+│   │   ├── campaign_mailer/          # Campaign mailer Lambda (SQS → SES)
+│   │   └── registration_worker/      # Registration worker Lambda (SQS → DDB → SES)
+│   ├── ansible/                      # Optional VM deployment playbooks
+│   ├── aws/                          # Legacy EC2 deployment guide (deprecated)
+│   └── scripts/                      # Infra + migration helper scripts
+├── .github/workflows/                # GitHub Actions CI/CD
+├── jury-presentation/                # Project review presentation materials
+├── phishing-aoc/                     # TryHackMe Advent of Cyber reference materials
+├── Dockerfile                        # Python 3.12-slim + Gunicorn
+├── docker-compose.yml                # Web + Nginx + DynamoDB Local dev stack
+├── seed_dynamodb.py                  # Seeds admin user + quizzes
+├── setup_local_db.py                 # Creates all DynamoDB tables locally
+├── config.py                         # Env var → app config mapping
+├── run.py                            # Local development entry point
+├── requirements.txt                  # Python runtime dependencies
+├── Makefile                          # Build and workflow shortcuts
+├── VERSION                           # Current version
+└── CHANGELOG.md                      # Version history
 ```
 
 ---
@@ -229,7 +238,7 @@ pytest-based tests with full AWS mocking via `moto`. No real AWS account needed.
 - Run: `make test` (outputs JUnit XML report)
 - Lint: `make lint` (flake8, max-line-length=120)
 
-> **Note:** There is no public registration flow. Tests that need a student use the `seed_user` fixture — never simulate a registration form.
+> **Note:** Most tests should keep using the `seed_user` fixture instead of driving `/auth/register`; registration hardening is tracked separately in issue `#78`.
 
 ---
 
@@ -345,16 +354,24 @@ Infra + migration helpers now live under `phishing-platform-infra/scripts/`.
 
 ---
 
-### `registration_worker/` — Async Registration Lambda
+### `phishing-platform-infra/lambda/` — Lambda Function Source
 
-A standalone AWS Lambda function that processes student self-registration requests asynchronously:
+Standalone AWS Lambda functions that handle async background work. Source lives under `phishing-platform-infra/lambda/` alongside the Terraform definitions that deploy them.
+
+#### `registration_worker/` — Async Registration Lambda
 
 1. Student scans a QR code → fills out the registration form
 2. Flask app enqueues the request to **SQS**
 3. **SNS** triggers this Lambda when the message arrives
 4. Lambda creates the user account in DynamoDB and sends a **SES** confirmation email
 
-Key file: `registration_worker/handler.py`
+Key file: `phishing-platform-infra/lambda/registration_worker/handler.py`
+
+#### `campaign_mailer/` — Campaign Mailer Lambda
+
+Processes phishing simulation campaign messages from SQS, fans out SES emails to the target cohort, and records delivery events in DynamoDB + Redis pub/sub.
+
+Key file: `phishing-platform-infra/lambda/campaign_mailer/handler.py`
 
 ---
 
@@ -391,7 +408,7 @@ See `phishing-platform-infra/ansible/README.md` for required variables.
 | `deploy-prod.yml` | Manual dispatch | Same flow targeting `prod` environment (requires approval) |
 | `destroy.yml` | Manual dispatch | Tears down all Terraform-managed AWS resources |
 | `claude.yml` | PR / issue events | Claude AI agent automation |
-| `claude-code-review.yml` | PR events | Automated code review by Claude |
+| `code-review.yml` | PR events | Review-context summary for main-bound pull requests |
 
 Terraform steps inside these workflows now run from `phishing-platform-infra/terraform`. When splitting repos, copy the deploy/destroy workflows into the infra repo and keep `ci.yml` in the app repo.
 
@@ -620,6 +637,7 @@ MIGRATE_DRY_RUN=true python3 ./phishing-platform-infra/scripts/migrate_dynamodb.
 
 | Guide | Audience | Description |
 |---|---|---|
+| [Workboard](documentation/WORKBOARD.md) | Maintainers | Live milestone, issue, and branch map for the deep-scan backlog |
 | [Architecture](documentation/ARCHITECTURE.md) | All | 10 Mermaid diagrams: system, AWS infra, schema, CI/CD, flows |
 | [Requirements](documentation/REQUIREMENTS.md) | All | Infrastructure, functional & IAM requirements |
 | [Audit & Roadmap](documentation/AUDIT_AND_ROADMAP.md) | All | Known issues + upcoming feature roadmap |
@@ -643,6 +661,12 @@ MIGRATE_DRY_RUN=true python3 ./phishing-platform-infra/scripts/migrate_dynamodb.
 | [Infrastructure](documentation/operator/INFRASTRUCTURE.md) | Operators | AWS resource reference |
 | [CI/CD](documentation/operator/CICD.md) | Operators | GitHub Actions workflow details |
 | [Maintenance](documentation/operator/MAINTENANCE.md) | Operators | Operational tasks (seeding, migrations, resets) |
+
+---
+
+## Workboard
+
+Use [`documentation/WORKBOARD.md`](documentation/WORKBOARD.md) as the backlog source of truth. It links each milestone cluster to its initiative issue, sub-issues, confirmed bugs, and the branch naming pattern expected for follow-up work.
 
 ---
 
@@ -741,7 +765,7 @@ This project is released under **CC0** (public domain). Use it freely.
 ## Changelog & License
 
 - Full version history: [CHANGELOG.md](CHANGELOG.md)
-- Current version: **1.2.4**
+- Current version: **1.2.5**
 - License: **CC0** — no rights reserved
 
 ---

@@ -36,6 +36,7 @@ def aws_env(monkeypatch):
     monkeypatch.setenv('DYNAMODB_CAMPAIGNS', 'test-campaigns')
     monkeypatch.setenv('DYNAMODB_CAMPAIGN_EVENTS', 'test-campaign-events')
     monkeypatch.setenv('S3_BUCKET', 'test-bucket')
+    monkeypatch.setenv('DYNAMODB_INSPECTOR_CONFIG', 'test-inspector-config')
     monkeypatch.setenv('SQS_REGISTRATION_QUEUE_URL', 'https://sqs.eu-west-3.amazonaws.com/123456789012/test-registration-queue')
     monkeypatch.setenv('SQS_CAMPAIGN_QUEUE_URL', 'https://sqs.eu-west-3.amazonaws.com/123456789012/test-campaign-queue')
     monkeypatch.setenv('SES_FROM_EMAIL', 'no-reply@test.example.com')
@@ -263,6 +264,14 @@ def _create_dynamodb_tables(region='eu-west-3'):
                 'Projection': {'ProjectionType': 'ALL'},
             },
         ],
+        BillingMode='PAY_PER_REQUEST',
+    )
+
+    # Inspector cohort config table
+    dynamodb.create_table(
+        TableName='test-inspector-config',
+        KeySchema=[{'AttributeName': 'cohort_key', 'KeyType': 'HASH'}],
+        AttributeDefinitions=[{'AttributeName': 'cohort_key', 'AttributeType': 'S'}],
         BillingMode='PAY_PER_REQUEST',
     )
 

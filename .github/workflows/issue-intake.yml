@@ -1,0 +1,30 @@
+name: Issue Intake
+
+on:
+  issues:
+    types: [opened, edited, reopened]
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  issues: write
+  actions: write
+
+jobs:
+  intake:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install lightweight dependencies
+        run: pip install requests
+
+      - name: Run issue intake
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python .github/scripts/issue_intake.py

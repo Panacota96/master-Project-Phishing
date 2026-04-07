@@ -1,0 +1,7 @@
+interface:
+  display_name: "Architecture Docs AWS"
+  short_description: "Standardize AWS docs and diagrams"
+  default_prompt: "Use $architecture-docs-aws to update Mermaid diagrams, AWS legends, and architecture docs consistently."
+
+policy:
+  allow_implicit_invocation: true

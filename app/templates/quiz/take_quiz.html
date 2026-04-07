@@ -12,7 +12,7 @@
         {% if time_limit %}
         <div class="alert alert-warning d-flex justify-content-between align-items-center">
             <span class="fw-semibold">Time remaining</span>
-            <span id="quizTimer" data-remaining="{{ remaining_seconds }}">{{ remaining_seconds }}s</span>
+            <span id="quizTimer" data-remaining="{{ remaining_seconds }}">{{ '%d:%02d' | format(remaining_seconds // 60, remaining_seconds % 60) }}</span>
         </div>
         {% endif %}
 
@@ -54,7 +54,7 @@
                     <strong>Explanation:</strong> {{ question.explanation }}
                 </div>
                 {% endif %}
-                <a href="{{ url_for('quiz.take_question') }}" class="btn btn-primary">Next Question</a>
+                <a href="{{ url_for('quiz.take_question') }}" class="btn btn-primary" id="next-question-link">Next Question</a>
                 {% endif %}
             </div>
         </div>
@@ -66,24 +66,91 @@
 const timerEl = document.getElementById('quizTimer');
 if (timerEl) {
     let remaining = parseInt(timerEl.dataset.remaining || '0', 10);
+
+    function formatTime(secs) {
+        const m = Math.floor(secs / 60);
+        const s = secs % 60;
+        return `${m}:${s.toString().padStart(2, '0')}`;
+    }
+
+    function updateTimerDisplay() {
+        timerEl.textContent = formatTime(remaining);
+        const alertEl = timerEl.closest('.alert');
+        if (alertEl) {
+            if (remaining <= 30) {
+                alertEl.classList.remove('alert-warning');
+                alertEl.classList.add('alert-danger');
+            } else {
+                alertEl.classList.remove('alert-danger');
+                alertEl.classList.add('alert-warning');
+            }
+        }
+    }
+
+    updateTimerDisplay();
     const intervalId = setInterval(() => {
         remaining -= 1;
         if (remaining <= 0) {
             clearInterval(intervalId);
-            timerEl.textContent = '0s';
+            timerEl.textContent = '0:00';
             window.location.href = "{{ url_for('quiz.finish_quiz') }}";
             return;
         }
-        timerEl.textContent = `${remaining}s`;
+        updateTimerDisplay();
     }, 1000);
 }
 
-document.querySelectorAll('.quiz-option').forEach(opt => {
+const options = document.querySelectorAll('.quiz-option');
+// Scope to the quiz answer form only — avoids accidentally grabbing the
+// bug-report modal form injected by base.html into the same DOM.
+const submitForm = options.length > 0 ? options[0].closest('form') : null;
+const nextLink = document.getElementById('next-question-link');
+
+options.forEach(opt => {
     opt.addEventListener('click', () => {
-        document.querySelectorAll('.quiz-option').forEach(o => o.classList.remove('selected'));
+        options.forEach(o => o.classList.remove('selected'));
         opt.classList.add('selected');
         opt.querySelector('input[type=radio]').checked = true;
     });
+});
+
+// Keyboard shortcuts: 1-4 / a-d select options; Enter submits or advances
+document.addEventListener('keydown', (e) => {
+    const tag = document.activeElement ? document.activeElement.tagName : '';
+    // Exclude all interactive elements, including links, so we don't intercept
+    // normal keyboard navigation (e.g. Tab+Enter on a focused <a>).
+    if (['INPUT', 'TEXTAREA', 'SELECT', 'BUTTON', 'A'].includes(tag)) return;
+
+    const key = e.key;
+
+    // Number keys 1-4 or letter keys a-d: select corresponding option
+    const numMap = {'1': 0, '2': 1, '3': 2, '4': 3};
+    const letterMap = {'a': 0, 'b': 1, 'c': 2, 'd': 3};
+    let idx = numMap[key];
+    if (idx === undefined) {
+        idx = letterMap[key.toLowerCase()];
+    }
+    if (idx === undefined) {
+        idx = -1;
+    }
+
+    if (idx >= 0 && idx < options.length) {
+        e.preventDefault();
+        options[idx].click();
+        return;
+    }
+
+    // Enter key: prefer advancing to next question when in explanation mode,
+    // otherwise submit the answer form.
+    if (key === 'Enter') {
+        if (nextLink) {
+            e.preventDefault();
+            window.location.href = nextLink.href;
+        } else if (submitForm) {
+            e.preventDefault();
+            submitForm.requestSubmit();
+        }
+    }
 });
 </script>
 {% endblock %}

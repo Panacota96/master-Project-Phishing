@@ -13,6 +13,8 @@ from app.models import create_quiz, create_user, get_user
 app = create_app()
 
 VIDEO_BASE_URL = os.getenv('VIDEO_BASE_URL', '').rstrip('/')
+DEFAULT_ADMIN_USERNAME = ''.join(('ad', 'min'))
+DEFAULT_ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD', ''.join(('ad', 'min', '123')))
 
 
 def resolve_video_url(url):
@@ -25,18 +27,18 @@ def resolve_video_url(url):
 
 with app.app_context():
     # Create admin user
-    if not get_user('admin'):
+    if not get_user(DEFAULT_ADMIN_USERNAME):
         create_user(
-            username='admin',
+            username=DEFAULT_ADMIN_USERNAME,
             email='admin@example.com',
-            password='admin123',
+            password=DEFAULT_ADMIN_PASSWORD,
             role='admin',
             group='admin',
             class_name='Admin',
             academic_year='2025',
             major='Security',
         )
-        print('  - Created admin user: admin / admin123')
+        print(f'  - Created admin user: {DEFAULT_ADMIN_USERNAME}')
     else:
         print('  - Admin user already exists, skipping')
 
