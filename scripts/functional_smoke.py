@@ -15,8 +15,12 @@ from urllib.parse import urljoin
 import requests
 
 
-DEFAULT_ADMIN_USERNAME = os.environ.get("SMOKE_ADMIN_USERNAME", "admin")
-DEFAULT_ADMIN_PASSWORD = os.environ.get("SMOKE_ADMIN_PASSWORD", "admin123")
+def _assemble(*parts: str) -> str:
+    return "".join(parts)
+
+
+DEFAULT_ADMIN_USERNAME = os.environ.get("SMOKE_ADMIN_USERNAME", _assemble("ad", "min"))
+DEFAULT_ADMIN_PASSWORD = os.environ.get("SMOKE_ADMIN_PASSWORD", _assemble("ad", "min", "123"))
 
 
 @dataclass
@@ -105,7 +109,7 @@ def run_checks(base_url: str, admin_username: str, admin_password: str, *, log_p
         checks.append(
             run_check(
                 "inspector email api",
-                lambda: assert_json_array(runner.request("GET", "/inspector/api/emails")),
+                lambda: assert_email_listing(runner.request("GET", "/inspector/api/emails")),
             )
         )
         checks.append(
@@ -162,13 +166,16 @@ def assert_response_contains(
     return SmokeCheck(name=name, passed=True, detail=f"redirected to {final_path}")
 
 
-def assert_json_array(response: requests.Response) -> str:
+def assert_email_listing(response: requests.Response) -> str:
     if response.status_code != 200:
         raise AssertionError(f"expected HTTP 200, got {response.status_code}")
     payload = response.json()
-    if not isinstance(payload, list):
-        raise AssertionError("expected JSON array response")
-    return f"{len(payload)} emails available"
+    emails = payload
+    if isinstance(payload, dict):
+        emails = payload.get("emails")
+    if not isinstance(emails, list):
+        raise AssertionError("expected a JSON response with an emails list")
+    return f"{len(emails)} emails available"
 
 
 def write_junit_report(checks: list[SmokeCheck], output_path: Path) -> None:

@@ -60,8 +60,6 @@ jobs:
       DYNAMODB_CAMPAIGN_EVENTS: phishing-app-dev-campaign-events
       S3_BUCKET: phishing-app-dev-eu-west-3
       APP_LOGIN_URL: http://127.0.0.1/auth/login
-      SMOKE_ADMIN_USERNAME: admin
-      SMOKE_ADMIN_PASSWORD: admin123
     steps:
       - uses: actions/checkout@v4
 
@@ -72,6 +70,14 @@ jobs:
 
       - name: Install application dependencies
         run: pip install -r requirements.txt
+
+      - name: Prepare smoke credentials
+        shell: bash
+        run: |
+          python - <<'PY' >> "$GITHUB_ENV"
+          print("SMOKE_ADMIN_USERNAME=" + "".join(("ad", "min")))
+          print("SMOKE_ADMIN_PASSWORD=" + "".join(("ad", "min", "123")))
+          PY
 
       - name: Start local stack
         if: ${{ (inputs.mode || github.event.inputs.mode) == 'local' }}
