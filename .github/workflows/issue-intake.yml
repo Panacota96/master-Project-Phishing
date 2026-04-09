@@ -24,7 +24,17 @@ jobs:
       - name: Install lightweight dependencies
         run: pip install requests
 
+      - name: Validate intake imports
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+        run: |
+          python - <<'PY'
+import scripts.issue_intake
+print("imports ok")
+PY
+
       - name: Run issue intake
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: python .github/scripts/issue_intake.py
+          PYTHONPATH: ${{ github.workspace }}
+        run: python -m scripts.issue_intake
