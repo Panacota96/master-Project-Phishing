@@ -11,6 +11,10 @@
 </p>
 
 <p align="center">
+  Built to make phishing defense practical, measurable, and easier to teach.
+</p>
+
+<p align="center">
   <img src="https://img.shields.io/badge/version-1.2.5-blue?style=flat-square" />
   <img src="https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square&logo=python&logoColor=white" />
   <img src="https://img.shields.io/badge/Flask-3.1.0-000000?style=flat-square&logo=flask&logoColor=white" />
@@ -24,6 +28,8 @@
     <img src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black" alt="Buy Me a Coffee" />
   </a>
 </p>
+
+> Why it matters: this repo shows how I translate blue-team awareness into hands-on student training with real phishing signals, analytics, and deployable infrastructure.
 
 ---
 
