@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Local Docker defaults no longer rely on a pre-created `.env`; `.env.example` is now the explicit starting point.
 - Documentation now treats `documentation/WORKBOARD.md` as the source of truth for milestone, issue, and branch tracking.
 - Terraform, Docker, and config baselines were corrected to match the current repository layout and runtime behavior.
+- Expanded GitHub Actions OIDC deploy-role permissions for newly managed security resources (CloudTrail event selectors, additional Secrets Manager read/list/restore actions, and WAFv2 resource lookups) to avoid `AccessDenied` during Terraform apply.
 
 ---
 
