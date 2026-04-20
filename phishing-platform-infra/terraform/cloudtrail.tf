@@ -9,7 +9,26 @@ data "aws_caller_identity" "current" {}
 resource "aws_s3_bucket" "cloudtrail" {
   count         = var.enable_cloudtrail ? 1 : 0
   bucket        = "${local.prefix}-cloudtrail-${data.aws_caller_identity.current.account_id}"
-  force_destroy = var.cloudtrail_bucket_force_destroy
+
+  lifecycle_rule {
+    id      = "cloudtrail-retention"
+    enabled = true
+
+    transition {
+      days          = 90
+      storage_class = "GLACIER"
+    }
+
+    expiration {
+      days = 2555 # ~7 years
+    }
+
+    abort_incomplete_multipart_upload_days = 7
+
+    filter {
+      prefix = ""
+    }
+  }
 
   tags = {
     Name = "${local.prefix}-cloudtrail"

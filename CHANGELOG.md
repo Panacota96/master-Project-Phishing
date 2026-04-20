@@ -26,11 +26,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Added
 - **AWS WAF v2** (`waf.tf`): CloudFront-scoped Web ACL (us-east-1) with `AWSManagedRulesCommonRuleSet`, `AWSManagedRulesKnownBadInputsRuleSet`, and a per-IP rate-based rule (300 requests / 5 minutes). Controlled by `enable_waf` variable (default `true`).
 - **AWS Secrets Manager** (`secrets_manager.tf`): Flask `SECRET_KEY` and `MSAL_CLIENT_SECRET` are now stored in a Secrets Manager secret (`{prefix}/app-secrets`). The Lambda receives `SECRET_ARN` instead of the plaintext values, preventing credentials from appearing in the AWS console environment variables view.
-- **AWS CloudTrail** (`cloudtrail.tf`): Multi-region trail writing to a dedicated AES256-encrypted S3 bucket with log-file validation enabled and S3 data-event logging for the application bucket. Controlled by `enable_cloudtrail` variable (default `true`).
+- **AWS CloudTrail** (`cloudtrail.tf`): Multi-region trail writing to a dedicated AES256-encrypted S3 bucket with log-file validation enabled and S3 data-event logging for the application bucket. Controlled by `enable_cloudtrail` variable (default `true`) with a 7-year retention policy (transition to Glacier after 90 days) and no force-destroy on the log bucket.
 - **DynamoDB PITR**: Point-in-Time Recovery enabled on all 11 DynamoDB tables for a 35-day recovery window.
 - **SQS DLQ alarms**: Two new CloudWatch alarms (`{prefix}-registration-dlq-depth` and `{prefix}-campaign-dlq-depth`) fire on the SNS alerts topic when either dead-letter queue accumulates ≥ 1 message.
 - **`config.py` Secrets Manager resolver**: shared secret payload is fetched once and cached; `SECRET_KEY` now fails closed when `SECRET_ARN` is configured but the key cannot be retrieved, while local development and tests still use env-var fallbacks when `SECRET_ARN` is absent.
-- **Terraform variables**: `enable_waf` (bool, default `true`), `enable_cloudtrail` (bool, default `true`), and `cloudtrail_bucket_force_destroy` (bool, default `false`) added to `variables.tf`.
+- **Terraform variables**: `enable_waf` (bool, default `true`) and `enable_cloudtrail` (bool, default `true`) added to `variables.tf`.
 - **Terraform outputs**: canonical outputs `waf_web_acl_arn`, `app_secrets_arn`, and `cloudtrail_bucket` exposed for the new infrastructure components.
 
 ### Changed
