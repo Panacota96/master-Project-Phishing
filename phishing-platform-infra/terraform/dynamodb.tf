@@ -32,6 +32,10 @@ resource "aws_dynamodb_table" "users" {
     range_key       = "username"
     projection_type = "ALL"
   }
+
+  point_in_time_recovery {
+    enabled = true
+  }
 }
 
 # ─── Quizzes Table ────────────────────────────────────────────────────────────
@@ -44,6 +48,10 @@ resource "aws_dynamodb_table" "quizzes" {
   attribute {
     name = "quiz_id"
     type = "S"
+  }
+
+  point_in_time_recovery {
+    enabled = true
   }
 }
 
@@ -88,6 +96,10 @@ resource "aws_dynamodb_table" "attempts" {
     range_key       = "completed_at"
     projection_type = "ALL"
   }
+
+  point_in_time_recovery {
+    enabled = true
+  }
 }
 
 # ─── Responses Table ──────────────────────────────────────────────────────────
@@ -123,6 +135,10 @@ resource "aws_dynamodb_table" "responses" {
     hash_key        = "quiz_question_id"
     range_key       = "username"
     projection_type = "ALL"
+  }
+
+  point_in_time_recovery {
+    enabled = true
   }
 }
 
@@ -167,6 +183,10 @@ resource "aws_dynamodb_table" "inspector_attempts" {
     range_key       = "submitted_at"
     projection_type = "ALL"
   }
+
+  point_in_time_recovery {
+    enabled = true
+  }
 }
 
 # ─── Inspector Attempts Table (Anonymous) ────────────────────────────────────
@@ -186,6 +206,10 @@ resource "aws_dynamodb_table" "inspector_attempts_anon" {
     name = "submitted_at"
     type = "S"
   }
+
+  point_in_time_recovery {
+    enabled = true
+  }
 }
 
 # ─── Bugs Table ────────────────────────────────────────────────────────────────
@@ -199,6 +223,10 @@ resource "aws_dynamodb_table" "bugs" {
     name = "bug_id"
     type = "S"
   }
+
+  point_in_time_recovery {
+    enabled = true
+  }
 }
 
 # ─── Answer Key Overrides Table ───────────────────────────────────────────────
@@ -211,6 +239,10 @@ resource "aws_dynamodb_table" "answer_key_overrides" {
   attribute {
     name = "email_file"
     type = "S"
+  }
+
+  point_in_time_recovery {
+    enabled = true
   }
 }
 
@@ -230,6 +262,10 @@ resource "aws_dynamodb_table" "cohort_tokens" {
     attribute_name = "expires_at"
     enabled        = true
   }
+
+  point_in_time_recovery {
+    enabled = true
+  }
 }
 
 # ─── Threat Cache (OpenPhish) ─────────────────────────────────────────────────
@@ -247,6 +283,10 @@ resource "aws_dynamodb_table" "threat_cache" {
   ttl {
     attribute_name = "ttl"
     enabled        = true
+  }
+
+  point_in_time_recovery {
+    enabled = true
   }
 }
 
@@ -271,6 +311,10 @@ resource "aws_dynamodb_table" "campaigns" {
     name            = "cohort-index"
     hash_key        = "cohort"
     projection_type = "ALL"
+  }
+
+  point_in_time_recovery {
+    enabled = true
   }
 }
 
@@ -302,5 +346,9 @@ resource "aws_dynamodb_table" "campaign_events" {
     hash_key        = "event_type"
     range_key       = "event_id"
     projection_type = "ALL"
+  }
+
+  point_in_time_recovery {
+    enabled = true
   }
 }

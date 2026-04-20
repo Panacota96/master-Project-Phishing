@@ -106,6 +106,7 @@ resource "aws_iam_role_policy" "github_actions_deploy" {
           "dynamodb:BatchGetItem",
           "dynamodb:DescribeTimeToLive",
           "dynamodb:UpdateTimeToLive",
+          "dynamodb:UpdateContinuousBackups",
           "dynamodb:ListTagsOfResource",
           "dynamodb:TagResource",
           "dynamodb:DescribeContinuousBackups",
@@ -127,9 +128,9 @@ resource "aws_iam_role_policy" "github_actions_deploy" {
         ]
       },
       {
-        Sid    = "APIGateway"
-        Effect = "Allow"
-        Action = "apigateway:*"
+        Sid      = "APIGateway"
+        Effect   = "Allow"
+        Action   = "apigateway:*"
         Resource = "*"
       },
       {
@@ -145,6 +146,62 @@ resource "aws_iam_role_policy" "github_actions_deploy" {
           "cloudfront:TagResource",
           "cloudfront:UntagResource",
           "cloudfront:ListTagsForResource",
+        ]
+        Resource = "*"
+      },
+      {
+        Sid    = "SecretsManager"
+        Effect = "Allow"
+        Action = [
+          "secretsmanager:CreateSecret",
+          "secretsmanager:DeleteSecret",
+          "secretsmanager:DescribeSecret",
+          "secretsmanager:GetSecretValue",
+          "secretsmanager:GetResourcePolicy",
+          "secretsmanager:ListSecrets",
+          "secretsmanager:ListSecretVersionIds",
+          "secretsmanager:PutSecretValue",
+          "secretsmanager:RestoreSecret",
+          "secretsmanager:TagResource",
+          "secretsmanager:UntagResource",
+          "secretsmanager:UpdateSecret",
+        ]
+        Resource = "*"
+      },
+      {
+        Sid    = "CloudTrail"
+        Effect = "Allow"
+        Action = [
+          "cloudtrail:AddTags",
+          "cloudtrail:CreateTrail",
+          "cloudtrail:DeleteTrail",
+          "cloudtrail:DescribeTrails",
+          "cloudtrail:GetEventSelectors",
+          "cloudtrail:GetTrail",
+          "cloudtrail:GetTrailStatus",
+          "cloudtrail:ListTags",
+          "cloudtrail:ListTrails",
+          "cloudtrail:PutEventSelectors",
+          "cloudtrail:RemoveTags",
+          "cloudtrail:StartLogging",
+          "cloudtrail:StopLogging",
+          "cloudtrail:UpdateTrail",
+        ]
+        Resource = "*"
+      },
+      {
+        Sid    = "WAFv2"
+        Effect = "Allow"
+        Action = [
+          "wafv2:CreateWebACL",
+          "wafv2:DeleteWebACL",
+          "wafv2:GetWebACL",
+          "wafv2:GetWebACLForResource",
+          "wafv2:ListTagsForResource",
+          "wafv2:ListWebACLs",
+          "wafv2:TagResource",
+          "wafv2:UntagResource",
+          "wafv2:UpdateWebACL",
         ]
         Resource = "*"
       },

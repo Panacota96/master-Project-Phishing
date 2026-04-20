@@ -6,7 +6,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
-<<<<<<< feature/deep-scan-governance-rollout
 ## [Unreleased]
 
 ### Added
@@ -18,7 +17,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Local Docker defaults no longer rely on a pre-created `.env`; `.env.example` is now the explicit starting point.
 - Documentation now treats `documentation/WORKBOARD.md` as the source of truth for milestone, issue, and branch tracking.
 - Terraform, Docker, and config baselines were corrected to match the current repository layout and runtime behavior.
-=======
+- Expanded GitHub Actions OIDC deploy-role permissions for newly managed security resources (CloudTrail event selectors, additional Secrets Manager read/list/restore actions, and WAFv2 resource lookups) to avoid `AccessDenied` during Terraform apply.
+
+---
+
+## [1.3.0] - 2026-04-04
+
+### Added
+- **AWS WAF v2** (`waf.tf`): CloudFront-scoped Web ACL (us-east-1) with `AWSManagedRulesCommonRuleSet`, `AWSManagedRulesKnownBadInputsRuleSet`, and a per-IP rate-based rule (300 requests / 5 minutes). Controlled by `enable_waf` variable (default `true`).
+- **AWS Secrets Manager** (`secrets_manager.tf`): Flask `SECRET_KEY` and `MSAL_CLIENT_SECRET` are now stored in a Secrets Manager secret (`{prefix}/app-secrets`). The Lambda receives `SECRET_ARN` instead of the plaintext values, preventing credentials from appearing in the AWS console environment variables view.
+- **AWS CloudTrail** (`cloudtrail.tf`): Multi-region trail writing to a dedicated AES256-encrypted S3 bucket with log-file validation enabled and S3 data-event logging for the application bucket. Controlled by `enable_cloudtrail` variable (default `true`) with a 7-year retention policy (transition to Glacier after 90 days) and no force-destroy on the log bucket.
+- **DynamoDB PITR**: Point-in-Time Recovery enabled on all 11 DynamoDB tables for a 35-day recovery window.
+- **SQS DLQ alarms**: Two new CloudWatch alarms (`{prefix}-registration-dlq-depth` and `{prefix}-campaign-dlq-depth`) fire on the SNS alerts topic when either dead-letter queue accumulates ≥ 1 message.
+- **`config.py` Secrets Manager resolver**: shared secret payload is fetched once and cached; `SECRET_KEY` now fails closed when `SECRET_ARN` is configured but the key cannot be retrieved, while local development and tests still use env-var fallbacks when `SECRET_ARN` is absent.
+- **Terraform variables**: `enable_waf` (bool, default `true`) and `enable_cloudtrail` (bool, default `true`) added to `variables.tf`.
+- **Terraform outputs**: canonical outputs `waf_web_acl_arn`, `app_secrets_arn`, and `cloudtrail_bucket` exposed for the new infrastructure components.
+
+### Changed
+- `lambda.tf`: Lambda env var `SECRET_KEY` replaced with `SECRET_ARN`; `MSAL_CLIENT_SECRET` removed from plaintext env vars (now fetched at runtime from Secrets Manager).
+- `iam.tf`: Lambda execution role now includes `secretsmanager:GetSecretValue` on the application secrets ARN.
+- `cloudfront.tf`: `web_acl_id` now references the WAF Web ACL ARN when `enable_waf = true`.
+- `terraform.tfvars.example`: Documents `enable_waf` and `enable_cloudtrail` optional overrides.
+- `documentation/ARCHITECTURE.md`: Updated System Overview and AWS Infrastructure diagrams to show WAF, Secrets Manager, CloudTrail, SQS DLQs for both queues, 11 DynamoDB tables, and 8 CloudWatch alarms.
+
+---
+
 ## [1.2.6] - 2026-04-04
 
 ### Changed
@@ -31,7 +54,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Added
 - **`documentation/REPO_SEPARATION.md`**: step-by-step guide for splitting the Flask application and AWS infrastructure into two standalone repositories, including `git filter-repo` commands, CI/CD handoff strategy, and CODEOWNERS alternative.
 - **Documentation index updates**: `documentation/README.md`, `documentation/dev/README.md`, and `documentation/operator/README.md` now list all files in their respective directories.
->>>>>>> main
 
 ---
 

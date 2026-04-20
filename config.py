@@ -1,8 +1,105 @@
+import json
+import logging
 import os
+from typing import Any
+
+logger = logging.getLogger(__name__)
+
+_APP_SECRETS_CACHE: dict[str, Any] | None = None
+_APP_SECRETS_CACHE_ARN: str | None = None
+
+
+def _get_app_secrets() -> dict[str, Any]:
+    """Fetch and cache the shared app secret bundle from Secrets Manager."""
+    global _APP_SECRETS_CACHE, _APP_SECRETS_CACHE_ARN
+
+    secret_arn = os.environ.get("SECRET_ARN", "").strip()
+    if not secret_arn:
+        return {}
+
+    if (
+        _APP_SECRETS_CACHE is not None
+        and _APP_SECRETS_CACHE_ARN == secret_arn
+    ):
+        return _APP_SECRETS_CACHE
+
+    import boto3
+    from botocore.exceptions import BotoCoreError, ClientError
+
+    try:
+        region = os.environ.get("AWS_REGION_NAME", "eu-west-3")
+        client = boto3.client("secretsmanager", region_name=region)
+        resp = client.get_secret_value(SecretId=secret_arn)
+        data = json.loads(resp["SecretString"])
+        if not isinstance(data, dict):
+            raise ValueError("secret payload must be a JSON object")
+    except (
+        ClientError,
+        BotoCoreError,
+        json.JSONDecodeError,
+        KeyError,
+        ValueError,
+    ) as exc:
+        raise RuntimeError(
+            f"Failed to load application secrets from {secret_arn}: {exc}"
+        ) from exc
+
+    _APP_SECRETS_CACHE = data
+    _APP_SECRETS_CACHE_ARN = secret_arn
+    return data
+
+
+def _resolve_secret_key() -> str:
+    """Return the Flask SECRET_KEY.
+
+    When running on AWS Lambda the ``SECRET_ARN`` environment variable points
+    to a Secrets Manager secret that holds the key as a JSON object
+    ``{"SECRET_KEY": "..."}`` alongside other credentials.  We fetch the value
+    at startup so the plaintext key is never stored as a Lambda environment
+    variable (where it is visible in the AWS console).
+
+    Falls back to the ``SECRET_KEY`` environment variable (or the insecure
+    development default) when ``SECRET_ARN`` is absent — this preserves
+    backward-compatibility for local development and unit tests.
+    """
+    secret_arn = os.environ.get("SECRET_ARN", "").strip()
+    if secret_arn:
+        secret_key = _get_app_secrets().get("SECRET_KEY")
+        if secret_key:
+            return secret_key
+
+        env_secret_key = os.environ.get("SECRET_KEY", "")
+        if env_secret_key:
+            logger.warning(
+                "SECRET_ARN is set but SECRET_KEY was not found in Secrets Manager; "
+                "falling back to SECRET_KEY env var"
+            )
+            return env_secret_key
+
+        raise RuntimeError(
+            "SECRET_ARN is set but SECRET_KEY could not be resolved from Secrets "
+            "Manager and no SECRET_KEY env fallback is configured"
+        )
+    return os.environ.get("SECRET_KEY", "dev-secret-key-change-in-production")
+
+
+def _resolve_msal_client_secret() -> str:
+    """Return the MSAL client secret from Secrets Manager or env var."""
+    secret_arn = os.environ.get("SECRET_ARN", "").strip()
+    if secret_arn:
+        msal_client_secret = _get_app_secrets().get("MSAL_CLIENT_SECRET")
+        if msal_client_secret:
+            return msal_client_secret
+
+        logger.warning(
+            "SECRET_ARN is set but MSAL_CLIENT_SECRET was not found in Secrets "
+            "Manager; falling back to MSAL_CLIENT_SECRET env var"
+        )
+    return os.environ.get("MSAL_CLIENT_SECRET", "")
 
 
 class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
+    SECRET_KEY = _resolve_secret_key()
 
     # Flask-WTF CSRF — allow requests through CloudFront where the Referer
     # header is the CloudFront domain, not the API Gateway origin.
@@ -54,7 +151,7 @@ class Config:
     # Set all three variables to enable the "Sign in with Microsoft" button.
     # Leave them empty (default) to disable SSO entirely.
     MSAL_CLIENT_ID = os.environ.get('MSAL_CLIENT_ID', '')
-    MSAL_CLIENT_SECRET = os.environ.get('MSAL_CLIENT_SECRET', '')
+    MSAL_CLIENT_SECRET = _resolve_msal_client_secret()
     # e.g. "https://login.microsoftonline.com/<tenant-id>/v2.0" or
     #       "https://login.microsoftonline.com/common/v2.0" for multi-tenant.
     MSAL_AUTHORITY = os.environ.get(

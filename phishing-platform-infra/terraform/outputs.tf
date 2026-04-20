@@ -87,3 +87,4 @@ output "custom_domain_url" {
   description = "Custom domain URL (empty if not configured)"
   value       = var.domain_name != "" ? "https://${var.domain_name}" : ""
 }
+
