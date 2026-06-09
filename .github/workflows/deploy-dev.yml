@@ -39,6 +39,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: lambda-artifacts
+          path: phishing-platform-infra
 
       - name: Terraform init
         working-directory: phishing-platform-infra/terraform
@@ -125,6 +126,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: lambda-artifacts
+          path: phishing-platform-infra
 
       - name: Terraform init
         working-directory: phishing-platform-infra/terraform
