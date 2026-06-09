@@ -85,6 +85,7 @@ resource "aws_iam_role_policy" "github_actions_deploy" {
           "iam:GetOpenIDConnectProvider",
           "iam:UpdateOpenIDConnectProviderThumbprint",
           "iam:TagOpenIDConnectProvider",
+          "iam:CreateServiceLinkedRole",
         ]
         Resource = "*"
       },
@@ -243,13 +244,18 @@ resource "aws_iam_role_policy" "github_actions_deploy" {
         Resource = "*"
       },
       {
-        Sid    = "EC2ForRedisNetworking"
+        Sid    = "EC2Networking"
         Effect = "Allow"
         Action = [
           "ec2:DescribeVpcs",
+          "ec2:DescribeVpcAttribute",
+          "ec2:ModifyVpcAttribute",
           "ec2:CreateDefaultVpc",
           "ec2:DescribeSubnets",
+          "ec2:DescribeAvailabilityZones",
+          "ec2:DescribeNetworkInterfaces",
           "ec2:DescribeSecurityGroups",
+          "ec2:DescribeSecurityGroupRules",
           "ec2:CreateSecurityGroup",
           "ec2:DeleteSecurityGroup",
           "ec2:AuthorizeSecurityGroupIngress",
@@ -258,6 +264,7 @@ resource "aws_iam_role_policy" "github_actions_deploy" {
           "ec2:RevokeSecurityGroupEgress",
           "ec2:CreateTags",
           "ec2:DeleteTags",
+          "ec2:DescribeTags",
         ]
         Resource = "*"
       },
@@ -273,6 +280,7 @@ resource "aws_iam_role_policy" "github_actions_deploy" {
           "elasticache:DeleteCacheSubnetGroup",
           "elasticache:DescribeCacheSubnetGroups",
           "elasticache:ModifyCacheSubnetGroup",
+          "elasticache:DescribeCacheClusters",
           "elasticache:AddTagsToResource",
           "elasticache:RemoveTagsFromResource",
           "elasticache:ListTagsForResource",
@@ -320,49 +328,6 @@ resource "aws_iam_role_policy" "github_actions_deploy" {
           "xray:DeleteGroup",
           "xray:GetGroup",
           "xray:UpdateGroup",
-        ]
-        Resource = "*"
-      },
-      {
-        Sid    = "EC2Networking"
-        Effect = "Allow"
-        Action = [
-          "ec2:DescribeVpcs",
-          "ec2:DescribeVpcAttribute",
-          "ec2:ModifyVpcAttribute",
-          "ec2:DescribeSubnets",
-          "ec2:DescribeAvailabilityZones",
-          "ec2:DescribeNetworkInterfaces",
-          "ec2:CreateSecurityGroup",
-          "ec2:DeleteSecurityGroup",
-          "ec2:DescribeSecurityGroups",
-          "ec2:DescribeSecurityGroupRules",
-          "ec2:AuthorizeSecurityGroupIngress",
-          "ec2:AuthorizeSecurityGroupEgress",
-          "ec2:RevokeSecurityGroupIngress",
-          "ec2:RevokeSecurityGroupEgress",
-          "ec2:CreateTags",
-          "ec2:DeleteTags",
-          "ec2:DescribeTags",
-        ]
-        Resource = "*"
-      },
-      {
-        Sid    = "ElastiCache"
-        Effect = "Allow"
-        Action = [
-          "elasticache:CreateCacheSubnetGroup",
-          "elasticache:DeleteCacheSubnetGroup",
-          "elasticache:ModifyCacheSubnetGroup",
-          "elasticache:DescribeCacheSubnetGroups",
-          "elasticache:CreateReplicationGroup",
-          "elasticache:DeleteReplicationGroup",
-          "elasticache:ModifyReplicationGroup",
-          "elasticache:DescribeReplicationGroups",
-          "elasticache:DescribeCacheClusters",
-          "elasticache:AddTagsToResource",
-          "elasticache:RemoveTagsFromResource",
-          "elasticache:ListTagsForResource",
         ]
         Resource = "*"
       },
