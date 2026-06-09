@@ -265,6 +265,11 @@ resource "aws_iam_role_policy" "github_actions_deploy" {
           "ec2:CreateTags",
           "ec2:DeleteTags",
           "ec2:DescribeTags",
+          "ec2:CreateVpcEndpoint",
+          "ec2:DeleteVpcEndpoints",
+          "ec2:DescribeVpcEndpoints",
+          "ec2:ModifyVpcEndpoint",
+          "ec2:DescribeRouteTables",
         ]
         Resource = "*"
       },

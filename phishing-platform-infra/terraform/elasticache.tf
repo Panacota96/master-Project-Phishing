@@ -14,6 +14,29 @@ data "aws_subnets" "default" {
   }
 }
 
+# ─── VPC Gateway Endpoints (free — allow VPC-attached Lambdas to reach S3/DynamoDB) ──
+
+data "aws_route_tables" "default" {
+  filter {
+    name   = "vpc-id"
+    values = [aws_default_vpc.default.id]
+  }
+}
+
+resource "aws_vpc_endpoint" "s3" {
+  vpc_id            = aws_default_vpc.default.id
+  service_name      = "com.amazonaws.${var.aws_region}.s3"
+  vpc_endpoint_type = "Gateway"
+  route_table_ids   = data.aws_route_tables.default.ids
+}
+
+resource "aws_vpc_endpoint" "dynamodb" {
+  vpc_id            = aws_default_vpc.default.id
+  service_name      = "com.amazonaws.${var.aws_region}.dynamodb"
+  vpc_endpoint_type = "Gateway"
+  route_table_ids   = data.aws_route_tables.default.ids
+}
+
 # ─── Security Groups ─────────────────────────────────────────────────────────
 
 resource "aws_security_group" "lambda" {

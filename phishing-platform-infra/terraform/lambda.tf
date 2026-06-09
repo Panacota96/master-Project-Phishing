@@ -47,11 +47,6 @@ resource "aws_lambda_function" "app" {
   tracing_config {
     mode = var.enable_xray ? "Active" : "PassThrough"
   }
-
-  vpc_config {
-    subnet_ids         = data.aws_subnets.default.ids
-    security_group_ids = [aws_security_group.lambda.id]
-  }
 }
 
 # ─── CloudWatch Log Group ─────────────────────────────────────────────────────
