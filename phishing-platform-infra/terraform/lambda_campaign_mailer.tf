@@ -93,14 +93,14 @@ resource "aws_lambda_function" "campaign_mailer" {
 
   environment {
     variables = {
-      AWS_REGION_NAME           = var.aws_region
-      DYNAMODB_USERS            = aws_dynamodb_table.users.name
-      DYNAMODB_CAMPAIGNS        = aws_dynamodb_table.campaigns.name
-      DYNAMODB_CAMPAIGN_EVENTS  = aws_dynamodb_table.campaign_events.name
-      SES_FROM_EMAIL            = var.ses_from_email
-      REDIS_ENDPOINT            = "${aws_elasticache_replication_group.redis.primary_endpoint_address}:${aws_elasticache_replication_group.redis.port}"
-      REDIS_USE_TLS             = "false"
-      APP_LOGIN_URL             = "https://${aws_cloudfront_distribution.app.domain_name}/auth/login"
+      AWS_REGION_NAME          = var.aws_region
+      DYNAMODB_USERS           = aws_dynamodb_table.users.name
+      DYNAMODB_CAMPAIGNS       = aws_dynamodb_table.campaigns.name
+      DYNAMODB_CAMPAIGN_EVENTS = aws_dynamodb_table.campaign_events.name
+      SES_FROM_EMAIL           = var.ses_from_email
+      REDIS_ENDPOINT           = "${aws_elasticache_replication_group.redis.primary_endpoint_address}:${aws_elasticache_replication_group.redis.port}"
+      REDIS_USE_TLS            = "false"
+      APP_LOGIN_URL            = "https://${aws_cloudfront_distribution.app.domain_name}/auth/login"
     }
   }
 

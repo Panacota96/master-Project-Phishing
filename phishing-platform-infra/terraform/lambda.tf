@@ -13,14 +13,14 @@ resource "aws_lambda_function" "app" {
 
   environment {
     variables = {
-      FLASK_ENV          = var.environment
-      SECRET_KEY         = var.secret_key
-      AWS_REGION_NAME    = var.aws_region
-      DYNAMODB_USERS     = aws_dynamodb_table.users.name
-      DYNAMODB_QUIZZES   = aws_dynamodb_table.quizzes.name
-      DYNAMODB_ATTEMPTS  = aws_dynamodb_table.attempts.name
-      DYNAMODB_RESPONSES = aws_dynamodb_table.responses.name
-      DYNAMODB_INSPECTOR = aws_dynamodb_table.inspector_attempts.name
+      FLASK_ENV                     = var.environment
+      SECRET_KEY                    = var.secret_key
+      AWS_REGION_NAME               = var.aws_region
+      DYNAMODB_USERS                = aws_dynamodb_table.users.name
+      DYNAMODB_QUIZZES              = aws_dynamodb_table.quizzes.name
+      DYNAMODB_ATTEMPTS             = aws_dynamodb_table.attempts.name
+      DYNAMODB_RESPONSES            = aws_dynamodb_table.responses.name
+      DYNAMODB_INSPECTOR            = aws_dynamodb_table.inspector_attempts.name
       DYNAMODB_INSPECTOR_ANON       = aws_dynamodb_table.inspector_attempts_anon.name
       DYNAMODB_BUGS                 = aws_dynamodb_table.bugs.name
       DYNAMODB_ANSWER_KEY_OVERRIDES = aws_dynamodb_table.answer_key_overrides.name

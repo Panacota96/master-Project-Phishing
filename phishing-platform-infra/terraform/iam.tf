@@ -85,8 +85,8 @@ resource "aws_iam_role_policy" "lambda_sqs" {
     Version = "2012-10-17"
     Statement = [
       {
-        Effect   = "Allow"
-        Action   = ["sqs:SendMessage"]
+        Effect = "Allow"
+        Action = ["sqs:SendMessage"]
         Resource = [
           aws_sqs_queue.registration.arn,
           aws_sqs_queue.campaigns.arn

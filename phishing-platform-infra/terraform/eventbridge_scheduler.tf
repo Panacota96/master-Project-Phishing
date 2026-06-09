@@ -38,11 +38,11 @@ resource "aws_scheduler_schedule_group" "campaigns" {
 # ─── Scheduled Campaign ─────────────────────────────────────────────────────-
 
 resource "aws_scheduler_schedule" "campaigns" {
-  count                = var.campaign_schedule_enabled ? 1 : 0
-  name                 = "${local.prefix}-campaign-schedule"
-  group_name           = aws_scheduler_schedule_group.campaigns.name
-  schedule_expression  = var.campaign_schedule_expression
-  description          = "Recurring phishing simulation campaign trigger"
+  count                        = var.campaign_schedule_enabled ? 1 : 0
+  name                         = "${local.prefix}-campaign-schedule"
+  group_name                   = aws_scheduler_schedule_group.campaigns.name
+  schedule_expression          = var.campaign_schedule_expression
+  description                  = "Recurring phishing simulation campaign trigger"
   schedule_expression_timezone = "UTC"
 
   flexible_time_window {

@@ -79,11 +79,11 @@ resource "aws_lambda_function" "registration_worker" {
 
   environment {
     variables = {
-      DYNAMODB_USERS        = aws_dynamodb_table.users.name
-      AWS_REGION_NAME       = var.aws_region
-      SES_FROM_EMAIL        = var.ses_from_email
-      APP_LOGIN_URL         = "https://${aws_cloudfront_distribution.app.domain_name}/auth/login"
-      SNS_REGISTRATION_ARN  = aws_sns_topic.registration.arn
+      DYNAMODB_USERS       = aws_dynamodb_table.users.name
+      AWS_REGION_NAME      = var.aws_region
+      SES_FROM_EMAIL       = var.ses_from_email
+      APP_LOGIN_URL        = "https://${aws_cloudfront_distribution.app.domain_name}/auth/login"
+      SNS_REGISTRATION_ARN = aws_sns_topic.registration.arn
     }
   }
 }

@@ -58,20 +58,20 @@ resource "aws_elasticache_subnet_group" "redis" {
 }
 
 resource "aws_elasticache_replication_group" "redis" {
-  replication_group_id          = "${local.prefix}-redis"
-  description                   = "Redis cache for real-time dashboard + threat feed"
-  engine                        = "redis"
-  engine_version                = var.redis_engine_version
-  node_type                     = var.redis_node_type
-  num_cache_clusters            = 1
-  automatic_failover_enabled    = false
-  multi_az_enabled              = false
-  port                          = 6379
-  subnet_group_name             = aws_elasticache_subnet_group.redis.name
-  security_group_ids            = [aws_security_group.redis.id]
-  at_rest_encryption_enabled    = true
-  transit_encryption_enabled    = false
-  apply_immediately             = true
+  replication_group_id       = "${local.prefix}-redis"
+  description                = "Redis cache for real-time dashboard + threat feed"
+  engine                     = "redis"
+  engine_version             = var.redis_engine_version
+  node_type                  = var.redis_node_type
+  num_cache_clusters         = 1
+  automatic_failover_enabled = false
+  multi_az_enabled           = false
+  port                       = 6379
+  subnet_group_name          = aws_elasticache_subnet_group.redis.name
+  security_group_ids         = [aws_security_group.redis.id]
+  at_rest_encryption_enabled = true
+  transit_encryption_enabled = false
+  apply_immediately          = true
 }
 
 # ─── Outputs ─────────────────────────────────────────────────────────────────
