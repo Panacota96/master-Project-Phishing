@@ -11,7 +11,7 @@ on:
       clean_s3:
         description: "Empty versioned S3 bucket before destroy"
         type: boolean
-        default: false
+        default: true
 
 jobs:
   destroy:

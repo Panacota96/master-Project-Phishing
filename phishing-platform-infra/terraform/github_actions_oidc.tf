@@ -271,6 +271,8 @@ resource "aws_iam_role_policy" "github_actions_deploy" {
           "ec2:ModifyVpcEndpoint",
           "ec2:DescribeRouteTables",
           "ec2:DescribePrefixLists",
+          "ec2:DeleteNetworkInterface",
+          "ec2:DescribeNetworkInterfaceAttribute",
         ]
         Resource = "*"
       },
