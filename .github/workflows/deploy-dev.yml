@@ -126,19 +126,24 @@ jobs:
         with:
           name: lambda-artifacts
 
-      - name: Download Terraform plan
-        uses: actions/download-artifact@v4
-        with:
-          name: tfplan-dev
-          path: phishing-platform-infra/terraform
-
       - name: Terraform init
         working-directory: phishing-platform-infra/terraform
         run: terraform init -reconfigure -backend-config="backend/dev.hcl"
 
+      - name: Write dev tfvars
+        working-directory: phishing-platform-infra/terraform
+        run: |
+          mkdir -p env
+          cat > env/dev.tfvars <<EOF
+          aws_region = "eu-west-3"
+          environment = "dev"
+          app_name   = "phishing-app"
+          secret_key = "${{ secrets.TF_VAR_SECRET_KEY }}"
+          EOF
+
       - name: Terraform apply
         working-directory: phishing-platform-infra/terraform
-        run: terraform apply -auto-approve tfplan
+        run: terraform apply -auto-approve -var-file="env/dev.tfvars"
 
       - name: Capture Terraform outputs
         id: tf_outputs
