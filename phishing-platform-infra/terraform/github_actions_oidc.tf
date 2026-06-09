@@ -270,6 +270,7 @@ resource "aws_iam_role_policy" "github_actions_deploy" {
           "ec2:DescribeVpcEndpoints",
           "ec2:ModifyVpcEndpoint",
           "ec2:DescribeRouteTables",
+          "ec2:DescribePrefixLists",
         ]
         Resource = "*"
       },
