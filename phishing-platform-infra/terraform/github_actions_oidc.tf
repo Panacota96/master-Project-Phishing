@@ -243,6 +243,62 @@ resource "aws_iam_role_policy" "github_actions_deploy" {
         Resource = "*"
       },
       {
+        Sid    = "EC2ForRedisNetworking"
+        Effect = "Allow"
+        Action = [
+          "ec2:DescribeVpcs",
+          "ec2:CreateDefaultVpc",
+          "ec2:DescribeSubnets",
+          "ec2:DescribeSecurityGroups",
+          "ec2:CreateSecurityGroup",
+          "ec2:DeleteSecurityGroup",
+          "ec2:AuthorizeSecurityGroupIngress",
+          "ec2:RevokeSecurityGroupIngress",
+          "ec2:AuthorizeSecurityGroupEgress",
+          "ec2:RevokeSecurityGroupEgress",
+          "ec2:CreateTags",
+          "ec2:DeleteTags",
+        ]
+        Resource = "*"
+      },
+      {
+        Sid    = "ElastiCacheRedis"
+        Effect = "Allow"
+        Action = [
+          "elasticache:CreateReplicationGroup",
+          "elasticache:DeleteReplicationGroup",
+          "elasticache:ModifyReplicationGroup",
+          "elasticache:DescribeReplicationGroups",
+          "elasticache:CreateCacheSubnetGroup",
+          "elasticache:DeleteCacheSubnetGroup",
+          "elasticache:DescribeCacheSubnetGroups",
+          "elasticache:ModifyCacheSubnetGroup",
+          "elasticache:AddTagsToResource",
+          "elasticache:RemoveTagsFromResource",
+          "elasticache:ListTagsForResource",
+        ]
+        Resource = "*"
+      },
+      {
+        Sid    = "EventBridgeScheduler"
+        Effect = "Allow"
+        Action = [
+          "scheduler:CreateScheduleGroup",
+          "scheduler:DeleteScheduleGroup",
+          "scheduler:GetScheduleGroup",
+          "scheduler:ListScheduleGroups",
+          "scheduler:CreateSchedule",
+          "scheduler:DeleteSchedule",
+          "scheduler:GetSchedule",
+          "scheduler:UpdateSchedule",
+          "scheduler:ListSchedules",
+          "scheduler:TagResource",
+          "scheduler:UntagResource",
+          "scheduler:ListTagsForResource",
+        ]
+        Resource = "*"
+      },
+      {
         Sid    = "SES"
         Effect = "Allow"
         Action = [
