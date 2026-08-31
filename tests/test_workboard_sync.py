@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from scripts.github_automation_common import WorkboardEntry, parse_workboard
+from scripts.github_automation_common import parse_workboard
 from scripts.workboard_sync import sync_workboard
 
 

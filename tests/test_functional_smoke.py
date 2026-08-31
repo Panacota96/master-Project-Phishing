@@ -2,7 +2,6 @@ import json
 import threading
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-from pathlib import Path
 from urllib.parse import parse_qs
 
 from scripts.functional_smoke import run_checks, write_junit_report

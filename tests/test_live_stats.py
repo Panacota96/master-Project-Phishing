@@ -6,8 +6,6 @@ Covers:
 """
 import json
 
-import pytest
-
 from app.models import create_user
 from tests.conftest import login
 

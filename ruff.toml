@@ -1,0 +1,20 @@
+# Ruff configuration for the `code-review` workflow.
+#
+# Ruff's default rule set widens between releases, and the workflow installs it
+# unpinned (`pip install ruff`). Without an explicit selection a routine Ruff
+# upgrade can turn every pull request red without a line of code changing —
+# 0.16.5, for example, reports 76 findings here against 4 under this selection.
+#
+# The rules below mirror what flake8 already enforces via `make lint`, so Ruff
+# and flake8 agree rather than contradicting each other.
+
+line-length = 120
+
+[lint]
+# Pyflakes (F) plus the pycodestyle error subset: imports (E4), statements (E7),
+# and runtime/syntax errors (E9). E501 stays off because flake8 owns line length.
+select = ["E4", "E7", "E9", "F"]
+
+[lint.per-file-ignores]
+# Re-exported fixtures and helpers are imported for their side effects.
+"tests/conftest.py" = ["F401"]

@@ -25,6 +25,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **`destroy.yml` no longer hardcodes the application bucket**, which would have missed the real bucket and left it non-empty, blocking `terraform destroy`.
 - **Asset sync now filters correctly.** `aws s3 sync --include` is a no-op without a preceding `--exclude "*"`, so the deploy workflows were uploading `compliance_report.md`, `realism_allowlist.json`, and `placeholder.mp4` alongside the real assets.
 - **`.gitignore` Terraform patterns** were anchored to the repository root and missed `phishing-platform-infra/terraform/`, leaving `.terraform/` provider directories untracked but visible.
+- **`code-review.yml` was unparseable.** It carried unresolved merge conflict markers on `main`, so GitHub never ran it. Resolved in favour of the "Automated Code Review" version (Ruff, Bandit, pytest coverage, Playwright E2E).
+- **Ruff pinned to an explicit rule set** via a new `ruff.toml`. The workflow installs Ruff unpinned, and its default rules widen between releases — 0.16.5 reported 76 findings where the selected rules report none — so an unrelated Ruff upgrade would have turned every pull request red. The selection mirrors `make lint`, and four genuinely unused test imports were removed.
 
 ---
 
