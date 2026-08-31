@@ -40,6 +40,11 @@ terraform/env/*.tfvars
 # Catch tfstate at any depth (e.g. phishing-platform-infra/terraform.tfstate)
 **/terraform.tfstate
 **/terraform.tfstate.backup
+# The patterns above are anchored to the repo root, so they miss the real
+# module path (phishing-platform-infra/terraform/...). Catch these at any depth.
+**/.terraform/
+**/.terraform.lock.hcl
+**/env/*.tfvars
 
 # Build artifacts
 lambda.zip

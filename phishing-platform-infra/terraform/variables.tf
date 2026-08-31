@@ -124,3 +124,9 @@ variable "campaign_schedule_expression" {
   type        = string
   default     = "rate(1 day)"
 }
+
+variable "state_bucket_name" {
+  description = "S3 bucket holding Terraform remote state; must match backend/<env>.hcl so the deploy role can read and write state"
+  type        = string
+  default     = "phishing-terraform-state-303004021289"
+}

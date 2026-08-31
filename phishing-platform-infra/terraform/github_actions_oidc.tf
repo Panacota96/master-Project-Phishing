@@ -123,8 +123,8 @@ resource "aws_iam_role_policy" "github_actions_deploy" {
         Resource = [
           "arn:aws:s3:::${local.prefix}-*",
           "arn:aws:s3:::${local.prefix}-*/*",
-          "arn:aws:s3:::phishing-terraform-state",
-          "arn:aws:s3:::phishing-terraform-state/*",
+          "arn:aws:s3:::${var.state_bucket_name}",
+          "arn:aws:s3:::${var.state_bucket_name}/*",
         ]
       },
       {
