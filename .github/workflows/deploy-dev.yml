@@ -165,11 +165,11 @@ jobs:
 
       - name: Sync EML samples to S3
         run: |
-          aws s3 sync examples/ s3://${{ steps.tf_outputs.outputs.s3_bucket }}/eml-samples/ --include "*.eml"
+          aws s3 sync examples/ s3://${{ steps.tf_outputs.outputs.s3_bucket }}/eml-samples/ --exclude "*" --include "*.eml"
 
       - name: Sync video assets to S3
         run: |
-          aws s3 sync app/static/videos/ s3://${{ steps.tf_outputs.outputs.s3_bucket }}/videos/ --include "*.mp4"
+          aws s3 sync app/static/videos/ s3://${{ steps.tf_outputs.outputs.s3_bucket }}/videos/ --exclude "*" --include "*.mp4"
 
       - name: Seed DynamoDB
         if: inputs.skip_seed != true

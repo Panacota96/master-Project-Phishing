@@ -6,7 +6,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
-<<<<<<< feature/deep-scan-governance-rollout
 ## [Unreleased]
 
 ### Added
@@ -18,7 +17,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Local Docker defaults no longer rely on a pre-created `.env`; `.env.example` is now the explicit starting point.
 - Documentation now treats `documentation/WORKBOARD.md` as the source of truth for milestone, issue, and branch tracking.
 - Terraform, Docker, and config baselines were corrected to match the current repository layout and runtime behavior.
-=======
+
+### Fixed
+- **Dev deployment restored after AWS account migration.** The GitHub OIDC provider and `github-actions-deploy` role lived in an account that is no longer reachable, so every deploy failed at `sts:AssumeRoleWithWebIdentity`. Both were recreated in the new account and `AWS_DEPLOY_ROLE_ARN` was repointed.
+- **Terraform state backend moved to an account-scoped bucket.** `phishing-terraform-state` is a globally unique name still held by the previous account, so `backend/{dev,prod}.hcl` now target `phishing-terraform-state-303004021289`, and the deploy role policy reads the name from `var.state_bucket_name` instead of a hardcoded ARN.
+- **Application S3 bucket name is now unique per account.** `<app>-<env>-<region>` collided with the old account's bucket and failed `CreateBucket` with `BucketAlreadyExists`; the name is now suffixed with the account ID via `aws_caller_identity`.
+- **`destroy.yml` no longer hardcodes the application bucket**, which would have missed the real bucket and left it non-empty, blocking `terraform destroy`.
+- **Asset sync now filters correctly.** `aws s3 sync --include` is a no-op without a preceding `--exclude "*"`, so the deploy workflows were uploading `compliance_report.md`, `realism_allowlist.json`, and `placeholder.mp4` alongside the real assets.
+- **`.gitignore` Terraform patterns** were anchored to the repository root and missed `phishing-platform-infra/terraform/`, leaving `.terraform/` provider directories untracked but visible.
+
+---
+
 ## [1.2.6] - 2026-04-04
 
 ### Changed
@@ -31,7 +40,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Added
 - **`documentation/REPO_SEPARATION.md`**: step-by-step guide for splitting the Flask application and AWS infrastructure into two standalone repositories, including `git filter-repo` commands, CI/CD handoff strategy, and CODEOWNERS alternative.
 - **Documentation index updates**: `documentation/README.md`, `documentation/dev/README.md`, and `documentation/operator/README.md` now list all files in their respective directories.
->>>>>>> main
 
 ---
 

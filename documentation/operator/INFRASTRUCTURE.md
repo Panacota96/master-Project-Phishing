@@ -39,7 +39,7 @@ Infrastructure is located in the `phishing-platform-infra/terraform/` directory.
 ### Bootstrap (Initial Setup)
 
 Before deploying the main infrastructure, a bootstrap process (`phishing-platform-infra/terraform/bootstrap/`) creates:
-- **S3 Bucket** (`phishing-terraform-state`): Terraform remote state storage.
+- **S3 Bucket** (`phishing-terraform-state-<AWS_ACCOUNT_ID>`): Terraform remote state storage. S3 bucket names are globally unique, so the account ID suffix keeps the stack rebuildable in a fresh account. The name must match `backend/<env>.hcl` and `var.state_bucket_name`.
 - **DynamoDB Table** (`phishing-terraform-locks`): Terraform state locking (`LockID`).
 
 ### Computing (Serverless)

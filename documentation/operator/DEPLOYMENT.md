@@ -22,7 +22,7 @@ Before deploying for the first time, create the Terraform state bucket and lock 
 cd phishing-platform-infra/terraform/bootstrap
 terraform init
 terraform apply \
-  -var="state_bucket_name=phishing-terraform-state" \
+  -var="state_bucket_name=phishing-terraform-state-<AWS_ACCOUNT_ID>" \
   -var="lock_table_name=phishing-terraform-locks" \
   -var="aws_region=eu-west-3"
 ```

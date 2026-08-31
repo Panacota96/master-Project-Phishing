@@ -19,7 +19,7 @@
 | SQS Queue `phishing-app-{env}-registration` | Async user registration queue | Standard queue, SSE, 60 s visibility, 1-day retention |
 | SQS DLQ `phishing-app-{env}-registration-dlq` | Dead-letter queue for failed registrations | 14-day retention, maxReceiveCount=4 |
 | SES Email Identity | Confirmation emails to new students | `no-reply@engarde.esme.fr`; set `ses_from_email` var |
-| Terraform State S3 + DynamoDB | IaC state management | `phishing-terraform-state` bucket + `phishing-terraform-locks` table |
+| Terraform State S3 + DynamoDB | IaC state management | `phishing-terraform-state-<AWS_ACCOUNT_ID>` bucket + `phishing-terraform-locks` table |
 | GitHub Actions OIDC Provider | Keyless CI/CD authentication | `token.actions.githubusercontent.com` |
 
 ### DynamoDB Tables (9)
@@ -197,7 +197,7 @@ For production deployments, a separate **`prod`** GitHub environment is required
 | `LambdaCRUD` | CreateFunction, DeleteFunction, GetFunction, GetFunctionConfiguration, UpdateFunctionCode, UpdateFunctionConfiguration, AddPermission, RemovePermission, GetPolicy, ListVersionsByFunction, PublishVersion, CreateEventSourceMapping, DeleteEventSourceMapping, GetEventSourceMapping, UpdateEventSourceMapping, ListEventSourceMappings, GetFunctionCodeSigningConfig, TagResource, UntagResource, ListTags | `*` |
 | `IAMRoleManagement` | CreateRole, DeleteRole, GetRole, TagRole, PassRole, ListInstanceProfilesForRole, Attach/DetachRolePolicy, Put/Delete/GetRolePolicy, ListRolePolicies, ListAttachedRolePolicies, OIDC provider management (Create/Delete/Get/Update/Tag) | `*` |
 | `DynamoDB` | CreateTable, DescribeTable, DeleteTable, UpdateTable, CRUD operations, DescribeTimeToLive, UpdateTimeToLive, ListTagsOfResource, TagResource, DescribeContinuousBackups | `arn:aws:dynamodb:*:*:table/phishing-app-*`, `phishing-terraform-locks` |
-| `S3Full` | `s3:*` | `phishing-app-*` and `phishing-terraform-state` buckets |
+| `S3Full` | `s3:*` | `phishing-app-*` and `phishing-terraform-state-<AWS_ACCOUNT_ID>` buckets |
 | `APIGateway` | `apigateway:*` | `*` |
 | `CloudFront` | CreateDistribution, DeleteDistribution, Get/Update/ListDistributions, TagResource, UntagResource, ListTagsForResource | `*` |
 | `CloudWatchLogs` | CreateLogGroup, DeleteLogGroup, PutRetentionPolicy, TagLogGroup, ListTagsLogGroup, ListLogDeliveries | `arn:aws:logs:*:*:log-group:/aws/*` |

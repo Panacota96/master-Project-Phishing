@@ -24,7 +24,7 @@ cd terraform
 # Bootstrap remote state (one-time)
 terraform -chdir=bootstrap init
 terraform -chdir=bootstrap apply \
-  -var="state_bucket_name=phishing-terraform-state" \
+  -var="state_bucket_name=phishing-terraform-state-<AWS_ACCOUNT_ID>" \
   -var="lock_table_name=phishing-terraform-locks" \
   -var="aws_region=eu-west-3"
 
