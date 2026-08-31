@@ -1,7 +1,7 @@
 # ─── Application S3 Bucket ────────────────────────────────────────────────────
 
 resource "aws_s3_bucket" "app" {
-  bucket = "${local.prefix}-${var.aws_region}"
+  bucket = local.bucket_name
 }
 
 resource "aws_s3_bucket_versioning" "app" {

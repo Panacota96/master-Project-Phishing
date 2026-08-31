@@ -28,6 +28,14 @@ provider "aws" {
   region = "us-east-1"
 }
 
+data "aws_caller_identity" "current" {}
+
 locals {
   prefix = "${var.app_name}-${var.environment}"
+
+  # S3 bucket names are globally unique across all AWS accounts, so the bare
+  # "<app>-<env>-<region>" name collides with buckets left behind by any other
+  # account that ever ran this stack. Suffixing the account ID keeps the name
+  # unique and lets the stack be rebuilt in a fresh account.
+  bucket_name = "${local.prefix}-${var.aws_region}-${data.aws_caller_identity.current.account_id}"
 }

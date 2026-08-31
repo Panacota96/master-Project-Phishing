@@ -62,8 +62,12 @@ jobs:
       - name: Clean S3 versions
         if: inputs.clean_s3
         run: |
-          S3_BUCKET="phishing-app-${{ inputs.environment }}-eu-west-3"
+          # Derive the bucket from state rather than hardcoding it: the name is
+          # suffixed with the account ID, so a literal would silently miss it
+          # and leave a non-empty bucket that blocks the destroy.
+          S3_BUCKET="$(terraform -chdir=phishing-platform-infra/terraform output -raw s3_bucket_name)"
           export S3_BUCKET
+          echo "Cleaning bucket: $S3_BUCKET"
 
           aws s3api list-object-versions --bucket "$S3_BUCKET" \
             --query 'Versions[].{Key:Key,VersionId:VersionId}' \
